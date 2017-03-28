@@ -21,3 +21,5 @@
 
 # other
 *.exe
+*.condor
+*.list
