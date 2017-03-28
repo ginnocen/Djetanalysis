@@ -249,6 +249,7 @@ void DTree::read_tree(TTree* t) {
     t->SetBranchStatus("BSWidthXErr", 1);
     t->SetBranchStatus("BSWidthY", 1);
     t->SetBranchStatus("BSWidthYErr", 1);
+
     t->SetBranchStatus("Dindex", 1);
     t->SetBranchStatus("Dtype", 1);
     t->SetBranchStatus("Dmass", 1);
@@ -431,6 +432,7 @@ void DTree::read_tree(TTree* t) {
     t->SetBranchAddress("BSWidthXErr", &BSWidthXErr);
     t->SetBranchAddress("BSWidthY", &BSWidthY);
     t->SetBranchAddress("BSWidthYErr", &BSWidthYErr);
+
     t->SetBranchAddress("Dindex", Dindex);
     t->SetBranchAddress("Dtype", Dtype);
     t->SetBranchAddress("Dmass", Dmass);

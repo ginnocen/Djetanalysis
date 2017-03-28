@@ -25,7 +25,7 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
   TFile* foutput = new TFile(output.c_str(), "recreate");
 
   TTree* outtree = new TTree("djt", "photon jet track tree");
-  DJetTree djt;
+  DJetTree djt(outtree);
 
   /**********************************************************
   * OPEN INPUT FILES
@@ -90,9 +90,6 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
   jet_tree_akpu4pf->SetBranchStatus("*", 0);
   jetTree jt_akpu4pf(jet_tree_akpu4pf);
 
-  djt.link_arrays(dt);
-  djt.create_tree(outtree);
-
   /**********************************************************
   * OPEN CORRECTION FILES
   **********************************************************/
@@ -137,15 +134,18 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
 
     //! D cuts and selection
     D_tree->GetEntry(j);
+    for (int id = 0; id < dt.Dsize; ++id) {
+      djt.copy_index(dt, id);
+    }
     djt.copy_variables(dt);
 
+    //! Jet cuts and selection
     int centBin = 0;
     if (isHI) {
       int centBins[4] = {20, 60, 100, 200};
       for (; hiBin > centBins[centBin]; ++centBin);
     }
 
-    //! Jet cuts and selection
     jet_tree_akpu3pf->GetEntry(j);
 
     int njet_akpu3pf = 0;
