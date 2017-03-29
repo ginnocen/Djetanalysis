@@ -20,10 +20,10 @@ int djet::d_jet(std::string output) {
         if (LoadTree(jentry) < 0) break;
         fChain->GetEntry(jentry);
 
-        if (!(Dsize > 0 && njet_akpu3pf > 0 && (*jetpt_akpu3pf)[0] > 40)) continue;
+        if (!(Dsize > 0 && njet_akpu3pf > 0 && (*jetpt_akpu3pf)[0] > 60)) continue;
 
         for (int m = 0; m < Dsize; m++) {
-            if (((*DsvpvDistance)[m] / (*DsvpvDisErr)[m]) > 3.06 && (*Dpt)[m] > 10) {
+            if (((*DsvpvDistance)[m] / (*DsvpvDisErr)[m]) > 4.06 && (*Dpt)[m] > 20) {
                 double deltaphi = acos(cos((*Dphi)[m] - (*jetphi_akpu3pf)[0]));
                 double deltaeta = (*Deta)[m] - (*jeteta_akpu3pf)[0];
                 double DeltaR = sqrt(pow(deltaphi, 2) + pow(deltaeta, 2));
