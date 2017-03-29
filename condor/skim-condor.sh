@@ -23,7 +23,7 @@ Rank         = Mips
 +AccountingGroup = "group_cmshi.$(whoami)"
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT
-transfer_input_files = D_jet_skim.exe,residuals.tgz
+transfer_input_files = D_jet_skim.exe,residuals.tgz,$1
 #noop_job = !( stringListMember("\$(Process)","") )
 
 Queue $JOBS
