@@ -26,7 +26,7 @@ process.HiForest.HiForestVersion = cms.string(version)
 process.source = cms.Source("PoolSource",
                             duplicateCheckMode = cms.untracked.string("noDuplicateCheck"),
                             fileNames = cms.untracked.vstring(
-                                "file:samples/PbPb_MC_RECODEBUG.root"
+                                "file:00E4B3B8-4207-E611-9472-0090FAA587C4.root"
                                 )
                             )
 
@@ -63,7 +63,7 @@ process.load("RecoHI.HiCentralityAlgos.CentralityBin_cfi")
 #####################################################################################
 
 process.TFileService = cms.Service("TFileService",
-                                   fileName=cms.string("HiForestAOD.root"))
+                                   fileName=cms.string("HiForestAOD_MC.root"))
 
 #####################################################################################
 # Additional Reconstruction and Analysis: Main Body
@@ -143,6 +143,27 @@ process.ggHiNtuplizerGED = process.ggHiNtuplizer.clone(recoPhotonSrc = cms.Input
 
 
 #####################
+# D-Meson Analyzer
+#####################
+AddCaloMuon = False
+runOnMC = True
+HIFormat = False
+UseGenPlusSim = False
+VtxLabel = "offlinePrimaryVerticesWithBS"
+TrkLabel = "generalTracks"
+### finder building block
+from Bfinder.finderMaker.finderMaker_75X_cff import finderMaker_75X
+finderMaker_75X(process, AddCaloMuon, runOnMC, HIFormat, UseGenPlusSim)
+process.Dfinder.tkPtCut = cms.double(1.5)
+process.Dfinder.Dchannel = cms.vint32(1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+process.Dfinder.alphaCut = cms.vdouble(0.2, 0.2, 999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 999.0,999.0,999.0)
+process.Dfinder.svpvDistanceCut_lowptD = cms.vdouble(2.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,0.0, 0.0)
+process.Dfinder.dPtCut = cms.vdouble(4.0, 4.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0,8.0, 8.0)
+process.Bfinder.bPtCut = cms.vdouble(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+
+
+
+#####################
 # tupel and necessary PAT sequences
 #####################
 
@@ -179,13 +200,14 @@ process.ana_step = cms.Path(
                             process.akHiGenJets +
                             process.hiCleanedGenFilters + 
                             process.jetSequences +
-                            process.hiFJRhoAnalyzer +
-                            process.ggHiNtuplizer +
-                            process.ggHiNtuplizerGED +
-                            process.pfcandAnalyzer +
-                            process.pfcandAnalyzerCS +
-                            process.HiForest +
-                            process.trackSequencesPbPb #+
+                            #process.hiFJRhoAnalyzer +
+                            #process.ggHiNtuplizer +
+                            #process.ggHiNtuplizerGED +
+                            #process.pfcandAnalyzer +
+                            #process.pfcandAnalyzerCS +
+                            process.DfinderSequence +
+                            process.HiForest #+
+                            #process.trackSequencesPbPb #+
                             #process.tupelPatSequence
                             )
 
