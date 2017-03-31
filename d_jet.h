@@ -11,9 +11,12 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
+#include <iostream>
 
 // Header file for the classes stored in the TTree if any.
 #include <vector>
+
+using namespace std;
 
 class djet {
 public :
@@ -479,6 +482,7 @@ public :
    virtual void     Init(TTree *tree);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
+   virtual int      fit();
 };
 
 djet::djet(std::string filename) : fChain(0)

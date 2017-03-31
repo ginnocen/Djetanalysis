@@ -8,6 +8,14 @@ int djet::d_jet(std::string output) {
         return 1;
 
     TFile* foutput = new TFile(output.c_str(), "recreate");
+    fit();
+    foutput->Write("", TObject::kOverwrite);
+    foutput->Close();
+
+   return 0;
+}
+
+int djet::fit() {
 
     TH1D* hInCone = new TH1D("hInCone", "hInCone", 50, 1.7, 2.1);
     TH1D* hOutCone = new TH1D("hOutCone", "hOutCone", 50, 1.7, 2.1);
@@ -32,12 +40,12 @@ int djet::d_jet(std::string output) {
             }
         }
     }
-
-    foutput->Write("", TObject::kOverwrite);
-    foutput->Close();
-
-    return 0;
+    cout<<"calling fit"<<endl;
+    return 1;
 }
+
+
+
 
 int main(int argc, char* argv[]) {
     if (argc < 3) {
