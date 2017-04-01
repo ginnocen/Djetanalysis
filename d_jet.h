@@ -11,6 +11,8 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
+
+#include <TH1F.h>
 #include <iostream>
 
 // Header file for the classes stored in the TTree if any.
@@ -18,13 +20,25 @@
 
 using namespace std;
 
+
 class djet {
 public :
+   
+
+
+   TH1F           *fhInConeAll;
+   TH1F           *fhInConeDmatched;
+   TH1F           *fhInConeDswapped;
+   TH1F           *fhOutConeAll;
+   TH1F           *fhOutConeDmatched;
+   TH1F           *fhOutConeDswapped;
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
    Int_t           fCurrent; //!current Tree number in a TChain
 
 // Fixed size dimensions of array or collections stored in the TTree if any.
-
+   
+   
+   
    // Declaration of leaf types
    Int_t           isPP;
    UInt_t          run;
@@ -477,12 +491,13 @@ public :
    virtual ~djet();
    virtual int      d_jet(std::string output);
    virtual Int_t    Cut(Long64_t entry);
+   virtual TH1F*    GetHisto(int,int); 
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
    virtual void     Init(TTree *tree);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
-   virtual int      fit();
+   virtual int      loop(int isData);
 };
 
 djet::djet(std::string filename) : fChain(0)
@@ -944,6 +959,13 @@ void djet::Init(TTree *tree)
    fChain->SetBranchAddress("DgencollisionId", &DgencollisionId, &b_DgencollisionId);
    fChain->SetBranchAddress("DgenBAncestorpt", &DgenBAncestorpt, &b_DgenBAncestorpt);
    fChain->SetBranchAddress("DgenBAncestorpdgId", &DgenBAncestorpdgId, &b_DgenBAncestorpdgId);
+    
+   fhInConeAll=new TH1F("fhInConeAll","fhInConeAll",60,1.7,2.0);
+   fhInConeDmatched=new TH1F("fhInConeDmatched","fhInConeDmatched",60,1.7,2.0);
+   fhInConeDswapped=new TH1F("fhInConeDswapped","fhInConeDswapped",60,1.7,2.0);
+   fhOutConeAll=new TH1F("fhOutConeAll","fhOutConeAll",60,1.7,2.0);
+   fhOutConeDmatched=new TH1F("fhOutConeDmatched","fhOutConeDmatched",60,1.7,2.0);
+   fhOutConeDswapped=new TH1F("fhOutConeDswapped","fhOutConeDswapped",60,1.7,2.0);
    Notify();
 }
 
@@ -973,5 +995,23 @@ Int_t djet::Cut(Long64_t entry)
 // returns -1 otherwise.
    return 1;
 }
+
+
+TH1F* djet::GetHisto(int indexcone, int indexgen)
+{ 
+  TH1F*h(0);
+  if(indexcone==0){
+    if(indexgen==0) h=(TH1F*)fhInConeAll->Clone();
+    if(indexgen==1) h=(TH1F*)fhInConeDmatched->Clone();
+    if(indexgen==2) h=(TH1F*)fhInConeDswapped->Clone();
+  }
+  if(indexcone==1){
+    if(indexgen==0) h=(TH1F*)fhOutConeAll->Clone();
+    if(indexgen==1) h=(TH1F*)fhOutConeDmatched->Clone();
+    if(indexgen==2) h=(TH1F*)fhOutConeDswapped->Clone();
+  }
+  return h;
+}
+
 
 #endif

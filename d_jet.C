@@ -8,18 +8,20 @@ int djet::d_jet(std::string output) {
         return 1;
 
     TFile* foutput = new TFile(output.c_str(), "recreate");
-    fit();
-    foutput->Write("", TObject::kOverwrite);
+    //foutput->Write("", TObject::kOverwrite);
+    fhInConeAll->Write();
+    fhInConeDmatched->Write();
+    fhInConeDswapped->Write();
+    fhOutConeAll->Write();
+    fhOutConeDmatched->Write();
+    fhOutConeDswapped->Write();
     foutput->Close();
 
    return 0;
 }
 
-int djet::fit() {
-
-    TH1D* hInCone = new TH1D("hInCone", "hInCone", 50, 1.7, 2.1);
-    TH1D* hOutCone = new TH1D("hOutCone", "hOutCone", 50, 1.7, 2.1);
-
+int djet::loop(int isData) {
+    
     int64_t nentries = fChain->GetEntriesFast();
     for (int64_t jentry = 0; jentry < nentries; jentry++) {
         if (jentry % 1000 == 0)
@@ -35,15 +37,27 @@ int djet::fit() {
                 double deltaphi = acos(cos((*Dphi)[m] - (*jetphi_akpu3pf)[0]));
                 double deltaeta = (*Deta)[m] - (*jeteta_akpu3pf)[0];
                 double DeltaR = sqrt(pow(deltaphi, 2) + pow(deltaeta, 2));
-                if (DeltaR < 0.5) hInCone->Fill((*Dmass)[m]);
-                else hOutCone->Fill((*Dmass)[m]);
+               
+                if (DeltaR < 0.5) {
+                   fhInConeAll->Fill((*Dmass)[m]);
+                   if(!isData){
+                     if(((*Dgen)[m])==23333) fhInConeDmatched->Fill((*Dmass)[m]);
+                     else if (((*Dgen)[m])==23344) fhInConeDswapped->Fill((*Dmass)[m]);                
+                   }
+                } 
+                if (DeltaR > 0.5) {
+                   fhOutConeAll->Fill((*Dmass)[m]);
+                   if(!isData){
+                     if(((*Dgen)[m])==23333) fhOutConeDmatched->Fill((*Dmass)[m]);
+                     else if (((*Dgen)[m])==23344) fhOutConeDswapped->Fill((*Dmass)[m]);
+                   }
+                }
             }
         }
     }
     cout<<"calling fit"<<endl;
     return 1;
 }
-
 
 
 
