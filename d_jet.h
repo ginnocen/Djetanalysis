@@ -496,7 +496,7 @@ public :
    virtual void     Init(TTree *tree);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
-   virtual int      loop(int isData);
+   virtual int      loop(int isData,double jetpt_cut,double jeteta_cut, double Dptlow_cut, double Dpthigh_cut, double Dy_cut, double decaylength_cut, double Dalpha_cut, double chi2cl_cut, double trkptmin_cut, double trketa_cut, double trkpterr_cut);
 };
 
 djet::djet(std::string filename) : fChain(0)

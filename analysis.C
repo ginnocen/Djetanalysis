@@ -18,7 +18,7 @@ void analysis(){
 //  tData->d_jet("myDatatest.root");
  
   djet* tMC = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_MCHydjet_Dfinder_MC_pthat30_31March_split/merged.root");
-  tMC->loop(0);
+  tMC->loop(0,60,999.,10,10000,10000,4.06,1000,0,1000,1000,0.);
   tMC->d_jet("myMCtest.root");
 
 }
