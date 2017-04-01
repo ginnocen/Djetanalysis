@@ -12,15 +12,8 @@ using namespace std;
 
 class Dfitter{
 
-public:  
-  double signal;
-  Dfitter(TH1F* hMass, TH1F*hMC, TH1F*hMCswapped);
-  ~Dfitter();
-  TH1F*fhMass;
-  TH1F*fhMC;
-  TH1F*fhMCswapped;
-  void fit();
-
+  public:
+ 
   TF1*fFuncTotal;
   TF1*fFuncBackground;
   TF1*fFuncMass;
@@ -37,6 +30,16 @@ public:
   Double_t maxhisto;
   Double_t nbinsmasshisto;
   Double_t binwidthmass;
+  
+  double signal;
+  Dfitter(TH1F* hMass, TH1F*hMC, TH1F*hMCswapped);
+  ~Dfitter();
+  TH1F*fhMass;
+  TH1F*fhMC;
+  TH1F*fhMCswapped;
+  
+  double GetSignal();
+  double GetSignalError();
 
 };
 

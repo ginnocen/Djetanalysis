@@ -24,14 +24,11 @@ using namespace std;
 class djet {
 public :
    
-
-
-   TH1F           *fhInConeAll;
-   TH1F           *fhInConeDmatched;
-   TH1F           *fhInConeDswapped;
-   TH1F           *fhOutConeAll;
-   TH1F           *fhOutConeDmatched;
-   TH1F           *fhOutConeDswapped;
+   double Redges[6]={0.,0.05,0.1,0.2,0.3,0.5};     //different R ranges
+   TH1F           *fhHistoMass[5];                       //different R radius=0,0.1,0.2,0.3,0.5,1.0
+   TH1F           *fhHistoGenSignal[5];
+   TH1F           *fhHistoGenSwapped[5];
+    
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
    Int_t           fCurrent; //!current Tree number in a TChain
 
@@ -491,7 +488,9 @@ public :
    virtual ~djet();
    virtual int      d_jet(std::string output);
    virtual Int_t    Cut(Long64_t entry);
-   virtual TH1F*    GetHisto(int,int); 
+   virtual TH1F*    GetMassSpectrum(int); 
+   virtual TH1F*    GetMassSpectrumGenSignal(int);
+   virtual TH1F*    GetMassSpectrumGenSwapped(int);
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
    virtual void     Init(TTree *tree);
@@ -960,12 +959,13 @@ void djet::Init(TTree *tree)
    fChain->SetBranchAddress("DgenBAncestorpt", &DgenBAncestorpt, &b_DgenBAncestorpt);
    fChain->SetBranchAddress("DgenBAncestorpdgId", &DgenBAncestorpdgId, &b_DgenBAncestorpdgId);
     
-   fhInConeAll=new TH1F("fhInConeAll","fhInConeAll",60,1.7,2.0);
-   fhInConeDmatched=new TH1F("fhInConeDmatched","fhInConeDmatched",60,1.7,2.0);
-   fhInConeDswapped=new TH1F("fhInConeDswapped","fhInConeDswapped",60,1.7,2.0);
-   fhOutConeAll=new TH1F("fhOutConeAll","fhOutConeAll",60,1.7,2.0);
-   fhOutConeDmatched=new TH1F("fhOutConeDmatched","fhOutConeDmatched",60,1.7,2.0);
-   fhOutConeDswapped=new TH1F("fhOutConeDswapped","fhOutConeDswapped",60,1.7,2.0);
+   
+   for (int i=0;i<5;i++){
+     fhHistoMass[i]=new TH1F(Form("fhHistoMass_R%d",i),Form("fhHistoMass_R%d",i),60,1.7,2.0);
+     fhHistoGenSignal[i]=new TH1F(Form("fhHistoGenSignal_R%d",i),Form("fhHistoGenSignal_R%d",i),60,1.7,2.0);
+     fhHistoGenSwapped[i]=new TH1F(Form("fhHistoGenSwapped_R%d",i),Form("fhHistoGenSwapped_R%d",i),60,1.7,2.0);
+   }
+ 
    Notify();
 }
 
@@ -997,20 +997,19 @@ Int_t djet::Cut(Long64_t entry)
 }
 
 
-TH1F* djet::GetHisto(int indexcone, int indexgen)
-{ 
-  TH1F*h(0);
-  if(indexcone==0){
-    if(indexgen==0) h=(TH1F*)fhInConeAll->Clone();
-    if(indexgen==1) h=(TH1F*)fhInConeDmatched->Clone();
-    if(indexgen==2) h=(TH1F*)fhInConeDswapped->Clone();
-  }
-  if(indexcone==1){
-    if(indexgen==0) h=(TH1F*)fhOutConeAll->Clone();
-    if(indexgen==1) h=(TH1F*)fhOutConeDmatched->Clone();
-    if(indexgen==2) h=(TH1F*)fhOutConeDswapped->Clone();
-  }
-  return h;
+TH1F* djet::GetMassSpectrum(int indexcone)
+{  
+  return fhHistoMass[indexcone];
+}
+
+TH1F* djet::GetMassSpectrumGenSignal(int indexcone)
+{
+  return fhHistoGenSignal[indexcone];
+}
+
+TH1F* djet::GetMassSpectrumGenSwapped(int indexcone)
+{
+  return fhHistoGenSwapped[indexcone];
 }
 
 

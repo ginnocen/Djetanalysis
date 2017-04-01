@@ -8,15 +8,11 @@ int djet::d_jet(std::string output) {
         return 1;
 
     TFile* foutput = new TFile(output.c_str(), "recreate");
-    //foutput->Write("", TObject::kOverwrite);
-    fhInConeAll->Write();
-    fhInConeDmatched->Write();
-    fhInConeDswapped->Write();
-    fhOutConeAll->Write();
-    fhOutConeDmatched->Write();
-    fhOutConeDswapped->Write();
-    foutput->Close();
-
+    for (int i=0;i<5;i++){
+      fhHistoMass[i]->Write();
+      fhHistoGenSignal[i]->Write();  
+      fhHistoGenSwapped[i]->Write();  
+    }
    return 0;
 }
 
@@ -33,26 +29,21 @@ int djet::loop(int isData) {
         if (!(Dsize > 0 && njet_akpu3pf > 0 && (*jetpt_akpu3pf)[0] > 60)) continue;
 
         for (int m = 0; m < Dsize; m++) {
-            if (((*DsvpvDistance)[m] / (*DsvpvDisErr)[m]) > 4.06 && (*Dpt)[m] > 20) {
+            if (((*DsvpvDistance)[m] / (*DsvpvDisErr)[m]) > 4.06 && (*Dpt)[m] > 10) {
                 double deltaphi = acos(cos((*Dphi)[m] - (*jetphi_akpu3pf)[0]));
                 double deltaeta = (*Deta)[m] - (*jeteta_akpu3pf)[0];
                 double DeltaR = sqrt(pow(deltaphi, 2) + pow(deltaeta, 2));
                
-                if (DeltaR < 0.5) {
-                   fhInConeAll->Fill((*Dmass)[m]);
-                   if(!isData){
-                     if(((*Dgen)[m])==23333) fhInConeDmatched->Fill((*Dmass)[m]);
-                     else if (((*Dgen)[m])==23344) fhInConeDswapped->Fill((*Dmass)[m]);                
-                   }
-                } 
-                if (DeltaR > 0.5) {
-                   fhOutConeAll->Fill((*Dmass)[m]);
-                   if(!isData){
-                     if(((*Dgen)[m])==23333) fhOutConeDmatched->Fill((*Dmass)[m]);
-                     else if (((*Dgen)[m])==23344) fhOutConeDswapped->Fill((*Dmass)[m]);
-                   }
-                }
-            }
+                for (int n=0; n<5; n++){ 
+                   if(DeltaR>Redges[n]&&DeltaR<Redges[n+1]){
+                     fhHistoMass[n]->Fill((*Dmass)[m]);
+                     if(!isData){
+                       if(((*Dgen)[m])==23333) fhHistoGenSignal[n]->Fill((*Dmass)[m]);
+                       else if (((*Dgen)[m])==23344) fhHistoGenSwapped[n]->Fill((*Dmass)[m]);
+                     }
+                  }           
+               }
+           }
         }
     }
     cout<<"calling fit"<<endl;

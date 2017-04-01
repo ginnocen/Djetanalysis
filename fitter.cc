@@ -16,9 +16,6 @@ Dfitter::Dfitter(TH1F* hMass, TH1F*hMC, TH1F*hMCswapped){
   maxhisto=2.0;
   nbinsmasshisto=60;
   binwidthmass=(maxhisto-minhisto)/nbinsmasshisto;
-}
-
-void Dfitter::fit(){
 
   fFuncTotal = new TF1("fFuncTotal","[0]*([7]*([9]*Gaus(x,[1],[2]*(1+[11]))/(sqrt(2*3.14159)*[2]*(1+[11]))+(1-[9])*Gaus(x,[1],[10]*(1+[11]))/(sqrt(2*3.14159)*[10]*(1+[11])))+(1-[7])*Gaus(x,[1],[8]*(1+[11]))/(sqrt(2*3.14159)*[8]*(1+[11])))+[3]+[4]*x+[5]*x*x+[6]*x*x*x", 1.7, 2.0);
   fFuncBackground = new TF1("fFuncBackground","[0]+[1]*x+[2]*x*x+[3]*x*x*x");
@@ -156,4 +153,18 @@ void Dfitter::fit(){
  }
 
 
+double Dfitter::GetSignal(){
+
+  double signal=fFuncTotal->Integral(minhisto,maxhisto)/binwidthmass; 
+  return signal;
+
+}
+
+
+double Dfitter::GetSignalError(){
+
+  double signalerror=fFuncTotal->Integral(minhisto,maxhisto)/binwidthmass*fFuncTotal->GetParError(0)/fFuncTotal->GetParameter(0); 
+  return signalerror;
+
+}
 
