@@ -25,7 +25,7 @@ process.HiForest.HiForestVersion = cms.string(version)
 
 process.source = cms.Source("PoolSource",
                             fileNames = cms.untracked.vstring(
-                                'file:/export/d00/scratch/ginnocen/ExamplesFilesDjet/AOD_HighPtJet80_Run2015E_PromptReco_v1.root'                        
+                                '/store/data/Run2015E/HighPtJet80/AOD/PromptReco-v1/000/262/173/00000/3E8293B5-9894-E511-90E8-02163E011FA1.root'                        
                                 #'/store/data/Run2015E/HighPtJet80/AOD/PromptReco-v1/000/262/272/00000/803A4255-7696-E511-B178-02163E0142DD.root'
                             )
 )
@@ -174,27 +174,6 @@ for idmod in my_id_modules:
 #####################################################################################
 
 #####################
-AddCaloMuon = False
-runOnMC = False
-HIFormat = False
-UseGenPlusSim = False
-VtxLabel = "offlinePrimaryVerticesWithBS"
-TrkLabel = "generalTracks"
-### finder building block
-from Bfinder.finderMaker.finderMaker_75X_cff import finderMaker_75X
-finderMaker_75X(process, AddCaloMuon, runOnMC, HIFormat, UseGenPlusSim,VtxLabel,TrkLabel)
-process.Dfinder.tkPtCut = cms.double(1.5)
-process.Dfinder.Dchannel = cms.vint32(1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-process.Dfinder.alphaCut = cms.vdouble(0.2, 0.2, 999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 999.0, 999.0,999.0,999.0)
-process.Dfinder.svpvDistanceCut_lowptD = cms.vdouble(2.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,0.0, 0.0)
-process.Dfinder.dPtCut = cms.vdouble(4.0, 4.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0,8.0, 8.0)
-process.Bfinder.bPtCut = cms.vdouble(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-
-####################################################################################
-
-
-
-#####################
 # tupel and necessary PAT sequences
 #####################
 
@@ -211,14 +190,13 @@ process.ana_step = cms.Path(process.hltanalysis *
 			    process.hltobject *
                             process.hiEvtAnalyzer *
                             process.jetSequences +
-                            #process.egmGsfElectronIDSequence + #Should be added in the path for VID module
-                            #process.ggHiNtuplizer +
-                            #process.ggHiNtuplizerGED +
-                            #process.pfcandAnalyzer +
-                            process.DfinderSequence +
-                            process.HiForest
-                            #process.trackSequencesPP
-                            #process.tupelPatSequence
+                            process.egmGsfElectronIDSequence + #Should be added in the path for VID module
+                            process.ggHiNtuplizer +
+                            process.ggHiNtuplizerGED +
+                            process.pfcandAnalyzer +
+                            process.HiForest +
+                            process.trackSequencesPP +
+                            process.tupelPatSequence
                             )
 
 #####################################################################################
