@@ -7,7 +7,7 @@
 #include "D_tree.h"
 #include "jet_tree.h"
 
-#include "../Corrections/L2L3/L2L3ResidualWFits.h"
+#include "Corrections/L2L3/L2L3ResidualWFits.h"
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -42,7 +42,6 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
   event_tree->SetBranchStatus("*", 0);
   int hiBin;
   float vz;
-  int hiNevtPlane;
   float hiEvtPlanes[29];
   _SET_BRANCH_ADDRESS(event_tree, run, djt.run);
   _SET_BRANCH_ADDRESS(event_tree, evt, djt.evt);
@@ -50,7 +49,6 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
   _SET_BRANCH_ADDRESS(event_tree, hiBin, hiBin);
   _SET_BRANCH_ADDRESS(event_tree, vz, vz);
   _SET_BRANCH_ADDRESS(event_tree, weight, djt.weight);
-  _SET_BRANCH_ADDRESS(event_tree, hiNevtPlane, hiNevtPlane);
   _SET_BRANCH_ADDRESS(event_tree, hiEvtPlanes, hiEvtPlanes);
 
   TTree* skim_tree = (TTree*)finput->Get("skimanalysis/HltTree");
@@ -80,12 +78,16 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
   D_tree->SetBranchStatus("*", 0);
   DTree dt(D_tree);
 
-  TTree* jet_tree_akpu3pf = (TTree*)finput->Get("akPu3PFJetAnalyzer/t");
+  TTree* jet_tree_akpu3pf = 0;
+  if (isPP) jet_tree_akpu3pf = (TTree*)finput->Get("ak3PFJetAnalyzer/t");
+  else jet_tree_akpu3pf = (TTree*)finput->Get("ak3PuPFJetAnalyzer/t");
   if (!jet_tree_akpu3pf) { printf("Could not access jet tree!\n"); return 1; }
   jet_tree_akpu3pf->SetBranchStatus("*", 0);
   jetTree jt_akpu3pf(jet_tree_akpu3pf);
 
-  TTree* jet_tree_akpu4pf = (TTree*)finput->Get("akPu4PFJetAnalyzer/t");
+  TTree* jet_tree_akpu4pf = 0;
+  if (isPP) jet_tree_akpu4pf = (TTree*)finput->Get("ak4PFJetAnalyzer/t");
+  else jet_tree_akpu4pf = (TTree*)finput->Get("akPu4PFJetAnalyzer/t");
   if (!jet_tree_akpu4pf) { printf("Could not access jet tree!\n"); return 1; }
   jet_tree_akpu4pf->SetBranchStatus("*", 0);
   jetTree jt_akpu4pf(jet_tree_akpu4pf);
@@ -200,7 +202,6 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
     djt.isPP = isPP;
     djt.hiBin = hiBin;
     djt.vz = vz;
-    djt.hiNevtPlane = hiNevtPlane;
     memcpy(djt.hiEvtPlanes, hiEvtPlanes, 29 * sizeof(float));
 
     outtree->Fill();
@@ -215,12 +216,14 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
 }
 
 int main(int argc, char* argv[]) {
-    if (argc == 6)
-        return D_jet_skim(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
+    if (argc == 5)
+        return D_jet_skim(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]));
+    else if (argc == 6)
+        return D_jet_skim(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), atof(argv[5]));
     else if (argc == 7)
-        return D_jet_skim(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]));
+        return D_jet_skim(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), atof(argv[5]), atoi(argv[6]));
     else if (argc == 8)
-        return D_jet_skim(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]), atoi(argv[7]));
+        return D_jet_skim(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), atof(argv[5]), atoi(argv[6]), atoi(argv[7]));
     else
         printf("Usage: ./D_jet_skim.exe [input] [output] [isPP] [isMC] [jetptmin] [start] [end]\n");
 

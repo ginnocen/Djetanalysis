@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [[ $# -ne 3 ]]; then
-    echo "usage: ./skim-condor.sh [input list] [output dir] [residuals]"
+if [[ $# -ne 5 ]]; then
+    echo "usage: ./skim-condor.sh [input list] [output dir] [residuals] [isPP] [isMC]"
     exit 1
 fi
 
@@ -14,7 +14,7 @@ Universe     = vanilla
 Initialdir   = $PWD/
 Notification = Error
 Executable   = $PWD/skim-djet.sh
-Arguments    = \$(Process) $1 $2 $3
+Arguments    = \$(Process) $1 $2 $3 $4 $5
 GetEnv       = True
 Output       = $PWD/logs/\$(Process).out
 Error        = $PWD/logs/\$(Process).err

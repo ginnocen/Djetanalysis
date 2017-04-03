@@ -20,8 +20,6 @@ class DJetTree {
         vz = -99;
         weight = -1;
 
-        hiNevtPlane = -1;
-
         njet_akpu3pf = 0;
         njet_akpu4pf = 0;
 
@@ -71,7 +69,6 @@ class DJetTree {
     float vz;
     float weight;
 
-    int hiNevtPlane;
     float hiEvtPlanes[29];
 
     int njet_akpu3pf;
@@ -303,8 +300,7 @@ void DJetTree::create_tree(TTree* t) {
     t->Branch("vz", &vz, "vz/F");
     t->Branch("weight", &weight, "weight/F");
 
-    t->Branch("hiNevtPlane", &hiNevtPlane, "hiNevtPlane/I");
-    t->Branch("hiEvtPlanes", hiEvtPlanes, "hiEvtPlanes[hiNevtPlane]/F");
+    t->Branch("hiEvtPlanes", hiEvtPlanes, "hiEvtPlanes[29]/F");
 
     t->Branch("njet_akpu3pf", &njet_akpu3pf, "njet_akpu3pf/I");
     t->Branch("jetptCorr_akpu3pf", &jetptCorr_akpu3pf);
