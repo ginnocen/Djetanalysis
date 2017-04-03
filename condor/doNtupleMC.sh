@@ -1,7 +1,7 @@
 #!/bin/bash
 
-runjobs=1
-merger=0
+runjobs=0
+merger=1
 
 
 variablehadoop="/mnt/hadoop/cms/store/user/ginnocen/Pythia8_prompt_D0pt0p0_Pthat30_Hydjet_MB/crab_PbPb_5TeV_MCHydjet_Dfinder_MC_pthat30_31March_split/170331_141358"

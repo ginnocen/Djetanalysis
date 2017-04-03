@@ -28,10 +28,10 @@ then
    rm -rf $mergeroutput
    mkdir $mergeroutput
 
-   hadd $mergeroutput/merged_1.root /mnt/hadoop/cms/store/user/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_26March_finalMerge2April/*.root
-   hadd $mergeroutput/merged_2.root /mnt/hadoop/cms/store/user/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part2_26March_finalMerge2April/*.root
-   hadd $mergeroutput/merged_3.root /mnt/hadoop/cms/store/user/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part3_26March_finalMerge2April/*.root
-   hadd $mergeroutput/merged_4.root /mnt/hadoop/cms/store/user/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part4_26March_finalMerge2April/*.root
+   hadd $mergeroutput/merged_1.root /mnt/hadoop/cms/store/user/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_26March_finalMerge2April_v1/*.root
+   hadd $mergeroutput/merged_2.root /mnt/hadoop/cms/store/user/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part2_26March_finalMerge2April_v1/*.root
+   hadd $mergeroutput/merged_3.root /mnt/hadoop/cms/store/user/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part3_26March_finalMerge2April_v1/*.root
+   hadd $mergeroutput/merged_4.root /mnt/hadoop/cms/store/user/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part4_26March_finalMerge2April_v1/*.root
    hadd $mergeroutput/merged_total.root $mergeroutput/merged_1.root $mergeroutput/merged_2.root $mergeroutput/merged_3.root $mergeroutput/merged_4.root
 
 fi
