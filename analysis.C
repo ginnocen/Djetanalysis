@@ -27,9 +27,9 @@ void analysis(){
   double trkpterr_cut=0.3;
   double chi2cl_cut=0.1;
   
-  djet* tData = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_2_3_4_26March_finalMerge2April_v1/merged_total.root");
-  tData->loop(1,jetpt_cut,jeteta_cut,Dptlow_cut,Dpthigh_cut,Dy_cut,decaylength_cut,Dalpha_cut,trkptmin_cut,trketa_cut,trkpterr_cut,chi2cl_cut);
-  tData->d_jet("myDatatest.root");
+  //djet* tData = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_2_3_4_26March_finalMerge2April_v1/merged_total.root");
+  //tData->loop(1,jetpt_cut,jeteta_cut,Dptlow_cut,Dpthigh_cut,Dy_cut,decaylength_cut,Dalpha_cut,trkptmin_cut,trketa_cut,trkpterr_cut,chi2cl_cut);
+  //tData->d_jet("myDatatest.root");
  
   //djet* tMC = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_MCHydjet_Dfinder_MC_pthat30_31March_split_finalmerge_2April_v1/merged.root");
   //tMC->loop(0,jetpt_cut,jeteta_cut,Dptlow_cut,Dpthigh_cut,Dy_cut,decaylength_cut,Dalpha_cut,trkptmin_cut,trketa_cut,trkpterr_cut,chi2cl_cut);
@@ -39,7 +39,10 @@ void analysis(){
   //tpp->loop(1,jetpt_cut,jeteta_cut,Dptlow_cut,Dpthigh_cut,Dy_cut,decaylength_cut,Dalpha_cut,trkptmin_cut,trketa_cut,trkpterr_cut,chi2cl_cut);
   //tpp->d_jet("myDataPPtest.root");
   void runFit(int);
+  void comparePP_PbPb();
   runFit(1);
+  runFit(0);
+  comparePP_PbPb();
 
 }
 
@@ -68,7 +71,7 @@ void runFit(int isPP=1){
    }
    
    if(!isPP){
-     file="myDataPPtest.root";
+     file="myDataPbPbtest.root";
      fileMC="myMCtest.root";
      output="resultsPbPb.root";
    }
