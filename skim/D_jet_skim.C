@@ -80,7 +80,7 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
 
   TTree* jet_tree_akpu3pf = 0;
   if (isPP) jet_tree_akpu3pf = (TTree*)finput->Get("ak3PFJetAnalyzer/t");
-  else jet_tree_akpu3pf = (TTree*)finput->Get("ak3PuPFJetAnalyzer/t");
+  else jet_tree_akpu3pf = (TTree*)finput->Get("akPu3PFJetAnalyzer/t");
   if (!jet_tree_akpu3pf) { printf("Could not access jet tree!\n"); return 1; }
   jet_tree_akpu3pf->SetBranchStatus("*", 0);
   jetTree jt_akpu3pf(jet_tree_akpu3pf);
