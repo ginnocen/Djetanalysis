@@ -13,7 +13,7 @@
 #include "TLegendEntry.h"
 using namespace std;
 
-void analysis(double jetpt_cut=80.,double Dptlow_cut=10.){
+void analysis(double jetpt_cut=80.,double Dptlow_cut=20.){
   
 
   double jeteta_cut=1.6;
@@ -28,19 +28,19 @@ void analysis(double jetpt_cut=80.,double Dptlow_cut=10.){
   
   int intjetpt_cut=(int)(jetpt_cut);
   int intDptlow_cut=(int)(Dptlow_cut);
-/*
+  
   djet* tData = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_2_3_4_26March_finalMerge2April_v1/merged_total.root");
   tData->loop(1,jetpt_cut,jeteta_cut,Dptlow_cut,Dpthigh_cut,Dy_cut,decaylength_cut,Dalpha_cut,trkptmin_cut,trketa_cut,trkpterr_cut,chi2cl_cut);
-  tData->d_jet(Form("myDataPbPbtest_jet%d_D%d",intjetpt_cut,intDptlow_cut));
+  tData->d_jet(Form("myDataPbPbtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut));
  
   djet* tMC = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_MCHydjet_Dfinder_MC_pthat30_31March_split_finalmerge_2April_v1/merged.root");
   tMC->loop(0,jetpt_cut,jeteta_cut,Dptlow_cut,Dpthigh_cut,Dy_cut,decaylength_cut,Dalpha_cut,trkptmin_cut,trketa_cut,trkpterr_cut,chi2cl_cut);
-  tMC->d_jet(Form("myMCPbPbtest_jet%d_D%d",intjetpt_cut,intDptlow_cut));
+  tMC->d_jet(Form("myMCPbPbtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut));
 
   djet* tpp = new djet("/export/d00/scratch/ginnocen/DjetFiles_HighPtJet80_pp_5TeV_Dfinder_2april_v1/merged.root");
   tpp->loop(1,jetpt_cut,jeteta_cut,Dptlow_cut,Dpthigh_cut,Dy_cut,decaylength_cut,Dalpha_cut,trkptmin_cut,trketa_cut,trkpterr_cut,chi2cl_cut);
-  tpp->d_jet(Form("myDataPPtest_jet%d_D%d",intjetpt_cut,intDptlow_cut));
-*/
+  tpp->d_jet(Form("myDataPPtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut));
+  
   void runFit(int,int,int);
   void comparePP_PbPb(int,int);
   runFit(1,intjetpt_cut,intDptlow_cut);
@@ -216,6 +216,10 @@ void comparePP_PbPb(int intjetpt_cut=80, int intDptlow_cut=10){
    TH1F*hSignalDataPbPb=(TH1F*)finputPbPb->Get("hSignalData");
    TH1F*hSignalDataPP=(TH1F*)finputPP->Get("hSignalData");
 
+   TH1F*ratioPbPbpp=(TH1F*)hSignalDataPbPb->Clone("ratioPbPbpp");
+   TH1F*hden=(TH1F*)hSignalDataPP->Clone("hden");
+   ratioPbPbpp->SetName("ratioPbPbpp");
+   ratioPbPbpp->Divide(hden);   
 
    TCanvas*canvas=new TCanvas("canvas","canvas",500,500);
    canvas->cd();
@@ -264,6 +268,30 @@ void comparePP_PbPb(int intjetpt_cut=80, int intDptlow_cut=10){
    entry->SetMarkerColor(1);
    legend->Draw();
 
-   canvas->SaveAs("canvasPP_PbPb.pdf");
+   canvas->SaveAs(Form("canvasDataMC_jet%d_D%d.pdf",intjetpt_cut,intDptlow_cut));
+
+   TCanvas*canvasRatio=new TCanvas("canvasRatio","canvasRatio",500,500);
+   canvasRatio->cd();
+   canvasRatio->SetLogy();
+
+   TH2F* hemptyratio=new TH2F("hemptyratio","",50,0,0.5,10,0.1,30.0);
+   hemptyratio->GetXaxis()->CenterTitle();
+   hemptyratio->GetYaxis()->CenterTitle();
+   hemptyratio->GetXaxis()->SetTitle("#Delta R");
+   hemptyratio->GetYaxis()->SetTitle("PbPb/pp");
+   hemptyratio->GetXaxis()->SetTitleOffset(0.9);
+   hemptyratio->GetYaxis()->SetTitleOffset(1.0);
+   hemptyratio->GetXaxis()->SetTitleSize(0.05);
+   hemptyratio->GetYaxis()->SetTitleSize(0.05);
+   hemptyratio->GetXaxis()->SetTitleFont(42);
+   hemptyratio->GetYaxis()->SetTitleFont(42);
+   hemptyratio->GetXaxis()->SetLabelFont(42);
+   hemptyratio->GetYaxis()->SetLabelFont(42);
+   hemptyratio->GetXaxis()->SetLabelSize(0.035);
+   hemptyratio->GetYaxis()->SetLabelSize(0.035);
+   hemptyratio->Draw();
+   ratioPbPbpp->Draw("psame");
+   canvasRatio->SaveAs(Form("canvasPbPbppjet%d_D%d.pdf",intjetpt_cut,intDptlow_cut));
+
 
 }
