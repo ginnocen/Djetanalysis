@@ -13,11 +13,10 @@
 #include "TLegendEntry.h"
 using namespace std;
 
-void analysis(){
+void analysis(double jetpt_cut=80.,double Dptlow_cut=10.){
   
-  double jetpt_cut=80.;
+
   double jeteta_cut=1.6;
-  double Dptlow_cut=10.;
   double Dpthigh_cut=1000.;
   double Dy_cut=2.0;
   double decaylength_cut=4.06;
@@ -27,28 +26,31 @@ void analysis(){
   double trkpterr_cut=0.3;
   double chi2cl_cut=0.1;
   
-  //djet* tData = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_2_3_4_26March_finalMerge2April_v1/merged_total.root");
-  //tData->loop(1,jetpt_cut,jeteta_cut,Dptlow_cut,Dpthigh_cut,Dy_cut,decaylength_cut,Dalpha_cut,trkptmin_cut,trketa_cut,trkpterr_cut,chi2cl_cut);
-  //tData->d_jet("myDatatest.root");
+  int intjetpt_cut=(int)(jetpt_cut);
+  int intDptlow_cut=(int)(Dptlow_cut);
+/*
+  djet* tData = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_2_3_4_26March_finalMerge2April_v1/merged_total.root");
+  tData->loop(1,jetpt_cut,jeteta_cut,Dptlow_cut,Dpthigh_cut,Dy_cut,decaylength_cut,Dalpha_cut,trkptmin_cut,trketa_cut,trkpterr_cut,chi2cl_cut);
+  tData->d_jet(Form("myDataPbPbtest_jet%d_D%d",intjetpt_cut,intDptlow_cut));
  
-  //djet* tMC = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_MCHydjet_Dfinder_MC_pthat30_31March_split_finalmerge_2April_v1/merged.root");
-  //tMC->loop(0,jetpt_cut,jeteta_cut,Dptlow_cut,Dpthigh_cut,Dy_cut,decaylength_cut,Dalpha_cut,trkptmin_cut,trketa_cut,trkpterr_cut,chi2cl_cut);
-  //tMC->d_jet("myMCtest.root");
+  djet* tMC = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_MCHydjet_Dfinder_MC_pthat30_31March_split_finalmerge_2April_v1/merged.root");
+  tMC->loop(0,jetpt_cut,jeteta_cut,Dptlow_cut,Dpthigh_cut,Dy_cut,decaylength_cut,Dalpha_cut,trkptmin_cut,trketa_cut,trkpterr_cut,chi2cl_cut);
+  tMC->d_jet(Form("myMCPbPbtest_jet%d_D%d",intjetpt_cut,intDptlow_cut));
 
-  //djet* tpp = new djet("/export/d00/scratch/ginnocen/DjetFiles_HighPtJet80_pp_5TeV_Dfinder_2april_v1/merged.root");
-  //tpp->loop(1,jetpt_cut,jeteta_cut,Dptlow_cut,Dpthigh_cut,Dy_cut,decaylength_cut,Dalpha_cut,trkptmin_cut,trketa_cut,trkpterr_cut,chi2cl_cut);
-  //tpp->d_jet("myDataPPtest.root");
-  void runFit(int);
-  void comparePP_PbPb();
-  runFit(1);
-  runFit(0);
-  comparePP_PbPb();
+  djet* tpp = new djet("/export/d00/scratch/ginnocen/DjetFiles_HighPtJet80_pp_5TeV_Dfinder_2april_v1/merged.root");
+  tpp->loop(1,jetpt_cut,jeteta_cut,Dptlow_cut,Dpthigh_cut,Dy_cut,decaylength_cut,Dalpha_cut,trkptmin_cut,trketa_cut,trkpterr_cut,chi2cl_cut);
+  tpp->d_jet(Form("myDataPPtest_jet%d_D%d",intjetpt_cut,intDptlow_cut));
+*/
+  void runFit(int,int,int);
+  void comparePP_PbPb(int,int);
+  runFit(1,intjetpt_cut,intDptlow_cut);
+  runFit(0,intjetpt_cut,intDptlow_cut);
+  comparePP_PbPb(intjetpt_cut,intDptlow_cut);
 
 }
 
-void runFit(int isPP=1){
+void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=10){
  
-
    gStyle->SetTextSize(0.05);
    gStyle->SetTextFont(42);
    gStyle->SetPadRightMargin(0.043);
@@ -65,15 +67,15 @@ void runFit(int isPP=1){
    TString file,fileMC,output;
 
    if(isPP){
-     file="myDataPPtest.root";
-     fileMC="myMCtest.root";
-     output="resultsPP.root";
+     file=Form("myDataPPtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut);
+     fileMC=Form("myMCPbPbtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut);
+     output=Form("resultsPP_jet%d_D%d.root",intjetpt_cut,intDptlow_cut);
    }
    
    if(!isPP){
-     file="myDataPbPbtest.root";
-     fileMC="myMCtest.root";
-     output="resultsPbPb.root";
+     file=Form("myDataPbPbtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut);
+     fileMC=Form("myMCPbPbtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut);
+     output=Form("resultsPbPb_jet%d_D%d.root",intjetpt_cut,intDptlow_cut);
    }
 
    double Redges[6]={0.,0.05,0.1,0.2,0.3,0.5};
@@ -193,7 +195,7 @@ void runFit(int isPP=1){
 
 
 
-void comparePP_PbPb(){
+void comparePP_PbPb(int intjetpt_cut=80, int intDptlow_cut=10){
 
 
    gStyle->SetTextSize(0.05);
@@ -208,8 +210,8 @@ void comparePP_PbPb(){
    gStyle->SetEndErrorSize(0);
    gStyle->SetMarkerStyle(20);
 
-   TFile* finputPP = new TFile("resultsPP.root");
-   TFile* finputPbPb = new TFile("resultsPbPb.root");
+   TFile* finputPP = new TFile(Form("resultsPP_jet%d_D%d.root",intjetpt_cut,intDptlow_cut));
+   TFile* finputPbPb = new TFile(Form("resultsPbPb_jet%d_D%d.root",intjetpt_cut,intDptlow_cut));
    
    TH1F*hSignalDataPbPb=(TH1F*)finputPbPb->Get("hSignalData");
    TH1F*hSignalDataPP=(TH1F*)finputPP->Get("hSignalData");
