@@ -32,7 +32,7 @@ int djet::loop(int isData,double jetpt_cut,double jeteta_cut, double Dptlow_cut,
             if((*Dpt)[m] >Dptlow_cut && (*Dpt)[m] <Dpthigh_cut){
                if ( fabs((*Dy)[m]) < Dy_cut  && ((*DsvpvDistance)[m] / (*DsvpvDisErr)[m]) > decaylength_cut && (*Dalpha)[m] < Dalpha_cut && (*Dchi2cl)[m] > chi2cl_cut ) {
                   if(fabs((*Dtrk1Eta)[m]) < trketa_cut && fabs((*Dtrk2Eta)[m]) < trketa_cut && (*Dtrk1Pt)[m] > trkptmin_cut && (*Dtrk2Pt)[m] > trkptmin_cut){
-                    if(((*Dtrk1PtErr)[m] / (*Dtrk1Pt)[m]) < trkpterr_cut && ((*Dtrk2PtErr)[m] / (*Dtrk2Pt)[m]) < trkpterr_cut){
+                    if(((*Dtrk1PtErr)[m] / (*Dtrk1Pt)[m]) < trkpterr_cut && ((*Dtrk2PtErr)[m] / (*Dtrk2Pt)[m]) < trkpterr_cut && (*Dtrk1highPurity)[m]==1 && (*Dtrk2highPurity)[m]==1){
                        double deltaphi = acos(cos((*Dphi)[m] - (*jetphi_akpu3pf)[0]));
                        double deltaeta = (*Deta)[m] - (*jeteta_akpu3pf)[0];
                        double DeltaR = sqrt(pow(deltaphi, 2) + pow(deltaeta, 2));

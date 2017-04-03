@@ -9,27 +9,70 @@
 #include "fitter.cc"
 #include "TCanvas.h"
 #include "TLegend.h"
+#include "TStyle.h"
+#include "TLegendEntry.h"
 using namespace std;
 
 void analysis(){
   
-//  djet* tData = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_2_3_4_26March_merged/total.root");
-//  tData->loop(1);
-//  tData->d_jet("myDatatest.root");
+  double jetpt_cut=80.;
+  double jeteta_cut=1.6;
+  double Dptlow_cut=10.;
+  double Dpthigh_cut=1000.;
+  double Dy_cut=2.0;
+  double decaylength_cut=4.06;
+  double Dalpha_cut=0.12;
+  double trkptmin_cut=2.0;
+  double trketa_cut=2.0;
+  double trkpterr_cut=0.3;
+  double chi2cl_cut=0.1;
+  
+  djet* tData = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_2_3_4_26March_finalMerge2April_v1/merged_total.root");
+  tData->loop(1,jetpt_cut,jeteta_cut,Dptlow_cut,Dpthigh_cut,Dy_cut,decaylength_cut,Dalpha_cut,trkptmin_cut,trketa_cut,trkpterr_cut,chi2cl_cut);
+  tData->d_jet("myDatatest.root");
  
-//  djet* tMC = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_MCHydjet_Dfinder_MC_pthat30_31March_split/merged.root");
-//  tMC->loop(0,60,999.,10,10000,10000,4.06,1000,0,1000,1000,0.);
-//  tMC->d_jet("myMCtest.root");
+  //djet* tMC = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_MCHydjet_Dfinder_MC_pthat30_31March_split_finalmerge_2April_v1/merged.root");
+  //tMC->loop(0,jetpt_cut,jeteta_cut,Dptlow_cut,Dpthigh_cut,Dy_cut,decaylength_cut,Dalpha_cut,trkptmin_cut,trketa_cut,trkpterr_cut,chi2cl_cut);
+  //tMC->d_jet("myMCtest.root");
 
-
-  djet* tpp = new djet("/export/d00/scratch/ginnocen/DjetFiles_HighPtJet80_pp_5TeV_Dfinder_2april_v1/merged.root");
-  tpp->loop(0,60,999.,10,10000,10000,4.06,1000,0,1000,1000,0.);
-  tpp->d_jet("myDataPPtest.root");
+  //djet* tpp = new djet("/export/d00/scratch/ginnocen/DjetFiles_HighPtJet80_pp_5TeV_Dfinder_2april_v1/merged.root");
+  //tpp->loop(1,jetpt_cut,jeteta_cut,Dptlow_cut,Dpthigh_cut,Dy_cut,decaylength_cut,Dalpha_cut,trkptmin_cut,trketa_cut,trkpterr_cut,chi2cl_cut);
+  //tpp->d_jet("myDataPPtest.root");
+  void runFit(int);
+  runFit(1);
 
 }
 
-void runFit(TString file="myDataPPtest.root", TString fileMC="myMCtest.root", TString output="resultsPP.root"){
-  
+void runFit(int isPP=1){
+ 
+
+   gStyle->SetTextSize(0.05);
+   gStyle->SetTextFont(42);
+   gStyle->SetPadRightMargin(0.043);
+   gStyle->SetPadLeftMargin(0.18);
+   gStyle->SetPadTopMargin(0.1);
+   gStyle->SetPadBottomMargin(0.145);
+   gStyle->SetTitleX(.0f);
+   gStyle->SetOptTitle(0);
+   gStyle->SetOptStat(0);
+   gStyle->SetEndErrorSize(0);
+   gStyle->SetMarkerStyle(20);
+
+ 
+   TString file,fileMC,output;
+
+   if(isPP){
+     file="myDataPPtest.root";
+     fileMC="myMCtest.root";
+     output="resultsPP.root";
+   }
+   
+   if(!isPP){
+     file="myDataPPtest.root";
+     fileMC="myMCtest.root";
+     output="resultsPbPb.root";
+   }
+
    double Redges[6]={0.,0.05,0.1,0.2,0.3,0.5};
  
    TH1F *hHistoMassMC[5];
@@ -75,10 +118,12 @@ void runFit(TString file="myDataPPtest.root", TString fileMC="myMCtest.root", TS
   hSignalData->Scale(1./hSignalData->GetBinContent(1));
   hSignalMC->Scale(1./hSignalMC->GetBinContent(1));
  
-  TCanvas*canvas=new TCanvas("canvas","canvas",600,500);
+
+  TCanvas*canvas=new TCanvas("canvas","canvas",500,500);
   canvas->cd();
-  
-  TH2F* hemptyFractions=new TH2F("hemptyFractions","",50,0,0.5,10,0,1.5);  
+  canvas->SetLogy();
+
+  TH2F* hemptyFractions=new TH2F("hemptyFractions","",50,0,0.5,10,0.0001,50);  
   hemptyFractions->GetXaxis()->CenterTitle();
   hemptyFractions->GetYaxis()->CenterTitle();
   hemptyFractions->GetXaxis()->SetTitle("#Delta R");
@@ -96,19 +141,124 @@ void runFit(TString file="myDataPPtest.root", TString fileMC="myMCtest.root", TS
   hemptyFractions->Draw();
 
   hSignalData->SetLineColor(2);
+  hSignalData->SetMarkerColor(2);
   hSignalData->Draw("psame");
   hSignalMC->SetLineColor(1);
+  hSignalMC->SetMarkerColor(1);
   hSignalMC->Draw("psame");
 
-  TLegend *legend=new TLegend(0.6,0.65,0.88,0.85);
-  legend->SetTextSize(0.04);
-  legend->AddEntry(hSignalData,"Data","l");
-  legend->AddEntry(hSignalMC,"Background fit","l");
-  legend->Draw();
 
+  TLegend *legend=new TLegend(0.3729839,0.7415254,0.7016129,0.8622881,"");//0.5100806,0.5868644,0.8084677,0.7605932
+  legend->SetBorderSize(0);
+  legend->SetLineColor(0);
+  legend->SetFillColor(0);
+  legend->SetFillStyle(1001);
+  legend->SetTextFont(42);
+  legend->SetTextSize(0.04);
+
+  TLegendEntry*entry;
+  if(isPP){
+  entry=legend->AddEntry(hSignalMC,"MC Hydjet+Pythia 5 TeV","f");
+  entry->SetTextFont(42);
+  entry->SetLineColor(1);
+  entry->SetMarkerColor(1);
+  entry=legend->AddEntry(hSignalData,"pp data 5 TeV","f");
+  entry->SetTextFont(42);
+  entry->SetLineColor(2);
+  entry->SetMarkerColor(2);  
+  legend->Draw();
+  }
+  else{
+  entry=legend->AddEntry(hSignalMC,"MC Hydjet+Pythia 5 TeV","f");
+  entry->SetTextFont(42);
+  entry->SetLineColor(1);
+  entry->SetMarkerColor(1);
+  entry=legend->AddEntry(hSignalData,"PbPb data 5 TeV","f");
+  entry->SetTextFont(42);
+  entry->SetLineColor(2);
+  entry->SetMarkerColor(2);
+  legend->Draw();
+  }
+  if(isPP) canvas->SaveAs("canvasPP_dataMC.pdf");
+  else canvas->SaveAs("canvasPbPb_dataMC.pdf");
 
   TFile* foutput = new TFile(output.Data(),"recreate");
   hSignalData->Write();
   hSignalMC->Write();
   foutput->Close();
+}
+
+
+
+void comparePP_PbPb(){
+
+
+   gStyle->SetTextSize(0.05);
+   gStyle->SetTextFont(42);
+   gStyle->SetPadRightMargin(0.043);
+   gStyle->SetPadLeftMargin(0.18);
+   gStyle->SetPadTopMargin(0.1);
+   gStyle->SetPadBottomMargin(0.145);
+   gStyle->SetTitleX(.0f);
+   gStyle->SetOptTitle(0);
+   gStyle->SetOptStat(0);
+   gStyle->SetEndErrorSize(0);
+   gStyle->SetMarkerStyle(20);
+
+   TFile* finputPP = new TFile("resultsPP.root");
+   TFile* finputPbPb = new TFile("resultsPbPb.root");
+   
+   TH1F*hSignalDataPbPb=(TH1F*)finputPbPb->Get("hSignalData");
+   TH1F*hSignalDataPP=(TH1F*)finputPP->Get("hSignalData");
+
+
+   TCanvas*canvas=new TCanvas("canvas","canvas",500,500);
+   canvas->cd();
+   canvas->SetLogy();
+
+   TH2F* hemptyFractions=new TH2F("hemptyFractions","",50,0,0.5,10,0.0001,50);
+   hemptyFractions->GetXaxis()->CenterTitle();
+   hemptyFractions->GetYaxis()->CenterTitle();
+   hemptyFractions->GetXaxis()->SetTitle("#Delta R");
+   hemptyFractions->GetYaxis()->SetTitle("D meson yield");
+   hemptyFractions->GetXaxis()->SetTitleOffset(0.9);
+   hemptyFractions->GetYaxis()->SetTitleOffset(1.0);
+   hemptyFractions->GetXaxis()->SetTitleSize(0.05);
+   hemptyFractions->GetYaxis()->SetTitleSize(0.05);
+   hemptyFractions->GetXaxis()->SetTitleFont(42);
+   hemptyFractions->GetYaxis()->SetTitleFont(42);
+   hemptyFractions->GetXaxis()->SetLabelFont(42);
+   hemptyFractions->GetYaxis()->SetLabelFont(42);
+   hemptyFractions->GetXaxis()->SetLabelSize(0.035);
+   hemptyFractions->GetYaxis()->SetLabelSize(0.035);
+   hemptyFractions->Draw();
+
+   hSignalDataPbPb->SetLineColor(2);
+   hSignalDataPbPb->SetMarkerColor(2);
+   hSignalDataPbPb->Draw("psame");
+   hSignalDataPP->SetLineColor(1);
+   hSignalDataPP->SetMarkerColor(1);
+   hSignalDataPP->Draw("psame");
+
+   TLegend *legend=new TLegend(0.3729839,0.7415254,0.7016129,0.8622881,"");//0.5100806,0.5868644,0.8084677,0.7605932
+   legend->SetBorderSize(0);
+   legend->SetLineColor(0);
+   legend->SetFillColor(0);
+   legend->SetFillStyle(1001);
+   legend->SetTextFont(42);
+   legend->SetTextSize(0.04);
+
+   TLegendEntry*entry;
+   entry=legend->AddEntry(hSignalDataPbPb,"PbPb data 5 TeV","f");
+   entry->SetTextFont(42);
+   entry->SetLineColor(2);
+   entry->SetMarkerColor(2);
+   entry=legend->AddEntry(hSignalDataPP,"pp data 5 TeV","f");
+   entry->SetTextFont(42);
+   entry->SetLineColor(1);
+   entry->SetMarkerColor(1);
+   legend->Draw();
+
+   canvas->SaveAs("canvasPP_PbPb.pdf");
+
 }
