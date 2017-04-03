@@ -17,13 +17,18 @@ void analysis(){
 //  tData->loop(1);
 //  tData->d_jet("myDatatest.root");
  
-  djet* tMC = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_MCHydjet_Dfinder_MC_pthat30_31March_split/merged.root");
-  tMC->loop(0,60,999.,10,10000,10000,4.06,1000,0,1000,1000,0.);
-  tMC->d_jet("myMCtest.root");
+//  djet* tMC = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_MCHydjet_Dfinder_MC_pthat30_31March_split/merged.root");
+//  tMC->loop(0,60,999.,10,10000,10000,4.06,1000,0,1000,1000,0.);
+//  tMC->d_jet("myMCtest.root");
+
+
+  djet* tpp = new djet("/export/d00/scratch/ginnocen/DjetFiles_HighPtJet80_pp_5TeV_Dfinder_2april_v1/merged.root");
+  tpp->loop(0,60,999.,10,10000,10000,4.06,1000,0,1000,1000,0.);
+  tpp->d_jet("myDataPPtest.root");
 
 }
 
-void runFit(){
+void runFit(TString file="myDataPPtest.root", TString fileMC="myMCtest.root", TString output="resultsPP.root"){
   
    double Redges[6]={0.,0.05,0.1,0.2,0.3,0.5};
  
@@ -34,8 +39,8 @@ void runFit(){
    TH1F*hSignalData=new TH1F("hSignalData","hSignalData",5,Redges);
    TH1F*hSignalMC=new TH1F("hSignalMC","hSignalMC",5,Redges);
 
-   TFile* finput = new TFile("myDatatest.root");
-   TFile* finputMC = new TFile("myMCtest.root");
+   TFile* finput = new TFile(file.Data());
+   TFile* finputMC = new TFile(fileMC.Data());
    Dfitter *fitData[5];   
    Dfitter *fitMC[5];   
 
@@ -102,7 +107,7 @@ void runFit(){
   legend->Draw();
 
 
-  TFile* foutput = new TFile("totalstudy.root","recreate");
+  TFile* foutput = new TFile(output.Data(),"recreate");
   hSignalData->Write();
   hSignalMC->Write();
   foutput->Close();
