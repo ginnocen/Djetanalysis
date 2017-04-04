@@ -13,7 +13,7 @@
 #include "TLegendEntry.h"
 using namespace std;
 
-void analysis(double jetpt_cut=80.,double Dptlow_cut=20.){
+void analysis(double jetpt_cut=80.,double Dptlow_cut=5.){
   
 
   double jeteta_cut=1.6;
@@ -28,15 +28,16 @@ void analysis(double jetpt_cut=80.,double Dptlow_cut=20.){
   
   int intjetpt_cut=(int)(jetpt_cut);
   int intDptlow_cut=(int)(Dptlow_cut);
-  
-  //djet* tData = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_2_3_4_26March_finalMerge2April_v1/merged_total.root");
-  //tData->SetJetPtCutEta(jetpt_cut,jeteta_cut);
-  //tData->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
-  //tData->SetDmesonCuts(decaylength_cut,Dalpha_cut,chi2cl_cut,trkptmin_cut,trketa_cut,trkpterr_cut);
-  //tData->loop(1);
-  //tData->d_jet(Form("myDataPbPbtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut));
  
- /*
+ //loop.C(int isData)
+/* 
+  djet* tData = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_2_3_4_26March_finalMerge2April_v1/merged_total.root");
+  tData->SetJetPtCutEta(jetpt_cut,jeteta_cut);
+  tData->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
+  tData->SetDmesonCuts(decaylength_cut,Dalpha_cut,chi2cl_cut,trkptmin_cut,trketa_cut,trkpterr_cut);
+  tData->loop(1);
+  tData->d_jet(Form("myDataPbPbtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut));
+
   djet* tMC = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_MCHydjet_Dfinder_MC_pthat30_31March_split_finalmerge_2April_v1/merged.root");
   tMC->SetJetPtCutEta(jetpt_cut,jeteta_cut);
   tMC->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
@@ -48,13 +49,22 @@ void analysis(double jetpt_cut=80.,double Dptlow_cut=20.){
   tpp->SetJetPtCutEta(jetpt_cut,jeteta_cut);
   tpp->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
   tpp->SetDmesonCuts(decaylength_cut,Dalpha_cut,chi2cl_cut,trkptmin_cut,trketa_cut,trkpterr_cut);
-  tpp->loop(0);
+  tpp->loop(1);
   tpp->d_jet(Form("myDataPPtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut));
-*/  
+
+
+  djet* tMCpp = new djet("/export/d00/scratch/jwang/Djets/DjetFiles_pp_5TeV_TuneCUETP8M1_Dfinder_MC_pthat30_20170404.root");
+  tMCpp->SetJetPtCutEta(jetpt_cut,jeteta_cut);
+  tMCpp->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
+  tMCpp->SetDmesonCuts(decaylength_cut,Dalpha_cut,chi2cl_cut,trkptmin_cut,trketa_cut,trkpterr_cut);
+  tMCpp->loop(0);
+  tMCpp->d_jet(Form("myMCPPtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut));
+*/
+ 
   void runFit(int,int,int);
   void comparePP_PbPb(int,int);
   runFit(1,intjetpt_cut,intDptlow_cut);
-  //runFit(0,intjetpt_cut,intDptlow_cut);
+  runFit(0,intjetpt_cut,intDptlow_cut);
   comparePP_PbPb(intjetpt_cut,intDptlow_cut);
 
 }
@@ -78,7 +88,7 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=10){
 
    if(isPP){
      file=Form("myDataPPtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut);
-     fileMC=Form("myMCPbPbtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut);
+     fileMC=Form("myMCPPtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut);
      output=Form("resultsPP_jet%d_D%d.root",intjetpt_cut,intDptlow_cut);
    }
    
@@ -101,16 +111,22 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=10){
    TFile* finputMC = new TFile(fileMC.Data());
    Dfitter *fitData[5];   
    Dfitter *fitMC[5];   
-
+ 
+  //int isPP=1,int intjetpt_cut=80, int intDptlow_cut=10  
+   TString canvasData;
+   TString canvasMC;
 
     for (int i=0;i<5;i++){
       
+      canvasData=Form("ResultsDataJetPt%d_Dptmin%d_isPP%d_Rindex%d",intjetpt_cut,intDptlow_cut,isPP,i);
+      canvasMC=Form("ResultsMCJetPt%d_Dptmin%d_isPP%d_Rindex%d",intjetpt_cut,intDptlow_cut,isPP,i);
+
       hHistoMassData[i]=(TH1F*)finput->Get(Form("fhHistoMass_R%d",i));
       hHistoMassMC[i]=(TH1F*)finputMC->Get(Form("fhHistoMass_R%d",i));
       hHistoGenSignal[i]=(TH1F*)finputMC->Get(Form("fhHistoGenSignal_R%d",i));
       hHistoGenSwapped[i]=(TH1F*)finputMC->Get(Form("fhHistoGenSwapped_R%d",i));
-      fitData[i]=new Dfitter(hHistoMassData[i],hHistoGenSignal[i],hHistoGenSwapped[i]);
-      fitMC[i]=new Dfitter(hHistoMassMC[i],hHistoGenSignal[i],hHistoGenSwapped[i]);
+      fitData[i]=new Dfitter(hHistoMassData[i],hHistoGenSignal[i],hHistoGenSwapped[i],canvasData);
+      fitMC[i]=new Dfitter(hHistoMassMC[i],hHistoGenSignal[i],hHistoGenSwapped[i],canvasMC);
 
     }
     for (int i=0;i<5;i++){

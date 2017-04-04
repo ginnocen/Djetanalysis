@@ -1,10 +1,12 @@
 #include "fitter.h"
 
-Dfitter::Dfitter(TH1F* hMass, TH1F*hMC, TH1F*hMCswapped){
+Dfitter::Dfitter(TH1F* hMass, TH1F*hMC, TH1F*hMCswapped, TString suffixcanvas){
   fhMass=(TH1F*)hMass->Clone();
   fhMC=(TH1F*)hMC->Clone();
   fhMCswapped=(TH1F*)hMCswapped->Clone();
-
+  
+  TCanvas* c = new TCanvas(suffixcanvas.Data(),"",600,600);
+  
   setparam0=100.;
   setparam1=1.865;
   setparam2=0.03;
@@ -141,7 +143,7 @@ Dfitter::Dfitter(TH1F* hMass, TH1F*hMC, TH1F*hMCswapped){
   fhMass->SetMarkerSize(0.8);
   fhMass->SetMarkerStyle(20);
   fhMass->SetStats(0);
-  /*
+  
   fhMass->Draw("e");
   fFuncBackground->Draw("same");   
   fFuncMass->SetRange(minhisto,maxhisto);	
@@ -149,7 +151,7 @@ Dfitter::Dfitter(TH1F* hMass, TH1F*hMC, TH1F*hMCswapped){
   fFuncMassSwap->SetRange(minhisto,maxhisto);
   fFuncMassSwap->Draw("same");
   fFuncTotal->Draw("same");
-  */
+  c->SaveAs(Form("canvas%s.pdf",suffixcanvas.Data())); 
  }
 
 

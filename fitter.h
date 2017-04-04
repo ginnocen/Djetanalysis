@@ -6,6 +6,7 @@
 #include "TH1F.h"
 #include "TLatex.h"
 #include "TLegend.h"
+#include "TCanvas.h"
 
 
 using namespace std;
@@ -32,7 +33,7 @@ class Dfitter{
   Double_t binwidthmass;
   
   double signal;
-  Dfitter(TH1F* hMass, TH1F*hMC, TH1F*hMCswapped);
+  Dfitter(TH1F* hMass, TH1F*hMC, TH1F*hMCswapped, TString suffixcanvas);
   ~Dfitter();
   TH1F*fhMass;
   TH1F*fhMC;
