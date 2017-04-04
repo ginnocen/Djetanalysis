@@ -22,6 +22,21 @@ using namespace std;
 
 
 class djet {
+
+private :
+
+  double fJetpt_cut;
+  double fJeteta_cut;
+  double fDptlow_cut;
+  double fDpthigh_cut;
+  double fDy_cut;
+  double fDdecaylength_cut;
+  double fDalpha_cut;
+  double fDtrkptmin_cut;
+  double fDtrketa_cut;
+  double fDtrkpterr_cut;
+  double fDchi2cl_cut;
+
 public :
    
    double Redges[6]={0.,0.05,0.1,0.2,0.3,0.5};     //different R ranges
@@ -496,7 +511,11 @@ public :
    virtual void     Init(TTree *tree);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
-   virtual int      loop(int isData,double jetpt_cut,double jeteta_cut, double Dptlow_cut, double Dpthigh_cut, double Dy_cut, double decaylength_cut, double Dalpha_cut, double chi2cl_cut, double trkptmin_cut, double trketa_cut, double trkpterr_cut);
+   virtual void SetJetPtCutEta(double jetptcutmin,double absjetetamax);
+   virtual void SetDmesonPtMinMaxRapidity(double dmesonptmin, double dmesonptmax, double dmesonabsrapiditymax);
+   virtual void SetDmesonCuts(double decaylength_cut,double Dalpha_cut,double chi2cl_cut,double trkptmin_cut,double trketa_cut,double trkpterr_cut);
+
+   virtual int      loop(int isData);
 };
 
 djet::djet(std::string filename) : fChain(0)
@@ -546,6 +565,19 @@ void djet::Init(TTree *tree)
    // (once per file to be processed).
 
    // Set object pointer
+
+   fJetpt_cut=9999.;
+   fJeteta_cut=-9999.;
+   fDptlow_cut=9999.;
+   fDpthigh_cut=0.;
+   fDy_cut=-9999.;
+   fDdecaylength_cut=9999.;
+   fDalpha_cut=-9999.;
+   fDchi2cl_cut=9999.;
+   fDtrkptmin_cut=9999.;
+   fDtrketa_cut=-9999.;
+   fDtrkpterr_cut=-9999.;
+
    jetptCorr_akpu3pf = 0;
    jetpt_akpu3pf = 0;
    jeteta_akpu3pf = 0;
@@ -1011,6 +1043,38 @@ TH1F* djet::GetMassSpectrumGenSwapped(int indexcone)
 {
   return fhHistoGenSwapped[indexcone];
 }
+
+void djet::SetJetPtCutEta(double jetptcutmin,double absjetetamax)
+{
+  fJetpt_cut=jetptcutmin;
+  fJeteta_cut=absjetetamax;
+}
+
+void djet::SetDmesonPtMinMaxRapidity(double dmesonptmin, double dmesonptmax, double dmesonabsrapiditymax)
+{
+  fDptlow_cut=dmesonptmin;
+  fDpthigh_cut=dmesonptmax;
+  fDy_cut=dmesonabsrapiditymax;
+}
+
+void djet::SetDmesonCuts(double decaylength_cut,double Dalpha_cut,double chi2cl_cut,double trkptmin_cut,double trketa_cut,double trkpterr_cut)
+{
+  fDdecaylength_cut=decaylength_cut;
+  fDalpha_cut=Dalpha_cut;
+  fDchi2cl_cut=chi2cl_cut;
+  fDtrkptmin_cut=trkptmin_cut;
+  fDtrketa_cut=trketa_cut;
+  fDtrkpterr_cut=trkpterr_cut;
+}
+
+
+
+
+
+
+
+
+
 
 
 #endif
