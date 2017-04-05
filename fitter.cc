@@ -151,6 +151,26 @@ Dfitter::Dfitter(TH1F* hMass, TH1F*hMC, TH1F*hMCswapped, TString suffixcanvas){
   fFuncMassSwap->SetRange(minhisto,maxhisto);
   fFuncMassSwap->Draw("same");
   fFuncTotal->Draw("same");
+  
+  TLegend* leg = new TLegend(0.65,0.58,0.82,0.88,NULL,"brNDC");
+  leg->SetBorderSize(0);
+  leg->SetTextSize(0.04);
+  leg->SetTextFont(42);
+  leg->SetFillStyle(0);
+  leg->AddEntry(fhMass,"Data","pl");
+  leg->AddEntry(fFuncTotal,"Fit","l");
+  leg->AddEntry(fFuncMass,"D^{0}+#bar{D^{#lower[0.2]{0}}} Signal","f");
+  leg->AddEntry(fFuncMassSwap,"K-#pi swapped","f");
+  leg->AddEntry(fFuncBackground,"Combinatorial","l");
+  leg->Draw("same");
+
+  TLatex* texCms = new TLatex(0.18,0.93, "#scale[1.25]{CMS} Preliminary");
+  texCms->SetNDC();
+  texCms->SetTextAlign(12);
+  texCms->SetTextSize(0.04);
+  texCms->SetTextFont(42);
+  texCms->Draw();
+
   c->SaveAs(Form("canvas%s.pdf",suffixcanvas.Data())); 
  }
 
