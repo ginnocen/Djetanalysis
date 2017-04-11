@@ -8,10 +8,15 @@ int djet::d_jet(std::string output) {
         return 1;
 
     TFile* foutput = new TFile(output.c_str(), "recreate");
-    for (int i=0;i<5;i++){
+    for (int i=0;i<nRedges;i++){
       fhHistoMass[i]->Write();
       fhHistoGenSignal[i]->Write();  
       fhHistoGenSwapped[i]->Write();  
+    }
+    for (int i=0;i<nZedges;i++){
+      fhHistoZMass[i]->Write();
+      fhHistoZGenSignal[i]->Write();
+      fhHistoZGenSwapped[i]->Write();
     }
     foutput->Close();
     delete foutput;
@@ -42,7 +47,7 @@ int djet::loop(int isData) {
                       double deltaeta = (*Deta)[m] - (*jeteta_akpu3pf)[indexjets];
                       double DeltaR = sqrt(pow(deltaphi, 2) + pow(deltaeta, 2));
                     
-                      for (int n=0; n<5; n++){ 
+                      for (int n=0; n<nRedges; n++){ 
                         if(DeltaR>Redges[n]&&DeltaR<Redges[n+1]){
                           if(debugmode){
                             cout<<"leading jet pt"<<(*jetpt_akpu3pf)[0]<<",eta="<<(*jeteta_akpu3pf)[indexjets]<<",phi="<<(*jetphi_akpu3pf)[indexjets]<<endl;
@@ -57,6 +62,17 @@ int djet::loop(int isData) {
                           }
                         }
                       }
+                      double zvariable=(*Dpt)[m]/(*jetpt_akpu3pf)[indexjets];
+
+                      for (int nz=0; nz<nZedges; nz++){
+                        if(zvariable>Zedges[nz]&&zvariable<Zedges[nz+1]){
+                          fhHistoZMass[nz]->Fill((*Dmass)[m]);
+                          if(!isData){
+                            if(((*Dgen)[m])==23333) fhHistoZGenSignal[nz]->Fill((*Dmass)[m]);
+                            else if (((*Dgen)[m])==23344) fhHistoZGenSwapped[nz]->Fill((*Dmass)[m]);
+                          }
+                        }
+                      }//end of loop over z
                     }           
                   }
                 }

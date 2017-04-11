@@ -11,10 +11,10 @@
 #include "TLegend.h"
 #include "TStyle.h"
 #include "TLegendEntry.h"
+
 using namespace std;
 
 void analysis(double jetpt_cut=80.,double Dptlow_cut=5.){
-  
 
   double jeteta_cut=1.6;
   double Dpthigh_cut=1000.;
@@ -28,23 +28,21 @@ void analysis(double jetpt_cut=80.,double Dptlow_cut=5.){
   
   int intjetpt_cut=(int)(jetpt_cut);
   int intDptlow_cut=(int)(Dptlow_cut);
- 
- //loop.C(int isData)
-/* 
+  
   djet* tData = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_2_3_4_26March_finalMerge2April_v1/merged_total.root");
   tData->SetJetPtCutEta(jetpt_cut,jeteta_cut);
   tData->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
   tData->SetDmesonCuts(decaylength_cut,Dalpha_cut,chi2cl_cut,trkptmin_cut,trketa_cut,trkpterr_cut);
   tData->loop(1);
   tData->d_jet(Form("myDataPbPbtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut));
-
+  
   djet* tMC = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_MCHydjet_Dfinder_MC_pthat30_31March_split_finalmerge_2April_v1/merged.root");
   tMC->SetJetPtCutEta(jetpt_cut,jeteta_cut);
   tMC->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
   tMC->SetDmesonCuts(decaylength_cut,Dalpha_cut,chi2cl_cut,trkptmin_cut,trketa_cut,trkpterr_cut);
   tMC->loop(0);
   tMC->d_jet(Form("myMCPbPbtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut));
-
+  
   djet* tpp = new djet("/export/d00/scratch/ginnocen/DjetFiles_HighPtJet80_pp_5TeV_Dfinder_2april_v1/merged.root");
   tpp->SetJetPtCutEta(jetpt_cut,jeteta_cut);
   tpp->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
@@ -52,14 +50,12 @@ void analysis(double jetpt_cut=80.,double Dptlow_cut=5.){
   tpp->loop(1);
   tpp->d_jet(Form("myDataPPtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut));
 
-
   djet* tMCpp = new djet("/export/d00/scratch/jwang/Djets/DjetFiles_pp_5TeV_TuneCUETP8M1_Dfinder_MC_pthat30_20170404.root");
   tMCpp->SetJetPtCutEta(jetpt_cut,jeteta_cut);
   tMCpp->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
-  tMCpp->SetDmesonCuts(decaylength_cut,Dalpha_cut,chi2cl_cut,trkptmin_cut,trketa_cut,trkpterr_cut);
+  tMCpp->SetDmesonCuts(decaylength_cut,Dalpha_cut,chi2cl_cut,trkptmin_cut,trketa_cut,trkpterr_cut); 
   tMCpp->loop(0);
   tMCpp->d_jet(Form("myMCPPtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut));
-*/
  
   void runFit(int,int,int);
   void comparePP_PbPb(int,int);
@@ -70,7 +66,16 @@ void analysis(double jetpt_cut=80.,double Dptlow_cut=5.){
 }
 
 void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=10){
- 
+
+   djet* tempty = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_2_3_4_26March_finalMerge2April_v1/merged_total.root");
+   const int nedgesR=tempty->GetnRedges();
+   double Redges[nedgesR+1];
+   for (int m=0;m<nedgesR+1;m++) Redges[m]=tempty->GetRedgesEdges(m);
+
+   const int nedgesZ=tempty->GetnZedges();
+   double Zedges[nedgesZ+1];
+   for (int m=0;m<nedgesZ+1;m++) Zedges[m]=tempty->GetZedgesEdges(m);
+
    gStyle->SetTextSize(0.05);
    gStyle->SetTextFont(42);
    gStyle->SetPadRightMargin(0.043);
@@ -97,26 +102,36 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=10){
      fileMC=Form("myMCPbPbtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut);
      output=Form("resultsPbPb_jet%d_D%d.root",intjetpt_cut,intDptlow_cut);
    }
-
-   double Redges[6]={0.,0.05,0.1,0.2,0.3,0.5};
  
-   TH1F *hHistoMassMC[5];
-   TH1F *hHistoMassData[5];
-   TH1F* hHistoGenSignal[5];
-   TH1F* hHistoGenSwapped[5];
-   TH1F*hSignalData=new TH1F("hSignalData","hSignalData",5,Redges);
-   TH1F*hSignalMC=new TH1F("hSignalMC","hSignalMC",5,Redges);
+   TH1F *hHistoMassMC[nedgesR];
+   TH1F *hHistoMassData[nedgesR];
+   TH1F* hHistoGenSignal[nedgesR];
+   TH1F* hHistoGenSwapped[nedgesR];
+
+   TH1F *hHistoZMassMC[nedgesZ];
+   TH1F *hHistoZMassData[nedgesZ];
+   TH1F* hHistoZGenSignal[nedgesZ];
+   TH1F* hHistoZGenSwapped[nedgesZ];
+
+
+   TH1F*hSignalData=new TH1F("hSignalData","hSignalData",nedgesR,Redges);
+   TH1F*hSignalMC=new TH1F("hSignalMC","hSignalMC",nedgesR,Redges);
+   TH1F*hZSignalData=new TH1F("hZSignalData","hZSignalData",nedgesZ,Zedges);
+   TH1F*hZSignalMC=new TH1F("hZSignalMC","hZSignalMC",nedgesZ,Zedges);
 
    TFile* finput = new TFile(file.Data());
    TFile* finputMC = new TFile(fileMC.Data());
-   Dfitter *fitData[5];   
-   Dfitter *fitMC[5];   
+   Dfitter *fitData[nedgesR];   
+   Dfitter *fitMC[nedgesR];   
+   Dfitter *fitZData[nedgesZ];
+   Dfitter *fitZMC[nedgesZ];
+
  
   //int isPP=1,int intjetpt_cut=80, int intDptlow_cut=10  
    TString canvasData;
    TString canvasMC;
 
-    for (int i=0;i<5;i++){
+    for (int i=0;i<nedgesR;i++){
       
       canvasData=Form("ResultsDataJetPt%d_Dptmin%d_isPP%d_Rindex%d",intjetpt_cut,intDptlow_cut,isPP,i);
       canvasMC=Form("ResultsMCJetPt%d_Dptmin%d_isPP%d_Rindex%d",intjetpt_cut,intDptlow_cut,isPP,i);
@@ -129,25 +144,53 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=10){
       fitMC[i]=new Dfitter(hHistoMassMC[i],hHistoGenSignal[i],hHistoGenSwapped[i],canvasMC);
 
     }
-    for (int i=0;i<5;i++){
-
+    for (int i=0;i<nedgesR;i++){
 
        hSignalData->SetBinContent(i+1,fitData[i]->GetSignal());
        hSignalData->SetBinError(i+1,fitData[i]->GetSignalError());
-   
        hSignalMC->SetBinContent(i+1,fitMC[i]->GetSignal());
        hSignalMC->SetBinError(i+1,fitMC[i]->GetSignalError());
-    
-      cout<<"data R bin="<<fitData[i]->GetSignal()<<endl;
-      cout<<"data R bin="<<fitData[i]->GetSignalError()<<endl;
-      cout<<"MC R bin="<<fitMC[i]->GetSignal()<<endl;
-      cout<<"MC R bin="<<fitMC[i]->GetSignalError()<<endl;
-
 }
 
+   TString canvasZData;
+   TString canvasZMC;
+
+    for (int i=0;i<nedgesZ;i++){
+
+      canvasZData=Form("ResultsZDataJetPt%d_Dptmin%d_isPP%d_Rindex%d",intjetpt_cut,intDptlow_cut,isPP,i);
+      canvasZMC=Form("ResultsZMCJetPt%d_Dptmin%d_isPP%d_Rindex%d",intjetpt_cut,intDptlow_cut,isPP,i);
+
+      hHistoZMassData[i]=(TH1F*)finput->Get(Form("fhHistoZMass_Z%d",i));
+      hHistoZMassMC[i]=(TH1F*)finputMC->Get(Form("fhHistoZMass_Z%d",i));
+      hHistoZGenSignal[i]=(TH1F*)finputMC->Get(Form("fhHistoZGenSignal_Z%d",i));
+      hHistoZGenSwapped[i]=(TH1F*)finputMC->Get(Form("fhHistoZGenSwapped_Z%d",i));
+      fitZData[i]=new Dfitter(hHistoZMassData[i],hHistoZGenSignal[i],hHistoZGenSwapped[i],canvasZData);
+      fitZMC[i]=new Dfitter(hHistoZMassMC[i],hHistoZGenSignal[i],hHistoZGenSwapped[i],canvasZMC);
+
+    }
+    for (int i=0;i<nedgesZ;i++){
+
+       hZSignalData->SetBinContent(i+1,fitZData[i]->GetSignal());
+       hZSignalData->SetBinError(i+1,fitZData[i]->GetSignalError());
+       hZSignalMC->SetBinContent(i+1,fitZMC[i]->GetSignal());
+       hZSignalMC->SetBinError(i+1,fitZMC[i]->GetSignalError());
+}
 
   hSignalData->Scale(1./hSignalData->GetBinContent(1));
   hSignalMC->Scale(1./hSignalMC->GetBinContent(1));
+ 
+  cout<<"number of entries Data"<<hZSignalData->GetEntries()<<endl;
+  cout<<"number of entries MC"<<hZSignalMC->GetEntries()<<endl;
+  int countMCZ=0;
+  int countDataZ=0;
+
+  for (int i=0;i<nedgesZ;i++){
+    countMCZ=countMCZ+hZSignalMC->GetBinContent(i);
+    countDataZ=countDataZ+hZSignalData->GetBinContent(i);
+  }
+ 
+  hZSignalData->Scale(1./(double)countDataZ);
+  hZSignalMC->Scale(1./(double)countMCZ);
  
 
   TCanvas*canvas=new TCanvas("canvas","canvas",500,500);
@@ -213,17 +256,83 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=10){
   if(isPP) canvas->SaveAs("canvasPP_dataMC.pdf");
   else canvas->SaveAs("canvasPbPb_dataMC.pdf");
 
+
+  TCanvas*canvasZ=new TCanvas("canvasZ","canvasZ",500,500);
+  canvasZ->cd();
+  canvasZ->SetLogy();
+
+  TH2F* hemptyFractionsZ=new TH2F("hemptyFractionsZ","",50,0,1.0,10,0.0001,50);  
+  hemptyFractionsZ->GetXaxis()->CenterTitle();
+  hemptyFractionsZ->GetYaxis()->CenterTitle();
+  hemptyFractionsZ->GetXaxis()->SetTitle("z=p_{T}(D)/p_{T}(Jet)");
+  hemptyFractionsZ->GetYaxis()->SetTitle("D meson yield");
+  hemptyFractionsZ->GetXaxis()->SetTitleOffset(0.9);
+  hemptyFractionsZ->GetYaxis()->SetTitleOffset(1.0);
+  hemptyFractionsZ->GetXaxis()->SetTitleSize(0.05);
+  hemptyFractionsZ->GetYaxis()->SetTitleSize(0.05);
+  hemptyFractionsZ->GetXaxis()->SetTitleFont(42);
+  hemptyFractionsZ->GetYaxis()->SetTitleFont(42);
+  hemptyFractionsZ->GetXaxis()->SetLabelFont(42);
+  hemptyFractionsZ->GetYaxis()->SetLabelFont(42);
+  hemptyFractionsZ->GetXaxis()->SetLabelSize(0.035);
+  hemptyFractionsZ->GetYaxis()->SetLabelSize(0.035);  
+  hemptyFractionsZ->Draw();
+
+  hZSignalData->SetLineColor(2);
+  hZSignalData->SetMarkerColor(2);
+  hZSignalData->Draw("psame");
+  hZSignalMC->SetLineColor(1);
+  hZSignalMC->SetMarkerColor(1);
+  hZSignalMC->Draw("psame");
+
+
+  TLegend *legendZ=new TLegend(0.3729839,0.7415254,0.7016129,0.8622881,"");//0.5100806,0.5868644,0.8084677,0.7605932
+  legendZ->SetBorderSize(0);
+  legendZ->SetLineColor(0);
+  legendZ->SetFillColor(0);
+  legendZ->SetFillStyle(1001);
+  legendZ->SetTextFont(42);
+  legendZ->SetTextSize(0.04);
+
+  TLegendEntry*entryZ;
+  if(isPP){
+  entryZ=legendZ->AddEntry(hZSignalMC,"MC Hydjet+Pythia 5 TeV","f");
+  entryZ->SetTextFont(42);
+  entryZ->SetLineColor(1);
+  entryZ->SetMarkerColor(1);
+  entryZ=legendZ->AddEntry(hZSignalData,"pp data 5 TeV","f");
+  entryZ->SetTextFont(42);
+  entryZ->SetLineColor(2);
+  entryZ->SetMarkerColor(2);  
+  legendZ->Draw();
+  }
+  else{
+  entryZ=legendZ->AddEntry(hZSignalMC,"MC Hydjet+Pythia 5 TeV","f");
+  entryZ->SetTextFont(42);
+  entryZ->SetLineColor(1);
+  entryZ->SetMarkerColor(1);
+  entryZ=legendZ->AddEntry(hZSignalData,"PbPb data 5 TeV","f");
+  entryZ->SetTextFont(42);
+  entryZ->SetLineColor(2);
+  entryZ->SetMarkerColor(2);
+  legendZ->Draw();
+  }
+  if(isPP) canvas->SaveAs("canvasZPP_dataMC.pdf");
+  else canvas->SaveAs("canvasZPbPb_dataMC.pdf");
+
+
   TFile* foutput = new TFile(output.Data(),"recreate");
   hSignalData->Write();
   hSignalMC->Write();
+  hZSignalData->Write();
+  hZSignalMC->Write();
   foutput->Close();
 }
 
 
 
 void comparePP_PbPb(int intjetpt_cut=80, int intDptlow_cut=10){
-
-
+  
    gStyle->SetTextSize(0.05);
    gStyle->SetTextFont(42);
    gStyle->SetPadRightMargin(0.043);

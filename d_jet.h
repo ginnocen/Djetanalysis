@@ -39,10 +39,19 @@ private :
 
 public :
    
-   double Redges[6]={0.,0.05,0.1,0.2,0.3,0.5};     //different R ranges
-   TH1F           *fhHistoMass[5];                       //different R radius=0,0.1,0.2,0.3,0.5,1.0
-   TH1F           *fhHistoGenSignal[5];
-   TH1F           *fhHistoGenSwapped[5];
+   static const int nRedges=5;  
+   double Redges[nRedges+1]={0.,0.05,0.1,0.2,0.3,0.5};     //different R ranges
+   
+   static const int nZedges=5;  
+   double Zedges[nZedges+1]={0.,0.2,0.4,0.6,0.8,1.0};     //different R ranges
+   
+   TH1F           *fhHistoMass[nRedges];                       //different R radius=0,0.1,0.2,0.3,0.5,1.0
+   TH1F           *fhHistoGenSignal[nRedges];
+   TH1F           *fhHistoGenSwapped[nRedges];
+   
+   TH1F           *fhHistoZMass[nZedges];                       //different R radius=0,0.1,0.2,0.3,0.5,1.0
+   TH1F           *fhHistoZGenSignal[nZedges];
+   TH1F           *fhHistoZGenSwapped[nZedges];
     
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
    Int_t           fCurrent; //!current Tree number in a TChain
@@ -506,6 +515,9 @@ public :
    virtual TH1F*    GetMassSpectrum(int); 
    virtual TH1F*    GetMassSpectrumGenSignal(int);
    virtual TH1F*    GetMassSpectrumGenSwapped(int);
+   virtual TH1F*    GetMassZSpectrum(int); 
+   virtual TH1F*    GetMassZSpectrumGenSignal(int);
+   virtual TH1F*    GetMassZSpectrumGenSwapped(int);
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
    virtual void     Init(TTree *tree);
@@ -514,8 +526,14 @@ public :
    virtual void SetJetPtCutEta(double jetptcutmin,double absjetetamax);
    virtual void SetDmesonPtMinMaxRapidity(double dmesonptmin, double dmesonptmax, double dmesonabsrapiditymax);
    virtual void SetDmesonCuts(double decaylength_cut,double Dalpha_cut,double chi2cl_cut,double trkptmin_cut,double trketa_cut,double trkpterr_cut);
-
+   virtual int GetnRedges();
+   virtual double GetRedgesEdges(int index);
+   virtual int GetnZedges();
+   virtual double GetZedgesEdges(int index);
    virtual int      loop(int isData);
+
+
+
 };
 
 djet::djet(std::string filename) : fChain(0)
@@ -990,12 +1008,17 @@ void djet::Init(TTree *tree)
    fChain->SetBranchAddress("DgencollisionId", &DgencollisionId, &b_DgencollisionId);
    fChain->SetBranchAddress("DgenBAncestorpt", &DgenBAncestorpt, &b_DgenBAncestorpt);
    fChain->SetBranchAddress("DgenBAncestorpdgId", &DgenBAncestorpdgId, &b_DgenBAncestorpdgId);
-    
-   
-   for (int i=0;i<5;i++){
+      
+   for (int i=0;i<nRedges;i++){
      fhHistoMass[i]=new TH1F(Form("fhHistoMass_R%d",i),Form("fhHistoMass_R%d",i),60,1.7,2.0);
      fhHistoGenSignal[i]=new TH1F(Form("fhHistoGenSignal_R%d",i),Form("fhHistoGenSignal_R%d",i),60,1.7,2.0);
      fhHistoGenSwapped[i]=new TH1F(Form("fhHistoGenSwapped_R%d",i),Form("fhHistoGenSwapped_R%d",i),60,1.7,2.0);
+   }
+
+   for (int i=0;i<nZedges;i++){
+     fhHistoZMass[i]=new TH1F(Form("fhHistoZMass_Z%d",i),Form("fhHistoZMass_Z%d",i),60,1.7,2.0);
+     fhHistoZGenSignal[i]=new TH1F(Form("fhHistoZGenSignal_Z%d",i),Form("fhHistoZGenSignal_Z%d",i),60,1.7,2.0);
+     fhHistoZGenSwapped[i]=new TH1F(Form("fhHistoZGenSwapped_Z%d",i),Form("fhHistoZGenSwapped_Z%d",i),60,1.7,2.0);
    }
  
    Notify();
@@ -1027,8 +1050,6 @@ Int_t djet::Cut(Long64_t entry)
 // returns -1 otherwise.
    return 1;
 }
-
-
 TH1F* djet::GetMassSpectrum(int indexcone)
 {  
   return fhHistoMass[indexcone];
@@ -1043,6 +1064,23 @@ TH1F* djet::GetMassSpectrumGenSwapped(int indexcone)
 {
   return fhHistoGenSwapped[indexcone];
 }
+
+TH1F* djet::GetMassZSpectrum(int indexcone)
+{  
+  return fhHistoZMass[indexcone];
+}
+
+TH1F* djet::GetMassZSpectrumGenSignal(int indexcone)
+{
+  return fhHistoZGenSignal[indexcone];
+}
+
+TH1F* djet::GetMassZSpectrumGenSwapped(int indexcone)
+{
+  return fhHistoZGenSwapped[indexcone];
+}
+
+
 
 void djet::SetJetPtCutEta(double jetptcutmin,double absjetetamax)
 {
@@ -1067,14 +1105,23 @@ void djet::SetDmesonCuts(double decaylength_cut,double Dalpha_cut,double chi2cl_
   fDtrkpterr_cut=trkpterr_cut;
 }
 
+int djet::GetnRedges(){
+return (int)(nRedges);
 
+}
 
+double djet::GetRedgesEdges(int index){
+  return Redges[index];
+}
 
+int djet::GetnZedges(){
+return (int)(nZedges);
 
+}
 
-
-
-
+double djet::GetZedgesEdges(int index){
+  return Zedges[index];
+}
 
 
 #endif
