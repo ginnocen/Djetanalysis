@@ -241,11 +241,20 @@ void comparePP_PbPb(int intjetpt_cut=80, int intDptlow_cut=10){
    
    TH1F*hSignalDataPbPb=(TH1F*)finputPbPb->Get("hSignalData");
    TH1F*hSignalDataPP=(TH1F*)finputPP->Get("hSignalData");
+   TH1F*hSignalMCPbPb=(TH1F*)finputPbPb->Get("hSignalMC");
+   TH1F*hSignalMCPP=(TH1F*)finputPP->Get("hSignalMC");
+
 
    TH1F*ratioPbPbpp=(TH1F*)hSignalDataPbPb->Clone("ratioPbPbpp");
    TH1F*hden=(TH1F*)hSignalDataPP->Clone("hden");
    ratioPbPbpp->SetName("ratioPbPbpp");
    ratioPbPbpp->Divide(hden);   
+
+   TH1F*ratioPbPbppMC=(TH1F*)hSignalMCPbPb->Clone("ratioPbPbpp");
+   TH1F*hdenMC=(TH1F*)hSignalMCPP->Clone("hden");
+   ratioPbPbppMC->SetName("ratioPbPbppMC");
+   ratioPbPbppMC->Divide(hdenMC);
+
 
    TCanvas*canvas=new TCanvas("canvas","canvas",500,500);
    canvas->cd();
@@ -319,5 +328,121 @@ void comparePP_PbPb(int intjetpt_cut=80, int intDptlow_cut=10){
    ratioPbPbpp->Draw("psame");
    canvasRatio->SaveAs(Form("canvasPbPbppjet%d_D%d.pdf",intjetpt_cut,intDptlow_cut));
 
+
+
+   TCanvas*canvasRatioMC=new TCanvas("canvasRatioMC","canvasRatioMC",500,500);
+   canvasRatioMC->cd();
+   canvasRatioMC->SetLogy();
+
+   TH2F* hemptyratioMC=new TH2F("hemptyratioMC","",50,0,0.5,10,0.1,30.0);
+   hemptyratioMC->GetXaxis()->CenterTitle();
+   hemptyratioMC->GetYaxis()->CenterTitle();
+   hemptyratioMC->GetXaxis()->SetTitle("#Delta R");
+   hemptyratioMC->GetYaxis()->SetTitle("PbPb/pp MC");
+   hemptyratioMC->GetXaxis()->SetTitleOffset(0.9);
+   hemptyratioMC->GetYaxis()->SetTitleOffset(1.0);
+   hemptyratioMC->GetXaxis()->SetTitleSize(0.05);
+   hemptyratioMC->GetYaxis()->SetTitleSize(0.05);
+   hemptyratioMC->GetXaxis()->SetTitleFont(42);
+   hemptyratioMC->GetYaxis()->SetTitleFont(42);
+   hemptyratioMC->GetXaxis()->SetLabelFont(42);
+   hemptyratioMC->GetYaxis()->SetLabelFont(42);
+   hemptyratioMC->GetXaxis()->SetLabelSize(0.035);
+   hemptyratioMC->GetYaxis()->SetLabelSize(0.035);
+   hemptyratioMC->Draw();
+   ratioPbPbppMC->Draw("psame");
+   canvasRatioMC->SaveAs(Form("canvasPbPbppjet%d_D%d_MC.pdf",intjetpt_cut,intDptlow_cut));
+
+   TFile*fouput=new TFile(Form("RatioPbPbppjet%d_D%d.root",intjetpt_cut,intDptlow_cut),"recreate");
+   ratioPbPbpp->Write();
+   fouput->Close();
+}
+
+
+void compareRatios(){
+   
+   void analysis(double,double);
+   analysis(80.,5.);                                  
+   analysis(80.,10.);                                  
+   analysis(80.,20.);
+
+   gStyle->SetTextSize(0.05);
+   gStyle->SetTextFont(42);
+   gStyle->SetPadRightMargin(0.043);
+   gStyle->SetPadLeftMargin(0.18);
+   gStyle->SetPadTopMargin(0.1);
+   gStyle->SetPadBottomMargin(0.145);
+   gStyle->SetTitleX(.0f);
+   gStyle->SetOptTitle(0);
+   gStyle->SetOptStat(0);
+   gStyle->SetEndErrorSize(0);
+   gStyle->SetMarkerStyle(20);
+
+   TFile* finputJet80D5 = new TFile("RatioPbPbppjet80_D5.root");
+   TFile* finputJet80D10 = new TFile("RatioPbPbppjet80_D10.root");
+   TFile* finputJet80D20 = new TFile("RatioPbPbppjet80_D20.root");
+
+
+   TH1F*ratioPbPbppJet80D5=(TH1F*)finputJet80D5->Get("ratioPbPbpp");
+   TH1F*ratioPbPbppJet80D10=(TH1F*)finputJet80D10->Get("ratioPbPbpp");
+   TH1F*ratioPbPbppJet80D20=(TH1F*)finputJet80D20->Get("ratioPbPbpp");   
+
+
+   TCanvas*canvas=new TCanvas("canvas","canvas",500,500);
+   canvas->cd();
+   canvas->SetLogy();
+
+   TH2F* hemptyratio=new TH2F("hemptyratio","",50,0,0.5,10,0.1,30.0);
+   hemptyratio->GetXaxis()->CenterTitle();
+   hemptyratio->GetYaxis()->CenterTitle();
+   hemptyratio->GetXaxis()->SetTitle("#Delta R");
+   hemptyratio->GetYaxis()->SetTitle("PbPb/pp");
+   hemptyratio->GetXaxis()->SetTitleOffset(0.9);
+   hemptyratio->GetYaxis()->SetTitleOffset(1.0);
+   hemptyratio->GetXaxis()->SetTitleSize(0.05);
+   hemptyratio->GetYaxis()->SetTitleSize(0.05);
+   hemptyratio->GetXaxis()->SetTitleFont(42);
+   hemptyratio->GetYaxis()->SetTitleFont(42);
+   hemptyratio->GetXaxis()->SetLabelFont(42);
+   hemptyratio->GetYaxis()->SetLabelFont(42);
+   hemptyratio->GetXaxis()->SetLabelSize(0.035);
+   hemptyratio->GetYaxis()->SetLabelSize(0.035);
+   hemptyratio->Draw();
+
+
+   ratioPbPbppJet80D5->SetLineColor(1);
+   ratioPbPbppJet80D5->SetMarkerColor(1);
+   ratioPbPbppJet80D5->Draw("psame");
+ 
+   ratioPbPbppJet80D10->SetLineColor(2);
+   ratioPbPbppJet80D10->SetMarkerColor(2);
+   ratioPbPbppJet80D10->Draw("psame");
+ 
+   ratioPbPbppJet80D20->SetLineColor(4);
+   ratioPbPbppJet80D20->SetMarkerColor(4);
+   ratioPbPbppJet80D20->Draw("psame");
+
+   TLegend *legend=new TLegend(0.3729839,0.7415254,0.7016129,0.8622881,"");//0.5100806,0.5868644,0.8084677,0.7605932
+   legend->SetBorderSize(0);
+   legend->SetLineColor(0);
+   legend->SetFillColor(0);
+   legend->SetFillStyle(1001);
+   legend->SetTextFont(42);
+   legend->SetTextSize(0.04);
+
+   TLegendEntry*entry;
+   entry=legend->AddEntry(ratioPbPbppJet80D5,"Jet 80 D p_{T}>5 GeV","f");
+   entry->SetTextFont(42);
+   entry->SetLineColor(1);
+   entry->SetMarkerColor(1);
+   entry=legend->AddEntry(ratioPbPbppJet80D10,"Jet 80 D p_{T}>10 GeV","f");
+   entry->SetTextFont(42);
+   entry->SetLineColor(2);
+   entry->SetMarkerColor(2);
+   entry=legend->AddEntry(ratioPbPbppJet80D20,"Jet 80 D p_{T}>20 GeV","f");
+   entry->SetTextFont(42);
+   entry->SetLineColor(4);
+   entry->SetMarkerColor(4);
+   legend->Draw();
 
 }
