@@ -38,49 +38,50 @@ int djet::loop(int isData) {
             cout<<"indexjets="<<indexjets<<",pt="<<(*jetpt_akpu3pf)[indexjets]<<endl;
           }
           if((*jetpt_akpu3pf)[indexjets] > fJetpt_cut && fabs((*jeteta_akpu3pf)[indexjets]) < fJeteta_cut){
-            for (int m = 0; m < Dsize; m++) {
-              if((*Dpt)[m] >fDptlow_cut && (*Dpt)[m] <fDpthigh_cut){
-                if ( fabs((*Dy)[m]) < fDy_cut  && ((*DsvpvDistance)[m] / (*DsvpvDisErr)[m]) > fDdecaylength_cut && (*Dalpha)[m] < fDalpha_cut && (*Dchi2cl)[m] > fDchi2cl_cut ) {
-                  if(fabs((*Dtrk1Eta)[m]) < fDtrketa_cut && fabs((*Dtrk2Eta)[m]) < fDtrketa_cut && (*Dtrk1Pt)[m] > fDtrkptmin_cut && (*Dtrk2Pt)[m] > fDtrkptmin_cut){
-                    if(((*Dtrk1PtErr)[m] / (*Dtrk1Pt)[m]) < fDtrkpterr_cut && ((*Dtrk2PtErr)[m] / (*Dtrk2Pt)[m]) < fDtrkpterr_cut && (*Dtrk1highPurity)[m]==1 && (*Dtrk2highPurity)[m]==1){
-                      double deltaphi = acos(cos((*Dphi)[m] - (*jetphi_akpu3pf)[indexjets]));
-                      double deltaeta = (*Deta)[m] - (*jeteta_akpu3pf)[indexjets];
+            for (int indexDm = 0; indexDm < Dsize; indexDm++) {
+              if((*Dpt)[indexDm] >fDptlow_cut && (*Dpt)[indexDm] <fDpthigh_cut){
+                if ( fabs((*Dy)[indexDm]) < fDy_cut  && ((*DsvpvDistance)[indexDm] / (*DsvpvDisErr)[indexDm]) > fDdecaylength_cut && (*Dalpha)[indexDm] < fDalpha_cut && (*Dchi2cl)[indexDm] > fDchi2cl_cut ) {
+                  if(fabs((*Dtrk1Eta)[indexDm]) < fDtrketa_cut && fabs((*Dtrk2Eta)[indexDm]) < fDtrketa_cut && (*Dtrk1Pt)[indexDm] > fDtrkptmin_cut && (*Dtrk2Pt)[indexDm] > fDtrkptmin_cut){
+                    if(((*Dtrk1PtErr)[indexDm] / (*Dtrk1Pt)[indexDm]) < fDtrkpterr_cut && ((*Dtrk2PtErr)[indexDm] / (*Dtrk2Pt)[indexDm]) < fDtrkpterr_cut && (*Dtrk1highPurity)[indexDm]==1 && (*Dtrk2highPurity)[indexDm]==1){
+                      double deltaphi = acos(cos((*Dphi)[indexDm] - (*jetphi_akpu3pf)[indexjets]));
+                      double deltaeta = (*Deta)[indexDm] - (*jeteta_akpu3pf)[indexjets];
                       double DeltaR = sqrt(pow(deltaphi, 2) + pow(deltaeta, 2));
                     
-                      for (int n=0; n<nRedges; n++){ 
-                        if(DeltaR>Redges[n]&&DeltaR<Redges[n+1]){
+                      for (int indexR=0; indexR<nRedges; indexR++){ 
+                        if(DeltaR>Redges[indexR]&&DeltaR<Redges[indexR+1]){
                           if(debugmode){
                             cout<<"leading jet pt"<<(*jetpt_akpu3pf)[0]<<",eta="<<(*jeteta_akpu3pf)[indexjets]<<",phi="<<(*jetphi_akpu3pf)[indexjets]<<endl;
-                            cout<<"Radius between "<<Redges[n]<<"and "<<Redges[n+1]<<endl;
-                            cout<<"Dmeson index="<<m<<",Dmeson pt="<<(*Dpt)[m]<<"Dmeson eta="<<(*Deta)[m]<<", phi="<<(*Dphi)[m]<<"radius="<<DeltaR<<endl;
+                            cout<<"Radius between "<<Redges[indexR]<<"and "<<Redges[indexR+1]<<endl;
+                            cout<<"Dmeson index="<<indexDm<<",Dmeson pt="<<(*Dpt)[indexDm]<<"Dmeson eta="<<(*Deta)[indexDm]<<", phi="<<(*Dphi)[indexDm]<<"radius="<<DeltaR<<endl;
                             cout<<"Delta eta="<<deltaeta<<", deltaphi="<<deltaphi<<endl;
                           }
-                          fhHistoMass[n]->Fill((*Dmass)[m]);
+                          fhHistoMass[indexR]->Fill((*Dmass)[indexDm]);
                           if(!isData){
-                            if(((*Dgen)[m])==23333) fhHistoGenSignal[n]->Fill((*Dmass)[m]);
-                            else if (((*Dgen)[m])==23344) fhHistoGenSwapped[n]->Fill((*Dmass)[m]);
+                            if(((*Dgen)[indexDm])==23333) fhHistoGenSignal[indexR]->Fill((*Dmass)[indexDm]);
+                            else if (((*Dgen)[indexDm])==23344) fhHistoGenSwapped[indexR]->Fill((*Dmass)[indexDm]);
                           }
-                        }
-                      }
-                      double zvariable=(*Dpt)[m]/(*jetpt_akpu3pf)[indexjets];
+                        }//selection on R
+                      }//end of loop over R
+ 
+                      double zvariable=(*Dpt)[indexDm]/(*jetpt_akpu3pf)[indexjets];
 
-                      for (int nz=0; nz<nZedges; nz++){
-                        if(zvariable>Zedges[nz]&&zvariable<Zedges[nz+1]){
-                          fhHistoZMass[nz]->Fill((*Dmass)[m]);
+                      for (int indexZ=0; indexZ<nZedges; indexZ++){
+                        if(zvariable>Zedges[indexZ]&&zvariable<Zedges[indexZ+1]){
+                          fhHistoZMass[indexZ]->Fill((*Dmass)[indexDm]);
                           if(!isData){
-                            if(((*Dgen)[m])==23333) fhHistoZGenSignal[nz]->Fill((*Dmass)[m]);
-                            else if (((*Dgen)[m])==23344) fhHistoZGenSwapped[nz]->Fill((*Dmass)[m]);
+                            if(((*Dgen)[indexDm])==23333) fhHistoZGenSignal[indexZ]->Fill((*Dmass)[indexDm]);
+                            else if (((*Dgen)[indexDm])==23344) fhHistoZGenSwapped[indexZ]->Fill((*Dmass)[indexDm]);
                           }
-                        }
+                        }//selection on z
                       }//end of loop over z
-                    }           
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+                    }//track selection2           
+                  }//trackselection
+                }//D meson selection 
+              }//pt cut on D mesons
+            }//loop over D mesons
+          } // selection on jet pt
+        } //end of loop over jets
+      }//end of loop over events
     cout<<"calling fit"<<endl;
     return 1;
 }
