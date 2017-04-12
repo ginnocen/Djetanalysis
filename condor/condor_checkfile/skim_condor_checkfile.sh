@@ -62,3 +62,5 @@ EOF
 	counter=$(($counter+1))	
     fi
 done
+
+echo "Submitted $counter jobs to Condor."
