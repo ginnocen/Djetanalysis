@@ -38,10 +38,10 @@ FILE=\$(head -n\$((\$1+1)) \$2 | tail -n1)
 
 if [[ \$5 -eq 1 ]]; then
     JETALGO=ak3PFJetAnalyzer
-    MIXINGFILE=""
+    MIXINGFILE='""'
 else
     JETALGO=akPu3PFJetAnalyzer
-    MIXINGFILE=/mnt/hadoop/cms/store/user/biran/photon-jet-track/PbPb-MB-Hydjet-Cymbal-170331.root
+    MIXINGFILE=/mnt/hadoop/cms/store/user/rbi/merged/HIMinimumBias2-HIRun2015-PromptReco-v1_forest_csjet_v1/0.root
 fi
 
 echo ./jet_track_skim.exe \$FILE \${1}.root \$JETALGO \$5 1 \$MIXINGFILE \$6
@@ -50,6 +50,8 @@ echo ./jet_track_skim.exe \$FILE \${1}.root \$JETALGO \$5 1 \$MIXINGFILE \$6
 if [[ \$? -eq 0 ]]; then
     mv \${1}.root \${3}
 fi
+
+rm -f *.root
 EOF
 
 condor_submit skim-jet-track.condor
