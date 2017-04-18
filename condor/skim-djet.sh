@@ -15,3 +15,5 @@ echo ./D_jet_skim.exe $FILE ${1}.root $5 $6
 if [[ $? -eq 0 ]]; then
     mv ${1}.root ${3}
 fi
+
+rm *.root
