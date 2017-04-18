@@ -4,10 +4,10 @@
 
 #include <string>
 
-int draw_jetshape(std::string sample, const char* type, const char* fname, const char* outfname) {
-    TFile* finput = new TFile(fname, "read");
+int draw_jetshape(std::string sample, const char* input, const char* output, const char* type) {
+    TFile* finput = new TFile(input, "read");
 
-    TFile* fout = new TFile(outfname, "update");
+    TFile* foutput = new TFile(output, "recreate");
 
     TH1::SetDefaultSumw2();
 
@@ -34,16 +34,17 @@ int draw_jetshape(std::string sample, const char* type, const char* fname, const
 
     hjs_final->Scale(1/hjs_final->Integral(hjs_final->FindBin(0.01), hjs_final->FindBin(0.29)), "width");
 
-    fout->Write("", TObject::kOverwrite);
-    fout->Close();
+    foutput->Write("", TObject::kOverwrite);
+    foutput->Close();
 
     return 0;
 }
 
 int main(int argc, char* argv[]) {
-    if (argc > 4)
-        for (int i=4; i<argc; ++i)
-            draw_jetshape(argv[1], argv[i], argv[2], argv[3]);
+    if (argc == 5)
+        draw_jetshape(argv[1], argv[2], argv[3], argv[4]);
+    else
+        return 1;
 
     return 0;
 }

@@ -25,7 +25,6 @@ void jettrack::jetshape(std::string label, int centmin, int centmax, float jetpt
   TH1D* hjetshapejetmix = new TH1D(Form("hjetshapejetmix_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";r;#rho(r)"), 20, 0, 1);
   TH1D* hjetshapejetmixue = new TH1D(Form("hjetshapejetmixue_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";r;#rho(r)"), 20, 0, 1);
   TH1D* hjetshapeue = new TH1D(Form("hjetshapeue_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";r;#rho(r)"), 20, 0, 1);
-  TH1D* hnmix = new TH1D(Form("hnmix_%s_%s_%d_%d", label.data(), jet_part.data(), abs(centmin), abs(centmax)), Form(";r;#rho(r)"), 1, 0, 2);
 
   // iterators
   int ij = -1, ij_mix = -1, ip = -1, ip_mix = -1;
@@ -62,7 +61,7 @@ void jettrack::jetshape(std::string label, int centmin, int centmax, float jetpt
     int njets_perevent = 0;
     int njets_permixevent = 0;
 
-    if (jet_type_is("reco", jet_part) || jet_type_is("sreco", jet_part) || jet_type_is("idreco", jet_part) || jet_type_is("sidreco", jet_part)) {
+    if (jet_type_is("reco", jet_part) || jet_type_is("sreco", jet_part)) {
       nij = njet;
       j_pt = *jetptCorr;
       j_eta = *jeteta;
@@ -110,15 +109,6 @@ void jettrack::jetshape(std::string label, int centmin, int centmax, float jetpt
     for (ij = 0; ij < nij; ij++) {
       if (jet_type_is("gen0", jet_part)) {
         if ((*gensubid)[ij] != 0) continue;
-      }
-      if (jet_type_is("bkg", jet_part) || jet_type_is("subbkg", jet_part)) {
-        if ((*gensubid)[ij] == 0) continue;
-      }
-      if (jet_type_is("idreco", jet_part)) {
-        if (!(*jetID)[ij]) continue;
-      }
-      if (jet_type_is("sidreco", jet_part)) {
-        if ((*subid)[ij]) continue;
       }
 
       float tmpjetpt = j_pt[ij];
@@ -206,20 +196,12 @@ void jettrack::jetshape(std::string label, int centmin, int centmax, float jetpt
 
     if (isPP) continue;
     if (jet_type_is("gen0", jet_part)) continue;
-    if (jet_type_is("bkg", jet_part)) continue;
     if (part_type_is("gen0", jet_part)) continue;
 
     //! (2.4) Mix jet loop
     float nmixedjetevents = nmix / 2;
     for (ij_mix = 0; ij_mix < nij_mix; ij_mix++) {
       if (j_ev_mix[ij_mix] % 2 != 1) continue;
-
-      if (jet_type_is("idreco", jet_part)) {
-        if (!(*jetID_mix)[ij_mix]) continue;
-      }
-      if (jet_type_is("sidreco", jet_part)) {
-        if ((*subid_mix)[ij_mix]) continue;
-      }
 
       float tmpjetpt = j_pt_mix[ij_mix];
       float tmpjeteta = j_eta_mix[ij_mix];
@@ -245,7 +227,6 @@ void jettrack::jetshape(std::string label, int centmin, int centmax, float jetpt
         if (fabs(tmpjeteta) > 1.6) continue;
         hjetptjetmix->Fill(tmpjetpt, smear_weight / nmixedjetevents);
         njets_permixevent++;
-        hnmix->Fill(1, smear_weight);
 
         // mix jet
         for (int ip_mix = 0; ip_mix < nip_mix; ++ip_mix) {
@@ -294,7 +275,7 @@ void jettrack::jetshape(std::string label, int centmin, int centmax, float jetpt
 
 int main(int argc, char* argv[]) {
   if (argc > 8 || argc < 3) {
-    printf("usage: ./jetshape <input> <label> [centmin centmax] [jetptcut] [jet_part] [trkptmin]\n");
+    printf("usage: ./jetshape [input] [label] [centmin centmax] [jetptcut] [jet_part] [trkptmin]\n");
     return 1;
   }
 

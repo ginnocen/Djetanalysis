@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [[ $# -ne 4 ]]; then
-    echo "Usage: ./run-jettrack.sh [input] [output] [jetptmin] [trkptmin]"
+if [[ $# -ne 5 ]]; then
+    echo "Usage: ./run-jettrack.sh [input] [output] [jetptmin] [trkptmin] [sample]"
     exit 1
 fi
 
@@ -10,5 +10,5 @@ g++ draw_jetshape.C $(root-config --cflags --libs) -Werror -Wall -O2 -o draw_jet
 
 set -x
 
-./jetshape $1 pbpbmc 0 200 $3 recoreco $4
-./draw_jetshape pbpbmc pbpbmc_recoreco_${3}_${4}.root $2 recoreco
+./jetshape $1 $5 0 200 $3 recoreco $4
+./draw_jetshape $5 ${5}_recoreco_${3}_${4}.root $2 recoreco
