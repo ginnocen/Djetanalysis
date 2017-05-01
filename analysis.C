@@ -28,7 +28,7 @@ void analysis(double jetpt_cut=80.,double Dptlow_cut=4.,double Dpthigh_cut=10.){
   int intjetpt_cut=(int)(jetpt_cut);
   int intDptlow_cut=(int)(Dptlow_cut);
   int intDpthigh_cut=(int)(Dpthigh_cut);  
-/*
+
   djet* tData = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_2_3_4_26March_finalMerge2April_v1/merged_total.root");
   tData->SetJetPtCutEta(jetpt_cut,jeteta_cut);
   tData->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
@@ -42,7 +42,7 @@ void analysis(double jetpt_cut=80.,double Dptlow_cut=4.,double Dpthigh_cut=10.){
   tMC->SetDmesonCuts(decaylength_cut,Dalpha_cut,chi2cl_cut,trkptmin_cut,trketa_cut,trkpterr_cut);
   tMC->loop(0);
   tMC->d_jet(Form("myMCPbPbtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut));
-*/  
+  
   djet* tpp = new djet("/export/d00/scratch/ginnocen/DjetFiles_HighPtJet80_pp_5TeV_Dfinder_2april_v1/merged.root");
   tpp->SetJetPtCutEta(jetpt_cut,jeteta_cut);
   tpp->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
@@ -60,8 +60,8 @@ void analysis(double jetpt_cut=80.,double Dptlow_cut=4.,double Dpthigh_cut=10.){
   void runFit(int,int,int,int);
   void comparePP_PbPb(int,int,int);
   runFit(1,intjetpt_cut,intDptlow_cut,intDpthigh_cut);
-  //runFit(0,intjetpt_cut,intDptlow_cut,intDpthigh_cut);
-  //comparePP_PbPb(intjetpt_cut,intDptlow_cut,intDpthigh_cut);
+  runFit(0,intjetpt_cut,intDptlow_cut,intDpthigh_cut);
+  comparePP_PbPb(intjetpt_cut,intDptlow_cut,intDpthigh_cut);
 }
 
 void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=-9999,int intDpthigh_cut=-9999){
@@ -474,7 +474,7 @@ void compareRatios(){
    analysis(80.,8.,20.);   
    analysis(80.,20.,80.);   
                                   
-/*
+
    gStyle->SetTextSize(0.05);
    gStyle->SetTextFont(42);
    gStyle->SetPadRightMargin(0.043);
@@ -541,5 +541,5 @@ void compareRatios(){
    entry->SetLineColor(2);
    entry->SetMarkerColor(2);
    legend->Draw();
-*/
+
 }
