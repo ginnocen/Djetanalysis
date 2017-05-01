@@ -14,10 +14,9 @@
 
 using namespace std;
 
-void analysis(double jetpt_cut=80.,double Dptlow_cut=5.){
+void analysis(double jetpt_cut=80.,double Dptlow_cut=4.,double Dpthigh_cut=10.){
 
   double jeteta_cut=1.6;
-  double Dpthigh_cut=1000.;
   double Dy_cut=2.0;
   double decaylength_cut=4.06;
   double Dalpha_cut=0.12;
@@ -28,44 +27,44 @@ void analysis(double jetpt_cut=80.,double Dptlow_cut=5.){
   
   int intjetpt_cut=(int)(jetpt_cut);
   int intDptlow_cut=(int)(Dptlow_cut);
-  
+  int intDpthigh_cut=(int)(Dpthigh_cut);  
+/*
   djet* tData = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_2_3_4_26March_finalMerge2April_v1/merged_total.root");
   tData->SetJetPtCutEta(jetpt_cut,jeteta_cut);
   tData->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
   tData->SetDmesonCuts(decaylength_cut,Dalpha_cut,chi2cl_cut,trkptmin_cut,trketa_cut,trkpterr_cut);
   tData->loop(1);
-  tData->d_jet(Form("myDataPbPbtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut));
+  tData->d_jet(Form("myDataPbPbtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut));
   
   djet* tMC = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_MCHydjet_Dfinder_MC_pthat30_31March_split_finalmerge_2April_v1/merged.root");
   tMC->SetJetPtCutEta(jetpt_cut,jeteta_cut);
   tMC->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
   tMC->SetDmesonCuts(decaylength_cut,Dalpha_cut,chi2cl_cut,trkptmin_cut,trketa_cut,trkpterr_cut);
   tMC->loop(0);
-  tMC->d_jet(Form("myMCPbPbtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut));
-  
+  tMC->d_jet(Form("myMCPbPbtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut));
+*/  
   djet* tpp = new djet("/export/d00/scratch/ginnocen/DjetFiles_HighPtJet80_pp_5TeV_Dfinder_2april_v1/merged.root");
   tpp->SetJetPtCutEta(jetpt_cut,jeteta_cut);
   tpp->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
   tpp->SetDmesonCuts(decaylength_cut,Dalpha_cut,chi2cl_cut,trkptmin_cut,trketa_cut,trkpterr_cut);
   tpp->loop(1);
-  tpp->d_jet(Form("myDataPPtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut));
+  tpp->d_jet(Form("myDataPPtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut));
 
   djet* tMCpp = new djet("/export/d00/scratch/jwang/Djets/DjetFiles_pp_5TeV_TuneCUETP8M1_Dfinder_MC_pthat30_20170404.root");
   tMCpp->SetJetPtCutEta(jetpt_cut,jeteta_cut);
   tMCpp->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
   tMCpp->SetDmesonCuts(decaylength_cut,Dalpha_cut,chi2cl_cut,trkptmin_cut,trketa_cut,trkpterr_cut); 
   tMCpp->loop(0);
-  tMCpp->d_jet(Form("myMCPPtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut));
+  tMCpp->d_jet(Form("myMCPPtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut));
  
-  void runFit(int,int,int);
-  void comparePP_PbPb(int,int);
-  runFit(1,intjetpt_cut,intDptlow_cut);
-  runFit(0,intjetpt_cut,intDptlow_cut);
-  comparePP_PbPb(intjetpt_cut,intDptlow_cut);
-
+  void runFit(int,int,int,int);
+  void comparePP_PbPb(int,int,int);
+  runFit(1,intjetpt_cut,intDptlow_cut,intDpthigh_cut);
+  //runFit(0,intjetpt_cut,intDptlow_cut,intDpthigh_cut);
+  //comparePP_PbPb(intjetpt_cut,intDptlow_cut,intDpthigh_cut);
 }
 
-void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=10){
+void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=-9999,int intDpthigh_cut=-9999){
 
    djet* tempty = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_2_3_4_26March_finalMerge2April_v1/merged_total.root");
    const int nedgesR=tempty->GetnRedges();
@@ -92,15 +91,15 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=10){
    TString file,fileMC,output;
 
    if(isPP){
-     file=Form("myDataPPtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut);
-     fileMC=Form("myMCPPtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut);
-     output=Form("resultsPP_jet%d_D%d.root",intjetpt_cut,intDptlow_cut);
+     file=Form("myDataPPtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
+     fileMC=Form("myMCPPtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
+     output=Form("resultsPP_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
    }
    
    if(!isPP){
-     file=Form("myDataPbPbtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut);
-     fileMC=Form("myMCPbPbtest_jet%d_D%d.root",intjetpt_cut,intDptlow_cut);
-     output=Form("resultsPbPb_jet%d_D%d.root",intjetpt_cut,intDptlow_cut);
+     file=Form("myDataPbPbtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
+     fileMC=Form("myMCPbPbtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
+     output=Form("resultsPbPb_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
    }
  
    TH1F *hHistoMassMC[nedgesR];
@@ -132,9 +131,9 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=10){
    TString canvasMC;
 
     for (int i=0;i<nedgesR;i++){
-      
-      canvasData=Form("ResultsDataJetPt%d_Dptmin%d_isPP%d_Rindex%d",intjetpt_cut,intDptlow_cut,isPP,i);
-      canvasMC=Form("ResultsMCJetPt%d_Dptmin%d_isPP%d_Rindex%d",intjetpt_cut,intDptlow_cut,isPP,i);
+      //jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
+      canvasData=Form("ResultsDataJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Rindex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i);
+      canvasMC=Form("ResultsMCJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Rindex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i);
 
       hHistoMassData[i]=(TH1F*)finput->Get(Form("fhHistoMass_R%d",i));
       hHistoMassMC[i]=(TH1F*)finputMC->Get(Form("fhHistoMass_R%d",i));
@@ -157,8 +156,8 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=10){
 
     for (int i=0;i<nedgesZ;i++){
 
-      canvasZData=Form("ResultsZDataJetPt%d_Dptmin%d_isPP%d_Rindex%d",intjetpt_cut,intDptlow_cut,isPP,i);
-      canvasZMC=Form("ResultsZMCJetPt%d_Dptmin%d_isPP%d_Rindex%d",intjetpt_cut,intDptlow_cut,isPP,i);
+      canvasZData=Form("ResultsZDataJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Zindex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i);
+      canvasZMC=Form("ResultsZMCJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Zindex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i);
 
       hHistoZMassData[i]=(TH1F*)finput->Get(Form("fhHistoZMass_Z%d",i));
       hHistoZMassMC[i]=(TH1F*)finputMC->Get(Form("fhHistoZMass_Z%d",i));
@@ -331,8 +330,8 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=10){
 
 
 
-void comparePP_PbPb(int intjetpt_cut=80, int intDptlow_cut=10){
-  
+void comparePP_PbPb(int intjetpt_cut=80, int intDptlow_cut=10,int intDpthigh_cut=9999){
+ 
    gStyle->SetTextSize(0.05);
    gStyle->SetTextFont(42);
    gStyle->SetPadRightMargin(0.043);
@@ -345,8 +344,8 @@ void comparePP_PbPb(int intjetpt_cut=80, int intDptlow_cut=10){
    gStyle->SetEndErrorSize(0);
    gStyle->SetMarkerStyle(20);
 
-   TFile* finputPP = new TFile(Form("resultsPP_jet%d_D%d.root",intjetpt_cut,intDptlow_cut));
-   TFile* finputPbPb = new TFile(Form("resultsPbPb_jet%d_D%d.root",intjetpt_cut,intDptlow_cut));
+   TFile* finputPP = new TFile(Form("resultsPP_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut));
+   TFile* finputPbPb = new TFile(Form("resultsPbPb_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut));
    
    TH1F*hSignalDataPbPb=(TH1F*)finputPbPb->Get("hSignalData");
    TH1F*hSignalDataPP=(TH1F*)finputPP->Get("hSignalData");
@@ -412,7 +411,7 @@ void comparePP_PbPb(int intjetpt_cut=80, int intDptlow_cut=10){
    entry->SetMarkerColor(1);
    legend->Draw();
 
-   canvas->SaveAs(Form("canvasDataMC_jet%d_D%d.pdf",intjetpt_cut,intDptlow_cut));
+   canvas->SaveAs(Form("canvasDataMC_jet%d_Dlow%d_Dhigh%d.pdf",intjetpt_cut,intDptlow_cut,intDpthigh_cut));
 
    TCanvas*canvasRatio=new TCanvas("canvasRatio","canvasRatio",500,500);
    canvasRatio->cd();
@@ -435,7 +434,7 @@ void comparePP_PbPb(int intjetpt_cut=80, int intDptlow_cut=10){
    hemptyratio->GetYaxis()->SetLabelSize(0.035);
    hemptyratio->Draw();
    ratioPbPbpp->Draw("psame");
-   canvasRatio->SaveAs(Form("canvasPbPbppjet%d_D%d.pdf",intjetpt_cut,intDptlow_cut));
+   canvasRatio->SaveAs(Form("canvasPbPbppjetData%d_Dlow%d_Dhigh%d.pdf",intjetpt_cut,intDptlow_cut,intDpthigh_cut));
 
 
 
@@ -460,9 +459,9 @@ void comparePP_PbPb(int intjetpt_cut=80, int intDptlow_cut=10){
    hemptyratioMC->GetYaxis()->SetLabelSize(0.035);
    hemptyratioMC->Draw();
    ratioPbPbppMC->Draw("psame");
-   canvasRatioMC->SaveAs(Form("canvasPbPbppjet%d_D%d_MC.pdf",intjetpt_cut,intDptlow_cut));
+   canvasRatioMC->SaveAs(Form("canvasPbPbppjetMC%d_Dlow%d_Dhigh%d.pdf",intjetpt_cut,intDptlow_cut,intDpthigh_cut));
 
-   TFile*fouput=new TFile(Form("RatioPbPbppjet%d_D%d.root",intjetpt_cut,intDptlow_cut),"recreate");
+   TFile*fouput=new TFile(Form("RatioPbPbppjet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut),"recreate");
    ratioPbPbpp->Write();
    fouput->Close();
 }
@@ -470,11 +469,12 @@ void comparePP_PbPb(int intjetpt_cut=80, int intDptlow_cut=10){
 
 void compareRatios(){
    
-   void analysis(double,double);
-   analysis(80.,5.);                                  
-   analysis(80.,10.);                                  
-   analysis(80.,20.);
-
+   void analysis(double,double,double);
+   analysis(80.,4.,8.);                                  
+   analysis(80.,8.,20.);   
+   analysis(80.,20.,80.);   
+                                  
+/*
    gStyle->SetTextSize(0.05);
    gStyle->SetTextFont(42);
    gStyle->SetPadRightMargin(0.043);
@@ -487,15 +487,11 @@ void compareRatios(){
    gStyle->SetEndErrorSize(0);
    gStyle->SetMarkerStyle(20);
 
-   TFile* finputJet80D5 = new TFile("RatioPbPbppjet80_D5.root");
-   TFile* finputJet80D10 = new TFile("RatioPbPbppjet80_D10.root");
-   TFile* finputJet80D20 = new TFile("RatioPbPbppjet80_D20.root");
+   TFile* finputJet1 = new TFile("RatioPbPbppjet80_Dlow4_Dhigh8.root");
+   TFile* finputJet2 = new TFile("RatioPbPbppjet80_Dlow10_Dhigh999.root");
 
-
-   TH1F*ratioPbPbppJet80D5=(TH1F*)finputJet80D5->Get("ratioPbPbpp");
-   TH1F*ratioPbPbppJet80D10=(TH1F*)finputJet80D10->Get("ratioPbPbpp");
-   TH1F*ratioPbPbppJet80D20=(TH1F*)finputJet80D20->Get("ratioPbPbpp");   
-
+   TH1F*ratioPbPbppJet1=(TH1F*)finputJet1->Get("ratioPbPbpp");
+   TH1F*ratioPbPbppJet2=(TH1F*)finputJet2->Get("ratioPbPbpp");
 
    TCanvas*canvas=new TCanvas("canvas","canvas",500,500);
    canvas->cd();
@@ -519,18 +515,14 @@ void compareRatios(){
    hemptyratio->Draw();
 
 
-   ratioPbPbppJet80D5->SetLineColor(1);
-   ratioPbPbppJet80D5->SetMarkerColor(1);
-   ratioPbPbppJet80D5->Draw("psame");
+   ratioPbPbppJet1->SetLineColor(1);
+   ratioPbPbppJet1->SetMarkerColor(1);
+   ratioPbPbppJet1->Draw("psame");
  
-   ratioPbPbppJet80D10->SetLineColor(2);
-   ratioPbPbppJet80D10->SetMarkerColor(2);
-   ratioPbPbppJet80D10->Draw("psame");
- 
-   ratioPbPbppJet80D20->SetLineColor(4);
-   ratioPbPbppJet80D20->SetMarkerColor(4);
-   ratioPbPbppJet80D20->Draw("psame");
-
+   ratioPbPbppJet2->SetLineColor(2);
+   ratioPbPbppJet2->SetMarkerColor(2);
+   ratioPbPbppJet2->Draw("psame");
+   
    TLegend *legend=new TLegend(0.3729839,0.7415254,0.7016129,0.8622881,"");//0.5100806,0.5868644,0.8084677,0.7605932
    legend->SetBorderSize(0);
    legend->SetLineColor(0);
@@ -540,18 +532,14 @@ void compareRatios(){
    legend->SetTextSize(0.04);
 
    TLegendEntry*entry;
-   entry=legend->AddEntry(ratioPbPbppJet80D5,"Jet 80 D p_{T}>5 GeV","f");
+   entry=legend->AddEntry(ratioPbPbppJet1,"Jet 80 D p_{T}>4, p_{T}<8 GeV","f");
    entry->SetTextFont(42);
    entry->SetLineColor(1);
    entry->SetMarkerColor(1);
-   entry=legend->AddEntry(ratioPbPbppJet80D10,"Jet 80 D p_{T}>10 GeV","f");
+   entry=legend->AddEntry(ratioPbPbppJet2,"Jet 80 D p_{T}>10 GeV","f");
    entry->SetTextFont(42);
    entry->SetLineColor(2);
    entry->SetMarkerColor(2);
-   entry=legend->AddEntry(ratioPbPbppJet80D20,"Jet 80 D p_{T}>20 GeV","f");
-   entry->SetTextFont(42);
-   entry->SetLineColor(4);
-   entry->SetMarkerColor(4);
    legend->Draw();
-
+*/
 }
