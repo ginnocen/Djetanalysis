@@ -27,7 +27,6 @@ int djet::d_jet(std::string output) {
 int djet::loop(int isData) {
   bool debugmode=false;
   int64_t nentries = fChain->GetEntriesFast();
-  nentries=1000000;
   int NjetsforNorm=0;
   for (int64_t jentry = 0; jentry < nentries; jentry++) {
     if (jentry % 1000 == 0) printf("%li/%li\n", jentry, nentries);
