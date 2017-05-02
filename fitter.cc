@@ -171,7 +171,7 @@ Dfitter::Dfitter(TH1F* hMass, TH1F*hMC, TH1F*hMCswapped, TString suffixcanvas){
   texCms->SetTextFont(42);
   texCms->Draw();
 
-  c->SaveAs(Form("canvas%s.pdf",suffixcanvas.Data())); 
+  c->SaveAs(Form("%s.pdf",suffixcanvas.Data())); 
  }
 
 

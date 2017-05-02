@@ -52,7 +52,9 @@ public :
    TH1F           *fhHistoZMass[nZedges];                       //different R radius=0,0.1,0.2,0.3,0.5,1.0
    TH1F           *fhHistoZGenSignal[nZedges];
    TH1F           *fhHistoZGenSwapped[nZedges];
-    
+      
+   TH1F           *hNjets;
+ 
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
    Int_t           fCurrent; //!current Tree number in a TChain
 
@@ -1020,7 +1022,9 @@ void djet::Init(TTree *tree)
      fhHistoZGenSignal[i]=new TH1F(Form("fhHistoZGenSignal_Z%d",i),Form("fhHistoZGenSignal_Z%d",i),60,1.7,2.0);
      fhHistoZGenSwapped[i]=new TH1F(Form("fhHistoZGenSwapped_Z%d",i),Form("fhHistoZGenSwapped_Z%d",i),60,1.7,2.0);
    }
- 
+
+   hNjets=new TH1F("hNjets","hNjets",1,0,1);
+
    Notify();
 }
 

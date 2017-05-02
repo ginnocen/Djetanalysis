@@ -14,7 +14,7 @@
 
 using namespace std;
 
-void analysis(double jetpt_cut=80.,double Dptlow_cut=4.,double Dpthigh_cut=10.){
+void analysis(double jetpt_cut=80.,double Dptlow_cut=20.,double Dpthigh_cut=80.){
 
   double jeteta_cut=1.6;
   double Dy_cut=2.0;
@@ -28,7 +28,7 @@ void analysis(double jetpt_cut=80.,double Dptlow_cut=4.,double Dpthigh_cut=10.){
   int intjetpt_cut=(int)(jetpt_cut);
   int intDptlow_cut=(int)(Dptlow_cut);
   int intDpthigh_cut=(int)(Dpthigh_cut);  
-
+/*  
   djet* tData = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_2_3_4_26March_finalMerge2April_v1/merged_total.root");
   tData->SetJetPtCutEta(jetpt_cut,jeteta_cut);
   tData->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
@@ -49,14 +49,14 @@ void analysis(double jetpt_cut=80.,double Dptlow_cut=4.,double Dpthigh_cut=10.){
   tpp->SetDmesonCuts(decaylength_cut,Dalpha_cut,chi2cl_cut,trkptmin_cut,trketa_cut,trkpterr_cut);
   tpp->loop(1);
   tpp->d_jet(Form("myDataPPtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut));
-
-  djet* tMCpp = new djet("/export/d00/scratch/jwang/Djets/DjetFiles_pp_5TeV_TuneCUETP8M1_Dfinder_MC_pthat30_20170404.root");
+  
+  djet* tMCpp = new djet("/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170412_pp_5TeV_TuneCUETP8M1_Dfinder_MC_Pthat30_20170404.root");
   tMCpp->SetJetPtCutEta(jetpt_cut,jeteta_cut);
   tMCpp->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
   tMCpp->SetDmesonCuts(decaylength_cut,Dalpha_cut,chi2cl_cut,trkptmin_cut,trketa_cut,trkpterr_cut); 
   tMCpp->loop(0);
   tMCpp->d_jet(Form("myMCPPtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut));
- 
+ */
   void runFit(int,int,int,int);
   void comparePP_PbPb(int,int,int);
   runFit(1,intjetpt_cut,intDptlow_cut,intDpthigh_cut);
@@ -130,10 +130,15 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=-9999,int intDpthi
    TString canvasData;
    TString canvasMC;
 
+   TH1F*hNjetsData=(TH1F*)finput->Get("hNjets");
+   TH1F*hNjetsMC=(TH1F*)finputMC->Get("hNjets");
+   hNjetsData->SetName("hNjetsData");
+   hNjetsMC->SetName("hNjetsMC");
+  
     for (int i=0;i<nedgesR;i++){
       //jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
-      canvasData=Form("ResultsDataJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Rindex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i);
-      canvasMC=Form("ResultsMCJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Rindex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i);
+      canvasData=Form("PlotsFits/ResultsDataJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Rindex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i);
+      canvasMC=Form("PlotsFits/ResultsMCJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Rindex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i);
 
       hHistoMassData[i]=(TH1F*)finput->Get(Form("fhHistoMass_R%d",i));
       hHistoMassMC[i]=(TH1F*)finputMC->Get(Form("fhHistoMass_R%d",i));
@@ -156,8 +161,8 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=-9999,int intDpthi
 
     for (int i=0;i<nedgesZ;i++){
 
-      canvasZData=Form("ResultsZDataJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Zindex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i);
-      canvasZMC=Form("ResultsZMCJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Zindex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i);
+      canvasZData=Form("PlotsFits/ResultsZDataJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Zindex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i);
+      canvasZMC=Form("PlotsFits/ResultsZMCJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Zindex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i);
 
       hHistoZMassData[i]=(TH1F*)finput->Get(Form("fhHistoZMass_Z%d",i));
       hHistoZMassMC[i]=(TH1F*)finputMC->Get(Form("fhHistoZMass_Z%d",i));
@@ -175,22 +180,24 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=-9999,int intDpthi
        hZSignalMC->SetBinError(i+1,fitZMC[i]->GetSignalError());
 }
 
-  hSignalData->Scale(1./hSignalData->GetBinContent(1));
-  hSignalMC->Scale(1./hSignalMC->GetBinContent(1));
+  hSignalData->Scale(1./hNjetsData->GetBinContent(1));
+  hSignalMC->Scale(1./hNjetsMC->GetBinContent(1));
  
-  cout<<"number of entries Data"<<hZSignalData->GetEntries()<<endl;
-  cout<<"number of entries MC"<<hZSignalMC->GetEntries()<<endl;
-  int countMCZ=0;
-  int countDataZ=0;
+//  cout<<"number of entries Data"<<hZSignalData->GetEntries()<<endl;
+//  cout<<"number of entries MC"<<hZSignalMC->GetEntries()<<endl;
+//  int countMCZ=0;
+//  int countDataZ=0;
+//
+//  for (int i=0;i<nedgesZ;i++){
+//    countMCZ=countMCZ+hZSignalMC->GetBinContent(i);
+//    countDataZ=countDataZ+hZSignalData->GetBinContent(i);
+//  }
+//  hZSignalData->Scale(1./(double)countDataZ);
+//  hZSignalMC->Scale(1./(double)countMCZ);
+ 
+  hZSignalData->Scale(1./hNjetsData->GetBinContent(1));
+  hZSignalMC->Scale(1./hNjetsMC->GetBinContent(1));
 
-  for (int i=0;i<nedgesZ;i++){
-    countMCZ=countMCZ+hZSignalMC->GetBinContent(i);
-    countDataZ=countDataZ+hZSignalData->GetBinContent(i);
-  }
- 
-  hZSignalData->Scale(1./(double)countDataZ);
-  hZSignalMC->Scale(1./(double)countMCZ);
- 
 
   TCanvas*canvas=new TCanvas("canvas","canvas",500,500);
   canvas->cd();
@@ -481,7 +488,8 @@ void compareRatios(){
    gStyle->SetPadLeftMargin(0.18);
    gStyle->SetPadTopMargin(0.1);
    gStyle->SetPadBottomMargin(0.145);
-   gStyle->SetTitleX(.0f);
+ 
+  gStyle->SetTitleX(.0f);
    gStyle->SetOptTitle(0);
    gStyle->SetOptStat(0);
    gStyle->SetEndErrorSize(0);

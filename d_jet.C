@@ -18,6 +18,7 @@ int djet::d_jet(std::string output) {
       fhHistoZGenSignal[i]->Write();
       fhHistoZGenSwapped[i]->Write();
     }
+    hNjets->Write();
     foutput->Close();
     delete foutput;
    return 0;
@@ -26,6 +27,8 @@ int djet::d_jet(std::string output) {
 int djet::loop(int isData) {
   bool debugmode=false;
   int64_t nentries = fChain->GetEntriesFast();
+  nentries=1000000;
+  int NjetsforNorm=0;
   for (int64_t jentry = 0; jentry < nentries; jentry++) {
     if (jentry % 1000 == 0) printf("%li/%li\n", jentry, nentries);
     if (LoadTree(jentry) < 0) break;
@@ -38,6 +41,7 @@ int djet::loop(int isData) {
             cout<<"indexjets="<<indexjets<<",pt="<<(*jetpt_akpu3pf)[indexjets]<<endl;
           }
           if((*jetpt_akpu3pf)[indexjets] > fJetpt_cut && fabs((*jeteta_akpu3pf)[indexjets]) < fJeteta_cut){
+            NjetsforNorm++;
             for (int indexDm = 0; indexDm < Dsize; indexDm++) {
               if((*Dpt)[indexDm] >fDptlow_cut && (*Dpt)[indexDm] <fDpthigh_cut){
                 if ( fabs((*Dy)[indexDm]) < fDy_cut  && ((*DsvpvDistance)[indexDm] / (*DsvpvDisErr)[indexDm]) > fDdecaylength_cut && (*Dalpha)[indexDm] < fDalpha_cut && (*Dchi2cl)[indexDm] > fDchi2cl_cut ) {
@@ -82,6 +86,7 @@ int djet::loop(int isData) {
           } // selection on jet pt
         } //end of loop over jets
       }//end of loop over events
+    hNjets->SetBinContent(1,NjetsforNorm);
     cout<<"calling fit"<<endl;
     return 1;
 }
