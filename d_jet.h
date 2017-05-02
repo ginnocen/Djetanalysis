@@ -285,6 +285,22 @@ public :
    std::vector<int>     *DgencollisionId;
    std::vector<float>   *DgenBAncestorpt;
    std::vector<int>     *DgenBAncestorpdgId;
+   std::vector<int>     *Gsize;
+   std::vector<int>     *GpdgId;
+   std::vector<int>     *GisSignal;
+   std::vector<float>   *Gy;
+   std::vector<float>   *Geta;
+   std::vector<float>   *Gphi;
+   std::vector<float>   *Gpt;
+   std::vector<float>   *Gtk1pt;
+   std::vector<float>   *Gtk1eta;
+   std::vector<float>   *Gtk1y;
+   std::vector<float>   *Gtk1phi;
+   std::vector<float>   *Gtk2pt;
+   std::vector<float>   *Gtk2eta;
+   std::vector<float>   *Gtk2y;
+   std::vector<float>   *Gtk2phi;
+
 
    // List of branches
    TBranch        *b_isPP;   //!
@@ -509,6 +525,21 @@ public :
    TBranch        *b_DgencollisionId;   //!
    TBranch        *b_DgenBAncestorpt;   //!
    TBranch        *b_DgenBAncestorpdgId;   //!
+   TBranch        *b_Gsize;   //!
+   TBranch        *b_GpdgId;   //!
+   TBranch        *b_GisSignal;   //!
+   TBranch        *b_Gy;   //!
+   TBranch        *b_Geta;   //!
+   TBranch        *b_Gphi;   //!
+   TBranch        *b_Gpt;   //!
+   TBranch        *b_Gtk1pt;   //!
+   TBranch        *b_Gtk1eta;   //!
+   TBranch        *b_Gtk1y;   //!
+   TBranch        *b_Gtk1phi;   //!
+   TBranch        *b_Gtk2pt;   //!
+   TBranch        *b_Gtk2eta;   //!
+   TBranch        *b_Gtk2y;   //!
+   TBranch        *b_Gtk2phi;   //!
 
    djet(std::string filename);
    virtual ~djet();
@@ -782,6 +813,23 @@ void djet::Init(TTree *tree)
    DgencollisionId = 0;
    DgenBAncestorpt = 0;
    DgenBAncestorpdgId = 0;
+   Gsize = 0;
+   GpdgId = 0;
+   GisSignal = 0;
+   Gy = 0;
+   Geta = 0;
+   Gphi = 0;
+   Gpt = 0;
+   Gtk1pt = 0;
+   Gtk1eta = 0;
+   Gtk1y = 0;
+   Gtk1phi = 0;
+   Gtk2pt = 0;
+   Gtk2eta = 0;
+   Gtk2y = 0;
+   Gtk2phi = 0;
+
+
    // Set branch addresses and branch pointers
    if (!tree) return;
    fChain = tree;
@@ -1010,6 +1058,24 @@ void djet::Init(TTree *tree)
    fChain->SetBranchAddress("DgencollisionId", &DgencollisionId, &b_DgencollisionId);
    fChain->SetBranchAddress("DgenBAncestorpt", &DgenBAncestorpt, &b_DgenBAncestorpt);
    fChain->SetBranchAddress("DgenBAncestorpdgId", &DgenBAncestorpdgId, &b_DgenBAncestorpdgId);
+   fChain->SetBranchAddress("Gsize", &Gsize, &b_Gsize);
+   fChain->SetBranchAddress("GpdgId", &GpdgId, &b_GpdgId);
+   fChain->SetBranchAddress("GisSignal", &GisSignal, &b_GisSignal);
+   fChain->SetBranchAddress("Gy", &Gy, &b_Gy);
+   fChain->SetBranchAddress("Geta", &Geta, &b_Geta);
+   fChain->SetBranchAddress("Gphi", &Gphi, &b_Gphi);
+   fChain->SetBranchAddress("Gpt", &Gpt, &b_Gpt);
+   fChain->SetBranchAddress("Gtk1pt", &Gtk1pt, &b_Gtk1pt);
+   fChain->SetBranchAddress("Gtk1eta", &Gtk1eta, &b_Gtk1eta);
+   fChain->SetBranchAddress("Gtk1y", &Gtk1y, &b_Gtk1y);
+   fChain->SetBranchAddress("Gtk1phi", &Gtk1phi, &b_Gtk1phi);
+   fChain->SetBranchAddress("Gtk2pt", &Gtk2pt, &b_Gtk2pt);
+   fChain->SetBranchAddress("Gtk2eta", &Gtk2eta, &b_Gtk2eta);
+   fChain->SetBranchAddress("Gtk2y", &Gtk2y, &b_Gtk2y);
+   fChain->SetBranchAddress("Gtk2phi", &Gtk2phi, &b_Gtk2phi);
+
+
+
       
    for (int i=0;i<nRedges;i++){
      fhHistoMass[i]=new TH1F(Form("fhHistoMass_R%d",i),Form("fhHistoMass_R%d",i),60,1.7,2.0);
