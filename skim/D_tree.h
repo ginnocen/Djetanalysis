@@ -2,6 +2,7 @@
 #define _D_TREE_H
 
 #include "TTree.h"
+#define MAX_XB       20000
 
 class DTree {
   public:

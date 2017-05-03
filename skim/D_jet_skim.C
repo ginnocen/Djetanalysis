@@ -5,6 +5,7 @@
 
 #include "D_jet_tree.h"
 #include "D_tree.h"
+#include "G_tree.h"
 #include "jet_tree.h"
 
 #include "Corrections/L2L3/L2L3ResidualWFits.h"
@@ -26,7 +27,6 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
 
   TTree* outtree = new TTree("djt", "photon jet track tree");
   DJetTree djt(outtree);
-
   /**********************************************************
   * OPEN INPUT FILES
   **********************************************************/
@@ -66,17 +66,25 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
   TTree* hlt_tree = (TTree*)finput->Get("hltanalysis/HltTree");
   if (!hlt_tree) { printf("Could not access hlt tree!\n"); return 1; }
   hlt_tree->SetBranchStatus("*", 0);
+  djt.set_hlt_tree(hlt_tree,isPP);
   int HLT_HISinglePhoton40_Eta1p5_v1;
   int HLT_HISinglePhoton40_Eta1p5_v2;
   int HLT_HISinglePhoton40_Eta1p5ForPPRef_v1;
   _SET_BRANCH_ADDRESS(hlt_tree, HLT_HISinglePhoton40_Eta1p5_v1, HLT_HISinglePhoton40_Eta1p5_v1);
   _SET_BRANCH_ADDRESS(hlt_tree, HLT_HISinglePhoton40_Eta1p5_v2, HLT_HISinglePhoton40_Eta1p5_v2);
   _SET_BRANCH_ADDRESS(hlt_tree, HLT_HISinglePhoton40_Eta1p5ForPPRef_v1, HLT_HISinglePhoton40_Eta1p5ForPPRef_v1);
+  TTree* hlt_new = hlt_tree->CloneTree(0);
+  hlt_new->SetName("hlt");
 
   TTree* D_tree = (TTree*)finput->Get("Dfinder/ntDkpi");
   if (!D_tree) {printf("Could not access D tree!\n"); return 1; }
   D_tree->SetBranchStatus("*", 0);
   DTree dt(D_tree);
+
+  TTree* G_tree = (TTree*)finput->Get("Dfinder/ntGen");
+  if (!G_tree) {printf("Could not access G tree!\n"); return 1; }
+  G_tree->SetBranchStatus("*", 0);
+  GTree gt(G_tree);
 
   TTree* jet_tree_akpu3pf = 0;
   if (isPP) jet_tree_akpu3pf = (TTree*)finput->Get("ak3PFJetAnalyzer/t");
@@ -140,6 +148,13 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
       djt.copy_index(dt, id);
     }
     djt.copy_variables(dt);
+
+    //! Gen cuts and selection
+    G_tree->GetEntry(j);
+    for (int id = 0; id < gt.Gsize; ++id) {
+      djt.copy_index_gen(gt, id);
+    }
+    djt.copy_variables_gen(gt);
 
     //! Jet cuts and selection
     int centBin = 0;
@@ -205,10 +220,12 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
     memcpy(djt.hiEvtPlanes, hiEvtPlanes, 29 * sizeof(float));
 
     outtree->Fill();
+    hlt_new->Fill();
   }
 
   foutput->cd();
   outtree->Write("", TObject::kOverwrite);
+  hlt_new->Write("", TObject::kOverwrite);
   foutput->Write("", TObject::kOverwrite);
   foutput->Close();
 
