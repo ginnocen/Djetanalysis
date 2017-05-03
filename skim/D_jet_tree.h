@@ -4,6 +4,7 @@
 #include "TTree.h"
 
 #include "D_tree.h"
+#include "G_tree.h"
 
 #include <vector>
 
@@ -57,9 +58,13 @@ class DJetTree {
 
     void create_tree(TTree* t);
 
+    void set_hlt_tree(TTree* ht, Bool_t isPP);
+
     void clear_vectors();
     void copy_variables(DTree dt);
+    void copy_variables_gen(GTree gt);
     void copy_index(DTree dt, int i);
+    void copy_index_gen(GTree gt, int i);
 
     int isPP;
     uint32_t run;
@@ -289,6 +294,26 @@ class DJetTree {
     std::vector<int>       DgencollisionId;
     std::vector<float>     DgenBAncestorpt;
     std::vector<int>       DgenBAncestorpdgId;
+
+    int                    Gsize;
+    std::vector<float>     Gy;
+    std::vector<float>     Geta;
+    std::vector<float>     Gphi;
+    std::vector<float>     Gpt;
+    std::vector<int>       GpdgId;
+    std::vector<int>       GcollisionId;
+    std::vector<int>       GisSignal;
+    std::vector<float>     GBAncestorpt;
+    std::vector<int>       GBAncestorpdgId;
+    std::vector<float>     Gtk1pt;
+    std::vector<float>     Gtk1eta;
+    std::vector<float>     Gtk1y;
+    std::vector<float>     Gtk1phi;
+    std::vector<float>     Gtk2pt;
+    std::vector<float>     Gtk2eta;
+    std::vector<float>     Gtk2y;
+    std::vector<float>     Gtk2phi;
+
 };
 
 void DJetTree::create_tree(TTree* t) {
@@ -520,6 +545,31 @@ void DJetTree::create_tree(TTree* t) {
     t->Branch("DgencollisionId", &DgencollisionId);
     t->Branch("DgenBAncestorpt", &DgenBAncestorpt);
     t->Branch("DgenBAncestorpdgId", &DgenBAncestorpdgId);
+
+    t->Branch("Gsize",&Gsize,"Gsize/I");
+    t->Branch("Gy",&Gy);
+    t->Branch("Geta",&Geta);
+    t->Branch("Gphi",&Gphi);
+    t->Branch("Gpt",&Gpt);
+    t->Branch("GpdgId",&GpdgId);
+    t->Branch("GcollisionId",&GcollisionId);
+    t->Branch("GisSignal",&GisSignal);
+    t->Branch("GBAncestorpt",&GBAncestorpt);
+    t->Branch("GBAncestorpdgId",&GBAncestorpdgId);
+    t->Branch("Gtk1pt",&Gtk1pt);
+    t->Branch("Gtk1eta",&Gtk1eta);
+    t->Branch("Gtk1y",&Gtk1y);
+    t->Branch("Gtk1phi",&Gtk1phi);
+    t->Branch("Gtk2pt",&Gtk2pt);
+    t->Branch("Gtk2eta",&Gtk2eta);
+    t->Branch("Gtk2y",&Gtk2y);
+    t->Branch("Gtk2phi",&Gtk2phi);
+
+}
+
+void DJetTree::copy_variables_gen(GTree gt)
+{
+  Gsize = gt.Gsize;
 }
 
 void DJetTree::copy_variables(DTree dt) {
@@ -548,6 +598,27 @@ void DJetTree::copy_variables(DTree dt) {
     BSWidthXErr = dt.BSWidthXErr;
     BSWidthY = dt.BSWidthY;
     BSWidthYErr = dt.BSWidthYErr;
+}
+
+void DJetTree::copy_index_gen(GTree gt, int i)
+{
+  Gy.push_back(gt.Gy[i]);
+  Geta.push_back(gt.Geta[i]);
+  Gphi.push_back(gt.Gphi[i]);
+  Gpt.push_back(gt.Gpt[i]);
+  GpdgId.push_back(gt.GpdgId[i]);
+  GcollisionId.push_back(gt.GcollisionId[i]);
+  GisSignal.push_back(gt.GisSignal[i]);
+  GBAncestorpt.push_back(gt.GBAncestorpt[i]);
+  GBAncestorpdgId.push_back(gt.GBAncestorpdgId[i]);
+  Gtk1pt.push_back(gt.Gtk1pt[i]);
+  Gtk1eta.push_back(gt.Gtk1eta[i]);
+  Gtk1y.push_back(gt.Gtk1y[i]);
+  Gtk1phi.push_back(gt.Gtk1phi[i]);
+  Gtk2pt.push_back(gt.Gtk2pt[i]);
+  Gtk2eta.push_back(gt.Gtk2eta[i]);
+  Gtk2y.push_back(gt.Gtk2y[i]);
+  Gtk2phi.push_back(gt.Gtk2phi[i]);
 }
 
 void DJetTree::copy_index(DTree dt, int i) {
@@ -898,6 +969,58 @@ void DJetTree::clear_vectors() {
     DgencollisionId.clear();
     DgenBAncestorpt.clear();
     DgenBAncestorpdgId.clear();
+
+    Gy.clear();
+    Geta.clear();
+    Gphi.clear();
+    Gpt.clear();
+    GpdgId.clear();
+    GcollisionId.clear();
+    GisSignal.clear();
+    GBAncestorpt.clear();
+    GBAncestorpdgId.clear();
+    Gtk1pt.clear();
+    Gtk1eta.clear();
+    Gtk1y.clear();
+    Gtk1phi.clear();
+    Gtk2pt.clear();
+    Gtk2eta.clear();
+    Gtk2y.clear();
+    Gtk2phi.clear();
+}
+
+void DJetTree::set_hlt_tree(TTree* ht, Bool_t isPP)
+{
+  ht->SetBranchStatus("*", 0);
+  if(isPP) //pp
+    {
+      ht->SetBranchStatus("HLT_L1MinimumBias*",1);
+      ht->SetBranchStatus("HLT_Dmeson*",1);
+      ht->SetBranchStatus("HLT_AK4CaloJet40_Eta5p1_v1*",1);
+      ht->SetBranchStatus("HLT_AK4CaloJet60_Eta5p1_v1*",1);
+      ht->SetBranchStatus("HLT_AK4CaloJet80_Eta5p1_v1*",1);
+      ht->SetBranchStatus("L1_SingleJet16_BptxAND*",1);
+      ht->SetBranchStatus("L1_SingleJet24_BptxAND*",1);
+      ht->SetBranchStatus("L1_SingleJet28_BptxAND*",1);
+      ht->SetBranchStatus("L1_SingleJet40_BptxAND*",1);
+      ht->SetBranchStatus("L1_SingleJet48_BptxAND*",1);      
+    }
+  else //PbPb
+    {
+      ht->SetBranchStatus("HLT_HIL1MinimumBias*",1);
+      ht->SetBranchStatus("HLT_HIDmeson*",1);
+      ht->SetBranchStatus("HLT_HIPuAK4CaloJet*",1);
+      ht->SetBranchStatus("L1_MinimumBiasHF1_AND",1);
+      ht->SetBranchStatus("L1_MinimumBiasHF2_AND",1);
+      ht->SetBranchStatus("L1_SingleS1Jet16_BptxAND*", 1);
+      ht->SetBranchStatus("L1_SingleS1Jet28_BptxAND*", 1);
+      ht->SetBranchStatus("L1_SingleS1Jet32_BptxAND*", 1);
+      ht->SetBranchStatus("L1_SingleJet44_BptxAND*",   1);
+      ht->SetBranchStatus("L1_SingleS1Jet52_BptxAND*", 1);
+      ht->SetBranchStatus("L1_SingleS1Jet56_BptxAND*", 1);
+      ht->SetBranchStatus("L1_SingleS1Jet64_BptxAND*", 1);
+    }
+
 }
 
 #endif
