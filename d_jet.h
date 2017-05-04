@@ -572,7 +572,7 @@ public :
    virtual int GetnZedges();
    virtual double GetZedgesEdges(int index);
    virtual int      loop(int isData);
-
+   virtual void divideBinWidth(TH1F*h);
 
 
 };
@@ -1096,7 +1096,7 @@ void djet::Init(TTree *tree)
      fhHistoZGenSwapped[i]=new TH1F(Form("fhHistoZGenSwapped_Z%d",i),Form("fhHistoZGenSwapped_Z%d",i),60,1.7,2.0);
    }
    fhDenEfficiency=new TH1F("fhDenEfficiency","fhDenEfficiency",nRedges,Redges);
-   fhNumEfficiency=new TH1F("fNumEfficiency","fhNumEfficiency",nRedges,Redges);
+   fhNumEfficiency=new TH1F("fhNumEfficiency","fhNumEfficiency",nRedges,Redges);
    //fhEfficiency=new TH1F("fhEfficiency","fhEfficiency",nRedges,Redges);
    fhZDenEfficiency=new TH1F("fhZDenEfficiency","fhZDenEfficiency",nZedges,Zedges);
    fhZNumEfficiency=new TH1F("fhZNumEfficiency","fhZNumEfficiency",nZedges,Zedges);
@@ -1162,6 +1162,23 @@ TH1F* djet::GetMassZSpectrumGenSwapped(int indexcone)
   return fhHistoZGenSwapped[indexcone];
 }
 
+
+void djet::divideBinWidth(TH1F* h)
+{
+  h->Sumw2();
+  for(int i=1;i<=h->GetNbinsX();i++)
+    {
+      Float_t val = h->GetBinContent(i);
+      Float_t valErr = h->GetBinError(i);
+      val/=h->GetBinWidth(i);
+      valErr/=h->GetBinWidth(i);
+      h->SetBinContent(i,val);
+      h->SetBinError(i,valErr);
+    }
+  h->GetXaxis()->CenterTitle();
+  h->GetYaxis()->CenterTitle();
+
+}
 
 
 void djet::SetJetPtCutEta(double jetptcutmin,double absjetetamax)

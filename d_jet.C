@@ -105,10 +105,14 @@ int djet::loop(int isData) {
           } // selection on jet pt
         } //end of loop over jets
       }//end of loop over events
+
+    divideBinWidth(fhDenEfficiency);
+    divideBinWidth(fhNumEfficiency);
+    divideBinWidth(fhZDenEfficiency);
+    divideBinWidth(fhZNumEfficiency);
+
     fhEfficiency=(TH1F*)fhNumEfficiency->Clone("fhEfficiency");
-    fhEfficiency->Sumw2();
     fhZEfficiency=(TH1F*)fhZNumEfficiency->Clone("fhZEfficiency");
-    fhZEfficiency->Sumw2();
     
     fhEfficiency->Divide(fhEfficiency,fhDenEfficiency, 1.0, 1.0, "B");
     fhZEfficiency->Divide(fhZEfficiency,fhZDenEfficiency, 1.0, 1.0, "B");

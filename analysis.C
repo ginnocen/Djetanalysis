@@ -14,6 +14,24 @@
 
 using namespace std;
 
+
+void divideBinWidth(TH1* h)
+{
+  h->Sumw2();
+  for(int i=1;i<=h->GetNbinsX();i++)
+    {
+      Float_t val = h->GetBinContent(i);
+      Float_t valErr = h->GetBinError(i);
+      val/=h->GetBinWidth(i);
+      valErr/=h->GetBinWidth(i);
+      h->SetBinContent(i,val);
+      h->SetBinError(i,valErr);
+    }
+  h->GetXaxis()->CenterTitle();
+  h->GetYaxis()->CenterTitle();
+}
+
+
 void loop(double jetpt_cut=80.,double Dptlow_cut=4.,double Dpthigh_cut=999.){
 
   double jeteta_cut=1.6;
@@ -124,7 +142,18 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_c
    
    TH1F*fhEfficiency=(TH1F*)finputMC->Get("fhEfficiency");
    TH1F*fhZEfficiency=(TH1F*)finputMC->Get("fhZEfficiency");
-  
+   TH1F*fhDenEfficiency=(TH1F*)finputMC->Get("fhDenEfficiency");
+   TH1F*fhNumEfficiency=(TH1F*)finputMC->Get("fhNumEfficiency");
+   TH1F*fhZDenEfficiency=(TH1F*)finputMC->Get("fhZDenEfficiency");
+   TH1F*fhZNumEfficiency=(TH1F*)finputMC->Get("fhZNumEfficiency");
+   
+   fhEfficiency->SetName("fhEfficiency");
+   fhZEfficiency->SetName("fhZEfficiency");
+   fhNumEfficiency->SetName("fhNumEfficiency");
+   fhDenEfficiency->SetName("fhDenEfficiency");
+   fhZNumEfficiency->SetName("fhZNumEfficiency");
+   fhZDenEfficiency->SetName("fhZDenEfficiency");
+   
     for (int i=0;i<nedgesR;i++){
       canvasData=Form("PlotsFits/ResultsDataJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Rindex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i);
       canvasMC=Form("PlotsFits/ResultsMCJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Rindex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i);
@@ -138,11 +167,10 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_c
 
     }
     for (int i=0;i<nedgesR;i++){
-       double sizebin=Redges[i+1]-Redges[i];
-       hSignalData->SetBinContent(i+1,fitData[i]->GetSignal()/sizebin);
-       hSignalData->SetBinError(i+1,fitData[i]->GetSignalError()/sizebin);
-       hSignalMC->SetBinContent(i+1,fitMC[i]->GetSignal()/sizebin);
-       hSignalMC->SetBinError(i+1,fitMC[i]->GetSignalError()/sizebin);
+       hSignalData->SetBinContent(i+1,fitData[i]->GetSignal());
+       hSignalData->SetBinError(i+1,fitData[i]->GetSignalError());
+       hSignalMC->SetBinContent(i+1,fitMC[i]->GetSignal());
+       hSignalMC->SetBinError(i+1,fitMC[i]->GetSignalError());
     }
 
    TString canvasZData;
@@ -162,22 +190,32 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_c
 
     }
     for (int i=0;i<nedgesZ;i++){
-       double sizeZbin=Zedges[i+1]-Zedges[i];
-       hZSignalData->SetBinContent(i+1,fitZData[i]->GetSignal()/sizeZbin);
-       hZSignalData->SetBinError(i+1,fitZData[i]->GetSignalError()/sizeZbin);
-       hZSignalMC->SetBinContent(i+1,fitZMC[i]->GetSignal()/sizeZbin);
-       hZSignalMC->SetBinError(i+1,fitZMC[i]->GetSignalError()/sizeZbin);
+       hZSignalData->SetBinContent(i+1,fitZData[i]->GetSignal());
+       hZSignalData->SetBinError(i+1,fitZData[i]->GetSignalError());
+       hZSignalMC->SetBinContent(i+1,fitZMC[i]->GetSignal());
+       hZSignalMC->SetBinError(i+1,fitZMC[i]->GetSignalError());
 }
-
-  hSignalData->Scale(1./hNjetsData->GetBinContent(1));
-  hSignalMC->Scale(1./hNjetsMC->GetBinContent(1));
- 
-  hZSignalData->Scale(1./hNjetsData->GetBinContent(1));
-  hZSignalMC->Scale(1./hNjetsMC->GetBinContent(1));
+  double normJetsData=hNjetsData->GetBinContent(1); 
+  double normJetsMC=hNjetsMC->GetBinContent(1);
   
+  divideBinWidth(hSignalData);
+  divideBinWidth(hSignalMC);
+  divideBinWidth(hZSignalData);
+  divideBinWidth(hZSignalMC);
+
+
+  hSignalData->Scale(1./normJetsData);
+  hZSignalData->Scale(1./normJetsData);
+  hSignalMC->Scale(1./normJetsMC);
+  hZSignalMC->Scale(1./normJetsMC);
+  fhNumEfficiency->Scale(1./normJetsMC);
+  fhDenEfficiency->Scale(1./normJetsMC);
+  fhZDenEfficiency->Scale(1./normJetsMC);
+  fhZNumEfficiency->Scale(1./normJetsMC);
+
   TH1F*hJetShape=(TH1F*)hSignalData->Clone("hJetShape");
   hJetShape->Divide(fhEfficiency);
-  TH1F*hFF=(TH1F*)hSignalData->Clone("hFF");
+  TH1F*hFF=(TH1F*)hZSignalData->Clone("hFF");
   hFF->Divide(fhZEfficiency);
 
   TCanvas*canvas=new TCanvas("canvas","canvas",500,500);
@@ -193,6 +231,10 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_c
   hFF->Write();
   fhEfficiency->Write();
   fhZEfficiency->Write();
+  fhNumEfficiency->Write();
+  fhDenEfficiency->Write();
+  fhZNumEfficiency->Write();
+  fhZDenEfficiency->Write();
   foutput->Close();
 }
 
