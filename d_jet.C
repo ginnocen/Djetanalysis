@@ -19,6 +19,12 @@ int djet::d_jet(std::string output) {
       fhHistoZGenSwapped[i]->Write();
     }
     hNjets->Write();
+    fhDenEfficiency->Write();
+    fhNumEfficiency->Write();
+    fhEfficiency->Write();
+    fhZDenEfficiency->Write();
+    fhZNumEfficiency->Write();
+    fhZEfficiency->Write();
     foutput->Close();
     delete foutput;
    return 0;
@@ -42,14 +48,14 @@ int djet::loop(int isData) {
           if((*jetpt_akpu3pf)[indexjets] > fJetpt_cut && fabs((*jeteta_akpu3pf)[indexjets]) < fJeteta_cut){
             NjetsforNorm++;
             for (int indexDm = 0; indexDm < Dsize; indexDm++) {
-              if((*Dpt)[indexDm] >fDptlow_cut && (*Dpt)[indexDm] <fDpthigh_cut){
-                if ( fabs((*Dy)[indexDm]) < fDy_cut  && ((*DsvpvDistance)[indexDm] / (*DsvpvDisErr)[indexDm]) > fDdecaylength_cut && (*Dalpha)[indexDm] < fDalpha_cut && (*Dchi2cl)[indexDm] > fDchi2cl_cut ) {
+              if((*Dpt)[indexDm] >fDptlow_cut && (*Dpt)[indexDm] <fDpthigh_cut && fabs((*Dy)[indexDm]) < fDy_cut){
+                if (((*DsvpvDistance)[indexDm] / (*DsvpvDisErr)[indexDm]) > fDdecaylength_cut && (*Dalpha)[indexDm] < fDalpha_cut && (*Dchi2cl)[indexDm] > fDchi2cl_cut ) {
                   if(fabs((*Dtrk1Eta)[indexDm]) < fDtrketa_cut && fabs((*Dtrk2Eta)[indexDm]) < fDtrketa_cut && (*Dtrk1Pt)[indexDm] > fDtrkptmin_cut && (*Dtrk2Pt)[indexDm] > fDtrkptmin_cut){
                     if(((*Dtrk1PtErr)[indexDm] / (*Dtrk1Pt)[indexDm]) < fDtrkpterr_cut && ((*Dtrk2PtErr)[indexDm] / (*Dtrk2Pt)[indexDm]) < fDtrkpterr_cut && (*Dtrk1highPurity)[indexDm]==1 && (*Dtrk2highPurity)[indexDm]==1){
                       double deltaphi = acos(cos((*Dphi)[indexDm] - (*jetphi_akpu3pf)[indexjets]));
                       double deltaeta = (*Deta)[indexDm] - (*jeteta_akpu3pf)[indexjets];
                       double DeltaR = sqrt(pow(deltaphi, 2) + pow(deltaeta, 2));
-                    
+                      if(isData==0 && ((*Dgen)[indexDm])==23333) fhNumEfficiency->Fill(DeltaR);
                       for (int indexR=0; indexR<nRedges; indexR++){ 
                         if(DeltaR>Redges[indexR]&&DeltaR<Redges[indexR+1]){
                           if(debugmode){
@@ -67,7 +73,7 @@ int djet::loop(int isData) {
                       }//end of loop over R
  
                       double zvariable=(*Dpt)[indexDm]/(*jetpt_akpu3pf)[indexjets];
-
+                      if(isData==0 && ((*Dgen)[indexDm])==23333) fhZNumEfficiency->Fill(zvariable);
                       for (int indexZ=0; indexZ<nZedges; indexZ++){
                         if(zvariable>Zedges[indexZ]&&zvariable<Zedges[indexZ+1]){
                           fhHistoZMass[indexZ]->Fill((*Dmass)[indexDm]);
@@ -82,9 +88,30 @@ int djet::loop(int isData) {
                 }//D meson selection 
               }//pt cut on D mesons
             }//loop over D mesons
+            
+            for (int indexDgenm = 0; indexDgenm < Gsize; indexDgenm++) {
+             if((*Gpt)[indexDgenm] >fDptlow_cut && (*Gpt)[indexDgenm] <fDpthigh_cut && fabs((*Gy)[indexDgenm]) < fDy_cut){
+                if(((*GisSignal)[indexDgenm])==1 || ((*GisSignal)[indexDgenm])==2){
+                  double deltagenphi = acos(cos((*Gphi)[indexDgenm] - (*jetphi_akpu3pf)[indexjets]));
+                  double deltageneta = (*Geta)[indexDgenm] - (*jeteta_akpu3pf)[indexjets];
+                  double DeltagenR = sqrt(pow(deltagenphi, 2) + pow(deltageneta, 2));
+                  double zgenvariable=(*Gpt)[indexDgenm]/(*jetpt_akpu3pf)[indexjets];
+                  fhDenEfficiency->Fill(DeltagenR);
+                  fhZDenEfficiency->Fill(zgenvariable);
+                }  
+              } 
+            }
           } // selection on jet pt
         } //end of loop over jets
       }//end of loop over events
+    fhEfficiency=(TH1F*)fhNumEfficiency->Clone("fhEfficiency");
+    fhEfficiency->Sumw2();
+    fhZEfficiency=(TH1F*)fhZNumEfficiency->Clone("fhZEfficiency");
+    fhZEfficiency->Sumw2();
+    
+    fhEfficiency->Divide(fhEfficiency,fhDenEfficiency, 1.0, 1.0, "B");
+    fhZEfficiency->Divide(fhZEfficiency,fhZDenEfficiency, 1.0, 1.0, "B");
+    
     hNjets->SetBinContent(1,NjetsforNorm);
     cout<<"calling fit"<<endl;
     return 1;

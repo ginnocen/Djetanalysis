@@ -14,7 +14,7 @@
 
 using namespace std;
 
-void analysis(double jetpt_cut=80.,double Dptlow_cut=20.,double Dpthigh_cut=80.){
+void analysis(double jetpt_cut=80.,double Dptlow_cut=4.,double Dpthigh_cut=30.){
 
   double jeteta_cut=1.6;
   double Dy_cut=2.0;
@@ -35,33 +35,34 @@ void analysis(double jetpt_cut=80.,double Dptlow_cut=20.,double Dpthigh_cut=80.)
   tData->SetDmesonCuts(decaylength_cut,Dalpha_cut,chi2cl_cut,trkptmin_cut,trketa_cut,trkpterr_cut);
   tData->loop(1);
   tData->d_jet(Form("myDataPbPbtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut));
-  
+
   djet* tMC = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_MCHydjet_Dfinder_MC_pthat30_31March_split_finalmerge_2April_v1/merged.root");
   tMC->SetJetPtCutEta(jetpt_cut,jeteta_cut);
   tMC->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
   tMC->SetDmesonCuts(decaylength_cut,Dalpha_cut,chi2cl_cut,trkptmin_cut,trketa_cut,trkpterr_cut);
   tMC->loop(0);
   tMC->d_jet(Form("myMCPbPbtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut));
-  
+
   djet* tpp = new djet("/export/d00/scratch/ginnocen/DjetFiles_HighPtJet80_pp_5TeV_Dfinder_2april_v1/merged.root");
   tpp->SetJetPtCutEta(jetpt_cut,jeteta_cut);
   tpp->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
   tpp->SetDmesonCuts(decaylength_cut,Dalpha_cut,chi2cl_cut,trkptmin_cut,trketa_cut,trkpterr_cut);
   tpp->loop(1);
   tpp->d_jet(Form("myDataPPtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut));
-  
-  djet* tMCpp = new djet("/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170412_pp_5TeV_TuneCUETP8M1_Dfinder_MC_Pthat30_20170404.root");
+ */ 
+  djet* tMCpp = new djet("/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170502_pp_5TeV_TuneCUETP8M1_Dfinder_MC_Pthat15_20170404.root");
   tMCpp->SetJetPtCutEta(jetpt_cut,jeteta_cut);
   tMCpp->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
   tMCpp->SetDmesonCuts(decaylength_cut,Dalpha_cut,chi2cl_cut,trkptmin_cut,trketa_cut,trkpterr_cut); 
   tMCpp->loop(0);
   tMCpp->d_jet(Form("myMCPPtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut));
- */
+/* 
   void runFit(int,int,int,int);
   void comparePP_PbPb(int,int,int);
   runFit(1,intjetpt_cut,intDptlow_cut,intDpthigh_cut);
   runFit(0,intjetpt_cut,intDptlow_cut,intDpthigh_cut);
   comparePP_PbPb(intjetpt_cut,intDptlow_cut,intDpthigh_cut);
+*/
 }
 
 void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=-9999,int intDpthigh_cut=-9999){

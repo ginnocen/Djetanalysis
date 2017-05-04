@@ -54,7 +54,14 @@ public :
    TH1F           *fhHistoZGenSwapped[nZedges];
       
    TH1F           *hNjets;
- 
+   TH1F           *fhDenEfficiency;
+   TH1F           *fhNumEfficiency;
+   TH1F           *fhEfficiency;
+   TH1F           *fhZDenEfficiency;
+   TH1F           *fhZNumEfficiency;
+   TH1F           *fhZEfficiency;
+   
+
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
    Int_t           fCurrent; //!current Tree number in a TChain
 
@@ -285,7 +292,8 @@ public :
    std::vector<int>     *DgencollisionId;
    std::vector<float>   *DgenBAncestorpt;
    std::vector<int>     *DgenBAncestorpdgId;
-   std::vector<int>     *Gsize;
+   
+   int               Gsize;
    std::vector<int>     *GpdgId;
    std::vector<int>     *GisSignal;
    std::vector<float>   *Gy;
@@ -813,7 +821,6 @@ void djet::Init(TTree *tree)
    DgencollisionId = 0;
    DgenBAncestorpt = 0;
    DgenBAncestorpdgId = 0;
-   Gsize = 0;
    GpdgId = 0;
    GisSignal = 0;
    Gy = 0;
@@ -1088,7 +1095,12 @@ void djet::Init(TTree *tree)
      fhHistoZGenSignal[i]=new TH1F(Form("fhHistoZGenSignal_Z%d",i),Form("fhHistoZGenSignal_Z%d",i),60,1.7,2.0);
      fhHistoZGenSwapped[i]=new TH1F(Form("fhHistoZGenSwapped_Z%d",i),Form("fhHistoZGenSwapped_Z%d",i),60,1.7,2.0);
    }
-
+   fhDenEfficiency=new TH1F("fhDenEfficiency","fhDenEfficiency",nRedges,Redges);
+   fhNumEfficiency=new TH1F("fNumEfficiency","fhNumEfficiency",nRedges,Redges);
+   //fhEfficiency=new TH1F("fhEfficiency","fhEfficiency",nRedges,Redges);
+   fhZDenEfficiency=new TH1F("fhZDenEfficiency","fhZDenEfficiency",nZedges,Zedges);
+   fhZNumEfficiency=new TH1F("fhZNumEfficiency","fhZNumEfficiency",nZedges,Zedges);
+   //fhZEfficiency=new TH1F("fhZEfficiency","fhZEfficiency",nZedges,Zedges);
    hNjets=new TH1F("hNjets","hNjets",1,0,1);
 
    Notify();
