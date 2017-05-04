@@ -43,9 +43,9 @@ int djet::loop(int isData) {
         for(int indexjets=0;indexjets<njet_akpu3pf;indexjets++){
          if(debugmode){ 
             cout<<"Dsize="<<Dsize<<endl;
-            cout<<"indexjets="<<indexjets<<",pt="<<(*jetpt_akpu3pf)[indexjets]<<endl;
+            cout<<"indexjets="<<indexjets<<",pt="<<(*jetptCorr_akpu3pf)[indexjets]<<endl;
           }
-          if((*jetpt_akpu3pf)[indexjets] > fJetpt_cut && fabs((*jeteta_akpu3pf)[indexjets]) < fJeteta_cut){
+          if((*jetptCorr_akpu3pf)[indexjets] > fJetpt_cut && fabs((*jeteta_akpu3pf)[indexjets]) < fJeteta_cut){
             NjetsforNorm++;
             for (int indexDm = 0; indexDm < Dsize; indexDm++) {
               if((*Dpt)[indexDm] >fDptlow_cut && (*Dpt)[indexDm] <fDpthigh_cut && fabs((*Dy)[indexDm]) < fDy_cut){
@@ -55,11 +55,13 @@ int djet::loop(int isData) {
                       double deltaphi = acos(cos((*Dphi)[indexDm] - (*jetphi_akpu3pf)[indexjets]));
                       double deltaeta = (*Deta)[indexDm] - (*jeteta_akpu3pf)[indexjets];
                       double DeltaR = sqrt(pow(deltaphi, 2) + pow(deltaeta, 2));
+                      double zvariable=(*Dpt)[indexDm]/(*jetptCorr_akpu3pf)[indexjets];
+
                       if(isData==0 && ((*Dgen)[indexDm])==23333) fhNumEfficiency->Fill(DeltaR);
                       for (int indexR=0; indexR<nRedges; indexR++){ 
                         if(DeltaR>Redges[indexR]&&DeltaR<Redges[indexR+1]){
                           if(debugmode){
-                            cout<<"leading jet pt"<<(*jetpt_akpu3pf)[0]<<",eta="<<(*jeteta_akpu3pf)[indexjets]<<",phi="<<(*jetphi_akpu3pf)[indexjets]<<endl;
+                            cout<<"leading jet pt"<<(*jetptCorr_akpu3pf)[0]<<",eta="<<(*jeteta_akpu3pf)[indexjets]<<",phi="<<(*jetphi_akpu3pf)[indexjets]<<endl;
                             cout<<"Radius between "<<Redges[indexR]<<"and "<<Redges[indexR+1]<<endl;
                             cout<<"Dmeson index="<<indexDm<<",Dmeson pt="<<(*Dpt)[indexDm]<<"Dmeson eta="<<(*Deta)[indexDm]<<", phi="<<(*Dphi)[indexDm]<<"radius="<<DeltaR<<endl;
                             cout<<"Delta eta="<<deltaeta<<", deltaphi="<<deltaphi<<endl;
@@ -72,7 +74,6 @@ int djet::loop(int isData) {
                         }//selection on R
                       }//end of loop over R
  
-                      double zvariable=(*Dpt)[indexDm]/(*jetpt_akpu3pf)[indexjets];
                       if(isData==0 && ((*Dgen)[indexDm])==23333) fhZNumEfficiency->Fill(zvariable);
                       for (int indexZ=0; indexZ<nZedges; indexZ++){
                         if(zvariable>Zedges[indexZ]&&zvariable<Zedges[indexZ+1]){
@@ -95,7 +96,7 @@ int djet::loop(int isData) {
                   double deltagenphi = acos(cos((*Gphi)[indexDgenm] - (*jetphi_akpu3pf)[indexjets]));
                   double deltageneta = (*Geta)[indexDgenm] - (*jeteta_akpu3pf)[indexjets];
                   double DeltagenR = sqrt(pow(deltagenphi, 2) + pow(deltageneta, 2));
-                  double zgenvariable=(*Gpt)[indexDgenm]/(*jetpt_akpu3pf)[indexjets];
+                  double zgenvariable=(*Gpt)[indexDgenm]/(*jetptCorr_akpu3pf)[indexjets];
                   fhDenEfficiency->Fill(DeltagenR);
                   fhZDenEfficiency->Fill(zgenvariable);
                 }  
