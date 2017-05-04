@@ -14,7 +14,7 @@
 
 using namespace std;
 
-void loop(double jetpt_cut=80.,double Dptlow_cut=4.,double Dpthigh_cut=30.){
+void loop(double jetpt_cut=80.,double Dptlow_cut=4.,double Dpthigh_cut=999.){
 
   double jeteta_cut=1.6;
   double Dy_cut=2.0;
@@ -50,7 +50,7 @@ void loop(double jetpt_cut=80.,double Dptlow_cut=4.,double Dpthigh_cut=30.){
   tpp->loop(1);
   tpp->d_jet(Form("myDataPPtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut));
 */
-  djet* tMCpp = new djet("/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170502_pp_5TeV_TuneCUETP8M1_Dfinder_MC_Pthat15_20170404.root");
+  djet* tMCpp = new djet("/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170502_pp_5TeV_TuneCUETP8M1_Dfinder_MC_Pthat5-120_20170404.root");
   tMCpp->SetJetPtCutEta(jetpt_cut,jeteta_cut);
   tMCpp->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
   tMCpp->SetDmesonCuts(decaylength_cut,Dalpha_cut,chi2cl_cut,trkptmin_cut,trketa_cut,trkpterr_cut); 
@@ -65,7 +65,7 @@ void loop(double jetpt_cut=80.,double Dptlow_cut=4.,double Dpthigh_cut=30.){
 */
 }
 
-void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=-9999,int intDpthigh_cut=-9999){
+void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_cut=999){
 
    djet* tempty = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_2_3_4_26March_finalMerge2April_v1/merged_total.root");
    const int nedgesR=tempty->GetnRedges();
@@ -79,7 +79,8 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=-9999,int intDpthi
    TString file,fileMC,output;
 
    if(isPP){
-     file=Form("myDataPPtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
+     //file=Form("myDataPPtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
+     file=Form("myMCPPtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
      fileMC=Form("myMCPPtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
      output=Form("resultsPP_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
    }
@@ -190,6 +191,8 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=-9999,int intDpthi
   hZSignalMC->Write();
   hJetShape->Write();
   hFF->Write();
+  fhEfficiency->Write();
+  fhZEfficiency->Write();
   foutput->Close();
 }
 
