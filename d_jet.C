@@ -41,11 +41,7 @@ int djet::loop(int isData) {
       if(debugmode) cout<<"********************* event number="<<evt<<" *********************"<<endl;
       if (!(Dsize > 0 && njet_akpu3pf)) continue;
         for(int indexjets=0;indexjets<njet_akpu3pf;indexjets++){
-         if(debugmode){ 
-            cout<<"Dsize="<<Dsize<<endl;
-            cout<<"indexjets="<<indexjets<<",pt="<<(*jetptCorr_akpu3pf)[indexjets]<<endl;
-          }
-          if((*jetptCorr_akpu3pf)[indexjets] > fJetpt_cut && fabs((*jeteta_akpu3pf)[indexjets]) < fJeteta_cut){
+         if((*jetptCorr_akpu3pf)[indexjets] > fJetpt_cut && fabs((*jeteta_akpu3pf)[indexjets]) < fJeteta_cut){
             NjetsforNorm++;
             for (int indexDm = 0; indexDm < Dsize; indexDm++) {
               if((*Dpt)[indexDm] >fDptlow_cut && (*Dpt)[indexDm] <fDpthigh_cut && fabs((*Dy)[indexDm]) < fDy_cut){
@@ -60,12 +56,6 @@ int djet::loop(int isData) {
                       if(isData==0 && ((*Dgen)[indexDm])==23333) fhNumEfficiency->Fill(DeltaR);
                       for (int indexR=0; indexR<nRedges; indexR++){ 
                         if(DeltaR>Redges[indexR]&&DeltaR<Redges[indexR+1]){
-                          if(debugmode){
-                            cout<<"leading jet pt"<<(*jetptCorr_akpu3pf)[0]<<",eta="<<(*jeteta_akpu3pf)[indexjets]<<",phi="<<(*jetphi_akpu3pf)[indexjets]<<endl;
-                            cout<<"Radius between "<<Redges[indexR]<<"and "<<Redges[indexR+1]<<endl;
-                            cout<<"Dmeson index="<<indexDm<<",Dmeson pt="<<(*Dpt)[indexDm]<<"Dmeson eta="<<(*Deta)[indexDm]<<", phi="<<(*Dphi)[indexDm]<<"radius="<<DeltaR<<endl;
-                            cout<<"Delta eta="<<deltaeta<<", deltaphi="<<deltaphi<<endl;
-                          }
                           fhHistoMass[indexR]->Fill((*Dmass)[indexDm]);
                           if(!isData){
                             if(((*Dgen)[indexDm])==23333) fhHistoGenSignal[indexR]->Fill((*Dmass)[indexDm]);
@@ -105,15 +95,16 @@ int djet::loop(int isData) {
           } // selection on jet pt
         } //end of loop over jets
       }//end of loop over events
-
-    divideBinWidth(fhDenEfficiency);
-    divideBinWidth(fhNumEfficiency);
-    divideBinWidth(fhZDenEfficiency);
-    divideBinWidth(fhZNumEfficiency);
-
+   
+    fhDenEfficiency->Sumw2();
+    fhNumEfficiency->Sumw2();
+    fhZDenEfficiency->Sumw2();
+    fhZNumEfficiency->Sumw2();
     fhEfficiency=(TH1F*)fhNumEfficiency->Clone("fhEfficiency");
     fhZEfficiency=(TH1F*)fhZNumEfficiency->Clone("fhZEfficiency");
-    
+    fhEfficiency->Sumw2();
+    fhZEfficiency->Sumw2();
+
     fhEfficiency->Divide(fhEfficiency,fhDenEfficiency, 1.0, 1.0, "B");
     fhZEfficiency->Divide(fhZEfficiency,fhZDenEfficiency, 1.0, 1.0, "B");
     

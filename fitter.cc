@@ -87,7 +87,7 @@ Dfitter::Dfitter(TH1F* hMass, TH1F*hMC, TH1F*hMCswapped, TString suffixcanvas){
   fhMass->Fit("fFuncTotal","L q","",minhisto,maxhisto);
   fhMass->Fit("fFuncTotal","L m","",minhisto,maxhisto);
   
-  TF1* fFuncBackground = new TF1("fFuncBackground","[0]+[1]*x+[2]*x*x+[3]*x*x*x");
+  fFuncBackground = new TF1("fFuncBackground","[0]+[1]*x+[2]*x*x+[3]*x*x*x");
   fFuncBackground->SetParameter(0,fFuncTotal->GetParameter(3));
   fFuncBackground->SetParameter(1,fFuncTotal->GetParameter(4));
   fFuncBackground->SetParameter(2,fFuncTotal->GetParameter(5));
@@ -96,7 +96,7 @@ Dfitter::Dfitter(TH1F* hMass, TH1F*hMC, TH1F*hMCswapped, TString suffixcanvas){
   fFuncBackground->SetRange(minhisto,maxhisto);
   fFuncBackground->SetLineStyle(2);
   
-  TF1* fFuncMass = new TF1("fmass","[0]*([3]*([4]*Gaus(x,[1],[2]*(1+[6]))/(sqrt(2*3.14159)*[2]*(1+[6]))+(1-[4])*Gaus(x,[1],[5]*(1+[6]))/(sqrt(2*3.14159)*[5]*(1+[6]))))");
+  fFuncMass = new TF1("fmass","[0]*([3]*([4]*Gaus(x,[1],[2]*(1+[6]))/(sqrt(2*3.14159)*[2]*(1+[6]))+(1-[4])*Gaus(x,[1],[5]*(1+[6]))/(sqrt(2*3.14159)*[5]*(1+[6]))))");
   fFuncMass->SetParameters(fFuncTotal->GetParameter(0),fFuncTotal->GetParameter(1),fFuncTotal->GetParameter(2),fFuncTotal->GetParameter(7),fFuncTotal->GetParameter(9),fFuncTotal->GetParameter(10),fFuncTotal->GetParameter(11));
   fFuncMass->SetParError(0,fFuncTotal->GetParError(0));
   fFuncMass->SetParError(1,fFuncTotal->GetParError(1));
@@ -110,7 +110,7 @@ Dfitter::Dfitter(TH1F* hMass, TH1F*hMC, TH1F*hMCswapped, TString suffixcanvas){
   fFuncMass->SetLineWidth(3);
   fFuncMass->SetLineStyle(2);
   
-  TF1* fFuncMassSwap = new TF1("fmassSwap","[0]*(1-[2])*Gaus(x,[1],[3]*(1+[4]))/(sqrt(2*3.14159)*[3]*(1+[4]))");
+  fFuncMassSwap = new TF1("fmassSwap","[0]*(1-[2])*Gaus(x,[1],[3]*(1+[4]))/(sqrt(2*3.14159)*[3]*(1+[4]))");
   fFuncMassSwap->SetParameters(fFuncTotal->GetParameter(0),fFuncTotal->GetParameter(1),fFuncTotal->GetParameter(7),fFuncTotal->GetParameter(8),fFuncTotal->GetParameter(11));
   fFuncMassSwap->SetParError(0,fFuncTotal->GetParError(0));
   fFuncMassSwap->SetParError(1,fFuncTotal->GetParError(1));
@@ -177,7 +177,7 @@ Dfitter::Dfitter(TH1F* hMass, TH1F*hMC, TH1F*hMCswapped, TString suffixcanvas){
 
 double Dfitter::GetSignal(){
 
-  double signal=fFuncTotal->Integral(minhisto,maxhisto)/binwidthmass; 
+  double signal=fFuncMass->Integral(minhisto,maxhisto)/binwidthmass; 
   return signal;
 
 }
@@ -185,7 +185,7 @@ double Dfitter::GetSignal(){
 
 double Dfitter::GetSignalError(){
 
-  double signalerror=fFuncTotal->Integral(minhisto,maxhisto)/binwidthmass*fFuncTotal->GetParError(0)/fFuncTotal->GetParameter(0); 
+  double signalerror=fFuncMass->Integral(minhisto,maxhisto)/binwidthmass*fFuncMass->GetParError(0)/fFuncMass->GetParameter(0); 
   return signalerror;
 
 }

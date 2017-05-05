@@ -171,6 +171,7 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_c
        hSignalData->SetBinError(i+1,fitData[i]->GetSignalError());
        hSignalMC->SetBinContent(i+1,fitMC[i]->GetSignal());
        hSignalMC->SetBinError(i+1,fitMC[i]->GetSignalError());
+       cout<<"GUARDA QUI pt bin="<<i<<", value"<<fitData[i]->GetSignal()<<endl;
     }
 
    TString canvasZData;
@@ -197,7 +198,8 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_c
 }
   double normJetsData=hNjetsData->GetBinContent(1); 
   double normJetsMC=hNjetsMC->GetBinContent(1);
-  
+ 
+ 
   divideBinWidth(hSignalData);
   divideBinWidth(hSignalMC);
   divideBinWidth(hZSignalData);
@@ -214,8 +216,10 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_c
   fhZNumEfficiency->Scale(1./normJetsMC);
 
   TH1F*hJetShape=(TH1F*)hSignalData->Clone("hJetShape");
+  hJetShape->Sumw2();
   hJetShape->Divide(fhEfficiency);
   TH1F*hFF=(TH1F*)hZSignalData->Clone("hFF");
+  hFF->Sumw2();
   hFF->Divide(fhZEfficiency);
 
   TCanvas*canvas=new TCanvas("canvas","canvas",500,500);
