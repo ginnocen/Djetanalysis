@@ -195,6 +195,15 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
     }
     djt.njet_akpu3pf = njet_akpu3pf;
 
+
+    djt.ngen_akpu3pf = jt_akpu3pf.ngen;
+    for (int igen = 0; igen < jt_akpu3pf.ngen; ++igen) {
+      djt.genpt_akpu3pf.push_back(jt_akpu3pf.genpt[igen]);
+      djt.geneta_akpu3pf.push_back(jt_akpu3pf.geneta[igen]);
+      djt.genphi_akpu3pf.push_back(jt_akpu3pf.genphi[igen]);
+      djt.gensubid_akpu3pf.push_back(jt_akpu3pf.gensubid[igen]);
+    }
+
     int njet_akpu4pf = 0;
     for (int ij = 0; ij < jt_akpu4pf.nref; ij++) {
       if (jt_akpu4pf.jtpt[ij] > 30 && fabs(jt_akpu4pf.jteta[ij]) < 1.6) {
