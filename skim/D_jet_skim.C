@@ -49,6 +49,7 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
   _SET_BRANCH_ADDRESS(event_tree, hiBin, hiBin);
   _SET_BRANCH_ADDRESS(event_tree, vz, vz);
   _SET_BRANCH_ADDRESS(event_tree, weight, djt.weight);
+  _SET_BRANCH_ADDRESS(event_tree, pthat, djt.pthat);
   _SET_BRANCH_ADDRESS(event_tree, hiEvtPlanes, hiEvtPlanes);
 
   TTree* skim_tree = (TTree*)finput->Get("skimanalysis/HltTree");
