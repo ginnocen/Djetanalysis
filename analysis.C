@@ -239,6 +239,8 @@ void runFit(int isPP=1,int genIndex=0,int intjetpt_cut=80, int intDptlow_cut=4,i
   fhDenEfficiency->Write();
   fhZNumEfficiency->Write();
   fhZDenEfficiency->Write();
+  hNjetsData->Write();
+  hNjetsMC->Write();
   foutput->Close();
 }
 
