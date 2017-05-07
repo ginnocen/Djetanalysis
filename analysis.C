@@ -68,14 +68,14 @@ void loop(double jetpt_cut=80.,double Dptlow_cut=4.,double Dpthigh_cut=999.){
   tpp->loop(1);
   tpp->d_jet(Form("myDataPPtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut));
 */
-  djet* tMCpp = new djet("/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170502_pp_5TeV_TuneCUETP8M1_Dfinder_MC_Pthat5-120_20170404.root");
+  djet* tMCpp = new djet("/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight.root");
   tMCpp->SetJetPtCutEta(jetpt_cut,jeteta_cut);
   tMCpp->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
   tMCpp->SetDmesonCuts(decaylength_cut,Dalpha_cut,chi2cl_cut,trkptmin_cut,trketa_cut,trkpterr_cut); 
   tMCpp->loop(0);
   tMCpp->d_jet(Form("myMCPPtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut));
 /* 
-  void runFit(int,int,int,int);
+  void runFit(int,int,int,int,int);
   void comparePP_PbPb(int,int,int);
   runFit(1,intjetpt_cut,intDptlow_cut,intDpthigh_cut);
   runFit(0,intjetpt_cut,intDptlow_cut,intDpthigh_cut);
@@ -83,9 +83,9 @@ void loop(double jetpt_cut=80.,double Dptlow_cut=4.,double Dpthigh_cut=999.){
 */
 }
 
-void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_cut=999){
-
-   djet* tempty = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_2_3_4_26March_finalMerge2April_v1/merged_total.root");
+void runFit(int isPP=1,int genIndex=0,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_cut=999){
+ 
+   djet* tempty = new djet("/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight.root");
    const int nedgesR=tempty->GetnRedges();
    double Redges[nedgesR+1];
    for (int m=0;m<nedgesR+1;m++) Redges[m]=tempty->GetRedgesEdges(m);
@@ -100,20 +100,20 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_c
      //file=Form("myDataPPtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
      file=Form("myMCPPtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
      fileMC=Form("myMCPPtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
-     output=Form("resultsPP_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
+     output=Form("resultsPP_jet%d_Dlow%d_Dhigh%d_genIndex%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut,genIndex);
    }
    
    if(!isPP){
      file=Form("myDataPbPbtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
      fileMC=Form("myMCPbPbtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
-     output=Form("resultsPbPb_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
+     output=Form("resultsPbPb_jet%d_Dlow%d_Dhigh%d_genIndex%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut,genIndex);
    }
  
    TH1F *hHistoMassMC[nedgesR];
    TH1F *hHistoMassData[nedgesR];
    TH1F* hHistoGenSignal[nedgesR];
    TH1F* hHistoGenSwapped[nedgesR];
-
+ 
    TH1F *hHistoZMassMC[nedgesZ];
    TH1F *hHistoZMassData[nedgesZ];
    TH1F* hHistoZGenSignal[nedgesZ];
@@ -139,29 +139,29 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_c
    TH1F*hNjetsMC=(TH1F*)finputMC->Get("hNjets");
    hNjetsData->SetName("hNjetsData");
    hNjetsMC->SetName("hNjetsMC");
-   
-   TH1F*fhEfficiency=(TH1F*)finputMC->Get("fhEfficiency");
-   TH1F*fhZEfficiency=(TH1F*)finputMC->Get("fhZEfficiency");
-   TH1F*fhDenEfficiency=(TH1F*)finputMC->Get("fhDenEfficiency");
-   TH1F*fhNumEfficiency=(TH1F*)finputMC->Get("fhNumEfficiency");
-   TH1F*fhZDenEfficiency=(TH1F*)finputMC->Get("fhZDenEfficiency");
-   TH1F*fhZNumEfficiency=(TH1F*)finputMC->Get("fhZNumEfficiency");
-   
-   fhEfficiency->SetName("fhEfficiency");
-   fhZEfficiency->SetName("fhZEfficiency");
-   fhNumEfficiency->SetName("fhNumEfficiency");
-   fhDenEfficiency->SetName("fhDenEfficiency");
-   fhZNumEfficiency->SetName("fhZNumEfficiency");
-   fhZDenEfficiency->SetName("fhZDenEfficiency");
-   
+ 
+   TH1F*fhEfficiency=(TH1F*)finputMC->Get(Form("fhEfficiency_%d",genIndex));
+   TH1F*fhZEfficiency=(TH1F*)finputMC->Get(Form("fhZEfficiency_%d",genIndex));
+   TH1F*fhDenEfficiency=(TH1F*)finputMC->Get(Form("fhDenEfficiency_%d",genIndex));
+   TH1F*fhNumEfficiency=(TH1F*)finputMC->Get(Form("fhNumEfficiency_%d",genIndex));
+   TH1F*fhZDenEfficiency=(TH1F*)finputMC->Get(Form("fhZDenEfficiency_%d",genIndex));
+   TH1F*fhZNumEfficiency=(TH1F*)finputMC->Get(Form("fhZNumEfficiency_%d",genIndex));
+   /*
+   fhEfficiency->SetName(Form("fhEfficiency_%d",genIndex));
+   fhZEfficiency->SetName(Form("fhZEfficiency_%d",genIndex));
+   fhNumEfficiency->SetName(Form("fhNumEfficiency_%d",genIndex));
+   fhDenEfficiency->SetName(Form("fhDenEfficiency_%d",genIndex));
+   fhZNumEfficiency->SetName(Form("fhZNumEfficiency_%d",genIndex));
+   fhZDenEfficiency->SetName(Form("fhZDenEfficiency_%d",genIndex));
+   */
     for (int i=0;i<nedgesR;i++){
       canvasData=Form("PlotsFits/ResultsDataJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Rindex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i);
       canvasMC=Form("PlotsFits/ResultsMCJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Rindex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i);
 
-      hHistoMassData[i]=(TH1F*)finput->Get(Form("fhHistoMass_R%d",i));
-      hHistoMassMC[i]=(TH1F*)finputMC->Get(Form("fhHistoMass_R%d",i));
-      hHistoGenSignal[i]=(TH1F*)finputMC->Get(Form("fhHistoGenSignal_R%d",i));
-      hHistoGenSwapped[i]=(TH1F*)finputMC->Get(Form("fhHistoGenSwapped_R%d",i));
+      hHistoMassData[i]=(TH1F*)finput->Get(Form("fhHistoMass_indexGen%d_R%d",genIndex,i));
+      hHistoMassMC[i]=(TH1F*)finputMC->Get(Form("fhHistoMass_indexGen%d_R%d",genIndex,i));
+      hHistoGenSignal[i]=(TH1F*)finputMC->Get(Form("fhHistoGenSignal_indexGen%d_R%d",genIndex,i));
+      hHistoGenSwapped[i]=(TH1F*)finputMC->Get(Form("fhHistoGenSwapped_indexGen%d_R%d",genIndex,i));
       fitData[i]=new Dfitter(hHistoMassData[i],hHistoGenSignal[i],hHistoGenSwapped[i],canvasData);
       fitMC[i]=new Dfitter(hHistoMassMC[i],hHistoGenSignal[i],hHistoGenSwapped[i],canvasMC);
 
@@ -182,10 +182,10 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_c
       canvasZData=Form("PlotsFits/ResultsZDataJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Zindex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i);
       canvasZMC=Form("PlotsFits/ResultsZMCJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Zindex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i);
 
-      hHistoZMassData[i]=(TH1F*)finput->Get(Form("fhHistoZMass_Z%d",i));
-      hHistoZMassMC[i]=(TH1F*)finputMC->Get(Form("fhHistoZMass_Z%d",i));
-      hHistoZGenSignal[i]=(TH1F*)finputMC->Get(Form("fhHistoZGenSignal_Z%d",i));
-      hHistoZGenSwapped[i]=(TH1F*)finputMC->Get(Form("fhHistoZGenSwapped_Z%d",i));
+      hHistoZMassData[i]=(TH1F*)finput->Get(Form("fhHistoZMass_indexGen%d_R%d",genIndex,i));
+      hHistoZMassMC[i]=(TH1F*)finputMC->Get(Form("fhHistoZMass_indexGen%d_R%d",genIndex,i));
+      hHistoZGenSignal[i]=(TH1F*)finputMC->Get(Form("fhHistoZGenSignal_indexGen%d_R%d",genIndex,i));
+      hHistoZGenSwapped[i]=(TH1F*)finputMC->Get(Form("fhHistoZGenSwapped_indexGen%d_R%d",genIndex,i));
       fitZData[i]=new Dfitter(hHistoZMassData[i],hHistoZGenSignal[i],hHistoZGenSwapped[i],canvasZData);
       fitZMC[i]=new Dfitter(hHistoZMassMC[i],hHistoZGenSignal[i],hHistoZGenSwapped[i],canvasZMC);
 
@@ -196,15 +196,18 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_c
        hZSignalMC->SetBinContent(i+1,fitZMC[i]->GetSignal());
        hZSignalMC->SetBinError(i+1,fitZMC[i]->GetSignalError());
 }
-  double normJetsData=hNjetsData->GetBinContent(1); 
-  double normJetsMC=hNjetsMC->GetBinContent(1);
+  double normJetsData=hNjetsData->GetBinContent(genIndex+1); 
+  double normJetsMC=hNjetsMC->GetBinContent(genIndex+1);
  
  
   divideBinWidth(hSignalData);
   divideBinWidth(hSignalMC);
   divideBinWidth(hZSignalData);
   divideBinWidth(hZSignalMC);
-
+  divideBinWidth(fhNumEfficiency);
+  divideBinWidth(fhDenEfficiency);
+  divideBinWidth(fhZDenEfficiency);
+  divideBinWidth(fhZNumEfficiency);
 
   hSignalData->Scale(1./normJetsData);
   hZSignalData->Scale(1./normJetsData);
@@ -225,7 +228,7 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_c
   TCanvas*canvas=new TCanvas("canvas","canvas",500,500);
   canvas->cd();
   canvas->SetLogy();
-  
+  cout<<"step4"<<endl; 
   TFile* foutput = new TFile(output.Data(),"recreate");
   hSignalData->Write();
   hSignalMC->Write();
@@ -239,6 +242,8 @@ void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_c
   fhDenEfficiency->Write();
   fhZNumEfficiency->Write();
   fhZDenEfficiency->Write();
+  hNjetsData->Write();
+  hNjetsMC->Write();
   foutput->Close();
 }
 

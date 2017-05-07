@@ -45,21 +45,24 @@ public :
    static const int nZedges=5;  
    double Zedges[nZedges+1]={0.,0.2,0.4,0.6,0.8,1.0};     //different R ranges
    
-   TH1F           *fhHistoMass[nRedges];                       //different R radius=0,0.1,0.2,0.3,0.5,1.0
-   TH1F           *fhHistoGenSignal[nRedges];
-   TH1F           *fhHistoGenSwapped[nRedges];
+   static const int indexGenRecoMass=2;
+   static const int indexGenRecoEff=2;
+ 
+   TH1F           *fhHistoMass[indexGenRecoMass][nRedges];                       //different R radius=0,0.1,0.2,0.3,0.5,1.0
+   TH1F           *fhHistoGenSignal[indexGenRecoMass][nRedges];
+   TH1F           *fhHistoGenSwapped[indexGenRecoMass][nRedges];
    
-   TH1F           *fhHistoZMass[nZedges];                       //different R radius=0,0.1,0.2,0.3,0.5,1.0
-   TH1F           *fhHistoZGenSignal[nZedges];
-   TH1F           *fhHistoZGenSwapped[nZedges];
+   TH1F           *fhHistoZMass[indexGenRecoMass][nZedges];                       //different R radius=0,0.1,0.2,0.3,0.5,1.0
+   TH1F           *fhHistoZGenSignal[indexGenRecoMass][nZedges];
+   TH1F           *fhHistoZGenSwapped[indexGenRecoMass][nZedges];
       
    TH1F           *hNjets;
-   TH1F           *fhDenEfficiency;
-   TH1F           *fhNumEfficiency;
-   TH1F           *fhEfficiency;
-   TH1F           *fhZDenEfficiency;
-   TH1F           *fhZNumEfficiency;
-   TH1F           *fhZEfficiency;
+   TH1F           *fhDenEfficiency[indexGenRecoEff];
+   TH1F           *fhNumEfficiency[indexGenRecoEff];
+   TH1F           *fhEfficiency[indexGenRecoEff];
+   TH1F           *fhZDenEfficiency[indexGenRecoEff];
+   TH1F           *fhZNumEfficiency[indexGenRecoEff];
+   TH1F           *fhZEfficiency[indexGenRecoEff];
    
 
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
@@ -553,12 +556,12 @@ public :
    virtual ~djet();
    virtual int      d_jet(std::string output);
    virtual Int_t    Cut(Long64_t entry);
-   virtual TH1F*    GetMassSpectrum(int); 
-   virtual TH1F*    GetMassSpectrumGenSignal(int);
-   virtual TH1F*    GetMassSpectrumGenSwapped(int);
-   virtual TH1F*    GetMassZSpectrum(int); 
-   virtual TH1F*    GetMassZSpectrumGenSignal(int);
-   virtual TH1F*    GetMassZSpectrumGenSwapped(int);
+   virtual TH1F*    GetMassSpectrum(int,int); 
+   virtual TH1F*    GetMassSpectrumGenSignal(int,int);
+   virtual TH1F*    GetMassSpectrumGenSwapped(int,int);
+   virtual TH1F*    GetMassZSpectrum(int,int); 
+   virtual TH1F*    GetMassZSpectrumGenSignal(int,int);
+   virtual TH1F*    GetMassZSpectrumGenSwapped(int,int);
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
    virtual void     Init(TTree *tree);
@@ -573,7 +576,11 @@ public :
    virtual double GetZedgesEdges(int index);
    virtual int      loop(int isData);
    virtual void divideBinWidth(TH1F*h);
-
+   virtual bool selectDgen(double Gpt,double Gy,int isGsignal);
+   virtual bool selectDrecoCand(double Dpt,double Dy,double DsvpvDistance,double DsvpvDisErr,double Dalpha,double Dchi2cl);
+   virtual bool selectDrecoTrack(double Dtrk1Eta,double Dtrk2Eta,double Dtrk1Pt,double Dtrk2Pt,double Dtrk1PtErr,double Dtrk2PtErr,int Dtrk1highPurity,int Dtrk2highPurity);
+   virtual void fillHistoR(bool isData,int indexgen,double Rvalue,double mass,int genvalue);
+   virtual void fillHistoZ(bool isData,int indexgen,double Zvalue,double mass,int genvalue);
 
 };
 
@@ -1083,26 +1090,27 @@ void djet::Init(TTree *tree)
 
 
 
-      
-   for (int i=0;i<nRedges;i++){
-     fhHistoMass[i]=new TH1F(Form("fhHistoMass_R%d",i),Form("fhHistoMass_R%d",i),60,1.7,2.0);
-     fhHistoGenSignal[i]=new TH1F(Form("fhHistoGenSignal_R%d",i),Form("fhHistoGenSignal_R%d",i),60,1.7,2.0);
-     fhHistoGenSwapped[i]=new TH1F(Form("fhHistoGenSwapped_R%d",i),Form("fhHistoGenSwapped_R%d",i),60,1.7,2.0);
+   for (int indexGen=0;indexGen<indexGenRecoMass;indexGen++){  
+     for (int i=0;i<nRedges;i++){
+       fhHistoMass[indexGen][i]=new TH1F(Form("fhHistoMass_indexGen%d_R%d",indexGen,i),Form("fhHistoMass_indexGen%d_R%d",indexGen,i),60,1.7,2.0);
+       fhHistoGenSignal[indexGen][i]=new TH1F(Form("fhHistoGenSignal_indexGen%d_R%d",indexGen,i),Form("fhHistoGenSignal_indexGen%d_R%d",indexGen,i),60,1.7,2.0);
+       fhHistoGenSwapped[indexGen][i]=new TH1F(Form("fhHistoGenSwapped_indexGen%d_R%d",indexGen,i),Form("fhHistoGenSwapped_indexGen%d_R%d",indexGen,i),60,1.7,2.0);
+     }
+     for (int i=0;i<nZedges;i++){
+       fhHistoZMass[indexGen][i]=new TH1F(Form("fhHistoZMass_indexGen%d_R%d",indexGen,i),Form("fhHistoZMass_indexGen%d_R%d",indexGen,i),60,1.7,2.0);
+       fhHistoZGenSignal[indexGen][i]=new TH1F(Form("fhHistoZGenSignal_indexGen%d_R%d",indexGen,i),Form("fhHistoZGenSignal_indexGen%d_R%d",indexGen,i),60,1.7,2.0);
+       fhHistoZGenSwapped[indexGen][i]=new TH1F(Form("fhHistoZGenSwapped_indexGen%d_R%d",indexGen,i),Form("fhHistoZGenSwapped_indexGen%d_R%d",indexGen,i),60,1.7,2.0);
+    }
    }
 
-   for (int i=0;i<nZedges;i++){
-     fhHistoZMass[i]=new TH1F(Form("fhHistoZMass_Z%d",i),Form("fhHistoZMass_Z%d",i),60,1.7,2.0);
-     fhHistoZGenSignal[i]=new TH1F(Form("fhHistoZGenSignal_Z%d",i),Form("fhHistoZGenSignal_Z%d",i),60,1.7,2.0);
-     fhHistoZGenSwapped[i]=new TH1F(Form("fhHistoZGenSwapped_Z%d",i),Form("fhHistoZGenSwapped_Z%d",i),60,1.7,2.0);
-   }
-   fhDenEfficiency=new TH1F("fhDenEfficiency","fhDenEfficiency",nRedges,Redges);
-   fhNumEfficiency=new TH1F("fhNumEfficiency","fhNumEfficiency",nRedges,Redges);
-   //fhEfficiency=new TH1F("fhEfficiency","fhEfficiency",nRedges,Redges);
-   fhZDenEfficiency=new TH1F("fhZDenEfficiency","fhZDenEfficiency",nZedges,Zedges);
-   fhZNumEfficiency=new TH1F("fhZNumEfficiency","fhZNumEfficiency",nZedges,Zedges);
-   //fhZEfficiency=new TH1F("fhZEfficiency","fhZEfficiency",nZedges,Zedges);
-   hNjets=new TH1F("hNjets","hNjets",1,0,1);
-
+   for (int indexEff=0;indexEff<indexGenRecoEff;indexEff++){
+     fhNumEfficiency[indexEff]=new TH1F(Form("fhNumEfficiency_%d",indexEff),Form("fhNumEfficiency_%d",indexEff),nRedges,Redges);
+     fhDenEfficiency[indexEff]=new TH1F(Form("fhDenEfficiency_%d",indexEff),Form("fhDenEfficiency_%d",indexEff),nRedges,Redges);
+     fhZNumEfficiency[indexEff]=new TH1F(Form("fhZNumEfficiency_%d",indexEff),Form("fhZNumEfficiency_%d",indexEff),nZedges,Zedges);
+     fhZDenEfficiency[indexEff]=new TH1F(Form("fhZDenEfficiency_%d",indexEff),Form("fhZDenEfficiency_%d",indexEff),nZedges,Zedges);
+  }  
+   
+   hNjets=new TH1F("hNjets","hNjets",2,0,2);
    Notify();
 }
 
@@ -1132,34 +1140,34 @@ Int_t djet::Cut(Long64_t entry)
 // returns -1 otherwise.
    return 1;
 }
-TH1F* djet::GetMassSpectrum(int indexcone)
+TH1F* djet::GetMassSpectrum(int indexgen,int indexcone)
 {  
-  return fhHistoMass[indexcone];
+  return fhHistoMass[indexgen][indexcone];
 }
 
-TH1F* djet::GetMassSpectrumGenSignal(int indexcone)
+TH1F* djet::GetMassSpectrumGenSignal(int indexgen,int indexcone)
 {
-  return fhHistoGenSignal[indexcone];
+  return fhHistoGenSignal[indexgen][indexcone];
 }
 
-TH1F* djet::GetMassSpectrumGenSwapped(int indexcone)
+TH1F* djet::GetMassSpectrumGenSwapped(int indexgen,int indexcone)
 {
-  return fhHistoGenSwapped[indexcone];
+  return fhHistoGenSwapped[indexgen][indexcone];
 }
 
-TH1F* djet::GetMassZSpectrum(int indexcone)
+TH1F* djet::GetMassZSpectrum(int indexgen,int indexcone)
 {  
-  return fhHistoZMass[indexcone];
+  return fhHistoZMass[indexgen][indexcone];
 }
 
-TH1F* djet::GetMassZSpectrumGenSignal(int indexcone)
+TH1F* djet::GetMassZSpectrumGenSignal(int indexgen,int indexcone)
 {
-  return fhHistoZGenSignal[indexcone];
+  return fhHistoZGenSignal[indexgen][indexcone];
 }
 
-TH1F* djet::GetMassZSpectrumGenSwapped(int indexcone)
+TH1F* djet::GetMassZSpectrumGenSwapped(int indexgen,int indexcone)
 {
-  return fhHistoZGenSwapped[indexcone];
+  return fhHistoZGenSwapped[indexgen][indexcone];
 }
 
 
@@ -1222,5 +1230,58 @@ double djet::GetZedgesEdges(int index){
   return Zedges[index];
 }
 
+bool djet::selectDgen(double Gpt,double Gy,int isGsignal){
+  bool selected=false;
+  if(Gpt >fDptlow_cut && Gpt <fDpthigh_cut && fabs(Gy) < fDy_cut && ((isGsignal==1 ) || (isGsignal==2))){
+    selected=true;
+  }
+  return selected;
+}
+
+
+
+bool djet::selectDrecoCand(double Dpt,double Dy,double DsvpvDistance,double DsvpvDisErr,double Dalpha,double Dchi2cl){
+  bool selected=false;
+  if(Dpt >fDptlow_cut && Dpt <fDpthigh_cut && fabs(Dy) < fDy_cut){
+    if ((DsvpvDistance/DsvpvDisErr) > fDdecaylength_cut && Dalpha < fDalpha_cut && Dchi2cl > fDchi2cl_cut ) {
+      selected=true;
+    }
+  }
+  return selected;
+}
+
+bool djet::selectDrecoTrack(double Dtrk1Eta,double Dtrk2Eta,double Dtrk1Pt,double Dtrk2Pt,double Dtrk1PtErr,double Dtrk2PtErr,int Dtrk1highPurity,int Dtrk2highPurity){
+  bool selected=false;
+  if(fabs(Dtrk1Eta) < fDtrketa_cut && fabs(Dtrk2Eta) < fDtrketa_cut && Dtrk1Pt > fDtrkptmin_cut && Dtrk2Pt > fDtrkptmin_cut){
+    if((Dtrk1PtErr /Dtrk1Pt) < fDtrkpterr_cut && (Dtrk2PtErr/Dtrk2Pt) < fDtrkpterr_cut && Dtrk1highPurity==1 && Dtrk2highPurity==1){
+      selected=true;
+    }
+  }
+  return selected;
+}
+
+void djet::fillHistoR(bool isData,int indexgen,double Rvalue,double mass,int genvalue){
+  for (int indexR=0; indexR<nRedges; indexR++){
+    if(Rvalue>Redges[indexR]&&Rvalue<Redges[indexR+1]){
+      fhHistoMass[indexgen][indexR]->Fill(mass);
+      if(!isData){
+        if(genvalue==23333) fhHistoGenSignal[indexgen][indexR]->Fill(mass);
+        else if (genvalue==23344) fhHistoGenSwapped[indexgen][indexR]->Fill(mass);
+      }
+    }//selection on R
+  }//end of loop over R
+}
+
+void djet::fillHistoZ(bool isData,int indexgen,double Zvalue,double mass,int genvalue){
+  for (int indexZ=0; indexZ<nZedges; indexZ++){
+    if(Zvalue>Zedges[indexZ]&&Zvalue<Zedges[indexZ+1]){
+      fhHistoZMass[indexgen][indexZ]->Fill(mass);
+      if(!isData){
+        if(genvalue==23333) fhHistoZGenSignal[indexgen][indexZ]->Fill(mass);
+        else if (genvalue==23344) fhHistoZGenSwapped[indexgen][indexZ]->Fill(mass);
+      }
+    }//selection on Z
+  }//end of loop over Z
+}
 
 #endif
