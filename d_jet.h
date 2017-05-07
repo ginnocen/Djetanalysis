@@ -1104,8 +1104,8 @@ void djet::Init(TTree *tree)
    }
 
    for (int indexEff=0;indexEff<indexGenRecoEff;indexEff++){
-     fhNumEfficiency[indexEff]=new TH1F(Form("fhDenEfficiency_%d",indexEff),Form("fhDenEfficiency_%d",indexEff),nRedges,Redges);
-     fhDenEfficiency[indexEff]=new TH1F(Form("fhNumEfficiency_%d",indexEff),Form("fhNumEfficiency_%d",indexEff),nRedges,Redges);
+     fhNumEfficiency[indexEff]=new TH1F(Form("fhNumEfficiency_%d",indexEff),Form("fhNumEfficiency_%d",indexEff),nRedges,Redges);
+     fhDenEfficiency[indexEff]=new TH1F(Form("fhDenEfficiency_%d",indexEff),Form("fhDenEfficiency_%d",indexEff),nRedges,Redges);
      fhZNumEfficiency[indexEff]=new TH1F(Form("fhZNumEfficiency_%d",indexEff),Form("fhZNumEfficiency_%d",indexEff),nZedges,Zedges);
      fhZDenEfficiency[indexEff]=new TH1F(Form("fhZDenEfficiency_%d",indexEff),Form("fhZDenEfficiency_%d",indexEff),nZedges,Zedges);
   }  

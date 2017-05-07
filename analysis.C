@@ -204,7 +204,10 @@ void runFit(int isPP=1,int genIndex=0,int intjetpt_cut=80, int intDptlow_cut=4,i
   divideBinWidth(hSignalMC);
   divideBinWidth(hZSignalData);
   divideBinWidth(hZSignalMC);
-
+  divideBinWidth(fhNumEfficiency);
+  divideBinWidth(fhDenEfficiency);
+  divideBinWidth(fhZDenEfficiency);
+  divideBinWidth(fhZNumEfficiency);
 
   hSignalData->Scale(1./normJetsData);
   hZSignalData->Scale(1./normJetsData);
