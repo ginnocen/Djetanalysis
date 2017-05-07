@@ -392,9 +392,6 @@ void DJetTree::create_tree(TTree* t) {
     t->Branch("BSWidthY", &BSWidthY, "BSWidthY/F");
     t->Branch("BSWidthYErr", &BSWidthYErr, "BSWidthYErr/F");
 
-    t->Branch("BSWidthY", &BSWidthY, "BSWidthY/F");
-    t->Branch("BSWidthYErr", &BSWidthYErr, "BSWidthYErr/F");
-
     t->Branch("Dindex", &Dindex);
     t->Branch("Dtype", &Dtype);
     t->Branch("Dmass", &Dmass);
