@@ -78,7 +78,7 @@ void closure(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_
   canvas->Divide(3,1);
   
 
-  TH2F* hempty=new TH2F("hempty","",50,0,0.5,10,0.,2.0);
+  TH2F* hempty=new TH2F("hempty","",50,0,0.5,10,0.5,1.5);
   hempty->GetXaxis()->CenterTitle();
   hempty->GetYaxis()->CenterTitle();
   hempty->GetXaxis()->SetTitle("#Delta R");
@@ -92,7 +92,22 @@ void closure(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_
   hempty->GetYaxis()->SetLabelFont(42);
   hempty->GetXaxis()->SetLabelSize(0.035);
   hempty->GetYaxis()->SetLabelSize(0.035);
-  
+ 
+ 
+  TLegend *legend=new TLegend(0.2729839,0.7415254,0.616129,0.8622881,"");//0.5100806,0.5868644,0.8084677,0.7605932
+  legend->SetBorderSize(0);
+  legend->SetLineColor(0);
+  legend->SetFillColor(0);
+  legend->SetFillStyle(1001);
+  legend->SetTextFont(42);
+  legend->SetTextSize(0.04);
+
+  TLegendEntry*entry;
+  entry=legend->AddEntry(hRecoJets_FitClosure,Form("pp, Jet 80 D p_{T}>%d, p_{T}<%d GeV",intDptlow_cut,intDpthigh_cut),"o");
+  entry->SetTextFont(42);
+  entry->SetLineColor(1);
+  entry->SetMarkerColor(1);
+ 
   TH2F*hemp[6];
   for (int i=0;i<6;i++){
     hemp[i]=(TH2F*)hempty->Clone(Form("hemp_%d",i));
@@ -102,7 +117,8 @@ void closure(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_
   hemp[0]->GetYaxis()->SetTitle("Fit Closure");
   hemp[0]->Draw();
   hRecoJets_FitClosure->Draw("psame");
-  
+  legend->Draw();
+ 
   canvas->cd(2);
   hemp[1]->GetYaxis()->SetTitle("Gen D, RecoJet/GenJet");
   hemp[1]->Draw();
@@ -114,24 +130,5 @@ void closure(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_
   hRecoJetDrecoOverGenJetGenD->Draw("psame");
 
 
-  /* 
-  TLegend *legend=new TLegend(0.3729839,0.7415254,0.7016129,0.8622881,"");//0.5100806,0.5868644,0.8084677,0.7605932
-  legend->SetBorderSize(0);
-  legend->SetLineColor(0);
-  legend->SetFillColor(0);
-  legend->SetFillStyle(1001);
-  legend->SetTextFont(42);
-  legend->SetTextSize(0.04);
-
-  TLegendEntry*entry;
-  entry=legend->AddEntry(ratioPbPbppJet1,"Jet 80 D p_{T}>4, p_{T}<8 GeV","f");
-  entry->SetTextFont(42);
-  entry->SetLineColor(1);
-  entry->SetMarkerColor(1);
-  entry=legend->AddEntry(ratioPbPbppJet2,"Jet 80 D p_{T}>10 GeV","f");
-  entry->SetTextFont(42);
-  entry->SetLineColor(2);
-  entry->SetMarkerColor(2);
-  legend->Draw();
-  */
+ 
 }
