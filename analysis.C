@@ -68,7 +68,7 @@ void loop(double jetpt_cut=80.,double Dptlow_cut=4.,double Dpthigh_cut=999.){
   tpp->loop(1);
   tpp->d_jet(Form("myDataPPtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut));
 */
-  djet* tMCpp = new djet("/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170502_pp_5TeV_TuneCUETP8M1_Dfinder_MC_Pthat5-120_20170404.root");
+  djet* tMCpp = new djet("/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight.root");
   tMCpp->SetJetPtCutEta(jetpt_cut,jeteta_cut);
   tMCpp->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
   tMCpp->SetDmesonCuts(decaylength_cut,Dalpha_cut,chi2cl_cut,trkptmin_cut,trketa_cut,trkpterr_cut); 

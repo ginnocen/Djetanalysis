@@ -573,7 +573,11 @@ public :
    virtual double GetZedgesEdges(int index);
    virtual int      loop(int isData);
    virtual void divideBinWidth(TH1F*h);
-
+   virtual bool selectDgen(double Gpt,double Gy,int isGsignal);
+   virtual bool selectDrecoCand(double Dpt,double Dy,double DsvpvDistance,double DsvpvDisErr,double Dalpha,double Dchi2cl);
+   virtual bool selectDrecoTrack(double Dtrk1Eta,double Dtrk2Eta,double Dtrk1Pt,double Dtrk2Pt,double Dtrk1PtErr,double Dtrk2PtErr,int Dtrk1highPurity,int Dtrk2highPurity);
+   virtual void fillHistoR(bool isData,double Rvalue,double mass,int genvalue);
+   virtual void fillHistoZ(bool isData,double Zvalue,double mass,int genvalue);
 
 };
 
@@ -1222,5 +1226,58 @@ double djet::GetZedgesEdges(int index){
   return Zedges[index];
 }
 
+bool djet::selectDgen(double Gpt,double Gy,int isGsignal){
+  bool selected=false;
+  if(Gpt >fDptlow_cut && Gpt <fDpthigh_cut && fabs(Gy) < fDy_cut && ((isGsignal==1 ) || (isGsignal==2))){
+    selected=true;
+  }
+  return selected;
+}
+
+
+
+bool djet::selectDrecoCand(double Dpt,double Dy,double DsvpvDistance,double DsvpvDisErr,double Dalpha,double Dchi2cl){
+  bool selected=false;
+  if(Dpt >fDptlow_cut && Dpt <fDpthigh_cut && fabs(Dy) < fDy_cut){
+    if ((DsvpvDistance/DsvpvDisErr) > fDdecaylength_cut && Dalpha < fDalpha_cut && Dchi2cl > fDchi2cl_cut ) {
+      selected=true;
+    }
+  }
+  return selected;
+}
+
+bool djet::selectDrecoTrack(double Dtrk1Eta,double Dtrk2Eta,double Dtrk1Pt,double Dtrk2Pt,double Dtrk1PtErr,double Dtrk2PtErr,int Dtrk1highPurity,int Dtrk2highPurity){
+  bool selected=false;
+  if(fabs(Dtrk1Eta) < fDtrketa_cut && fabs(Dtrk2Eta) < fDtrketa_cut && Dtrk1Pt > fDtrkptmin_cut && Dtrk2Pt > fDtrkptmin_cut){
+    if((Dtrk1PtErr /Dtrk1Pt) < fDtrkpterr_cut && (Dtrk2PtErr/Dtrk2Pt) < fDtrkpterr_cut && Dtrk1highPurity==1 && Dtrk2highPurity==1){
+      selected=true;
+    }
+  }
+  return selected;
+}
+
+void djet::fillHistoR(bool isData,double Rvalue,double mass,int genvalue){
+  for (int indexR=0; indexR<nRedges; indexR++){
+    if(Rvalue>Redges[indexR]&&Rvalue<Redges[indexR+1]){
+      fhHistoMass[indexR]->Fill(mass);
+      if(!isData){
+        if(genvalue==23333) fhHistoGenSignal[indexR]->Fill(mass);
+        else if (genvalue==23344) fhHistoGenSwapped[indexR]->Fill(mass);
+      }
+    }//selection on R
+  }//end of loop over R
+}
+
+void djet::fillHistoZ(bool isData,double Zvalue,double mass,int genvalue){
+  for (int indexZ=0; indexZ<nZedges; indexZ++){
+    if(Zvalue>Zedges[indexZ]&&Zvalue<Zedges[indexZ+1]){
+      fhHistoZMass[indexZ]->Fill(mass);
+      if(!isData){
+        if(genvalue==23333) fhHistoZGenSignal[indexZ]->Fill(mass);
+        else if (genvalue==23344) fhHistoZGenSwapped[indexZ]->Fill(mass);
+      }
+    }//selection on Z
+  }//end of loop over Z
+}
 
 #endif
