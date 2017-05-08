@@ -16,8 +16,8 @@ using namespace std;
 
 void closure(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_cut=999){
   
-   TString inputgenIndex0=Form("resultsPP_jet%d_Dlow%d_Dhigh%d_genIndex0.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
-   TString inputgenIndex1=Form("resultsPP_jet%d_Dlow%d_Dhigh%d_genIndex1.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
+   TString inputgenIndex0=Form("resultsPP_jet%d_Dlow%d_Dhigh%d_genIndex0_indexBkg0.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
+   TString inputgenIndex1=Form("resultsPP_jet%d_Dlow%d_Dhigh%d_genIndex1_indexBkg0.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
    TFile *file[2];
    file[0]=new TFile(inputgenIndex0.Data());
    file[1]=new TFile(inputgenIndex1.Data());
@@ -35,12 +35,12 @@ void closure(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_
    for (int i=0;i<2;i++){
      hSignalMC[i]=(TH1F*)file[i]->Get("hSignalMC");
      hZSignalMC[i]=(TH1F*)file[i]->Get("hZSignalMC");
-     fhNumEfficiency[i]=(TH1F*)file[i]->Get(Form("fhNumEfficiency_%d",i));
-     fhDenEfficiency[i]=(TH1F*)file[i]->Get(Form("fhDenEfficiency_%d",i));
-     fhEfficiency[i]=(TH1F*)file[i]->Get(Form("fhEfficiency_%d",i));
-     fhZNumEfficiency[i]=(TH1F*)file[i]->Get(Form("fhZNumEfficiency_%d",i));
-     fhZDenEfficiency[i]=(TH1F*)file[i]->Get(Form("fZDenEfficiency_%d",i));
-     fhZEfficiency[i]=(TH1F*)file[i]->Get(Form("fZEfficiency_%d",i));
+     fhNumEfficiency[i]=(TH1F*)file[i]->Get(Form("fhNumEfficiency_%d_indexBkg0",i));
+     fhDenEfficiency[i]=(TH1F*)file[i]->Get(Form("fhDenEfficiency_%d_indexBkg0",i));
+     fhEfficiency[i]=(TH1F*)file[i]->Get(Form("fhEfficiency_%d_indexBkg0",i));
+     fhZNumEfficiency[i]=(TH1F*)file[i]->Get(Form("fhZNumEfficiency_%d_indexBkg0",i));
+     fhZDenEfficiency[i]=(TH1F*)file[i]->Get(Form("fZDenEfficiency_%d_indexBkg0",i));
+     fhZEfficiency[i]=(TH1F*)file[i]->Get(Form("fZEfficiency_%d_indexBkg0",i));
   }   
    
   TH1F*hRecoJets_FitClosure=(TH1F*)hSignalMC[0]->Clone("hRecoJets_FitClosure");

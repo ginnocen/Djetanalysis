@@ -269,21 +269,3 @@ void runFit(int isPP=1,int indexBkg=1,int genIndex=1,int intjetpt_cut=80, int in
 
 
 
-void comparePP_PbPb(int intjetpt_cut=80, int intDptlow_cut=10,int intDpthigh_cut=9999){
- 
-   TFile* finputPP = new TFile(Form("resultsPP_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut));
-   TFile* finputPbPb = new TFile(Form("resultsPbPb_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut));
-   
-   TH1F*hJetShapePbPb=(TH1F*)finputPbPb->Get("hJetShape");
-   TH1F*hJetShapePP=(TH1F*)finputPP->Get("hJetShape");
-
-   TH1F*ratioPbPbpp=(TH1F*)hJetShapePbPb->Clone("ratioPbPbpp");
-   TH1F*hden=(TH1F*)hJetShapePP->Clone("hden");
-   ratioPbPbpp->SetName("ratioPbPbpp");
-   ratioPbPbpp->Divide(hden);   
-   TFile*fouput=new TFile(Form("RatioPbPbppjet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut),"recreate");
-   ratioPbPbpp->Write();
-   fouput->Close();
-}
-
-
