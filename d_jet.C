@@ -34,7 +34,9 @@ int djet::d_jet(std::string output) {
    return 0;
 }
 
-int djet::loop(int isData) {
+int djet::loop(int isData,bool isBkgreflaction) {
+  double ref_factor=1;
+  if (isBkgreflaction==true) ref_factor=-1.;
   bool debugmode=false;
   int64_t nentries = fChain->GetEntriesFast();
   int NjetsforNorm=0;
@@ -46,17 +48,18 @@ int djet::loop(int isData) {
     if(debugmode) cout<<"********************* event number="<<evt<<" *********************"<<endl;
     if (!(Dsize > 0 && njet_akpu3pf)) continue;
       for(int indexjets=0;indexjets<njet_akpu3pf;indexjets++){
-        if((*jetptCorr_akpu3pf)[indexjets] > fJetpt_cut && fabs((*jeteta_akpu3pf)[indexjets]) < fJeteta_cut){
+        if((*jetptCorr_akpu3pf)[indexjets] > fJetpt_cut && fabs((*jeteta_akpu3pf)[indexjets]) > fJetetamin_cut && fabs((*jeteta_akpu3pf)[indexjets]) < fJetetamax_cut){
           NjetsforNorm++;
           for (int indexDm = 0; indexDm < Dsize; indexDm++) {
             bool isrecoD=selectDrecoCand((*Dpt)[indexDm],(*Dy)[indexDm],(*DsvpvDistance)[indexDm],(*DsvpvDisErr)[indexDm],(*Dalpha)[indexDm],(*Dchi2cl)[indexDm]);
             bool isrecoDtrack=selectDrecoTrack((*Dtrk1Eta)[indexDm],(*Dtrk2Eta)[indexDm],(*Dtrk1Pt)[indexDm],(*Dtrk2Pt)[indexDm],(*Dtrk1PtErr)[indexDm],(*Dtrk2PtErr)[indexDm],(*Dtrk1highPurity)[indexDm],(*Dtrk2highPurity)[indexDm]);
             if (isrecoD&&isrecoDtrack){
+              
               double deltaphi = acos(cos((*Dphi)[indexDm] - (*jetphi_akpu3pf)[indexjets]));
-              double deltaeta = (*Deta)[indexDm] - (*jeteta_akpu3pf)[indexjets];
+              double deltaeta = (*Deta)[indexDm] - ref_factor*(*jeteta_akpu3pf)[indexjets];
               double DeltaR = sqrt(pow(deltaphi, 2) + pow(deltaeta, 2));
               double zvariable=(*Dpt)[indexDm]/(*jetptCorr_akpu3pf)[indexjets];
-
+             
               if(isData==0 && ((*Dgen)[indexDm])==23333) fhNumEfficiency[0]->Fill(DeltaR);
               if(isData==0 && ((*Dgen)[indexDm])==23333) fhZNumEfficiency[0]->Fill(zvariable);
 
@@ -70,7 +73,7 @@ int djet::loop(int isData) {
              bool isGen=selectDgen((*Gpt)[indexDgenm],(*Gy)[indexDgenm],(*GisSignal)[indexDgenm]);
                if(isGen){
                  double deltagenphi = acos(cos((*Gphi)[indexDgenm] - (*jetphi_akpu3pf)[indexjets]));
-                 double deltageneta = (*Geta)[indexDgenm] - (*jeteta_akpu3pf)[indexjets];
+                 double deltageneta = (*Geta)[indexDgenm] - ref_factor*(*jeteta_akpu3pf)[indexjets];
                  double DeltagenR = sqrt(pow(deltagenphi, 2) + pow(deltageneta, 2));
                  double zgenvariable=(*Gpt)[indexDgenm]/(*jetptCorr_akpu3pf)[indexjets];
                  fhDenEfficiency[0]->Fill(DeltagenR);
@@ -83,14 +86,14 @@ int djet::loop(int isData) {
     if(isData==0){
       if (!(Dsize > 0 && ngen_akpu3pf)) continue;
         for(int indexjets=0;indexjets<ngen_akpu3pf;indexjets++){
-          if((*genpt_akpu3pf)[indexjets] > fJetpt_cut && fabs((*geneta_akpu3pf)[indexjets]) < fJeteta_cut){
+          if((*genpt_akpu3pf)[indexjets] > fJetpt_cut && fabs((*geneta_akpu3pf)[indexjets]) > fJetetamin_cut && fabs((*geneta_akpu3pf)[indexjets]) < fJetetamax_cut){
             NjetsforNormGenJet++;
             for (int indexDm = 0; indexDm < Dsize; indexDm++) {
               bool isrecoD=selectDrecoCand((*Dpt)[indexDm],(*Dy)[indexDm],(*DsvpvDistance)[indexDm],(*DsvpvDisErr)[indexDm],(*Dalpha)[indexDm],(*Dchi2cl)[indexDm]);
               bool isrecoDtrack=selectDrecoTrack((*Dtrk1Eta)[indexDm],(*Dtrk2Eta)[indexDm],(*Dtrk1Pt)[indexDm],(*Dtrk2Pt)[indexDm],(*Dtrk1PtErr)[indexDm],(*Dtrk2PtErr)[indexDm],(*Dtrk1highPurity)[indexDm],(*Dtrk2highPurity)[indexDm]);
               if (isrecoD&&isrecoDtrack){
                 double deltaphi = acos(cos((*Dphi)[indexDm] - (*genphi_akpu3pf)[indexjets]));
-                double deltaeta = (*Deta)[indexDm] - (*geneta_akpu3pf)[indexjets];
+                double deltaeta = (*Deta)[indexDm] - ref_factor*(*geneta_akpu3pf)[indexjets];
                 double DeltaR = sqrt(pow(deltaphi, 2) + pow(deltaeta, 2));
                 double zvariable=(*Dpt)[indexDm]/(*genpt_akpu3pf)[indexjets];
 
@@ -105,7 +108,7 @@ int djet::loop(int isData) {
              bool isGen=selectDgen((*Gpt)[indexDgenm],(*Gy)[indexDgenm],(*GisSignal)[indexDgenm]);
                if(isGen){
                  double deltagenphi = acos(cos((*Gphi)[indexDgenm] - (*genphi_akpu3pf)[indexjets]));
-                 double deltageneta = (*Geta)[indexDgenm] - (*geneta_akpu3pf)[indexjets];
+                 double deltageneta = (*Geta)[indexDgenm] - ref_factor*(*geneta_akpu3pf)[indexjets];
                  double DeltagenR = sqrt(pow(deltagenphi, 2) + pow(deltageneta, 2));
                  double zgenvariable=(*Gpt)[indexDgenm]/(*jetptCorr_akpu3pf)[indexjets];
                  fhDenEfficiency[1]->Fill(DeltagenR);
@@ -116,18 +119,19 @@ int djet::loop(int isData) {
        }//end of loop over jets
     }//end of is data
     }//end of loop over events
-   
-    for (int indexeff=0;indexeff<indexGenRecoEff;indexeff++){
-      fhDenEfficiency[indexeff]->Sumw2();
-      fhNumEfficiency[indexeff]->Sumw2();
-      fhZDenEfficiency[indexeff]->Sumw2();
-      fhZNumEfficiency[indexeff]->Sumw2();
-      fhEfficiency[indexeff]=(TH1F*)fhNumEfficiency[indexeff]->Clone(Form("fhEfficiency_%d",indexeff));
-      fhZEfficiency[indexeff]=(TH1F*)fhZNumEfficiency[indexeff]->Clone(Form("fhZEfficiency_%d",indexeff));
-      fhEfficiency[indexeff]->Sumw2();
-      fhZEfficiency[indexeff]->Sumw2();      
-      fhEfficiency[indexeff]->Divide(fhEfficiency[indexeff],fhDenEfficiency[indexeff], 1.0, 1.0, "B");
-      fhZEfficiency[indexeff]->Divide(fhZEfficiency[indexeff],fhZDenEfficiency[indexeff], 1.0, 1.0, "B");
+    if(isData==0){  
+      for (int indexeff=0;indexeff<indexGenRecoEff;indexeff++){
+        fhDenEfficiency[indexeff]->Sumw2();
+        fhNumEfficiency[indexeff]->Sumw2();
+        fhZDenEfficiency[indexeff]->Sumw2();
+        fhZNumEfficiency[indexeff]->Sumw2();
+        fhEfficiency[indexeff]=(TH1F*)fhNumEfficiency[indexeff]->Clone(Form("fhEfficiency_%d",indexeff));
+        fhZEfficiency[indexeff]=(TH1F*)fhZNumEfficiency[indexeff]->Clone(Form("fhZEfficiency_%d",indexeff));
+        fhEfficiency[indexeff]->Sumw2();
+        fhZEfficiency[indexeff]->Sumw2();      
+        fhEfficiency[indexeff]->Divide(fhEfficiency[indexeff],fhDenEfficiency[indexeff], 1.0, 1.0, "B");
+        fhZEfficiency[indexeff]->Divide(fhZEfficiency[indexeff],fhZDenEfficiency[indexeff], 1.0, 1.0, "B");
+      }
     }
     //NjetsforNormGenJet
     hNjets->SetBinContent(1,NjetsforNorm);

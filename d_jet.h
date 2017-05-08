@@ -26,7 +26,8 @@ class djet {
 private :
 
   double fJetpt_cut;
-  double fJeteta_cut;
+  double fJetetamin_cut;
+  double fJetetamax_cut;
   double fDptlow_cut;
   double fDpthigh_cut;
   double fDy_cut;
@@ -567,14 +568,14 @@ public :
    virtual void     Init(TTree *tree);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
-   virtual void SetJetPtCutEta(double jetptcutmin,double absjetetamax);
+   virtual void SetJetPtCutEta(double jetptcutmin,double absjetetamin,double absjetetamax);
    virtual void SetDmesonPtMinMaxRapidity(double dmesonptmin, double dmesonptmax, double dmesonabsrapiditymax);
    virtual void SetDmesonCuts(double decaylength_cut,double Dalpha_cut,double chi2cl_cut,double trkptmin_cut,double trketa_cut,double trkpterr_cut);
    virtual int GetnRedges();
    virtual double GetRedgesEdges(int index);
    virtual int GetnZedges();
    virtual double GetZedgesEdges(int index);
-   virtual int      loop(int isData);
+   virtual int      loop(int isData,bool isBkgreflaction);
    virtual void divideBinWidth(TH1F*h);
    virtual bool selectDgen(double Gpt,double Gy,int isGsignal);
    virtual bool selectDrecoCand(double Dpt,double Dy,double DsvpvDistance,double DsvpvDisErr,double Dalpha,double Dchi2cl);
@@ -633,7 +634,8 @@ void djet::Init(TTree *tree)
    // Set object pointer
 
    fJetpt_cut=9999.;
-   fJeteta_cut=-9999.;
+   fJetetamin_cut=-9999.;
+   fJetetamax_cut=-9999.;
    fDptlow_cut=9999.;
    fDpthigh_cut=0.;
    fDy_cut=-9999.;
@@ -1189,10 +1191,11 @@ void djet::divideBinWidth(TH1F* h)
 }
 
 
-void djet::SetJetPtCutEta(double jetptcutmin,double absjetetamax)
+void djet::SetJetPtCutEta(double jetptcutmin,double absjetetamin,double absjetetamax )
 {
   fJetpt_cut=jetptcutmin;
-  fJeteta_cut=absjetetamax;
+  fJetetamin_cut=absjetetamin;
+  fJetetamax_cut=absjetetamax;
 }
 
 void djet::SetDmesonPtMinMaxRapidity(double dmesonptmin, double dmesonptmax, double dmesonabsrapiditymax)

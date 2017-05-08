@@ -128,7 +128,6 @@ void closure(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_
   hemp[2]->GetYaxis()->SetTitle("Reco Jet  Efficiency corrected D / Gen Jet gen D");
   hemp[2]->Draw();
   hRecoJetDrecoOverGenJetGenD->Draw("psame");
+  canvas->SaveAs("canvasClosurePP.pdf");
 
-
- 
 }
