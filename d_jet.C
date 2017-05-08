@@ -92,7 +92,7 @@ int djet::loop(int isData) {
                  fhDenEfficiency[0][0]->Fill(DeltagenR);
                  fhDenEfficiency[0][1]->Fill(DeltagenRRefl);
                  if(DeltagenR<0.3) fhZDenEfficiency[0][0]->Fill(zgenvariable);
-                 if(deltagenetaRefl<0.3) fhZDenEfficiency[0][1]->Fill(zgenvariable);
+                 if(DeltagenRRefl<0.3) fhZDenEfficiency[0][1]->Fill(zgenvariable);
                }//end selected  
              }//loop over gen candidate
            }//end of isData

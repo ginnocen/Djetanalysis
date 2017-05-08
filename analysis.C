@@ -175,8 +175,8 @@ void runFit(int isPP=1,int indexBkg=1,int genIndex=1,int intjetpt_cut=80, int in
    fhZDenEfficiency->SetName(Form("fhZDenEfficiency_%d",genIndex));
    */
     for (int i=0;i<nedgesR;i++){
-      canvasData=Form("PlotsFits/ResultsDataJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Rindex%d_indexBkg%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i,indexBkg);
-      canvasMC=Form("PlotsFits/ResultsMCJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Rindex%d_indexBkg%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i,indexBkg);
+      canvasData=Form("PlotsFits/ResultsDataJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Rindex%d_indexBkg%d_genIndex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i,indexBkg,genIndex);
+      canvasMC=Form("PlotsFits/ResultsMCJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Rindex%d_indexBkg%dgenIndex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i,indexBkg,genIndex);
 
       hHistoMassData[i]=(TH1F*)finput->Get(Form("fhHistoMass_indexGen%d_R%d_indexBkg%d",genIndex,i,indexBkg));
       hHistoMassMC[i]=(TH1F*)finputMC->Get(Form("fhHistoMass_indexGen%d_R%d_indexBkg%d",genIndex,i,indexBkg));
@@ -199,8 +199,8 @@ void runFit(int isPP=1,int indexBkg=1,int genIndex=1,int intjetpt_cut=80, int in
 
     for (int i=0;i<nedgesZ;i++){
 
-      canvasZData=Form("PlotsFits/ResultsZDataJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Zindex%d_indexBkg%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i,indexBkg);
-      canvasZMC=Form("PlotsFits/ResultsZMCJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Zindex%d_indexBkg%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i,indexBkg);
+      canvasZData=Form("PlotsFits/ResultsZDataJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Zindex%d_indexBkg%d_genIndex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i,indexBkg,genIndex);
+      canvasZMC=Form("PlotsFits/ResultsZMCJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Zindex%d_indexBkg%d_genIndex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i,indexBkg,genIndex);
 
       hHistoZMassData[i]=(TH1F*)finput->Get(Form("fhHistoZMass_indexGen%d_Z%d_indexBkg%d",genIndex,i,indexBkg));
       hHistoZMassMC[i]=(TH1F*)finputMC->Get(Form("fhHistoZMass_indexGen%d_Z%d_indexBkg%d",genIndex,i,indexBkg));
