@@ -145,7 +145,19 @@ int djet::loop(int isData) {
                  fhDenEfficiency[1][1]->Fill(DeltagenRRefl);
                  if(DeltagenR<0.3) fhZDenEfficiency[1][0]->Fill(zgenvariable);
                  if(DeltagenRRefl<0.3) fhZDenEfficiency[1][1]->Fill(zgenvariable);
-
+                 /*
+                 if(DeltagenRRefl<0.01){
+                   cout<<"evt number="<<evt<<endl;
+                   cout<<"EvtNo"<<EvtNo<<endl;
+                   cout<<"jet pt="<<(*genpt_akpu3pf)[indexjets]<<endl;
+                   cout<<"jet eta="<<(*geneta_akpu3pf)[indexjets]<<endl;
+                   cout<<"jet phi="<<(*genphi_akpu3pf)[indexjets]<<endl;
+                   //cout<" D pt="<<(*Gpt)[indexDgenm]<<endl;
+                   cout<<"D pt="<<(*Gpt)[indexDgenm]<<endl;
+                   cout<<"D eta="<<(*Geta)[indexDgenm]<<endl;
+                   cout<<"D phi="<<(*Gphi)[indexDgenm]<<endl;
+                 }
+                 */
                }//end selected  
              }//loop over gen candidate
          }// selection on jet pt
