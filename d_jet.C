@@ -21,14 +21,15 @@ int djet::d_jet(std::string output) {
           fhHistoZGenSwapped[indexgen][i][indexBkg]->Write();
         }
       }
-  
-      for (int indexeff=0;indexeff<indexGenRecoEff;indexeff++){
-        fhDenEfficiency[indexeff][indexBkg]->Write();
-        fhNumEfficiency[indexeff][indexBkg]->Write();
-        fhEfficiency[indexeff][indexBkg]->Write();
-        fhZDenEfficiency[indexeff][indexBkg]->Write();
-        fhZNumEfficiency[indexeff][indexBkg]->Write();
-        fhZEfficiency[indexeff][indexBkg]->Write();
+      if(fisData==0){ 
+        for (int indexeff=0;indexeff<indexGenRecoEff;indexeff++){
+          fhDenEfficiency[indexeff][indexBkg]->Write();
+          fhNumEfficiency[indexeff][indexBkg]->Write();
+          fhEfficiency[indexeff][indexBkg]->Write();
+          fhZDenEfficiency[indexeff][indexBkg]->Write();
+          fhZNumEfficiency[indexeff][indexBkg]->Write();
+          fhZEfficiency[indexeff][indexBkg]->Write();
+        }
       }
     }
     hNjets->Write();
@@ -38,6 +39,7 @@ int djet::d_jet(std::string output) {
 }
 
 int djet::loop(int isData) {
+  fisData=isData;
   bool debugmode=false;
   int64_t nentries = fChain->GetEntriesFast();
   int NjetsforNorm=0;

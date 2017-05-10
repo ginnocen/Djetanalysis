@@ -24,7 +24,7 @@ using namespace std;
 class djet {
 
 private :
-
+  int fisData;
   double fJetpt_cut;
   double fJetetamin_cut;
   double fJetetamax_cut;
@@ -633,7 +633,7 @@ void djet::Init(TTree *tree)
    // (once per file to be processed).
 
    // Set object pointer
-
+   fisData=-1;
    fJetpt_cut=9999.;
    fJetetamin_cut=-9999.;
    fJetetamax_cut=-9999.;

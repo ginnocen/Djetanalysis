@@ -36,8 +36,8 @@ void analysis(){
  
    bool doPPData=false;
    bool doPPMC=true;
-   bool doPbPbData=false;
-   bool doPbPbMC=false;
+   bool doPbPbData=true;
+   bool doPbPbMC=true;
  
   //void runFit(int isPP=1,int indexBkg=1,int genIndex=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_cut=999)
  
@@ -49,6 +49,11 @@ void analysis(){
    runFit(1,1,0,80,4,999);
    runFit(1,1,1,80,4,999);
 
+   runFit(0,0,0,80,4,999);
+   runFit(0,0,1,80,4,999);
+   runFit(0,1,0,80,4,999);
+   runFit(0,1,1,80,4,999);
+ 
 }
 
 
@@ -77,7 +82,7 @@ void loop(bool doPPData=false,bool doPPMC=true,bool doPbPbData=false,bool doPbPb
   }
 
   if(doPbPbMC){
-    djet* tMC = new djet("/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_MCHydjet_Dfinder_MC_pthat30_31March_split_finalmerge_2April_v1/merged.root");
+    djet* tMC = new djet("/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight.root");
     tMC->SetJetPtCutEta(jetpt_cut,jetetamin_cut,jetetamax_cut);
     tMC->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
     tMC->SetDmesonCuts(decaylength_cut,Dalpha_cut,chi2cl_cut,trkptmin_cut,trketa_cut,trkpterr_cut);
@@ -118,7 +123,7 @@ void runFit(int isPP=1,int indexBkg=1,int genIndex=1,int intjetpt_cut=80, int in
    TString file,fileMC,output;
 
    if(isPP){
-     file=Form("myMCPPtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
+     file=Form("myDataPPtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
      fileMC=Form("myMCPPtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
      output=Form("resultsPP_jet%d_Dlow%d_Dhigh%d_genIndex%d_indexBkg%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut,genIndex,indexBkg);
    }
