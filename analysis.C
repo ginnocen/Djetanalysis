@@ -35,25 +35,17 @@ void divideBinWidth(TH1* h)
 void analysis(){
  
    bool doPPData=false;
-   bool doPPMC=true;
-   bool doPbPbData=true;
+   bool doPPMC=false;
+   bool doPbPbData=false;
    bool doPbPbMC=true;
  
-  //void runFit(int isPP=1,int indexBkg=1,int genIndex=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_cut=999)
- 
-   void loop(bool,bool,bool,bool,double,double,double);
-   //loop(doPPData,doPPMC,doPbPbData,doPbPbMC,80,4,999);                                  
-   void runFit(int,int,int,int,int,int);
-   runFit(1,0,0,80,4,999);
-   runFit(1,0,1,80,4,999);
-   runFit(1,1,0,80,4,999);
-   runFit(1,1,1,80,4,999);
+  // void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_cut=999){
 
-   runFit(0,0,0,80,4,999);
-   runFit(0,0,1,80,4,999);
-   runFit(0,1,0,80,4,999);
-   runFit(0,1,1,80,4,999);
- 
+   void loop(bool,bool,bool,bool,double,double,double);
+   loop(doPPData,doPPMC,doPbPbData,doPbPbMC,80,4,999);                                  
+   void runFit(int,int,int,int);
+   runFit(1,80,4,999); 
+   runFit(0,80,4,999);
 }
 
 
@@ -61,7 +53,7 @@ void loop(bool doPPData=false,bool doPPMC=true,bool doPbPbData=false,bool doPbPb
   double jetetamin_cut=0.3;
   double jetetamax_cut=1.6;
   double Dy_cut=2.0;
-  double decaylength_cut=3;//4.06
+  double decaylength_cut=4.06;//4.06
   double Dalpha_cut=0.12;
   double trkptmin_cut=2.0;
   double trketa_cut=2.0;
@@ -82,7 +74,7 @@ void loop(bool doPPData=false,bool doPPMC=true,bool doPbPbData=false,bool doPbPb
   }
 
   if(doPbPbMC){
-    djet* tMC = new djet("/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight.root");
+    djet* tMC = new djet("/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170510_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_pthatweight.root");
     tMC->SetJetPtCutEta(jetpt_cut,jetetamin_cut,jetetamax_cut);
     tMC->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
     tMC->SetDmesonCuts(decaylength_cut,Dalpha_cut,chi2cl_cut,trkptmin_cut,trketa_cut,trkpterr_cut);
@@ -109,167 +101,175 @@ void loop(bool doPPData=false,bool doPPMC=true,bool doPbPbData=false,bool doPbPb
   }
 }
 
-void runFit(int isPP=1,int indexBkg=1,int genIndex=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_cut=999){
+void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_cut=999){
  
    djet* tempty = new djet("/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight.root");
-   const int nedgesR=tempty->GetnRedges();
-   double Redges[nedgesR+1];
-   for (int m=0;m<nedgesR+1;m++) Redges[m]=tempty->GetRedgesEdges(m);
+   const int nRedges=tempty->GetnRedges();
+   double Redges[nRedges+1];
+   for (int m=0;m<nRedges+1;m++) Redges[m]=tempty->GetRedgesEdges(m);
 
-   const int nedgesZ=tempty->GetnZedges();
-   double Zedges[nedgesZ+1];
-   for (int m=0;m<nedgesZ+1;m++) Zedges[m]=tempty->GetZedgesEdges(m);
+   const int nZedges=tempty->GetnZedges();
+   double Zedges[nZedges+1];
+   for (int m=0;m<nZedges+1;m++) Zedges[m]=tempty->GetZedgesEdges(m);
+
+   static const int indexGenRecoMass=2;
+   static const int indexBkgReflection=2;
 
    TString file,fileMC,output;
-
+   
    if(isPP){
      file=Form("myDataPPtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
      fileMC=Form("myMCPPtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
-     output=Form("resultsPP_jet%d_Dlow%d_Dhigh%d_genIndex%d_indexBkg%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut,genIndex,indexBkg);
+     output=Form("resultsPP_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
    }
    
    if(!isPP){
      file=Form("myDataPbPbtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
      fileMC=Form("myMCPbPbtest_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
-     output=Form("resultsPbPb_jet%d_Dlow%d_Dhigh%d_genIndex%d_indexBkg%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut,genIndex,indexBkg);
+     output=Form("resultsPbPb_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
    }
  
-   TH1F *hHistoMassMC[nedgesR];
-   TH1F *hHistoMassData[nedgesR];
-   TH1F* hHistoGenSignal[nedgesR];
-   TH1F* hHistoGenSwapped[nedgesR];
- 
-   TH1F *hHistoZMassMC[nedgesZ];
-   TH1F *hHistoZMassData[nedgesZ];
-   TH1F* hHistoZGenSignal[nedgesZ];
-   TH1F* hHistoZGenSwapped[nedgesZ];
+   TH1F *hHistoMassData[nRedges][indexBkgReflection];
+   TH1F *hHistoZMassData[nRedges][indexBkgReflection];
 
+   TH1F *hHistoMassMC[nRedges][indexBkgReflection];
+   TH1F* hHistoMassMCGenSignal[nRedges][indexBkgReflection];
+   TH1F* hHistoMassMCGenSwapped[nRedges][indexBkgReflection];
 
-   TH1F*hSignalData=new TH1F("hSignalData","hSignalData",nedgesR,Redges);
-   TH1F*hSignalMC=new TH1F("hSignalMC","hSignalMC",nedgesR,Redges);
-   TH1F*hZSignalData=new TH1F("hZSignalData","hZSignalData",nedgesZ,Zedges);
-   TH1F*hZSignalMC=new TH1F("hZSignalMC","hZSignalMC",nedgesZ,Zedges);
+   TH1F *hHistoZMassMC[nZedges][indexBkgReflection];
+   TH1F* hHistoZMassMCGenSignal[nZedges][indexBkgReflection];
+   TH1F* hHistoZMassMCGenSwapped[nZedges][indexBkgReflection];
+
+   TH1F*hSignalData[indexBkgReflection];
+   TH1F*hSignalZData[indexBkgReflection];
+   TH1F*hSignalMC[indexBkgReflection];
+   TH1F*hSignalZMC[indexBkgReflection];
+
+   for (int indexBkg=0;indexBkg<indexBkgReflection;indexBkg++){
+     hSignalData[indexBkg]=new TH1F(Form("hSignalData_indexBkg%d",indexBkg),Form("hSignalData_indexBkg%d",indexBkg),nRedges,Redges);
+     hSignalZData[indexBkg]=new TH1F(Form("hSignalZData_indexBkg%d",indexBkg),Form("hSignalData_indexBkg%d",indexBkg),nZedges,Zedges);
+     hSignalMC[indexBkg]=new TH1F(Form("hSignalMC_indexBkg%d",indexBkg),Form("hSignalMC_indexBkg%d",indexBkg),nRedges,Redges);
+     hSignalZMC[indexBkg]=new TH1F(Form("hSignalZMC_indexBkg%d",indexBkg),Form("hSignalData_indexBkg%d",indexBkg),nZedges,Zedges);
+     hSignalData[indexBkg]->SetName(Form("hSignalData_indexBkg%d",indexBkg));
+     hSignalMC[indexBkg]->SetName(Form("hSignalMC_indexBkg%d",indexBkg));
+     hSignalZData[indexBkg]->SetName(Form("hSignalZData_indexBkg%d",indexBkg));
+     hSignalZMC[indexBkg]->SetName(Form("hSignalZMC_indexBkg%d",indexBkg));
+  }
 
    TFile* finput = new TFile(file.Data());
    TFile* finputMC = new TFile(fileMC.Data());
-   Dfitter *fitData[nedgesR];   
-   Dfitter *fitMC[nedgesR];   
-   Dfitter *fitZData[nedgesZ];
-   Dfitter *fitZMC[nedgesZ];
+
+   Dfitter *fitData[nRedges][indexBkgReflection];   
+   Dfitter *fitMC[nRedges][indexBkgReflection];   
+   Dfitter *fitZData[nZedges][indexBkgReflection];
+   Dfitter *fitZMC[nZedges][indexBkgReflection];
 
    TString canvasData;
    TString canvasMC;
-
+  
    TH1F*hNjetsData=(TH1F*)finput->Get("hNjets");
    TH1F*hNjetsMC=(TH1F*)finputMC->Get("hNjets");
    hNjetsData->SetName("hNjetsData");
    hNjetsMC->SetName("hNjetsMC");
- 
-   TH1F*fhEfficiency=(TH1F*)finputMC->Get(Form("fhEfficiency_%d_indexBkg%d",genIndex,indexBkg));
-   TH1F*fhZEfficiency=(TH1F*)finputMC->Get(Form("fhZEfficiency_%d_indexBkg%d",genIndex,indexBkg));
-   TH1F*fhDenEfficiency=(TH1F*)finputMC->Get(Form("fhDenEfficiency_%d_indexBkg%d",genIndex,indexBkg));
-   TH1F*fhNumEfficiency=(TH1F*)finputMC->Get(Form("fhNumEfficiency_%d_indexBkg%d",genIndex,indexBkg));
-   TH1F*fhZDenEfficiency=(TH1F*)finputMC->Get(Form("fhZDenEfficiency_%d_indexBkg%d",genIndex,indexBkg));
-   TH1F*fhZNumEfficiency=(TH1F*)finputMC->Get(Form("fhZNumEfficiency_%d_indexBkg%d",genIndex,indexBkg));
-   /*
-   fhEfficiency->SetName(Form("fhEfficiency_%d",genIndex));
-   fhZEfficiency->SetName(Form("fhZEfficiency_%d",genIndex));
-   fhNumEfficiency->SetName(Form("fhNumEfficiency_%d",genIndex));
-   fhDenEfficiency->SetName(Form("fhDenEfficiency_%d",genIndex));
-   fhZNumEfficiency->SetName(Form("fhZNumEfficiency_%d",genIndex));
-   fhZDenEfficiency->SetName(Form("fhZDenEfficiency_%d",genIndex));
-   */
-    for (int i=0;i<nedgesR;i++){
-      canvasData=Form("PlotsFits/ResultsDataJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Rindex%d_indexBkg%d_genIndex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i,indexBkg,genIndex);
-      canvasMC=Form("PlotsFits/ResultsMCJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Rindex%d_indexBkg%dgenIndex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i,indexBkg,genIndex);
+   
+   for (int indexBkg=0;indexBkg<indexBkgReflection;indexBkg++){
+     for (int i=0;i<nRedges;i++){
+       canvasData=Form("PlotsFits/ResultsDataJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Rindex%d_indexBkg%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i,indexBkg);
+       canvasMC=Form("PlotsFits/ResultsMCJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Rindex%d_indexBkg%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i,indexBkg);
+       hHistoMassData[i][indexBkg]=(TH1F*)finput->Get(Form("fhHistoMass_indexGen0_R%d_indexBkg%d",i,indexBkg));
+       hHistoMassMC[i][indexBkg]=(TH1F*)finputMC->Get(Form("fhHistoMass_indexGen0_R%d_indexBkg%d",i,indexBkg));
+       hHistoMassMCGenSignal[i][indexBkg]=(TH1F*)finputMC->Get(Form("fhHistoGenSignal_indexGen0_R%d_indexBkg%d",i,indexBkg));
+       hHistoMassMCGenSwapped[i][indexBkg]=(TH1F*)finputMC->Get(Form("fhHistoGenSwapped_indexGen0_R%d_indexBkg%d",i,indexBkg));
+       fitData[i][indexBkg]=new Dfitter(hHistoMassData[i][indexBkg],hHistoMassMCGenSignal[i][indexBkg],hHistoMassMCGenSwapped[i][indexBkg],canvasData);
+       fitMC[i][indexBkg]=new Dfitter(hHistoMassMC[i][indexBkg],hHistoMassMCGenSignal[i][indexBkg],hHistoMassMCGenSwapped[i][indexBkg],canvasData);
+       hSignalData[indexBkg]->SetBinContent(i+1,fitData[i][indexBkg]->GetSignal()); 
+       hSignalData[indexBkg]->SetBinError(i+1,fitData[i][indexBkg]->GetSignalError());
+       hSignalMC[indexBkg]->SetBinContent(i+1,fitMC[i][indexBkg]->GetSignal());
+       hSignalMC[indexBkg]->SetBinError(i+1,fitMC[i][indexBkg]->GetSignalError());
 
-      hHistoMassData[i]=(TH1F*)finput->Get(Form("fhHistoMass_indexGen%d_R%d_indexBkg%d",genIndex,i,indexBkg));
-      hHistoMassMC[i]=(TH1F*)finputMC->Get(Form("fhHistoMass_indexGen%d_R%d_indexBkg%d",genIndex,i,indexBkg));
-      hHistoGenSignal[i]=(TH1F*)finputMC->Get(Form("fhHistoGenSignal_indexGen%d_R%d_indexBkg%d",genIndex,i,indexBkg));
-      hHistoGenSwapped[i]=(TH1F*)finputMC->Get(Form("fhHistoGenSwapped_indexGen%d_R%d_indexBkg%d",genIndex,i,indexBkg));
-      fitData[i]=new Dfitter(hHistoMassData[i],hHistoGenSignal[i],hHistoGenSwapped[i],canvasData);
-      fitMC[i]=new Dfitter(hHistoMassMC[i],hHistoGenSignal[i],hHistoGenSwapped[i],canvasMC);
 
-    }
-    for (int i=0;i<nedgesR;i++){
-       hSignalData->SetBinContent(i+1,fitData[i]->GetSignal());
-       hSignalData->SetBinError(i+1,fitData[i]->GetSignalError());
-       hSignalMC->SetBinContent(i+1,fitMC[i]->GetSignal());
-       hSignalMC->SetBinError(i+1,fitMC[i]->GetSignalError());
-       cout<<"GUARDA QUI pt bin="<<i<<", value"<<fitData[i]->GetSignal()<<endl;
-    }
+     }
+     for (int i=0;i<nZedges;i++){
+       canvasData=Form("PlotsFits/ResultsDataJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Zindex%d_indexBkg%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i,indexBkg);
+       canvasMC=Form("PlotsFits/ResultsMCJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Zindex%d_indexBkg%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i,indexBkg);
+       hHistoZMassData[i][indexBkg]=(TH1F*)finput->Get(Form("fhHistoZMass_indexGen0_Z%d_indexBkg%d",i,indexBkg));
+       hHistoZMassMC[i][indexBkg]=(TH1F*)finputMC->Get(Form("fhHistoZMass_indexGen0_Z%d_indexBkg%d",i,indexBkg));
+       hHistoZMassMCGenSignal[i][indexBkg]=(TH1F*)finputMC->Get(Form("fhHistoZGenSignal_indexGen0_Z%d_indexBkg%d",i,indexBkg));
+       hHistoZMassMCGenSwapped[i][indexBkg]=(TH1F*)finputMC->Get(Form("fhHistoZGenSwapped_indexGen0_Z%d_indexBkg%d",i,indexBkg));
+       fitZData[i][indexBkg]=new Dfitter(hHistoZMassData[i][indexBkg],hHistoZMassMCGenSignal[i][indexBkg],hHistoZMassMCGenSwapped[i][indexBkg],canvasData);
+       fitZMC[i][indexBkg]=new Dfitter(hHistoZMassMC[i][indexBkg],hHistoZMassMCGenSignal[i][indexBkg],hHistoZMassMCGenSwapped[i][indexBkg],canvasData); 
+       hSignalZData[indexBkg]->SetBinContent(i+1,fitZData[i][indexBkg]->GetSignal());
+       hSignalZData[indexBkg]->SetBinError(i+1,fitZData[i][indexBkg]->GetSignalError());
+       hSignalZMC[indexBkg]->SetBinContent(i+1,fitZMC[i][indexBkg]->GetSignal());
+       hSignalZMC[indexBkg]->SetBinError(i+1,fitZMC[i][indexBkg]->GetSignalError());
+     }
+   }
 
-   TString canvasZData;
-   TString canvasZMC;
+   TH1F*fhDenEfficiency[indexGenRecoMass][indexBkgReflection];
+   TH1F*fhNumEfficiency[indexGenRecoMass][indexBkgReflection];
+   TH1F*fhEfficiency[indexGenRecoMass][indexBkgReflection];
+   TH1F*fhZDenEfficiency[indexGenRecoMass][indexBkgReflection];
+   TH1F*fhZNumEfficiency[indexGenRecoMass][indexBkgReflection];
+   TH1F*fhZEfficiency[indexGenRecoMass][indexBkgReflection];
 
-    for (int i=0;i<nedgesZ;i++){
+   double normJetsDataReco=hNjetsData->GetBinContent(1);
+   double normJetsMC[2];
+   normJetsMC[0]=hNjetsMC->GetBinContent(1);
+   normJetsMC[1]=hNjetsMC->GetBinContent(2);
 
-      canvasZData=Form("PlotsFits/ResultsZDataJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Zindex%d_indexBkg%d_genIndex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i,indexBkg,genIndex);
-      canvasZMC=Form("PlotsFits/ResultsZMCJetPt%d_Dptmin%d_Dptmax%d_isPP%d_Zindex%d_indexBkg%d_genIndex%d",intjetpt_cut,intDptlow_cut,intDpthigh_cut,isPP,i,indexBkg,genIndex);
+   for (int indexBkg=0;indexBkg<indexBkgReflection;indexBkg++){
+     for (int i=0;i<indexGenRecoMass;i++){
 
-      hHistoZMassData[i]=(TH1F*)finput->Get(Form("fhHistoZMass_indexGen%d_Z%d_indexBkg%d",genIndex,i,indexBkg));
-      hHistoZMassMC[i]=(TH1F*)finputMC->Get(Form("fhHistoZMass_indexGen%d_Z%d_indexBkg%d",genIndex,i,indexBkg));
-      hHistoZGenSignal[i]=(TH1F*)finputMC->Get(Form("fhHistoZGenSignal_indexGen%d_Z%d_indexBkg%d",genIndex,i,indexBkg));
-      hHistoZGenSwapped[i]=(TH1F*)finputMC->Get(Form("fhHistoZGenSwapped_indexGen%d_Z%d_indexBkg%d",genIndex,i,indexBkg));
-      fitZData[i]=new Dfitter(hHistoZMassData[i],hHistoZGenSignal[i],hHistoZGenSwapped[i],canvasZData);
-      fitZMC[i]=new Dfitter(hHistoZMassMC[i],hHistoZGenSignal[i],hHistoZGenSwapped[i],canvasZMC);
+       fhDenEfficiency[i][indexBkg]=(TH1F*)finputMC->Get(Form("fhDenEfficiency_%d_indexBkg%d",i,indexBkg));
+       fhNumEfficiency[i][indexBkg]=(TH1F*)finputMC->Get(Form("fhNumEfficiency_%d_indexBkg%d",i,indexBkg));
+       fhEfficiency[i][indexBkg]=(TH1F*)finputMC->Get(Form("fhEfficiency_%d_indexBkg%d",i,indexBkg));
+       fhZDenEfficiency[i][indexBkg]=(TH1F*)finputMC->Get(Form("fhZDenEfficiency_%d_indexBkg%d",i,indexBkg));
+       fhZNumEfficiency[i][indexBkg]=(TH1F*)finputMC->Get(Form("fhZNumEfficiency_%d_indexBkg%d",i,indexBkg));
+       fhZEfficiency[i][indexBkg]=(TH1F*)finputMC->Get(Form("fhZEfficiency_%d_indexBkg%d",i,indexBkg));
+       divideBinWidth(fhDenEfficiency[i][indexBkg]);
+       divideBinWidth(fhNumEfficiency[i][indexBkg]);
+       divideBinWidth(fhZDenEfficiency[i][indexBkg]);
+       divideBinWidth(fhZNumEfficiency[i][indexBkg]);
+       fhNumEfficiency[i][indexBkg]->Scale(1/normJetsMC[i]);
+       fhDenEfficiency[i][indexBkg]->Scale(1/normJetsMC[i]);
+       fhZNumEfficiency[i][indexBkg]->Scale(1/normJetsMC[i]);
+       fhZDenEfficiency[i][indexBkg]->Scale(1/normJetsMC[i]);
+     }
+   }
 
-    }
-    for (int i=0;i<nedgesZ;i++){
-       hZSignalData->SetBinContent(i+1,fitZData[i]->GetSignal());
-       hZSignalData->SetBinError(i+1,fitZData[i]->GetSignalError());
-       hZSignalMC->SetBinContent(i+1,fitZMC[i]->GetSignal());
-       hZSignalMC->SetBinError(i+1,fitZMC[i]->GetSignalError());
-}
-  double normJetsData=hNjetsData->GetBinContent(genIndex+1); 
-  double normJetsMC=hNjetsMC->GetBinContent(genIndex+1);
- 
- 
-  divideBinWidth(hSignalData);
-  divideBinWidth(hSignalMC);
-  divideBinWidth(hZSignalData);
-  divideBinWidth(hZSignalMC);
-  divideBinWidth(fhNumEfficiency);
-  divideBinWidth(fhDenEfficiency);
-  divideBinWidth(fhZDenEfficiency);
-  divideBinWidth(fhZNumEfficiency);
+   for (int indexBkg=0;indexBkg<indexBkgReflection;indexBkg++){
+       divideBinWidth(hSignalMC[indexBkg]);
+       divideBinWidth(hSignalData[indexBkg]);
+       divideBinWidth(hSignalZMC[indexBkg]);
+       divideBinWidth(hSignalZData[indexBkg]);
+       hSignalMC[indexBkg]->Scale(1/normJetsMC[0]);
+       hSignalData[indexBkg]->Scale(1/normJetsDataReco);
+       hSignalZMC[indexBkg]->Scale(1/normJetsMC[0]);
+       hSignalZData[indexBkg]->Scale(1/normJetsDataReco);
+   }
 
-  hSignalData->Scale(1./normJetsData);
-  hZSignalData->Scale(1./normJetsData);
-  hSignalMC->Scale(1./normJetsMC);
-  hZSignalMC->Scale(1./normJetsMC);
-  fhNumEfficiency->Scale(1./normJetsMC);
-  fhDenEfficiency->Scale(1./normJetsMC);
-  fhZDenEfficiency->Scale(1./normJetsMC);
-  fhZNumEfficiency->Scale(1./normJetsMC);
 
-  TH1F*hJetShape=(TH1F*)hSignalData->Clone("hJetShape");
-  hJetShape->Sumw2();
-  hJetShape->Divide(fhEfficiency);
-  TH1F*hFF=(TH1F*)hZSignalData->Clone("hFF");
-  hFF->Sumw2();
-  hFF->Divide(fhZEfficiency);
-
-  TCanvas*canvas=new TCanvas("canvas","canvas",500,500);
-  canvas->cd();
-  canvas->SetLogy();
-  cout<<"step4"<<endl; 
   TFile* foutput = new TFile(output.Data(),"recreate");
-  hSignalData->Write();
-  hSignalMC->Write();
-  hZSignalData->Write();
-  hZSignalMC->Write();
-  hJetShape->Write();
-  hFF->Write();
-  fhEfficiency->Write();
-  fhZEfficiency->Write();
-  fhNumEfficiency->Write();
-  fhDenEfficiency->Write();
-  fhZNumEfficiency->Write();
-  fhZDenEfficiency->Write();
+  for (int indexBkg=0;indexBkg<indexBkgReflection;indexBkg++){
+    for (int i=0;i<indexGenRecoMass;i++){
+     fhDenEfficiency[i][indexBkg]->Write();
+     fhNumEfficiency[i][indexBkg]->Write();
+     fhEfficiency[i][indexBkg]->Write();
+     fhZNumEfficiency[i][indexBkg]->Write();
+     fhZDenEfficiency[i][indexBkg]->Write();
+     fhZEfficiency[i][indexBkg]->Write();
+    }
+  }
+  for (int indexBkg=0;indexBkg<indexBkgReflection;indexBkg++){
+    hSignalMC[indexBkg]->Write();
+    hSignalData[indexBkg]->Write();
+    hSignalZMC[indexBkg]->Write();
+    hSignalZData[indexBkg]->Write();
+  }
   hNjetsData->Write();
   hNjetsMC->Write();
   foutput->Close();
+
 }
 
 
