@@ -32,8 +32,8 @@ void JetShape(){
    TH1F*hSignalDataPP=(TH1F*)filePP->Get("hSignalData_indexBkg0");
    TH1F*hSignalDataPbPb=(TH1F*)filePbPb->Get("hSignalData_indexBkg0");         
             
-   TH1F*fhEfficiencyPP=(TH1F*)filePP->Get("fhNumEfficiency_0_indexBkg0");
-   TH1F*fhEfficiencyPbPb=(TH1F*)filePbPb->Get("fhNumEfficiency_0_indexBkg0");
+   TH1F*fhEfficiencyPP=(TH1F*)filePP->Get("fhEfficiency_0_indexBkg0");
+   TH1F*fhEfficiencyPbPb=(TH1F*)filePbPb->Get("fhEfficiency_0_indexBkg0");
 
    hSignalDataPbPb->Divide(fhEfficiencyPbPb);
    hSignalDataPP->Divide(fhEfficiencyPP);

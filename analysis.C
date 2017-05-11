@@ -42,10 +42,13 @@ void analysis(){
   // void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_cut=999){
 
    void loop(bool,bool,bool,bool,double,double,double);
-   loop(doPPData,doPPMC,doPbPbData,doPbPbMC,80,4,999);                                  
+   loop(doPPData,doPPMC,doPbPbData,doPbPbMC,80,4,10);                                  
+   loop(doPPData,doPPMC,doPbPbData,doPbPbMC,80,10,999);
    void runFit(int,int,int,int);
-   runFit(1,80,4,999); 
-   runFit(0,80,4,999);
+   runFit(1,80,4,10); 
+   runFit(0,80,4,10);
+   runFit(1,80,10,999);
+   runFit(0,80,10,999);
 }
 
 
