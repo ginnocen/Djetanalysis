@@ -14,52 +14,47 @@
 
 using namespace std;
 
-void closure(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_cut=999){
-  
-   TString inputgenIndex0=Form("resultsPP_jet%d_Dlow%d_Dhigh%d_genIndex0_indexBkg0.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
-   TString inputgenIndex1=Form("resultsPP_jet%d_Dlow%d_Dhigh%d_genIndex1_indexBkg0.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
-   TFile *file[2];
-   file[0]=new TFile(inputgenIndex0.Data());
-   file[1]=new TFile(inputgenIndex1.Data());
+void closure(int isPP=1){
+ 
+   int intjetpt_cut=80;
+   int intDptlow_cut=4;
+   int intDpthigh_cut=999;
 
-   TH1F*hNjets=(TH1F*)file[0]->Get("hNjetsMC");
-   TH1F*hSignalMC[2];
-   TH1F*hZSignalMC[2];                    
+   TString input;
+
+   if (isPP) input=Form("resultsPP_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
+   else input=Form("resultsPbPb_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
+   TFile*file=new TFile(input.Data());
+
+   TH1F*hSignalMC[2];            
    TH1F*fhEfficiency[2];
    TH1F*fhNumEfficiency[2];
    TH1F*fhDenEfficiency[2]; 
-   TH1F*fhZEfficiency[2];
-   TH1F*fhZNumEfficiency[2];
-   TH1F*fhZDenEfficiency[2];
+
+   hSignalMC[0]=(TH1F*)file->Get("hSignalMC_indexBkg0");  
+
+
 
    for (int i=0;i<2;i++){
-     hSignalMC[i]=(TH1F*)file[i]->Get("hSignalMC");
-     hZSignalMC[i]=(TH1F*)file[i]->Get("hZSignalMC");
-     fhNumEfficiency[i]=(TH1F*)file[i]->Get(Form("fhNumEfficiency_%d_indexBkg0",i));
-     fhDenEfficiency[i]=(TH1F*)file[i]->Get(Form("fhDenEfficiency_%d_indexBkg0",i));
-     fhEfficiency[i]=(TH1F*)file[i]->Get(Form("fhEfficiency_%d_indexBkg0",i));
-     fhZNumEfficiency[i]=(TH1F*)file[i]->Get(Form("fhZNumEfficiency_%d_indexBkg0",i));
-     fhZDenEfficiency[i]=(TH1F*)file[i]->Get(Form("fZDenEfficiency_%d_indexBkg0",i));
-     fhZEfficiency[i]=(TH1F*)file[i]->Get(Form("fZEfficiency_%d_indexBkg0",i));
+     fhNumEfficiency[i]=(TH1F*)file->Get(Form("fhNumEfficiency_%d_indexBkg0",i));
+     fhDenEfficiency[i]=(TH1F*)file->Get(Form("fhDenEfficiency_%d_indexBkg0",i));
+     fhEfficiency[i]=(TH1F*)file->Get(Form("fhEfficiency_%d_indexBkg0",i));
   }   
-   
-  TH1F*hRecoJets_FitClosure=(TH1F*)hSignalMC[0]->Clone("hRecoJets_FitClosure");
-  hRecoJets_FitClosure->SetName("hRecoJets_FitClosure");
-  hRecoJets_FitClosure->Divide(fhNumEfficiency[0]);
+
 
   TH1F*hGenD_RecoOverGenJets=(TH1F*)fhDenEfficiency[0]->Clone("hGenD_RecoOverGenJets");
   hGenD_RecoOverGenJets->SetName("hGenD_RecoOverGenJets");
   hGenD_RecoOverGenJets->Divide(fhDenEfficiency[1]);
-
-  TH1F*hRecoJet_CorrectedDrecoOverDGen=(TH1F*)hSignalMC[0]->Clone("hRecoJet_CorrectedDrecoOverDGen");
-  hRecoJet_CorrectedDrecoOverDGen->SetName("hRecoJet_CorrectedDrecoOverDGen");
-  hRecoJet_CorrectedDrecoOverDGen->Divide(fhEfficiency[0]);
-  hRecoJet_CorrectedDrecoOverDGen->Divide(fhDenEfficiency[0]);
-
+  cout<<"step 3"<<endl;
+  TH1F*hFitClosure=(TH1F*)hSignalMC[0]->Clone("hFitClosure");
+  hFitClosure->SetName("hFitClosure");
+  hFitClosure->Divide(fhNumEfficiency[0]);
+  cout<<"step 4"<<endl;
   TH1F*hRecoJetDrecoOverGenJetGenD=(TH1F*)hSignalMC[0]->Clone("hRecoJetDrecoOverGenJetGenD");
   hRecoJetDrecoOverGenJetGenD->SetName("hRecoJetDrecoOverGenJetGenD");
   hRecoJetDrecoOverGenJetGenD->Divide(fhEfficiency[0]);
   hRecoJetDrecoOverGenJetGenD->Divide(fhDenEfficiency[1]);
+
 
   gStyle->SetTextSize(0.05);
   gStyle->SetTextFont(42);
@@ -103,7 +98,7 @@ void closure(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_
   legend->SetTextSize(0.04);
 
   TLegendEntry*entry;
-  entry=legend->AddEntry(hRecoJets_FitClosure,Form("pp, Jet 80 D p_{T}>%d, p_{T}<%d GeV",intDptlow_cut,intDpthigh_cut),"o");
+  entry=legend->AddEntry(hRecoJetDrecoOverGenJetGenD,Form("pp, Jet 80 D p_{T}>%d, p_{T}<%d GeV",intDptlow_cut,intDpthigh_cut),"o");
   entry->SetTextFont(42);
   entry->SetLineColor(1);
   entry->SetMarkerColor(1);
@@ -113,21 +108,19 @@ void closure(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_
     hemp[i]=(TH2F*)hempty->Clone(Form("hemp_%d",i));
   }
  
-  canvas->cd(1);
-  hemp[0]->GetYaxis()->SetTitle("Fit Closure");
-  hemp[0]->Draw();
-  hRecoJets_FitClosure->Draw("psame");
-  legend->Draw();
- 
-  canvas->cd(2);
+  canvas->cd(1); 
   hemp[1]->GetYaxis()->SetTitle("Gen D, RecoJet/GenJet");
   hemp[1]->Draw();
   hGenD_RecoOverGenJets->Draw("psame");
-
-  canvas->cd(3);
-  hemp[2]->GetYaxis()->SetTitle("Reco Jet  Efficiency corrected D / Gen Jet gen D");
+  canvas->cd(2);
+  hemp[2]->GetYaxis()->SetTitle("Fit Closure");
   hemp[2]->Draw();
-  hRecoJetDrecoOverGenJetGenD->Draw("psame");
+  hFitClosure->Draw("psame");
   canvas->SaveAs("canvasClosurePP.pdf");
-
+  canvas->cd(3);
+  hemp[3]->GetYaxis()->SetTitle("");
+  hemp[3]->Draw();
+  hRecoJetDrecoOverGenJetGenD->Draw("psame");
+  
+ 
 }
