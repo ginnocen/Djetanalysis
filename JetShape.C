@@ -14,20 +14,19 @@
 
 using namespace std;
 
-void JetShape(){
+void JetShape(int intDptlow_cut=6, int intDpthigh_cut=999){
  
    int intjetpt_cut=80;
-   int intDptlow_cut=6;
-   int intDpthigh_cut=999;
    int intjetetamin_cut=0;
    int intjetetamax_cut=20;
 
    TString inputPP;
    TString inputPbPb;
-
+   TString output;
 
    inputPP=Form("Files/resultsPP_jet%d_Dlow%d_Dhigh%d_jetetamin%d_jetetamax%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut,intjetetamin_cut,intjetetamax_cut);
    inputPbPb=Form("Files/resultsPbPb_jet%d_Dlow%d_Dhigh%d_jetetamin%d_jetetamax%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut,intjetetamin_cut,intjetetamax_cut);
+   output=Form("Files/results_jet%d_Dlow%d_Dhigh%d_jetetamin%d_jetetamax%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut,intjetetamin_cut,intjetetamax_cut);
    TFile*filePP=new TFile(inputPP.Data());
    TFile*filePbPb=new TFile(inputPbPb.Data());
 
@@ -90,7 +89,11 @@ void JetShape(){
   canvas->cd(); 
   hempty->GetYaxis()->SetTitle("PbPb/pp");
   hempty->Draw();
-  hSignalDataPbPb->Draw("psame"); 
+  hSignalDataPbPb->Draw("psame");
+  TFile *foutput=new TFile(output.Data(),"recreate");
+  hSignalDataPbPb->SetName("hJetShape");
+  hSignalDataPbPb->Write();
+  foutput->Close(); 
 }
 
 
