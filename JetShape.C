@@ -14,6 +14,7 @@
 
 using namespace std;
 
+
 void JetShape(int intDptlow_cut=6, int intDpthigh_cut=999){
  
    int intjetpt_cut=80;
@@ -97,6 +98,70 @@ void JetShape(int intDptlow_cut=6, int intDpthigh_cut=999){
 }
 
 
+void JetShapeComparison(){
+ 
+   int intjetpt_cut=80;
+   int intjetetamin_cut=0;
+   int intjetetamax_cut=20;
+
+   TString input1;
+   TString input2;
+
+   input1=Form("Files/results_jet%d_Dlow6_Dhigh999_jetetamin%d_jetetamax%d.root",intjetpt_cut,intjetetamin_cut,intjetetamax_cut);
+   input2=Form("Files/results_jet%d_Dlow20_Dhigh999_jetetamin%d_jetetamax%d.root",intjetpt_cut,intjetetamin_cut,intjetetamax_cut);
+
+   TFile*file1=new TFile(input1.Data());
+   TFile*file2=new TFile(input2.Data());
+
+   TH1F*hJetShape1=(TH1F*)file1->Get("hJetShape");
+   TH1F*hJetShape2=(TH1F*)file2->Get("hJetShape");
+
+  gStyle->SetTextSize(0.05);
+  gStyle->SetTextFont(42);
+  gStyle->SetPadRightMargin(0.043);
+  gStyle->SetPadLeftMargin(0.18);
+  gStyle->SetPadTopMargin(0.1);
+  gStyle->SetPadBottomMargin(0.145);
+ 
+  gStyle->SetTitleX(.0f);
+  gStyle->SetOptTitle(0);
+  gStyle->SetOptStat(0);
+  gStyle->SetEndErrorSize(0);
+  gStyle->SetMarkerStyle(20);
+
+  TCanvas*canvas=new TCanvas("canvas","canvas",600,500);
+  canvas->SetLogy();
+  TH2F* hempty=new TH2F("hempty","",50,0,.5,10,0.1,20.0);
+  hempty->GetXaxis()->CenterTitle();
+  hempty->GetYaxis()->CenterTitle();
+  hempty->GetXaxis()->SetTitle("#Delta R");
+  hempty->GetXaxis()->SetTitleOffset(0.9);
+  hempty->GetYaxis()->SetTitleOffset(1.0);
+  hempty->GetXaxis()->SetTitleSize(0.05);
+  hempty->GetYaxis()->SetTitleSize(0.05);
+  hempty->GetXaxis()->SetTitleFont(42);
+  hempty->GetYaxis()->SetTitleFont(42);
+  hempty->GetXaxis()->SetLabelFont(42);
+  hempty->GetYaxis()->SetLabelFont(42);
+  hempty->GetXaxis()->SetLabelSize(0.035);
+  hempty->GetYaxis()->SetLabelSize(0.035);
+ 
+  TLegend *legend=new TLegend(0.2729839,0.7415254,0.616129,0.8622881,"");//0.5100806,0.5868644,0.8084677,0.7605932
+  legend->SetBorderSize(0);
+  legend->SetLineColor(0);
+  legend->SetFillColor(0);
+  legend->SetFillStyle(1001);
+  legend->SetTextFont(42);
+  legend->SetTextSize(0.04);
+ 
+  canvas->cd(); 
+  hempty->GetYaxis()->SetTitle("PbPb/pp");
+  hempty->Draw();
+  hJetShape1->Draw("psame");
+  hJetShape2->Draw("psame");
+
+}
+
 
 
 void FF(){
@@ -142,7 +207,7 @@ void FF(){
 
   TCanvas*canvas=new TCanvas("canvas","canvas",600,500);
   canvas->SetLogy();
-  TH2F* hempty=new TH2F("hempty","",50,0,1.,10,0.1,20.0);
+  TH2F* hempty=new TH2F("hempty","",50,0,.5,10,0.1,20.0);
   hempty->GetXaxis()->CenterTitle();
   hempty->GetYaxis()->CenterTitle();
   hempty->GetXaxis()->SetTitle("#Delta R");

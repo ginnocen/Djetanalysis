@@ -44,13 +44,13 @@ void analysis(){
    void loop(bool,bool,bool,bool,double,double,double,double,double);
    void runFit(int,int,int,int,int,int);
    
-   loop(doPPData,doPPMC,doPbPbData,doPbPbMC,80,6,999,0,20);                             
-   runFit(1,80,6,999,0,20); 
-   runFit(0,80,6,999,0,20);
+   //loop(doPPData,doPPMC,doPbPbData,doPbPbMC,80,6,999,0,20);                             
+   //runFit(1,80,6,999,0,20); 
+   //runFit(0,80,6,999,0,20);
 
-   loop(doPPData,doPPMC,doPbPbData,doPbPbMC,80,20,999,0,20);
-   runFit(1,80,20,999,0,20);
-   runFit(0,80,20,999,0,20);
+   loop(doPPData,doPPMC,doPbPbData,doPbPbMC,80,50,999,0,20);
+   runFit(1,80,50,999,0,20);
+   runFit(0,80,50,999,0,20);
 
 
 } 
