@@ -32,7 +32,7 @@ void divideBinWidth(TH1* h)
 }
 
 
-void analysis(){
+void analysis(bool doloop=false, bool doloopreflection=false, bool doFit=true, bool doFitreflection=false){
  
    bool doPPData=true;
    bool doPPMC=true;
@@ -44,15 +44,27 @@ void analysis(){
    void loop(bool,bool,bool,bool,double,double,double,double,double);
    void runFit(int,int,int,int,int,int);
    
-   //loop(doPPData,doPPMC,doPbPbData,doPbPbMC,80,6,999,0,20);                             
-   //runFit(1,80,6,999,0,20); 
-   //runFit(0,80,6,999,0,20);
+   if(doloop){
+       loop(doPPData,doPPMC,doPbPbData,doPbPbMC,80,6,999,0,20);
+       loop(doPPData,doPPMC,doPbPbData,doPbPbMC,80,20,999,0,20);
+   }
 
-   loop(doPPData,doPPMC,doPbPbData,doPbPbMC,80,50,999,0,20);
-   runFit(1,80,50,999,0,20);
-   runFit(0,80,50,999,0,20);
-
-
+   if(doloopreflection){
+       loop(doPPData,doPPMC,doPbPbData,doPbPbMC,80,6,999,3,16);
+       loop(doPPData,doPPMC,doPbPbData,doPbPbMC,80,20,999,3,16);
+   }
+   if(doFit){
+     runFit(1,80,6,999,0,20);
+     runFit(0,80,6,999,0,20);
+     runFit(1,80,20,999,0,20);
+     runFit(0,80,20,999,0,20);
+   }
+   if(doFitreflection){
+     runFit(1,80,6,999,3,16);
+     runFit(0,80,6,999,3,16);
+     runFit(1,80,20,999,3,16);
+     runFit(0,80,20,999,3,16);
+   }
 } 
 
 
