@@ -17,13 +17,13 @@ using namespace std;
 void closure(int isPP=1){
  
    int intjetpt_cut=80;
-   int intDptlow_cut=4;
+   int intDptlow_cut=6;
    int intDpthigh_cut=999;
 
    TString input;
 
-   if (isPP) input=Form("resultsPP_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
-   else input=Form("resultsPbPb_jet%d_Dlow%d_Dhigh%d.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
+   if (isPP) input=Form("Files/resultsPP_jet%d_Dlow%d_Dhigh%d_jetetamin0_jetetamax20.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
+   else input=Form("Files/resultsPbPb_jet%d_Dlow%d_Dhigh%d_jetetamin0_jetetamax20.root",intjetpt_cut,intDptlow_cut,intDpthigh_cut);
    TFile*file=new TFile(input.Data());
 
    TH1F*hSignalMC[2];            
@@ -108,19 +108,28 @@ void closure(int isPP=1){
     hemp[i]=(TH2F*)hempty->Clone(Form("hemp_%d",i));
   }
  
+  if(isPP==0){
+    hemp[1]->GetYaxis()->SetTitle("PbPb Gen D, RecoJet/GenJet");
+    hemp[2]->GetYaxis()->SetTitle("PbPb Fit Closure");
+    hemp[3]->GetYaxis()->SetTitle("PbPb Full closure");
+  }
+
+  if(isPP==1){
+    hemp[1]->GetYaxis()->SetTitle("pp Gen D, RecoJet/GenJet");
+    hemp[2]->GetYaxis()->SetTitle("pp Fit Closure");
+    hemp[3]->GetYaxis()->SetTitle("pp Full closure");
+  }
+
+ 
   canvas->cd(1); 
-  hemp[1]->GetYaxis()->SetTitle("Gen D, RecoJet/GenJet");
   hemp[1]->Draw();
   hGenD_RecoOverGenJets->Draw("psame");
   canvas->cd(2);
-  hemp[2]->GetYaxis()->SetTitle("Fit Closure");
   hemp[2]->Draw();
   hFitClosure->Draw("psame");
-  canvas->SaveAs("canvasClosurePP.pdf");
   canvas->cd(3);
-  hemp[3]->GetYaxis()->SetTitle("");
   hemp[3]->Draw();
   hRecoJetDrecoOverGenJetGenD->Draw("psame");
-  
- 
+  if (isPP==1) canvas->SaveAs(Form("PlotsResults/canvasPPClosure_jet%d_Dlow%d_Dhigh%d_jetetamin0_jetetamax20.pdf",intjetpt_cut,intDptlow_cut,intDpthigh_cut));
+  if (isPP==0) canvas->SaveAs(Form("PlotsResults/canvasPbPbClosure_jet%d_Dlow%d_Dhigh%d_jetetamin0_jetetamax20.pdf",intjetpt_cut,intDptlow_cut,intDpthigh_cut));
 }

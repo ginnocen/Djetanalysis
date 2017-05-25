@@ -161,7 +161,7 @@ void JetShapeComparison(int intjetpt_cut=80,int intjetetamin_cut=0,int intjeteta
    hJetShapePbPbOverPP1->Draw("psame");
    hJetShapePbPbOverPP2->Draw("psame");
    legendJetShapePbPbOverPP->Draw();
-   canvasPbPbOverPP->SaveAs(Form("PlotsResults/canvasPbPbOverPPPbPbOverPPJetShape_Jet%d_Dmin%d_Dmax%d",intjetpt_cut,intjetetamin_cut,intjetetamax_cut));
+   canvasPbPbOverPP->SaveAs(Form("PlotsResults/canvasPbPbOverPPPbPbOverPPJetShape_Jet%d_Dmin%d_Dmax%d.pdf",intjetpt_cut,intjetetamin_cut,intjetetamax_cut));
 
 
    TCanvas*canvasYields=new TCanvas("canvasYields","canvasYields",1000,500);
@@ -251,7 +251,7 @@ void JetShapeComparison(int intjetpt_cut=80,int intjetetamin_cut=0,int intjeteta
    legendJetShapeYields->Draw();
 
 
-   canvasYields->SaveAs(Form("PlotsResults/canvasYieldsJetShape_Jet%d_Dmin%d_Dmax%d",intjetpt_cut,intjetetamin_cut,intjetetamax_cut));
+   canvasYields->SaveAs(Form("PlotsResults/canvasYieldsJetShape_Jet%d_Dmin%d_Dmax%d.pdf",intjetpt_cut,intjetetamin_cut,intjetetamax_cut));
 
 
 
@@ -340,7 +340,7 @@ void JetShapeComparison(int intjetpt_cut=80,int intjetetamin_cut=0,int intjeteta
    legendJetShapeEfficiencies->Draw();
 
 
-   canvasEfficiencies->SaveAs(Form("PlotsResults/canvasEfficienciesJetShape_Jet%d_Dmin%d_Dmax%d",intjetpt_cut,intjetetamin_cut,intjetetamax_cut));
+   canvasEfficiencies->SaveAs(Form("PlotsResults/canvasEfficienciesJetShape_Jet%d_Dmin%d_Dmax%d.pdf",intjetpt_cut,intjetetamin_cut,intjetetamax_cut));
 
 
 }

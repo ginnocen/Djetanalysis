@@ -1,6 +1,6 @@
 #!/bin/bash
 downloadfromscratch=0
-uploadplots=0
+uploadplots=1
 commitplots=1
 
 
@@ -20,13 +20,14 @@ fi
 if [ $uploadplots -eq 1 ]
 then
   cd $trunk
-  cp -r $home/PlotsFits PlotsFits
-  cp -r $home/PlotsResults PlotsResults
+  cp -r $home/PlotsFits/*.* PlotsFits/*.*
+  cp -r $home/PlotsResults/*.* PlotsResults/*.*
 fi
 
 if [ $commitplots -eq 1 ]
 then
   cd $trunk
+  svn add PlotsFits PlotsFits
   svn add PlotsResults PlotsFits
   svn commit -m "update plots"
 fi
