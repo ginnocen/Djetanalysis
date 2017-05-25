@@ -69,7 +69,7 @@ void closure(int isPP=1){
   gStyle->SetEndErrorSize(0);
   gStyle->SetMarkerStyle(20);
 
-  TCanvas*canvas=new TCanvas("canvas","canvas",1200,500);
+  TCanvas*canvas=new TCanvas("canvas","canvas",1500,500);
   canvas->Divide(3,1);
   
 
@@ -123,12 +123,24 @@ void closure(int isPP=1){
  
   canvas->cd(1); 
   hemp[1]->Draw();
+  hGenD_RecoOverGenJets->SetLineWidth(2);
+  hGenD_RecoOverGenJets->SetMarkerStyle(23);
+  hGenD_RecoOverGenJets->SetMarkerColor(1);
+  hGenD_RecoOverGenJets->SetLineColor(1);
   hGenD_RecoOverGenJets->Draw("psame");
   canvas->cd(2);
   hemp[2]->Draw();
+  hFitClosure->SetLineWidth(2);
+  hFitClosure->SetMarkerStyle(23);
+  hFitClosure->SetMarkerColor(1);
+  hFitClosure->SetLineColor(1);
   hFitClosure->Draw("psame");
   canvas->cd(3);
   hemp[3]->Draw();
+  hRecoJetDrecoOverGenJetGenD->SetLineWidth(2);
+  hRecoJetDrecoOverGenJetGenD->SetMarkerStyle(23);
+  hRecoJetDrecoOverGenJetGenD->SetMarkerColor(1);
+  hRecoJetDrecoOverGenJetGenD->SetLineColor(1);
   hRecoJetDrecoOverGenJetGenD->Draw("psame");
   if (isPP==1) canvas->SaveAs(Form("PlotsResults/canvasPPClosure_jet%d_Dlow%d_Dhigh%d_jetetamin0_jetetamax20.pdf",intjetpt_cut,intDptlow_cut,intDpthigh_cut));
   if (isPP==0) canvas->SaveAs(Form("PlotsResults/canvasPbPbClosure_jet%d_Dlow%d_Dhigh%d_jetetamin0_jetetamax20.pdf",intjetpt_cut,intDptlow_cut,intDpthigh_cut));

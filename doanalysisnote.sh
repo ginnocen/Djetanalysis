@@ -20,16 +20,14 @@ fi
 if [ $uploadplots -eq 1 ]
 then
   cd $trunk
-  cp -r $home/PlotsFits/*.* PlotsFits/*.*
-  cp -r $home/PlotsResults/*.* PlotsResults/*.*
+  #cp $home/PlotsFits/*.* PlotsFits/*.*
+  cp $home/PlotsResults/*.* PlotsResults/*.*
 fi
 
 if [ $commitplots -eq 1 ]
 then
   cd $trunk
-  svn add PlotsFits PlotsFits
-  svn add PlotsResults PlotsFits
-  svn commit -m "update plots"
+  svn commit -m "update plots" PlotsFits PlotsResults
 fi
 
 
