@@ -1,6 +1,6 @@
 #!/bin/bash
 downloadfromscratch=0
-uploadplots=0
+uploadplots=1
 commitplots=1
 
 
