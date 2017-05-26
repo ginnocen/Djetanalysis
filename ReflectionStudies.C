@@ -15,7 +15,7 @@
 using namespace std;
 
 
-void ReflectionStudies(int isPP=1,int intjetpt_cut=80,int intjetetamin_cut=0,int intjetetamax_cut=20){
+void ReflectionStudies(int isPP=1,int intjetpt_cut=80,int intjetetamin_cut=3,int intjetetamax_cut=16){
  
    TString input1;
    TString input2;
@@ -55,7 +55,7 @@ void ReflectionStudies(int isPP=1,int intjetpt_cut=80,int intjetetamin_cut=0,int
  
    TCanvas*canvasBkg1OverBkg0=new TCanvas("canvasBkg1OverBkg0","canvasBkg1OverBkg0",500,500);
    canvasBkg1OverBkg0->SetLogy();
-   TH2F* hemptyBkg1OverBkg0=new TH2F("hemptyBkg1OverBkg0","",50,0,.5,10,0.001,1000.0);
+   TH2F* hemptyBkg1OverBkg0=new TH2F("hemptyBkg1OverBkg0","",50,0,.5,10,0.00000000001,1000.0);
    hemptyBkg1OverBkg0->GetXaxis()->CenterTitle();
    hemptyBkg1OverBkg0->GetYaxis()->CenterTitle();
    hemptyBkg1OverBkg0->GetXaxis()->SetTitle("#Delta R");
@@ -103,8 +103,8 @@ void ReflectionStudies(int isPP=1,int intjetpt_cut=80,int intjetetamin_cut=0,int
    hSignalData_indexBkg1_file1->Draw("psame");
    hSignalData_indexBkg1_file2->Draw("psame");
    legendDYieldBkg1OverBkg0->Draw();
-   if(isPP==1)canvasBkg1OverBkg0->SaveAs(Form("PlotsResults/canvasppBkg1OverBkg0DYield_Jet%d_Dmin%d_Dmax%d.pdf",intjetpt_cut,intjetetamin_cut,intjetetamax_cut));
-   if(isPP==0)canvasBkg1OverBkg0->SaveAs(Form("PlotsResults/canvasPbPbBkg1OverBkg0DYield_Jet%d_Dmin%d_Dmax%d.pdf",intjetpt_cut,intjetetamin_cut,intjetetamax_cut));
+   if(isPP==1)canvasBkg1OverBkg0->SaveAs(Form("PlotsResults/canvasppBkg1OverBkg0DYield_Jet%d_jetetamin%d_jetetamax%d.pdf",intjetpt_cut,intjetetamin_cut,intjetetamax_cut));
+   if(isPP==0)canvasBkg1OverBkg0->SaveAs(Form("PlotsResults/canvasPbPbBkg1OverBkg0DYield_Jet%d_jetetamin%d_jetetamax%d.pdf",intjetpt_cut,intjetetamin_cut,intjetetamax_cut));
 
 
 }
