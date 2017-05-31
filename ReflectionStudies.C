@@ -85,12 +85,13 @@ void ReflectionStudies(int isPP=1,int intjetpt_cut=80,int intjetetamin_cut=3,int
    ent_hDYieldBkg1OverBkg01->SetFillColor(0);
    ent_hDYieldBkg1OverBkg01->SetMarkerColor(1);
  
+/*
    TLegendEntry *ent_hDYieldBkg1OverBkg02=legendDYieldBkg1OverBkg0->AddEntry(hSignalData_indexBkg1_file2,"D^{0} p_{\rm T} > 20 GeV/c","pf");
    ent_hDYieldBkg1OverBkg02->SetTextFont(42);
    ent_hDYieldBkg1OverBkg02->SetLineColor(1);
    ent_hDYieldBkg1OverBkg02->SetFillColor(0);
    ent_hDYieldBkg1OverBkg02->SetMarkerColor(2);
-
+*/
    hemptyBkg1OverBkg0->Draw();
    hSignalData_indexBkg1_file1->SetLineColor(1);
    hSignalData_indexBkg1_file1->SetMarkerColor(1);
@@ -101,7 +102,7 @@ void ReflectionStudies(int isPP=1,int intjetpt_cut=80,int intjetetamin_cut=3,int
    hSignalData_indexBkg1_file2->SetLineWidth(2);
    hSignalData_indexBkg1_file2->SetMarkerStyle(21);
    hSignalData_indexBkg1_file1->Draw("psame");
-   hSignalData_indexBkg1_file2->Draw("psame");
+   //hSignalData_indexBkg1_file2->Draw("psame");
    legendDYieldBkg1OverBkg0->Draw();
    if(isPP==1)canvasBkg1OverBkg0->SaveAs(Form("PlotsResults/canvasppBkg1OverBkg0DYield_Jet%d_jetetamin%d_jetetamax%d.pdf",intjetpt_cut,intjetetamin_cut,intjetetamax_cut));
    if(isPP==0)canvasBkg1OverBkg0->SaveAs(Form("PlotsResults/canvasPbPbBkg1OverBkg0DYield_Jet%d_jetetamin%d_jetetamax%d.pdf",intjetpt_cut,intjetetamin_cut,intjetetamax_cut));
