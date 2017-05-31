@@ -32,7 +32,7 @@ void divideBinWidth(TH1* h)
 }
 
 
-void analysis(bool doloop=false, bool doloopreflection=true, bool doFit=false, bool doFitreflection=true){
+void analysis(bool doloop=false, bool doloopreflection=false, bool doFit=true, bool doFitreflection=true){
  
    bool doPPData=true;
    bool doPPMC=true;
