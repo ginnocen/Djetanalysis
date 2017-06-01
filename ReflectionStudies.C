@@ -31,15 +31,14 @@ void ReflectionStudies(int isPP=1,int intjetpt_cut=80,int intjetetamin_cut=3,int
    
    TFile*file1=new TFile(input1.Data());
    TFile*file2=new TFile(input2.Data());
+   
+   TH1F*hSignalData_indexBkg1_file1_NormArea=(TH1F*)file1->Get("hSignalData_indexBkg1");
+   TH1F*hSignalData_indexBkg1_file2_NormArea=(TH1F*)file2->Get("hSignalData_indexBkg1");
+   
+   hSignalData_indexBkg1_file1_NormArea->SetName("hSignalData_indexBkg1_file1_NormArea");
+   hSignalData_indexBkg1_file2_NormArea->SetName("hSignalData_indexBkg1_file2_NormArea");
+   
 
-   TH1F*hSignalData_indexBkg0_file1=(TH1F*)file1->Get("hSignalData_indexBkg0");
-   TH1F*hSignalData_indexBkg1_file1=(TH1F*)file1->Get("hSignalData_indexBkg1");
-   TH1F*hSignalData_indexBkg0_file2=(TH1F*)file2->Get("hSignalData_indexBkg0");
-   TH1F*hSignalData_indexBkg1_file2=(TH1F*)file2->Get("hSignalData_indexBkg1");
-   
-   hSignalData_indexBkg1_file1->Divide(hSignalData_indexBkg0_file1);
-   hSignalData_indexBkg1_file2->Divide(hSignalData_indexBkg0_file2);
-   
    gStyle->SetTextSize(0.05);
    gStyle->SetTextFont(42);
    gStyle->SetPadRightMargin(0.043);
@@ -53,9 +52,90 @@ void ReflectionStudies(int isPP=1,int intjetpt_cut=80,int intjetetamin_cut=3,int
    gStyle->SetEndErrorSize(0);
    gStyle->SetMarkerStyle(20);
  
-   TCanvas*canvasBkg1OverBkg0=new TCanvas("canvasBkg1OverBkg0","canvasBkg1OverBkg0",500,500);
-   canvasBkg1OverBkg0->SetLogy();
-   TH2F* hemptyBkg1OverBkg0=new TH2F("hemptyBkg1OverBkg0","",50,0,.5,10,0.00000000001,1000.0);
+   TCanvas*canvas=new TCanvas("canvas","canvas",500,500);
+
+   static const int nRedges=4;
+   double Redges[nRedges+1]={0.,0.05,0.1,0.2,0.5};     //different R ranges
+   double Area[nRedges+1];
+   double Length[nRedges+1];
+   for (int i=0;i<nRedges;i++){
+     Area[i]=((Redges[i+1])*(Redges[i+1])-(Redges[i])*(Redges[i]))*3.14;
+     Length[i]=(Redges[i+1]-Redges[i]);
+   }
+
+  for (int i=0;i<nRedges;i++){
+
+    hSignalData_indexBkg1_file1_NormArea->SetBinContent(i+1,hSignalData_indexBkg1_file1_NormArea->GetBinContent(i+1)/Area[i]*Length[i]);
+    hSignalData_indexBkg1_file1_NormArea->SetBinError(i+1,hSignalData_indexBkg1_file1_NormArea->GetBinError(i+1)/Area[i]*Length[i]);
+    hSignalData_indexBkg1_file2_NormArea->SetBinContent(i+1,hSignalData_indexBkg1_file2_NormArea->GetBinContent(i+1)/Area[i]*Length[i]);
+    hSignalData_indexBkg1_file2_NormArea->SetBinError(i+1,hSignalData_indexBkg1_file2_NormArea->GetBinError(i+1)/Area[i]*Length[i]);
+  }
+
+   gPad->SetLogy();
+   TH2F* hemptyBkgNorm=new TH2F("hemptyBkgNorm","",50,0,.5,10,0.0000000001,1000);
+   hemptyBkgNorm->GetXaxis()->CenterTitle();
+   hemptyBkgNorm->GetYaxis()->CenterTitle();
+   hemptyBkgNorm->GetXaxis()->SetTitle("#Delta R");
+   hemptyBkgNorm->GetYaxis()->SetTitle("D^{0} meson yield / Area");
+   hemptyBkgNorm->GetXaxis()->SetTitleOffset(0.9);
+   hemptyBkgNorm->GetYaxis()->SetTitleOffset(1.1);
+   hemptyBkgNorm->GetXaxis()->SetTitleSize(0.05);
+   hemptyBkgNorm->GetYaxis()->SetTitleSize(0.05);
+   hemptyBkgNorm->GetXaxis()->SetTitleFont(42);
+   hemptyBkgNorm->GetYaxis()->SetTitleFont(42);
+   hemptyBkgNorm->GetXaxis()->SetLabelFont(42);
+   hemptyBkgNorm->GetYaxis()->SetLabelFont(42);
+   hemptyBkgNorm->GetXaxis()->SetLabelSize(0.035);
+   hemptyBkgNorm->GetYaxis()->SetLabelSize(0.035);
+   hemptyBkgNorm->Draw();
+   hSignalData_indexBkg1_file1_NormArea->SetLineColor(1);
+   hSignalData_indexBkg1_file1_NormArea->SetMarkerColor(1);
+   hSignalData_indexBkg1_file1_NormArea->SetLineWidth(2);
+   hSignalData_indexBkg1_file1_NormArea->SetMarkerStyle(23);
+   hSignalData_indexBkg1_file2_NormArea->SetLineColor(2);
+   hSignalData_indexBkg1_file2_NormArea->SetMarkerColor(2);
+   hSignalData_indexBkg1_file2_NormArea->SetLineWidth(2);
+   hSignalData_indexBkg1_file2_NormArea->SetMarkerStyle(21);
+   hSignalData_indexBkg1_file1_NormArea->Draw("same");
+
+   if(isPP==1)canvas->SaveAs(Form("PlotsResults/canvasppBkg1Norm_Jet%d_jetetamin%d_jetetamax%d.pdf",intjetpt_cut,intjetetamin_cut,intjetetamax_cut));
+   if(isPP==0)canvas->SaveAs(Form("PlotsResults/canvasPbPbBkg1Norm_Jet%d_jetetamin%d_jetetamax%d.pdf",intjetpt_cut,intjetetamin_cut,intjetetamax_cut));
+
+}
+
+
+
+void Check(int isPP=1,int intjetpt_cut=80,int intjetetamin_cut=3,int intjetetamax_cut=16){
+ 
+   TString input1;
+   TString input2;
+ 
+   if(isPP==1){
+     input1=Form("Files/resultsPP_jet%d_Dlow6_Dhigh999_jetetamin%d_jetetamax%d.root",intjetpt_cut,intjetetamin_cut,intjetetamax_cut);
+     input2=Form("Files/resultsPP_jet%d_Dlow20_Dhigh999_jetetamin%d_jetetamax%d.root",intjetpt_cut,intjetetamin_cut,intjetetamax_cut);
+   }
+   if(isPP==0){
+     input1=Form("Files/resultsPbPb_jet%d_Dlow6_Dhigh999_jetetamin%d_jetetamax%d.root",intjetpt_cut,intjetetamin_cut,intjetetamax_cut);
+     input2=Form("Files/resultsPbPb_jet%d_Dlow20_Dhigh999_jetetamin%d_jetetamax%d.root",intjetpt_cut,intjetetamin_cut,intjetetamax_cut);
+   }
+   
+   TFile*file1=new TFile(input1.Data());
+   TFile*file2=new TFile(input2.Data());
+   
+   TH1F*hSignalData_indexBkg1OverBkg0_file1=(TH1F*)file1->Get("hSignalData_indexBkg1");
+   TH1F*hSignalData_indexBkg0_file1=(TH1F*)file1->Get("hSignalData_indexBkg0");
+   TH1F*hSignalData_indexBkg1_file2=(TH1F*)file2->Get("hSignalData_indexBkg1");
+   TH1F*hSignalData_indexBkg0_file2=(TH1F*)file2->Get("hSignalData_indexBkg0");
+   
+  hSignalData_indexBkg1OverBkg0_file1->Divide(hSignalData_indexBkg0_file1);
+  hSignalData_indexBkg1OverBkg0_file1->Draw();
+  
+   gPad->SetLogy();
+   
+   TCanvas*canvas=new TCanvas("canvas","canvas",500,500);
+   canvas->SetLogy();
+
+   TH2F* hemptyBkg1OverBkg0=new TH2F("hemptyBkg1OverBkg0","",50,0,.5,10,0.000001,100000);
    hemptyBkg1OverBkg0->GetXaxis()->CenterTitle();
    hemptyBkg1OverBkg0->GetYaxis()->CenterTitle();
    hemptyBkg1OverBkg0->GetXaxis()->SetTitle("#Delta R");
@@ -70,45 +150,16 @@ void ReflectionStudies(int isPP=1,int intjetpt_cut=80,int intjetetamin_cut=3,int
    hemptyBkg1OverBkg0->GetYaxis()->SetLabelFont(42);
    hemptyBkg1OverBkg0->GetXaxis()->SetLabelSize(0.035);
    hemptyBkg1OverBkg0->GetYaxis()->SetLabelSize(0.035);
-  
-   TLegend *legendDYieldBkg1OverBkg0=new TLegend(0.2729839,0.7415254,0.616129,0.8622881,"");//0.5100806,0.5868644,0.8084677,0.7605932
-   legendDYieldBkg1OverBkg0->SetBorderSize(0);
-   legendDYieldBkg1OverBkg0->SetLineColor(0);
-   legendDYieldBkg1OverBkg0->SetFillColor(0);
-   legendDYieldBkg1OverBkg0->SetFillStyle(1001);
-   legendDYieldBkg1OverBkg0->SetTextFont(42);
-   legendDYieldBkg1OverBkg0->SetTextSize(0.04);
- 
-   TLegendEntry *ent_hDYieldBkg1OverBkg01=legendDYieldBkg1OverBkg0->AddEntry(hSignalData_indexBkg1_file1,"D^{0} p_{\rm T} > 6 GeV/c","pf");
-   ent_hDYieldBkg1OverBkg01->SetTextFont(42);
-   ent_hDYieldBkg1OverBkg01->SetLineColor(1);
-   ent_hDYieldBkg1OverBkg01->SetFillColor(0);
-   ent_hDYieldBkg1OverBkg01->SetMarkerColor(1);
- 
-/*
-   TLegendEntry *ent_hDYieldBkg1OverBkg02=legendDYieldBkg1OverBkg0->AddEntry(hSignalData_indexBkg1_file2,"D^{0} p_{\rm T} > 20 GeV/c","pf");
-   ent_hDYieldBkg1OverBkg02->SetTextFont(42);
-   ent_hDYieldBkg1OverBkg02->SetLineColor(1);
-   ent_hDYieldBkg1OverBkg02->SetFillColor(0);
-   ent_hDYieldBkg1OverBkg02->SetMarkerColor(2);
-*/
-   hemptyBkg1OverBkg0->Draw();
-   hSignalData_indexBkg1_file1->SetLineColor(1);
-   hSignalData_indexBkg1_file1->SetMarkerColor(1);
-   hSignalData_indexBkg1_file1->SetLineWidth(2);
-   hSignalData_indexBkg1_file1->SetMarkerStyle(23);
-   hSignalData_indexBkg1_file2->SetLineColor(2);
-   hSignalData_indexBkg1_file2->SetMarkerColor(2);
-   hSignalData_indexBkg1_file2->SetLineWidth(2);
-   hSignalData_indexBkg1_file2->SetMarkerStyle(21);
-   hSignalData_indexBkg1_file1->Draw("psame");
-   //hSignalData_indexBkg1_file2->Draw("psame");
-   legendDYieldBkg1OverBkg0->Draw();
-   if(isPP==1)canvasBkg1OverBkg0->SaveAs(Form("PlotsResults/canvasppBkg1OverBkg0DYield_Jet%d_jetetamin%d_jetetamax%d.pdf",intjetpt_cut,intjetetamin_cut,intjetetamax_cut));
-   if(isPP==0)canvasBkg1OverBkg0->SaveAs(Form("PlotsResults/canvasPbPbBkg1OverBkg0DYield_Jet%d_jetetamin%d_jetetamax%d.pdf",intjetpt_cut,intjetetamin_cut,intjetetamax_cut));
 
+   hemptyBkg1OverBkg0->Draw();
+   hSignalData_indexBkg1OverBkg0_file1->SetLineColor(1);
+   hSignalData_indexBkg1OverBkg0_file1->SetMarkerColor(1);
+   hSignalData_indexBkg1OverBkg0_file1->SetLineWidth(2);
+   hSignalData_indexBkg1OverBkg0_file1->SetMarkerStyle(23);
+   hSignalData_indexBkg1OverBkg0_file1->Draw("psame");
+
+   if(isPP==1)canvas->SaveAs(Form("PlotsResults/canvasppBkg1OverBkg0DYield_Jet%d_jetetamin%d_jetetamax%d.pdf",intjetpt_cut,intjetetamin_cut,intjetetamax_cut));
+   if(isPP==0)canvas->SaveAs(Form("PlotsResults/canvasPbPbBkg1OverBkg0DYield_Jet%d_jetetamin%d_jetetamax%d.pdf",intjetpt_cut,intjetetamin_cut,intjetetamax_cut));
 
 }
-
-
 
