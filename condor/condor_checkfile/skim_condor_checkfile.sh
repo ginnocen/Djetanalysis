@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [[ $# -ne 7 ]]; then
-    echo "usage: ./skim-condor.sh [input dir] [output dir] [max jobs] [log dir] [residuals] [isPP] [isMC]"
+if [[ $# -ne 8 ]]; then
+    echo "usage: ./skim-condor.sh [input dir] [output dir] [max jobs] [log dir] [residuals] [isPP] [isMC] [check input empty]"
     exit 1
 fi
 
@@ -12,6 +12,7 @@ LOGDIR=$4
 RESIDUALS=$5
 isPP=$6
 isMC=$7
+ifCHECKEMPTY=$8
 
 rm filelist.txt
 ls $DATASET  | awk '{print "" $0}' >> filelist.txt
@@ -32,13 +33,17 @@ do
     then
         break
     fi
-    ifexist=`ls ${DESTINATION}/skim_djet_$i`
-    if [ -z $ifexist ]
+    #ifexist=`ls ${DESTINATION}/skim_djet_$i`
+    #if [ -z $ifexist ]
+    if [ ! -f ${DESTINATION}/skim_djet_$i ] && [ -f ${DATASET}/$i ]
     then
-        infn=`echo $i | awk -F "." '{print $1}'`
-        INFILE="${DATASET}/$i"
-	
-	cat > skim-djet.condor <<EOF
+        if [ -s ${DATASET}/$i ] || [ $ifCHECKEMPTY -eq 0 ]
+        then
+            echo -e "\033[38;5;242mSubmitting a job for output\033[0m ${DESTINATION}/skim_djet_$i"
+            infn=`echo $i | awk -F "." '{print $1}'`
+            INFILE="${DATASET}/$i"
+	    
+	    cat > skim-djet.condor <<EOF
 
 Universe     = vanilla
 Initialdir   = $PWD/
@@ -57,10 +62,11 @@ transfer_input_files = D_jet_skim.exe,residuals.tgz
 
 Queue 
 EOF
-	condor_submit skim-djet.condor
-	mv skim-djet.condor $LOGDIR/log-${infn}.condor
-	counter=$(($counter+1))	
+            condor_submit skim-djet.condor
+            mv skim-djet.condor $LOGDIR/log-${infn}.condor
+            counter=$(($counter+1))	
+        fi
     fi
 done
 
-echo "Submitted $counter jobs to Condor."
+echo -e "Submitted \033[1;36m$counter\033[0m jobs to Condor."

@@ -7,6 +7,7 @@ j=0
 isMC=1
 isPP=0
 MAXFILENO=10000000000
+ifCHECKEMPTY=0
 
 #
 PTHATS=(0 5 10 15 30 50 80 120 170)
@@ -30,7 +31,7 @@ then
   g++ D_jet_skim.C $(root-config --cflags --libs) -Werror -Wall -O2 -o D_jet_skim.exe
   cd ../condor
   cp ../skim/D_jet_skim.exe .
-  ./skim_condor_checkfile.sh $INPUTDIR $OUTPUTDIR $MAXFILENO $LOGDIR residuals.tgz $isPP $isMC 
+  ./skim_condor_checkfile.sh $INPUTDIR $OUTPUTDIR $MAXFILENO $LOGDIR residuals.tgz $isPP $isMC $ifCHECKEMPTY
 fi
 
 if [ "$merger" -eq 1 ]
