@@ -82,6 +82,9 @@ public :
    Int_t           hiBin;
    Float_t         vz;
    Float_t         weight;
+   Float_t         pthat;
+   Float_t         pthatweight;
+   Float_t         maxDgenpt;
    Int_t           hiNevtPlane;
    Float_t         hiEvtPlanes[29];   //[hiNevtPlane]
    Int_t           njet_akpu3pf;
@@ -323,6 +326,9 @@ public :
    TBranch        *b_hiBin;   //!
    TBranch        *b_vz;   //!
    TBranch        *b_weight;   //!
+   TBranch        *b_pthat;   //!
+   TBranch        *b_pthatweight;   //!
+   TBranch        *b_maxDgenpt;   //!
    TBranch        *b_hiNevtPlane;   //!
    TBranch        *b_hiEvtPlanes;   //!
    TBranch        *b_njet_akpu3pf;   //!
@@ -860,6 +866,9 @@ void djet::Init(TTree *tree)
    fChain->SetBranchAddress("hiBin", &hiBin, &b_hiBin);
    fChain->SetBranchAddress("vz", &vz, &b_vz);
    fChain->SetBranchAddress("weight", &weight, &b_weight);
+   fChain->SetBranchAddress("pthat", &pthat, &b_pthat);
+   fChain->SetBranchAddress("pthatweight", &pthatweight, &b_pthatweight);
+   fChain->SetBranchAddress("maxDgenpt", &maxDgenpt, &b_maxDgenpt);
    fChain->SetBranchAddress("hiNevtPlane", &hiNevtPlane, &b_hiNevtPlane);
    fChain->SetBranchAddress("hiEvtPlanes", hiEvtPlanes, &b_hiEvtPlanes);
    fChain->SetBranchAddress("njet_akpu3pf", &njet_akpu3pf, &b_njet_akpu3pf);

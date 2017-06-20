@@ -74,6 +74,7 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
   _SET_BRANCH_ADDRESS(hlt_tree, HLT_HISinglePhoton40_Eta1p5_v1, HLT_HISinglePhoton40_Eta1p5_v1);
   _SET_BRANCH_ADDRESS(hlt_tree, HLT_HISinglePhoton40_Eta1p5_v2, HLT_HISinglePhoton40_Eta1p5_v2);
   _SET_BRANCH_ADDRESS(hlt_tree, HLT_HISinglePhoton40_Eta1p5ForPPRef_v1, HLT_HISinglePhoton40_Eta1p5ForPPRef_v1);
+  foutput->cd();  
   TTree* hlt_new = hlt_tree->CloneTree(0);
   hlt_new->SetName("hlt");
 
