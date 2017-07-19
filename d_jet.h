@@ -39,9 +39,8 @@ private :
   double fDchi2cl_cut;
 
 public :
-   
-   static const int nRedges=4;  
-   double Redges[nRedges+1]={0.,0.05,0.1,0.2,0.5};     //different R ranges
+   static const int nRedges=3;  
+   double Redges[nRedges+1]={0.,0.1,0.2,0.5};     //different R ranges
    
    static const int nZedges=5;  
    double Zedges[nZedges+1]={0.,0.2,0.4,0.6,0.8,1.0};     //different R ranges

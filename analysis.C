@@ -32,12 +32,12 @@ void divideBinWidth(TH1* h)
 }
 
 
-void analysis(bool doloop=false, bool doloopreflection=false, bool doFit=true, bool doFitreflection=true){
+void analysis(bool doloop=true, bool doloopreflection=false, bool doFit=true, bool doFitreflection=false){
  
    bool doPPData=true;
    bool doPPMC=true;
-   bool doPbPbData=true;
-   bool doPbPbMC=true;
+   bool doPbPbData=false;
+   bool doPbPbMC=false;
  
   // void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_cut=999){
 
@@ -45,25 +45,25 @@ void analysis(bool doloop=false, bool doloopreflection=false, bool doFit=true, b
    void runFit(int,int,int,int,int,int);
    
    if(doloop){
-       loop(doPPData,doPPMC,doPbPbData,doPbPbMC,80,6,999,0,20);
+       loop(doPPData,doPPMC,doPbPbData,doPbPbMC,80,4,20,0,20);
        loop(doPPData,doPPMC,doPbPbData,doPbPbMC,80,20,999,0,20);
+       loop(doPPData,doPPMC,doPbPbData,doPbPbMC,60,4,20,0,20);
+       loop(doPPData,doPPMC,doPbPbData,doPbPbMC,60,20,999,0,20);
+       loop(doPPData,doPPMC,doPbPbData,doPbPbMC,40,4,20,0,20);
+       loop(doPPData,doPPMC,doPbPbData,doPbPbMC,40,20,999,0,20);
    }
 
    if(doloopreflection){
-       loop(doPPData,doPPMC,doPbPbData,doPbPbMC,80,6,999,3,16);
-       loop(doPPData,doPPMC,doPbPbData,doPbPbMC,80,20,999,3,16);
    }
    if(doFit){
-     runFit(1,80,6,999,0,20);
-     runFit(0,80,6,999,0,20);
+     runFit(1,80,4,20,0,20);
      runFit(1,80,20,999,0,20);
-     runFit(0,80,20,999,0,20);
+     runFit(1,60,4,20,0,20);
+     runFit(1,60,20,999,0,20);
+     runFit(1,40,4,20,0,20);
+     runFit(1,40,20,999,0,20);
    }
    if(doFitreflection){
-     runFit(1,80,6,999,3,16);
-     runFit(0,80,6,999,3,16);
-     runFit(1,80,20,999,3,16);
-     runFit(0,80,20,999,3,16);
    }
 } 
 
@@ -108,7 +108,10 @@ void loop(bool doPPData=false,bool doPPMC=true,bool doPbPbData=false,bool doPbPb
   }
 
   if(doPPData){
-    djet* tpp = new djet("/export/d00/scratch/ginnocen/DjetFiles_HighPtJet80_pp_5TeV_Dfinder_2april_v1/merged.root");
+    TString namefile;
+    if (intjetpt_cut>=80) namefile="/export/d00/scratch/ginnocen/DjetFiles_HighPtJet80_pp_5TeV_Dfinder_2april_v1/merged.root";
+    else  namefile=" /mnt/hadoop/cms/store/user/jwang/Djets/DjetFiles_20170619_pp_5TeV_HighPtLowerJets_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614.root";
+    djet* tpp = new djet(namefile.Data());
     tpp->SetJetPtCutEta(jetpt_cut,jetetamin_cut,jetetamax_cut);
     tpp->SetDmesonPtMinMaxRapidity(Dptlow_cut,Dpthigh_cut,Dy_cut);
     tpp->SetDmesonCuts(decaylength_cut,Dalpha_cut,chi2cl_cut,trkptmin_cut,trketa_cut,trkpterr_cut);

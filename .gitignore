@@ -9,7 +9,7 @@
 *.pcm
 
 # output
-*.root
+#*.root
 *.log
 *.out
 *.err
