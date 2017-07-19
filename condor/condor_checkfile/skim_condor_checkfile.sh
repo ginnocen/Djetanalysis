@@ -62,7 +62,7 @@ transfer_input_files = D_jet_skim.exe,residuals.tgz
 
 Queue 
 EOF
-            condor_submit skim-djet.condor
+            condor_submit -pool submit.mit.edu:9615 -name submit.mit.edu -spool skim-djet.condor
             mv skim-djet.condor $LOGDIR/log-${infn}.condor
             counter=$(($counter+1))	
         fi
