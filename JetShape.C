@@ -15,13 +15,13 @@
 using namespace std;
 
 
-void JetShape(){
+void JetShape(int jetptmin=80){
 
   void runJetShape(int,int,int,int,int);
   void JetShapeComparison(int,int,int);
-  runJetShape(6,999,80,0,20);
-  runJetShape(20,999,80,0,20);
-  JetShapeComparison(80,0,20);
+  runJetShape(4,20,jetptmin,0,20);
+  runJetShape(20,999,jetptmin,0,20);
+  JetShapeComparison(jetptmin,0,20);
 }
 
 void runJetShape(int intDptlow_cut=6, int intDpthigh_cut=999, int intjetpt_cut=80, int intjetetamin_cut=0, int intjetetamax_cut=20){
@@ -75,7 +75,7 @@ void JetShapeComparison(int intjetpt_cut=80,int intjetetamin_cut=0,int intjeteta
    TString input1;
    TString input2;
 
-   input1=Form("Files/results_jet%d_Dlow6_Dhigh999_jetetamin%d_jetetamax%d.root",intjetpt_cut,intjetetamin_cut,intjetetamax_cut);
+   input1=Form("Files/results_jet%d_Dlow4_Dhigh20_jetetamin%d_jetetamax%d.root",intjetpt_cut,intjetetamin_cut,intjetetamax_cut);
    input2=Form("Files/results_jet%d_Dlow20_Dhigh999_jetetamin%d_jetetamax%d.root",intjetpt_cut,intjetetamin_cut,intjetetamax_cut);
 
    TFile*file1=new TFile(input1.Data());
