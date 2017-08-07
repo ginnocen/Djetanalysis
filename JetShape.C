@@ -136,7 +136,7 @@ void JetShapeComparison(int intjetpt_cut=80,int intjetetamin_cut=0,int intjeteta
    legendJetShapePbPbOverPP->SetTextFont(42);
    legendJetShapePbPbOverPP->SetTextSize(0.04);
  
-   TLegendEntry *ent_hJetShapePbPbOverPP1=legendJetShapePbPbOverPP->AddEntry(hJetShapePbPbOverPP1,"D^{0} p_{\rm T} > 6 GeV/c","pf");
+   TLegendEntry *ent_hJetShapePbPbOverPP1=legendJetShapePbPbOverPP->AddEntry(hJetShapePbPbOverPP1,"D^{0} p_{\rm T} > 4 GeV/c","pf");
    ent_hJetShapePbPbOverPP1->SetTextFont(42);
    ent_hJetShapePbPbOverPP1->SetLineColor(1);
    ent_hJetShapePbPbOverPP1->SetFillColor(0);

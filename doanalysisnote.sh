@@ -1,7 +1,7 @@
 #!/bin/bash
 downloadfromscratch=0
 uploadplots=1
-commitplots=1
+commitplots=0
 
 
 export trunk=/net/hisrv0001/home/ginnocen/Djet/CMSSW_7_5_8_patch3/src/Djetanalysis/analysisnote/notes/AN-17-097/trunk/
@@ -20,8 +20,8 @@ fi
 if [ $uploadplots -eq 1 ]
 then
   cd $trunk
-  cp $home/PlotsResults/*.* PlotsResults/.
-  cp $home/PlotsFits/*/*.* PlotsFits/.
+  cp $home/PlotsResults/*.pdf* PlotsResults/.
+  cp $home/PlotsFits/*/*.pdf* PlotsFits/.
 fi
 
 if [ $commitplots -eq 1 ]

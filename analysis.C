@@ -32,12 +32,12 @@ void divideBinWidth(TH1* h)
 }
 
 
-void analysis(bool doloop=true, bool doloopreflection=false, bool doFit=true, bool doFitreflection=false){
+void analysis(bool doloop=false, bool doloopreflection=false, bool doFit=true, bool doFitreflection=false){
  
-   bool doPPData=true;
-   bool doPPMC=true;
-   bool doPbPbData=false;
-   bool doPbPbMC=false;
+   bool doPPData=false;
+   bool doPPMC=false;
+   bool doPbPbData=true;
+   bool doPbPbMC=true;
  
   // void runFit(int isPP=1,int intjetpt_cut=80, int intDptlow_cut=4,int intDpthigh_cut=999){
 
@@ -56,12 +56,21 @@ void analysis(bool doloop=true, bool doloopreflection=false, bool doFit=true, bo
    if(doloopreflection){
    }
    if(doFit){
+
+     runFit(0,80,4,20,0,20);
+     runFit(0,80,20,999,0,20);
+     runFit(0,60,4,20,0,20);
+     runFit(0,60,20,999,0,20);
+     runFit(0,40,4,20,0,20);
+     runFit(0,40,20,999,0,20);
+/*
      runFit(1,80,4,20,0,20);
      runFit(1,80,20,999,0,20);
      runFit(1,60,4,20,0,20);
      runFit(1,60,20,999,0,20);
      runFit(1,40,4,20,0,20);
      runFit(1,40,20,999,0,20);
+*/
    }
    if(doFitreflection){
    }
