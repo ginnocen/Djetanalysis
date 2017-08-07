@@ -3,20 +3,20 @@
 #
 isMC=0
 isPP=1
-MAXFILENO=1000000
+MAXFILENO=2
 ifCHECKEMPTY=1
 
 #
 runjobs=${1:-0}
 merger=${2:-0}
 
-INPUTDIR="/mnt/hadoop/cms/store/user/wangj/HighPtLowerJets/crab_HiForestAOD_DfinderData_pp_20170614_HighPtLowerJets_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar/170615_172204/0000/"
+INPUTDIR="/mnt/hadoop/cms/store/user/ginnocen/HighPtJet80/crab_pp_5TeV_HighPtJet80_Dfinder_2april/170402_230535/0000/"
 OUTPUTPRIDIR="/mnt/hadoop/cms/store/user/jwang/Djets/"
-OUTPUTSUBDIR="DjetFiles_20170616_pp_5TeV_HighPtLowerJets_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614"
+OUTPUTSUBDIR="DjetFiles_HighPtJet80_pp_5TeV_Dfinder_2april_v1"
 OUTPUTDIR="${OUTPUTPRIDIR}/${OUTPUTSUBDIR}"
 LOGDIR="/export/d00/scratch/jwang/hadooplogs/log_${OUTPUTSUBDIR}"
 
-MERGEOUTPUTDIR="/export/d00/scratch/jwang/Djets/MC/"
+MERGEOUTPUTDIR="/export/d00/scratch/jwang/Djets/data/"
 
 if [ "$runjobs" -eq 1 ]
 then 
@@ -34,3 +34,10 @@ then
    hadd ${MERGEOUTPUTDIR}/${OUTPUTSUBDIR}.root ${OUTPUTPRIDIR}/${OUTPUTSUBDIR}/*.root
 fi
 
+#INPUTDIR="/mnt/hadoop/cms/store/user/wangj/HighPtLowerJets/crab_HiForestAOD_DfinderData_pp_20170614_HighPtLowerJets_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar/170615_172204/0000/"
+#OUTPUTPRIDIR="/mnt/hadoop/cms/store/user/jwang/Djets/"
+#OUTPUTSUBDIR="DjetFiles_20170616_pp_5TeV_HighPtLowerJets_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614"
+#OUTPUTDIR="${OUTPUTPRIDIR}/${OUTPUTSUBDIR}"
+#LOGDIR="/export/d00/scratch/jwang/hadooplogs/log_${OUTPUTSUBDIR}"
+
+#MERGEOUTPUTDIR="/export/d00/scratch/jwang/Djets/MC/"
