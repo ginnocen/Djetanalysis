@@ -191,7 +191,7 @@ int djet::loop(int isData) {
 }
 
 
-
+/*
 int main(int argc, char* argv[]) {
     if (argc < 3) {
         printf("Usage: ./d_jet [input] [output]\n");
@@ -205,3 +205,4 @@ int main(int argc, char* argv[]) {
     else
         return 1;
 }
+*/
