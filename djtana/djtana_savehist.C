@@ -54,13 +54,10 @@ void djtana_savehist(TString inputname="", TString outputname="",
               Float_t deltaRref = TMath::Sqrt(pow(deltaphi, 2) + pow(deltaetaref, 2));
               Float_t zvariable = (**djt.aDpt[irecogen])[jd]/(**djt.ajetpt[irecogen])[jj];
               
-              Int_t ibindr = xjjc::findibin(&drBins, deltaR);
-              if(ibindr<0) continue;
-              Int_t ibinz = xjjc::findibin(&zBins, zvariable);
-              if(ibinz<0) continue;
-
               Int_t ibinpt = xjjc::findibin(&ptBins, (**djt.aDpt[irecogen])[jd]);
               if(ibinpt<0) continue;              
+              Int_t ibindr = xjjc::findibin(&drBins, deltaR);
+              if(ibindr<0) continue;
 
               Int_t result_initcutval = initcutval_bindep(collisionsyst, ibinpt, ibindr);
               if(result_initcutval) return;
@@ -75,6 +72,8 @@ void djtana_savehist(TString inputname="", TString outputname="",
               
               // fill hist ...
               ahHistoRMass[ibinpt][ibindr]->Fill((*djt.Dmass)[jd]);
+              Int_t ibinz = xjjc::findibin(&zBins, zvariable);
+              if(ibinz<0) continue;
               ahHistoZMass[ibinpt][ibinz]->Fill((*djt.Dmass)[jd]);
                   
             }
