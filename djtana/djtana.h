@@ -25,7 +25,7 @@ TH1F* ahHistoZMassSwapped[nPtBins][nZBins];
 // TH1F* ahZNumEfficiency[indexGenRecoEff][indexBkgReflection];
 // TH1F* ahZEfficiency[indexGenRecoEff][indexBkgReflection];
 
-void createhists()
+void createhists_savehist()
 {
   for(int i=0;i<nPtBins;i++)
     {
@@ -33,12 +33,44 @@ void createhists()
       for(int j=0;j<nZBins;j++) ahHistoZMass[i][j] = new TH1F(Form("hHistoZMass_pt_%d_dr_%d",i,j), ";m_{#piK} (GeV/c^{2});Entries / (5 MeV/c^{2})", 60, 1.7, 2.0);
     }
 }
-void writehists()
+void createhists_savetpl()
+{
+  for(int i=0;i<nPtBins;i++)
+    {
+      for(int j=0;j<nDrBins;j++) 
+        {
+          ahHistoRMassSignal[i][j] = new TH1F(Form("hHistoRMassSignal_pt_%d_dr_%d",i,j), ";m_{#piK} (GeV/c^{2});Entries / (5 MeV/c^{2})", 60, 1.7, 2.0);
+          ahHistoRMassSwapped[i][j] = new TH1F(Form("hHistoRMassSwapped_pt_%d_dr_%d",i,j), ";m_{#piK} (GeV/c^{2});Entries / (5 MeV/c^{2})", 60, 1.7, 2.0);
+        }
+      for(int j=0;j<nZBins;j++) 
+        {
+          ahHistoZMassSignal[i][j] = new TH1F(Form("hHistoZMassSignal_pt_%d_dr_%d",i,j), ";m_{#piK} (GeV/c^{2});Entries / (5 MeV/c^{2})", 60, 1.7, 2.0);
+          ahHistoZMassSwapped[i][j] = new TH1F(Form("hHistoZMassSwapped_pt_%d_dr_%d",i,j), ";m_{#piK} (GeV/c^{2});Entries / (5 MeV/c^{2})", 60, 1.7, 2.0);
+        }
+    }
+}
+void writehists_savehist()
 {
   for(int i=0;i<nPtBins;i++)
     {
       for(int j=0;j<nDrBins;j++) ahHistoRMass[i][j]->Write();
       for(int j=0;j<nZBins;j++) ahHistoZMass[i][j]->Write();
+    }
+}
+void writehists_savetpl()
+{
+  for(int i=0;i<nPtBins;i++)
+    {
+      for(int j=0;j<nDrBins;j++) 
+        {
+          ahHistoRMassSignal[i][j]->Write();
+          ahHistoRMassSwapped[i][j]->Write();
+        }
+      for(int j=0;j<nZBins;j++) 
+        {
+          ahHistoZMassSignal[i][j]->Write();
+          ahHistoZMassSwapped[i][j]->Write();
+        }
     }
 }
 

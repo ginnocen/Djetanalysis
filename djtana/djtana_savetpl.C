@@ -1,39 +1,24 @@
 #include "djtana.h"
 
-Bool_t istest = false;
-void djtana_savehist(TString inputname="", TString outputname="", 
-                     TString collisionsyst="", Int_t isMC=1, Int_t irecogen=0,
-                     Float_t jetptmin=0, Float_t jetetamin=0, Float_t jetetamax=0, 
-                     Int_t maxevt=-1)
+void djtana_savetpl(TString inputname, TString outputname, 
+                    TString collisionsyst, Int_t isMC, Int_t irecogen,
+                    Float_t jetptmin, Float_t jetetamin, Float_t jetetamax, 
+                    Int_t maxevt=-1)
 {
-  if(istest)
-    {
-      inputname = "/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight.root";
-      outputname = "test";
-      collisionsyst = "pp";
-      isMC = 1;
-      irecogen = 0;
-      jetptmin = 40;
-      jetetamin = 0.3;
-      jetetamax = 1.6;
-      maxevt = -1;
-    }
+  int arguerr(TString collisionsyst, Int_t irecogen);
+  if(arguerr(collisionsyst, irecogen)) return;
 
-  int arguerr(TString collisionsyst, Int_t irecogen, Int_t isMC);
-  if(arguerr(collisionsyst, irecogen, isMC)) return;
-
-  createhists_savehist();
+  createhists_savetpl();
   djet djt(inputname);
   djt.setjetcut(jetptmin, jetetamin, jetetamax);
-  djt.setGcut(cutval_Dy);
   initcutval(collisionsyst);
 
   int64_t nentries = djt.fChain->GetEntriesFast();
-  int rnentries = (maxevt>0&&istest&&maxevt<=nentries)?maxevt:nentries;
+  int rnentries = (maxevt>0&&maxevt<=nentries)?maxevt:nentries;
   int ncountjet = 0;
   for(int i=0;i<rnentries;i++)
     {
-      if(i%10000==0) std::cout<<std::setiosflags(std::ios::left)<<"  [ \033[1;36m"<<std::setw(10)<<i<<"\033[0m"<<" / "<<std::setw(10)<<rnentries<<" ] "<<"\033[1;36m"<<std::setw(4)<<Form("%.0f%s",100.*i/rnentries,"%")<<"\033[0m"<<"   >>   djtana_savehist("<<std::setw(5)<<Form("%s,",collisionsyst.Data())<<" "<<std::setw(5)<<Form("%s,",tMC[isMC].Data())<<" "<<std::setw(20)<<Form("%sD_%sjet)", djt.aDopt[irecogen].Data(), djt.ajetopt[irecogen].Data())<<"\r"<<std::flush;
+      if(i%10000==0) std::cout<<std::setiosflags(std::ios::left)<<"  [ \033[1;36m"<<std::setw(10)<<i<<"\033[0m"<<" / "<<std::setw(10)<<rnentries<<" ] "<<"\033[1;36m"<<std::setw(4)<<Form("%.0f%s",100.*i/rnentries,"%")<<"\033[0m"<<"   >>   djtana_savetpl("<<std::setw(5)<<Form("%s,",collisionsyst.Data())<<" "<<std::setw(5)<<Form("%s,",tMC[isMC].Data())<<" "<<std::setw(20)<<Form("%sD_%sjet)", djt.aDopt[irecogen].Data(), djt.ajetopt[irecogen].Data())<<"\r"<<std::flush;
       //
       djt.fChain->GetEntry(i);
       //
@@ -71,20 +56,22 @@ void djtana_savehist(TString inputname="", TString outputname="",
               if(!djtDsel) continue;
               
               // fill hist ...
-              ahHistoRMass[ibinpt][ibindr]->Fill((*djt.Dmass)[jd]);
+              if((*djt.Dgen)[jd]==23333) ahHistoRMassSignal[ibinpt][ibindr]->Fill((*djt.Dmass)[jd]);
+              if((*djt.Dgen)[jd]==23344) ahHistoRMassSwapped[ibinpt][ibindr]->Fill((*djt.Dmass)[jd]);
               Int_t ibinz = xjjc::findibin(&zBins, zvariable);
               if(ibinz<0) continue;
-              ahHistoZMass[ibinpt][ibinz]->Fill((*djt.Dmass)[jd]);
+              if((*djt.Dgen)[jd]==23333) ahHistoZMassSignal[ibinpt][ibinz]->Fill((*djt.Dmass)[jd]);
+              if((*djt.Dgen)[jd]==23344) ahHistoZMassSwapped[ibinpt][ibinz]->Fill((*djt.Dmass)[jd]);
                   
             }
         }
     }
-  std::cout<<std::setiosflags(std::ios::left)<<"  Processed "<<"\033[1;31m"<<rnentries<<"\033[0m out of\033[1;31m "<<nentries<<"\033[0m event(s)."<<"   >>   djtana_savehist("<<std::setw(5)<<Form("%s,",collisionsyst.Data())<<" "<<std::setw(5)<<Form("%s,",tMC[isMC].Data())<<" "<<std::setw(30)<<Form("%sD_%sjet)", djt.aDopt[irecogen].Data(), djt.ajetopt[irecogen].Data())<<std::endl;
+  std::cout<<std::setiosflags(std::ios::left)<<"  Processed "<<"\033[1;31m"<<rnentries<<"\033[0m out of\033[1;31m "<<nentries<<"\033[0m event(s)."<<"   >>   djtana_savetpl("<<std::setw(5)<<Form("%s,",collisionsyst.Data())<<" "<<std::setw(5)<<Form("%s,",tMC[isMC].Data())<<" "<<std::setw(30)<<Form("%sD_%sjet)", djt.aDopt[irecogen].Data(), djt.ajetopt[irecogen].Data())<<std::endl;
   std::cout<<std::endl;
 
   TFile* outf = new TFile(Form("%s.root",outputname.Data()), "recreate");
   outf->cd();
-  writehists_savehist();
+  writehists_savetpl();
   outf->Write();
   outf->Close();
 
@@ -94,43 +81,32 @@ int main(int argc, char* argv[])
 {
   if(argc==10)
     {
-      djtana_savehist(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), atof(argv[6]), atof(argv[7]), atof(argv[8]), atoi(argv[9]));
+      djtana_savetpl(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), atof(argv[6]), atof(argv[7]), atof(argv[8]), atoi(argv[9]));
       return 0;
     }
   if(argc==9)
     {
-      djtana_savehist(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), atof(argv[6]), atof(argv[7]), atof(argv[8]));
-      return 0;
-    }
-  else if(argc==1)
-    {
-      djtana_savehist();
+      djtana_savetpl(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), atof(argv[6]), atof(argv[7]), atof(argv[8]));
       return 0;
     }
   else
     {
-      std::cout<<"  Error: invalid arguments number - djtana_savehist()"<<std::endl;
+      std::cout<<"  Error: invalid arguments number - djtana_savetpl()"<<std::endl;
       return 1;
     }
 }
 
-int arguerr(TString collisionsyst, Int_t irecogen, Int_t isMC)
+int arguerr(TString collisionsyst, Int_t irecogen)
 {
   if(collsyst_list.find(collisionsyst)==collsyst_list.end())
     {
       std::cout<<"\033[1;31merror:\033[0m invalid \"collisionsyst\""<<std::endl;
       return 1;
     }
-  if(isMC!=0 && isMC!=1)
-    {
-      std::cout<<"\033[1;31merror:\033[0m invalid \"isMC\""<<std::endl;
-      return 1;
-    }
-  if(irecogen<0 && irecogen>3)
+  if(irecogen!=0 && irecogen!=2)
     {
       std::cout<<"\033[1;31merror:\033[0m invalid \"irecogen\""<<std::endl;
       return 1;
     }
   return 0;
 }
-
