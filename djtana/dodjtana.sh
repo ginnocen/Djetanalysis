@@ -2,9 +2,9 @@
 # dodjtana.sh #
 
 # 
-iCOL=(1)
+iCOL=(0 1)
 jJET=(0)
-kRECOGEN=(0)
+kRECOGEN=(0 1 2 3)
 
 ##
 
@@ -85,30 +85,35 @@ done
 
 ##
 
-# djtana_savehist.C #
-g++ djtana_savehist.C $(root-config --cflags --libs) -g -o djtana_savehist.exe
+# djtana_savetpl.C + djtana_savehist.C #
+g++ djtana_savetpl.C $(root-config --cflags --libs) -g -o djtana_savetpl.exe || return 1;
+g++ djtana_savehist.C $(root-config --cflags --libs) -g -o djtana_savehist.exe || return 1;
+
 for i in ${iCOL[@]}
 do
     for j in ${jJET[@]}
     do
         for k in ${kRECOGEN[@]}
         do
-            tPOSTFIX=hist_Djet_$(produce_postfix $i $j $k)
-            echo -e "-- Processing ${FUNCOLOR}djtana_savehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[$3]}${NC}"
-            set -x
-            ./djtana_savehist.exe "${INPUTDANAME[i]}" "rootfiles/${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]}
-            set +x
-            echo
+            if [ $k -eq 0 ] || [ ${ISMC[i]} -eq 1 ]
+            then
+                tPOSTFIX=Djet_$(produce_postfix $i $j $k)                
+                echo -e "-- Processing ${FUNCOLOR}djtana_savetpl.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[$3]}${NC}"
+                set -x
+                ./djtana_savetpl.exe "${INPUTMCNAME[i]}" "rootfiles/masstpl_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} &
+                set +x
+                echo
+                echo -e "-- Processing ${FUNCOLOR}djtana_savehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[$3]}${NC}"
+                set -x
+                ./djtana_savehist.exe "${INPUTDANAME[i]}" "rootfiles/hist_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} &
+                set +x
+                echo
+            fi
         done
     done
 done
 
-# wait
-
-
-
-
-
-
+wait
 rm djtana_savehist.exe
+rm djtana_savetpl.exe
 
