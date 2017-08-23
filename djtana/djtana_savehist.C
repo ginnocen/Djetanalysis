@@ -1,35 +1,21 @@
 #include "djtana.h"
 
-Bool_t istest = false;
-void djtana_savehist(TString inputname="", TString outputname="", 
-                     TString collisionsyst="", Int_t isMC=1, Int_t irecogen=0,
-                     Float_t jetptmin=0, Float_t jetetamin=0, Float_t jetetamax=0, 
+void djtana_savehist(TString inputname, TString outputname, 
+                     TString collisionsyst, Int_t isMC, Int_t irecogen,
+                     Float_t jetptmin, Float_t jetetamin, Float_t jetetamax, 
                      Int_t maxevt=-1)
 {
-  if(istest)
-    {
-      inputname = "/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight.root";
-      outputname = "test";
-      collisionsyst = "pp";
-      isMC = 1;
-      irecogen = 0;
-      jetptmin = 40;
-      jetetamin = 0.3;
-      jetetamax = 1.6;
-      maxevt = -1;
-    }
-
   int arguerr(TString collisionsyst, Int_t irecogen, Int_t isMC);
   if(arguerr(collisionsyst, irecogen, isMC)) return;
 
-  createhists_savehist();
+  createhists("savehist");
   djet djt(inputname);
   djt.setjetcut(jetptmin, jetetamin, jetetamax);
   djt.setGcut(cutval_Dy);
   initcutval(collisionsyst);
 
   int64_t nentries = djt.fChain->GetEntriesFast();
-  int rnentries = (maxevt>0&&istest&&maxevt<=nentries)?maxevt:nentries;
+  int rnentries = (maxevt>0&&maxevt<=nentries)?maxevt:nentries;
   int ncountjet = 0;
   for(int i=0;i<rnentries;i++)
     {
@@ -70,12 +56,13 @@ void djtana_savehist(TString inputname="", TString outputname="",
                   Int_t djtDsel = djt.isDselected(jd, djt.aDopt[irecogen]);
                   if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
                   if(!djtDsel) continue;
-                  ahHistoRMass[l][ibinpt][ibindr]->Fill((*djt.Dmass)[jd]);
+                  Float_t Dmass = irecogen%2==0?(*djt.Dmass)[jd]:DZERO_MASS;
+                  ahHistoRMass[l][ibinpt][ibindr]->Fill(Dmass);
 
                   if(deltaR[l]>0.3) continue; // ... to discuss
                   Int_t ibinz = xjjc::findibin(&zBins, zvariable);
                   if(ibinz<0) continue;
-                  ahHistoZMass[l][ibinpt][ibinz]->Fill((*djt.Dmass)[jd]);
+                  ahHistoZMass[l][ibinpt][ibinz]->Fill(Dmass);
                 }
             }
         }
@@ -87,7 +74,7 @@ void djtana_savehist(TString inputname="", TString outputname="",
 
   TFile* outf = new TFile(Form("%s.root",outputname.Data()), "recreate");
   outf->cd();
-  writehists_savehist();
+  writehists("savehist");
   outf->Write();
   outf->Close();
 
@@ -107,7 +94,10 @@ int main(int argc, char* argv[])
     }
   else if(argc==1)
     {
-      djtana_savehist();
+      djtana_savehist("/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight.root",
+                      "test",
+                      "pp", 1, 0,
+                      40, 0.3, 1.6, 100000);
       return 0;
     }
   else

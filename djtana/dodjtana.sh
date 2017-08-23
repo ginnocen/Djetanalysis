@@ -2,7 +2,7 @@
 # dodjtana.sh #
 
 # 
-iCOL=(0 1)
+iCOL=(0 1 2 3)
 jJET=(0)
 kRECOGEN=(0 1 2 3)
 
@@ -35,6 +35,10 @@ INPUTMCNAME=(
     '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170510_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_pthatweight.root'
     '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170510_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_pthatweight.root'
 )
+
+DO_SAVETPL=${1:-0}
+DO_SAVEHIST=${2:-0}
+DO_USEHIST=${3:-0}
 
 # Do not touch the macros below if you don't know what they mean #
 #
@@ -98,16 +102,22 @@ do
             if [ $k -eq 0 ] || [ ${ISMC[i]} -eq 1 ]
             then
                 tPOSTFIX=Djet_$(produce_postfix $i $j $k)
-                echo -e "-- Processing ${FUNCOLOR}djtana_savetpl.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
-                set -x
-                ./djtana_savetpl.exe "${INPUTMCNAME[i]}" "rootfiles/masstpl_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} &
-                set +x
-                echo
-                echo -e "-- Processing ${FUNCOLOR}djtana_savehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
-                set -x
-                ./djtana_savehist.exe "${INPUTDANAME[i]}" "rootfiles/hist_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} &
-                set +x
-                echo
+                if [ $DO_SAVETPL -eq 1 ]
+                then
+                    echo -e "-- Processing ${FUNCOLOR}djtana_savetpl.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
+                    # set -x
+                    ./djtana_savetpl.exe "${INPUTMCNAME[i]}" "rootfiles/masstpl_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} &
+                    # set +x
+                    echo
+                fi
+                if [ $DO_SAVEHIST -eq 1 ]
+                then
+                    echo -e "-- Processing ${FUNCOLOR}djtana_savehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
+                    # set -x
+                    ./djtana_savehist.exe "${INPUTDANAME[i]}" "rootfiles/hist_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} &
+                    # set +x
+                    echo
+                fi
             fi
         done
     done
@@ -116,4 +126,33 @@ done
 wait
 rm djtana_savehist.exe
 rm djtana_savetpl.exe
+
+
+# djtana_usehist.C #
+g++ djtana_usehist.C $(root-config --cflags --libs) -g -o djtana_usehist.exe || return 1;
+
+if [ $DO_USEHIST -eq 1 ]
+then
+    for i in ${iCOL[@]}
+    do
+        for j in ${jJET[@]}
+        do
+            for k in ${kRECOGEN[@]}
+            do
+                if [ $k -eq 0 ] || [ ${ISMC[i]} -eq 1 ]
+                then
+                    tPOSTFIX=Djet_$(produce_postfix $i $j $k)
+                    echo -e "-- Processing ${FUNCOLOR}djtana_usehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
+                    # set -x
+                    ./djtana_usehist.exe "rootfiles/hist_${tPOSTFIX}" "rootfiles/masstpl_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}" $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]}
+                    # set +x
+                    echo
+                fi
+            done
+        done
+    done
+fi
+
+rm djtana_usehist.exe
+
 
