@@ -8,7 +8,7 @@ void djtana_savetpl(TString inputname, TString outputname,
   int arguerr(TString collisionsyst, Int_t irecogen);
   if(arguerr(collisionsyst, irecogen)) return;
 
-  createhists_savetpl();
+  createhists("savetpl");
   djet djt(inputname);
   djt.setjetcut(jetptmin, jetetamin, jetetamax);
   djt.setGcut(cutval_Dy);
@@ -61,6 +61,7 @@ void djtana_savetpl(TString inputname, TString outputname,
                     {
                       ahHistoRMassSignal[l][ibinpt][ibindr]->Fill((*djt.Dmass)[jd]);
                       ahNumREfficiency[l][ibinpt]->Fill(deltaR[l]);
+                      ahREfficiency[l][ibinpt]->Fill(deltaR[l]);
                     }
                   if((*djt.Dgen)[jd]==23344) ahHistoRMassSwapped[l][ibinpt][ibindr]->Fill((*djt.Dmass)[jd]);
 
@@ -71,6 +72,7 @@ void djtana_savetpl(TString inputname, TString outputname,
                     {
                       ahHistoZMassSignal[l][ibinpt][ibinz]->Fill((*djt.Dmass)[jd]);
                       ahNumZEfficiency[l][ibinpt]->Fill(zvariable);
+                      ahZEfficiency[l][ibinpt]->Fill(zvariable);
                     }
                   if((*djt.Dgen)[jd]==23344) ahHistoZMassSwapped[l][ibinpt][ibinz]->Fill((*djt.Dmass)[jd]);
                 }
@@ -107,10 +109,18 @@ void djtana_savetpl(TString inputname, TString outputname,
   std::cout<<std::endl;
 
   hNjets->SetBinContent(1, ncountjet);
+  for(int l=0;l<nRefBins;l++)
+    {
+      for(int i=0;i<nPtBins;i++)
+        {
+          ahREfficiency[l][i]->Divide(ahDenREfficiency[l][i]);
+          ahZEfficiency[l][i]->Divide(ahDenZEfficiency[l][i]);
+        }
+    }
 
   TFile* outf = new TFile(Form("%s.root",outputname.Data()), "recreate");
   outf->cd();
-  writehists_savetpl();
+  writehists("savetpl");
   outf->Write();
   outf->Close();
 
