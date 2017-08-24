@@ -11,8 +11,7 @@ void djtana_plothist(TString inputhistname, TString outputname,
 
   TFile* infhist = new TFile(Form("%s.root",inputhistname.Data()));
   if(!infhist->IsOpen()) return;
-  Int_t gethist = gethists(infhist, "plothist");
-  if(gethist) return;
+  if(gethists(infhist, "plothist")) return;
 
   // preparation
   std::vector<TString> vectex =
@@ -49,7 +48,7 @@ void djtana_plothist(TString inputhistname, TString outputname,
         {
           TCanvas* c = new TCanvas("c", "", 600, 600);
           TH2F* hempty = new TH2F("hempty", Form(";%s;%s",xtitle[k].Data(),ytitle[k].Data()), 5, vxBins[k].front(), vxBins[k].back(), 10, 0, yaxismax[k][l]*2.);
-          xjjroot::sethempty(hempty, 0, 0.1);
+          xjjroot::sethempty(hempty, 0, 0.5);
           hempty->Draw();
           TLegend* leg = new TLegend(0.53, 0.88-nPtBins*0.06, 0.85, 0.88);
           xjjroot::setleg(leg);
