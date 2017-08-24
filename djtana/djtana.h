@@ -44,6 +44,13 @@ TH1F* ahSignalZraw[nRefBins][nPtBins];
 TH1F* ahSignalRnorm[nRefBins][nPtBins];
 TH1F* ahSignalZnorm[nRefBins][nPtBins];
 
+TH1F* ahSignalRnormPP[nRefBins][nPtBins];
+TH1F* ahSignalZnormPP[nRefBins][nPtBins];
+TH1F* ahSignalRnormPbPb[nRefBins][nPtBins];
+TH1F* ahSignalZnormPbPb[nRefBins][nPtBins];
+TH1F* ahSignalRnormRatio[nRefBins][nPtBins];
+TH1F* ahSignalZnormRatio[nRefBins][nPtBins];
+
 //
 int createhists(Option_t* option)
 {
@@ -101,6 +108,18 @@ int createhists(Option_t* option)
               ahSignalZraw[l][i] = new TH1F(Form("hSignalZraw_%s_pt_%d",tRef[l].Data(),i), ";p_{T}^{D} / p_{T}^{jet};", nZBins, zBins);
               ahSignalRnorm[l][i] = new TH1F(Form("hSignalRnorm_%s_pt_%d",tRef[l].Data(),i), ";#DeltaR;", nDrBins, drBins);
               ahSignalZnorm[l][i] = new TH1F(Form("hSignalZnorm_%s_pt_%d",tRef[l].Data(),i), ";p_{T}^{D} / p_{T}^{jet};", nZBins, zBins);
+            }
+        }
+      return 0;
+    }
+  if(opt=="saveratio")
+    {
+      for(int l=0;l<nRefBins;l++)
+        {
+          for(int i=0;i<nPtBins;i++)
+            {
+              ahSignalRnormRatio[l][i] = new TH1F(Form("hSignalRnormRatio_%s_pt_%d",tRef[l].Data(),i), ";#DeltaR;", nDrBins, drBins);
+              ahSignalZnormRatio[l][i] = new TH1F(Form("hSignalZnormRatio_%s_pt_%d",tRef[l].Data(),i), ";p_{T}^{D} / p_{T}^{jet};", nZBins, zBins);
             }
         }
       return 0;
@@ -170,6 +189,18 @@ int writehists(Option_t* option)
         }
       return 0;
     }
+  if(opt=="saveratio")
+    {
+      for(int l=0;l<nRefBins;l++)
+        {
+          for(int i=0;i<nPtBins;i++)
+            {
+              ahSignalRnormRatio[l][i]->Write();
+              ahSignalZnormRatio[l][i]->Write();
+            }
+        }
+      return 0;
+    }
   std::cout<<"error: invalid option for writehists()"<<std::endl;
   return 1;
 }
@@ -224,10 +255,44 @@ int gethists(TFile* inf, Option_t* option)
         {
           for(int i=0;i<nPtBins;i++)
             {
-              // ahSignalR[l][i] = (TH1F*)inf->Get(Form("hSignalR_%s_pt_%d",tRef[l].Data(),i));
-              // ahSignalZ[l][i] = (TH1F*)inf->Get(Form("hSignalZ_%s_pt_%d",tRef[l].Data(),i));
               ahSignalRnorm[l][i] = (TH1F*)inf->Get(Form("hSignalRnorm_%s_pt_%d",tRef[l].Data(),i));
               ahSignalZnorm[l][i] = (TH1F*)inf->Get(Form("hSignalZnorm_%s_pt_%d",tRef[l].Data(),i));
+            }
+        }
+      return 0;
+    }
+  if(opt=="saveratiopp")
+    {
+      for(int l=0;l<nRefBins;l++)
+        {
+          for(int i=0;i<nPtBins;i++)
+            {
+              ahSignalRnormPP[l][i] = (TH1F*)inf->Get(Form("hSignalRnorm_%s_pt_%d",tRef[l].Data(),i));
+              ahSignalZnormPP[l][i] = (TH1F*)inf->Get(Form("hSignalZnorm_%s_pt_%d",tRef[l].Data(),i));
+            }
+        }
+      return 0;
+    }
+  if(opt=="saveratiopbpb")
+    {
+      for(int l=0;l<nRefBins;l++)
+        {
+          for(int i=0;i<nPtBins;i++)
+            {
+              ahSignalRnormPbPb[l][i] = (TH1F*)inf->Get(Form("hSignalRnorm_%s_pt_%d",tRef[l].Data(),i));
+              ahSignalZnormPbPb[l][i] = (TH1F*)inf->Get(Form("hSignalZnorm_%s_pt_%d",tRef[l].Data(),i));
+            }
+        }
+      return 0;
+    }
+  if(opt=="plotratio")
+    {
+      for(int l=0;l<nRefBins;l++)
+        {
+          for(int i=0;i<nPtBins;i++)
+            {
+              ahSignalRnormRatio[l][i] = (TH1F*)inf->Get(Form("hSignalRnormRatio_%s_pt_%d",tRef[l].Data(),i));
+              ahSignalZnormRatio[l][i] = (TH1F*)inf->Get(Form("hSignalZnormRatio_%s_pt_%d",tRef[l].Data(),i));
             }
         }
       return 0;
