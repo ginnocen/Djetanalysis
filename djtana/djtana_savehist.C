@@ -8,8 +8,7 @@ void djtana_savehist(TString inputname, TString outputname,
   int arguerr(TString collisionsyst, Int_t irecogen, Int_t isMC);
   if(arguerr(collisionsyst, irecogen, isMC)) return;
 
-  Int_t createhist = createhists("savehist");
-  if(createhist) return;
+  if(createhists("savehist")) return;
 
   djet djt(inputname);
   djt.setjetcut(jetptmin, jetetamin, jetetamax);
@@ -76,8 +75,7 @@ void djtana_savehist(TString inputname, TString outputname,
 
   TFile* outf = new TFile(Form("%s.root",outputname.Data()), "recreate");
   outf->cd();
-  Int_t writehist = writehists("savehist");
-  if(writehist) return;
+  if(writehists("savehist")) return;
   outf->Write();
   outf->Close();
 

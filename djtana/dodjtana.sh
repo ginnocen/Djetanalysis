@@ -1,7 +1,7 @@
 #!/bin/bash
 # dodjtana.sh #
 
-# 
+# Select the systems the macros run on 
 iCOL=(0 1 2 3)
 jJET=(0)
 kRECOGEN=(0 1 2 3)
@@ -19,8 +19,6 @@ JETETAMAX=(2.0 1.6)
 
 # nRECOGEN loop
 RECOGEN=('RecoD_RecoJet' 'GenD_RecoJet' 'RecoD_GenJet' 'GenD_GenJet')
-
-##
 
 # dataset[nCOL]
 INPUTDANAME=(
@@ -100,7 +98,7 @@ do
     do
         for k in ${kRECOGEN[@]}
         do
-            if [ $k -eq 0 ] || [ ${ISMC[i]} -eq 1 ]
+            if [ $k -eq 0 ] || [ ${ISMC[i]} -eq 1 ] # only RecoD_RecoJet will run for data
             then
                 tPOSTFIX=Djet_$(produce_postfix $i $j $k)
                 if [ $DO_SAVETPL -eq 1 ]
@@ -140,7 +138,7 @@ then
         do
             for k in ${kRECOGEN[@]}
             do
-                if [ $k -eq 0 ] || [ ${ISMC[i]} -eq 1 ]
+                if [ $k -eq 0 ] || [ ${ISMC[i]} -eq 1 ] # only RecoD_RecoJet will run for data
                 then
                     tPOSTFIX=Djet_$(produce_postfix $i $j $k)
                     echo -e "-- Processing ${FUNCOLOR}djtana_usehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
@@ -167,7 +165,7 @@ then
         do
             for k in ${kRECOGEN[@]}
             do
-                if [ $k -eq 0 ] || [ ${ISMC[i]} -eq 1 ]
+                if [ $k -eq 0 ] || [ ${ISMC[i]} -eq 1 ] # only RecoD_RecoJet will run for data
                 then
                     tPOSTFIX=Djet_$(produce_postfix $i $j $k)
                     echo -e "-- Processing ${FUNCOLOR}djtana_plothist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
