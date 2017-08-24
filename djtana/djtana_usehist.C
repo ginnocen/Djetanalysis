@@ -7,7 +7,8 @@ void djtana_usehist(TString inputhistname, TString inputtplname, TString outputn
   int arguerr(TString collisionsyst, Int_t irecogen);
   if(arguerr(collisionsyst, irecogen)) return;
 
-  createhists("usehist");
+  Int_t createhist = createhists("usehist");
+  if(createhist) return;
   Bool_t isrecoD = irecogen%2==0;
 
   TFile* infhist = new TFile(Form("%s.root",inputhistname.Data()));
@@ -85,7 +86,8 @@ void djtana_usehist(TString inputhistname, TString inputtplname, TString outputn
 
   TFile* outf = new TFile(Form("rootfiles/xsec_%s.root",outputname.Data()), "recreate");
   outf->cd();
-  writehists("usehist");
+  Int_t writehist = writehists("usehist");
+  if(writehist) return;
   outf->Write();
   outf->Close();
 
