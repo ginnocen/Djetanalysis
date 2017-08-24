@@ -39,6 +39,7 @@ INPUTMCNAME=(
 DO_SAVETPL=${1:-0}
 DO_SAVEHIST=${2:-0}
 DO_USEHIST=${3:-0}
+DO_PLOTHIST=${4:-0}
 
 # Do not touch the macros below if you don't know what they mean #
 #
@@ -78,7 +79,7 @@ function produce_postfix()
 }
 
 #
-FOLDERS=("plotfits" "rootfiles")
+FOLDERS=("plotfits" "plotxsecs" "rootfiles")
 for i in ${FOLDERS[@]}
 do
     if [ ! -d $i ]
@@ -154,5 +155,32 @@ then
 fi
 
 rm djtana_usehist.exe
+
+# djtana_plothist.C #
+g++ djtana_plothist.C $(root-config --cflags --libs) -g -o djtana_plothist.exe || return 1;
+
+if [ $DO_PLOTHIST -eq 1 ]
+then
+    for i in ${iCOL[@]}
+    do
+        for j in ${jJET[@]}
+        do
+            for k in ${kRECOGEN[@]}
+            do
+                if [ $k -eq 0 ] || [ ${ISMC[i]} -eq 1 ]
+                then
+                    tPOSTFIX=Djet_$(produce_postfix $i $j $k)
+                    echo -e "-- Processing ${FUNCOLOR}djtana_plothist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
+                    # set -x
+                    ./djtana_plothist.exe "rootfiles/xsec_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}" ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]}
+                    # set +x
+                    echo
+                fi
+            done
+        done
+    done
+fi
+
+rm djtana_plothist.exe
 
 

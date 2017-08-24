@@ -4,13 +4,19 @@
 #include "../includes/djet.h"
 #include "../includes/prefilters.h"
 #include "../includes/xjjcuti.h"
+#include "../includes/xjjrootuti.h"
 #include "../includes/dfitter.h"
 #include <iostream>
 #include <iomanip>
 #include <TMath.h>
 #include <TH1F.h>
+#include <TH2F.h>
+#include <TLegend.h>
 
 const Float_t DZERO_MASS = 1.8649;
+
+Color_t  amcolor[nPtBins]  =  {kBlack,  kRed};
+Style_t  amstyle[nPtBins]  =  {20,      21};
 
 //
 const int nRefBins = 2;
@@ -208,6 +214,20 @@ int gethists(TFile* inf, Option_t* option)
                   ahHistoZMassSignal[l][i][j] = (TH1F*)inf->Get(Form("hHistoZMassSignal_%s_pt_%d_z_%d",tRef[l].Data(),i,j));
                   ahHistoZMassSwapped[l][i][j] = (TH1F*)inf->Get(Form("hHistoZMassSwapped_%s_pt_%d_z_%d",tRef[l].Data(),i,j));
                 }
+            }
+        }
+      return 0;
+    }
+  if(opt=="plothist")
+    {
+      for(int l=0;l<nRefBins;l++)
+        {
+          for(int i=0;i<nPtBins;i++)
+            {
+              // ahSignalR[l][i] = (TH1F*)inf->Get(Form("hSignalR_%s_pt_%d",tRef[l].Data(),i));
+              // ahSignalZ[l][i] = (TH1F*)inf->Get(Form("hSignalZ_%s_pt_%d",tRef[l].Data(),i));
+              ahSignalRnorm[l][i] = (TH1F*)inf->Get(Form("hSignalRnorm_%s_pt_%d",tRef[l].Data(),i));
+              ahSignalZnorm[l][i] = (TH1F*)inf->Get(Form("hSignalZnorm_%s_pt_%d",tRef[l].Data(),i));
             }
         }
       return 0;
