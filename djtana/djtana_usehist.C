@@ -7,19 +7,17 @@ void djtana_usehist(TString inputhistname, TString inputtplname, TString outputn
   int arguerr(TString collisionsyst, Int_t irecogen);
   if(arguerr(collisionsyst, irecogen)) return;
 
-  createhists("usehist");
+  if(createhists("usehist")) return;
   Bool_t isrecoD = irecogen%2==0;
 
   TFile* infhist = new TFile(Form("%s.root",inputhistname.Data()));
   if(!infhist->IsOpen()) return;
-  Int_t gethist = gethists(infhist, "hist");
-  if(gethist) return;
+  if(gethists(infhist, "hist")) return;
   if(isrecoD)
     {
       TFile* inftpl = new TFile(Form("%s.root",inputtplname.Data()));
       if(!inftpl->IsOpen()) return;
-      Int_t gettpl = gethists(inftpl, "tpl");
-      if(gettpl) return;
+      if(gethists(inftpl, "tpl")) return;
     }
 
   std::vector<float> vdrBins, vzBins;
@@ -85,7 +83,7 @@ void djtana_usehist(TString inputhistname, TString inputtplname, TString outputn
 
   TFile* outf = new TFile(Form("rootfiles/xsec_%s.root",outputname.Data()), "recreate");
   outf->cd();
-  writehists("usehist");
+  if(writehists("usehist")) return;
   outf->Write();
   outf->Close();
 

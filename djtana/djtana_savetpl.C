@@ -8,7 +8,8 @@ void djtana_savetpl(TString inputname, TString outputname,
   int arguerr(TString collisionsyst, Int_t irecogen);
   if(arguerr(collisionsyst, irecogen)) return;
 
-  createhists("savetpl");
+  if(createhists("savetpl")) return;
+
   djet djt(inputname);
   djt.setjetcut(jetptmin, jetetamin, jetetamax);
   djt.setGcut(cutval_Dy);
@@ -120,7 +121,7 @@ void djtana_savetpl(TString inputname, TString outputname,
 
   TFile* outf = new TFile(Form("%s.root",outputname.Data()), "recreate");
   outf->cd();
-  writehists("savetpl");
+  if(writehists("savetpl")) return;
   outf->Write();
   outf->Close();
 

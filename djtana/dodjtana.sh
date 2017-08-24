@@ -1,7 +1,7 @@
 #!/bin/bash
 # dodjtana.sh #
 
-# 
+# Select the systems the macros run on 
 iCOL=(0 1 2 3)
 jJET=(0)
 kRECOGEN=(0 1 2 3)
@@ -20,8 +20,6 @@ JETETAMAX=(2.0 1.6)
 # nRECOGEN loop
 RECOGEN=('RecoD_RecoJet' 'GenD_RecoJet' 'RecoD_GenJet' 'GenD_GenJet')
 
-##
-
 # dataset[nCOL]
 INPUTDANAME=(
     '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight.root'
@@ -39,6 +37,7 @@ INPUTMCNAME=(
 DO_SAVETPL=${1:-0}
 DO_SAVEHIST=${2:-0}
 DO_USEHIST=${3:-0}
+DO_PLOTHIST=${4:-0}
 
 # Do not touch the macros below if you don't know what they mean #
 #
@@ -78,7 +77,7 @@ function produce_postfix()
 }
 
 #
-FOLDERS=("plotfits" "rootfiles")
+FOLDERS=("plotfits" "plotxsecs" "rootfiles")
 for i in ${FOLDERS[@]}
 do
     if [ ! -d $i ]
@@ -99,7 +98,7 @@ do
     do
         for k in ${kRECOGEN[@]}
         do
-            if [ $k -eq 0 ] || [ ${ISMC[i]} -eq 1 ]
+            if [ $k -eq 0 ] || [ ${ISMC[i]} -eq 1 ] # only RecoD_RecoJet will run for data
             then
                 tPOSTFIX=Djet_$(produce_postfix $i $j $k)
                 if [ $DO_SAVETPL -eq 1 ]
@@ -139,7 +138,7 @@ then
         do
             for k in ${kRECOGEN[@]}
             do
-                if [ $k -eq 0 ] || [ ${ISMC[i]} -eq 1 ]
+                if [ $k -eq 0 ] || [ ${ISMC[i]} -eq 1 ] # only RecoD_RecoJet will run for data
                 then
                     tPOSTFIX=Djet_$(produce_postfix $i $j $k)
                     echo -e "-- Processing ${FUNCOLOR}djtana_usehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
@@ -154,5 +153,32 @@ then
 fi
 
 rm djtana_usehist.exe
+
+# djtana_plothist.C #
+g++ djtana_plothist.C $(root-config --cflags --libs) -g -o djtana_plothist.exe || return 1;
+
+if [ $DO_PLOTHIST -eq 1 ]
+then
+    for i in ${iCOL[@]}
+    do
+        for j in ${jJET[@]}
+        do
+            for k in ${kRECOGEN[@]}
+            do
+                if [ $k -eq 0 ] || [ ${ISMC[i]} -eq 1 ] # only RecoD_RecoJet will run for data
+                then
+                    tPOSTFIX=Djet_$(produce_postfix $i $j $k)
+                    echo -e "-- Processing ${FUNCOLOR}djtana_plothist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
+                    # set -x
+                    ./djtana_plothist.exe "rootfiles/xsec_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}" ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]}
+                    # set +x
+                    echo
+                fi
+            done
+        done
+    done
+fi
+
+rm djtana_plothist.exe
 
 
