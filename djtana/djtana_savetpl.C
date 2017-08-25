@@ -62,7 +62,6 @@ void djtana_savetpl(TString inputname, TString outputname,
                     {
                       ahHistoRMassSignal[l][ibinpt][ibindr]->Fill((*djt.Dmass)[jd]);
                       ahNumREfficiency[l][ibinpt]->Fill(deltaR[l]);
-                      ahREfficiency[l][ibinpt]->Fill(deltaR[l]);
                     }
                   if((*djt.Dgen)[jd]==23344) ahHistoRMassSwapped[l][ibinpt][ibindr]->Fill((*djt.Dmass)[jd]);
 
@@ -73,7 +72,6 @@ void djtana_savetpl(TString inputname, TString outputname,
                     {
                       ahHistoZMassSignal[l][ibinpt][ibinz]->Fill((*djt.Dmass)[jd]);
                       ahNumZEfficiency[l][ibinpt]->Fill(zvariable);
-                      ahZEfficiency[l][ibinpt]->Fill(zvariable);
                     }
                   if((*djt.Dgen)[jd]==23344) ahHistoZMassSwapped[l][ibinpt][ibinz]->Fill((*djt.Dmass)[jd]);
                 }
@@ -114,8 +112,12 @@ void djtana_savetpl(TString inputname, TString outputname,
     {
       for(int i=0;i<nPtBins;i++)
         {
-          ahREfficiency[l][i]->Divide(ahDenREfficiency[l][i]);
-          ahZEfficiency[l][i]->Divide(ahDenZEfficiency[l][i]);
+          ahNumREfficiency[l][i]->Sumw2();
+          ahDenREfficiency[l][i]->Sumw2();
+          ahNumZEfficiency[l][i]->Sumw2();
+          ahDenZEfficiency[l][i]->Sumw2();
+          ahREfficiency[l][i]->Divide(ahNumREfficiency[l][i], ahDenREfficiency[l][i]);
+          ahZEfficiency[l][i]->Divide(ahNumZEfficiency[l][i], ahDenZEfficiency[l][i]);
         }
     }
 
