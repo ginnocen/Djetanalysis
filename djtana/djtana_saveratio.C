@@ -1,38 +1,38 @@
 #include "djtana.h"
 
-void djtana_saveratio(TString inputhistnamePP, TString inputhistnamePbPb, TString outputname,
+void djtana_saveratio(std::vector<TString> inputhistname, TString outputname,
                       Float_t jetptmin, Float_t jetetamin, Float_t jetetamax)
 {
-  int arguerr();
-  if(arguerr()) return;
+  int arguerr(std::vector<TString> inputhistname);
+  if(arguerr(inputhistname)) return;
 
   if(createhists("saveratio")) return;
 
-  TFile* infhistPP = new TFile(Form("%s.root",inputhistnamePP.Data()));
-  if(!infhistPP->IsOpen()) return;
-  if(gethists(infhistPP, "saveratioPP")) return;
-  TFile* infhistPbPb = new TFile(Form("%s.root",inputhistnamePbPb.Data()));
-  if(!infhistPbPb->IsOpen()) return;
-  if(gethists(infhistPbPb, "saveratioPbPb")) return;
-
-  for(int l=0;l<nRefBins;l++)
+  for(int m=0;m<2;m++)
     {
-      for(int i=0;i<nPtBins;i++)
+      TFile* infhist = new TFile(Form("%s.root",inputhistname[m].Data()));
+      if(!infhist->IsOpen()) return;
+      if(gethists(infhist, (m==0?"saveratiopp":"saveratiopbpb"))) return;
+    }
+
+  for(int i=0;i<nPtBins;i++)
+    {
+      for(int l=0;l<nRefBins;l++)
         {
-          TH1F*  hSignalXnormPP[2]     =  {ahSignalRnormPP[l][i],     ahSignalZnormPP[l][i]};
-          TH1F*  hSignalXnormPbPb[2]   =  {ahSignalRnormPbPb[l][i],   ahSignalZnormPbPb[l][i]};
-          TH1F*  hSignalXnormRatio[2]  =  {ahSignalRnormRatio[l][i],  ahSignalZnormRatio[l][i]};
+          TH1F* hSignalXnormP[2][2] = {{ahSignalRnormP[0][l][i], ahSignalZnormP[0][l][i]}, 
+                                       {ahSignalRnormP[1][l][i], ahSignalZnormP[1][l][i]}};
+          TH1F* hSignalXnormRatio[2] = {ahSignalRnormRatio[l][i], ahSignalZnormRatio[l][i]};
           for(int k=0;k<2;k++)
             {
-              TH1F* hRatio = (TH1F*)hSignalXnormPbPb[k]->Clone("hRatio");
-              hRatio->Divide(hSignalXnormPP[k]);
-              for(int j=0;j<hSignalXnormRatio[k]->GetNbinsX();j++)
-                {
-                  hSignalXnormRatio[k]->SetBinContent(j+1, hRatio->GetBinContent(j+1));
-                  hSignalXnormRatio[k]->SetBinError(j+1, hRatio->GetBinError(j+1));
-                }
-              delete hRatio;
+              hSignalXnormRatio[k]->Divide(hSignalXnormP[1][k], hSignalXnormP[0][k]);
             }
+        }
+      TH1F* hSignalXsubP[2][2] = {{ahSignalRsubP[0][i], ahSignalZsubP[0][i]}, 
+                                  {ahSignalRsubP[1][i], ahSignalZsubP[1][i]}};
+      TH1F* hSignalXsubRatio[2] = {ahSignalRsubRatio[i], ahSignalZsubRatio[i]};
+      for(int k=0;k<2;k++)
+        {
+          hSignalXsubRatio[k]->Divide(hSignalXsubP[1][k], hSignalXsubP[0][k]);
         }
     }
   
@@ -48,7 +48,8 @@ int main(int argc, char* argv[])
 {
   if(argc==7)
     {
-      djtana_saveratio(argv[1], argv[2], argv[3], atof(argv[4]), atof(argv[5]), atof(argv[6]));
+      std::vector<TString> inputname = {argv[1], argv[2]};
+      djtana_saveratio(inputname, argv[3], atof(argv[4]), atof(argv[5]), atof(argv[6]));
       return 0;
     }
   else
@@ -58,8 +59,13 @@ int main(int argc, char* argv[])
     }
 }
 
-int arguerr()
+int arguerr(std::vector<TString> inputhistname)
 {
+  if(inputhistname.size()!=2)
+    {
+      std::cout<<"\033[1;31merror:\033[0m invalid \"inputhistname\""<<std::endl;
+      return 1;
+    }
   return 0;
 }
 

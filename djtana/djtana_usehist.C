@@ -26,9 +26,9 @@ void djtana_usehist(TString inputhistname, TString inputtplname, TString outputn
 
   xjjroot::dfitter* dft = new xjjroot::dfitter("");
   
-  for(int l=0;l<nRefBins;l++)
+  for(int i=0;i<nPtBins;i++)
     {
-      for(int i=0;i<nPtBins;i++)
+      for(int l=0;l<nRefBins;l++)
         {
           TString               tleg[2]          =  {"#DeltaR",            "p_{T}^{D} / p_{T}^{jet}"};
           TString               tname[2]         =  {"dr",                 "z"};
@@ -71,12 +71,16 @@ void djtana_usehist(TString inputhistname, TString inputtplname, TString outputn
                     {
                       TH1F* hHistoXMass = k==0?ahHistoRMass[l][i][j]:ahHistoZMass[l][i][j];
                       hSignalX[k]->SetBinContent(j+1, hHistoXMass->Integral());
+                      hSignalX[k]->SetBinError(j+1, TMath::Sqrt(hHistoXMass->Integral()));
                       hSignalXnorm[k]->SetBinContent(j+1, hHistoXMass->Integral() / hSignalXnorm[k]->GetBinWidth(j+1));
+                      hSignalXnorm[k]->SetBinError(j+1, TMath::Sqrt(hHistoXMass->Integral()) / hSignalXnorm[k]->GetBinWidth(j+1));
                     }
                 }
               hSignalXnorm[k]->Scale(1./hNjets->GetBinContent(1));
             }
         }
+      ahSignalRsub[i]->Add(ahSignalRnorm[0][i], ahSignalRnorm[1][i], 1, -1);
+      ahSignalZsub[i]->Add(ahSignalZnorm[0][i], ahSignalZnorm[1][i], 1, -1);      
     }
   delete dft;
   

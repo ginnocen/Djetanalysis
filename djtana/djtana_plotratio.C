@@ -1,7 +1,8 @@
 #include "djtana.h"
 
 void djtana_plotratio(TString inputhistname, TString outputname,
-                      Float_t jetptmin, Float_t jetetamin, Float_t jetetamax)
+                      Float_t jetptmin, Float_t jetetamin, Float_t jetetamax,
+                      Int_t plotwosub = 1)
 {
   int arguerr();
   if(arguerr()) return;
@@ -22,40 +23,48 @@ void djtana_plotratio(TString inputhistname, TString outputname,
   std::vector<float> vdrBins, vzBins;
   for(int j=0;j<sizeof(drBins)/sizeof(drBins[0]);j++) vdrBins.push_back(drBins[j]);
   for(int j=0;j<sizeof(zBins)/sizeof(zBins[0]);j++) vzBins.push_back(zBins[j]);
-  TString             xtitle[2]  =  {"#DeltaR",                                  "z = p_{T}^{D} / p_{T}^{jet}"};
-  TString             ytitle[2]  =  {"#rho(#DeltaR)_{PbPb}/#rho(#DeltaR)_{pp}",  "#rho(z)_{PbPb}/#rho(z)_{pp}"};
-  TString             tname[2]   =  {"dr",                                       "z"};
-  std::vector<float>  vxBins[2]  =  {vdrBins,                                    vzBins};
+  TString             xtitle[2]             =  {"#DeltaR",                                  "z = p_{T}^{D} / p_{T}^{jet}"};
+  TString             ytitle[2]             =  {"#rho(#DeltaR)_{PbPb}/#rho(#DeltaR)_{pp}",  "#rho(z)_{PbPb}/#rho(z)_{pp}"};
+  TString             tname[2]              =  {"dr",                                       "z"};
+  std::vector<float>  vxBins[2]             =  {vdrBins,                                    vzBins};
+
 
   // plot
   for(int k=0;k<2;k++)
     {
-      for(int l=0;l<nRefBins;l++)
+      TCanvas* c = new TCanvas("c", "", 600, 600);
+      c->SetLogy();
+      TH2F* hempty = new TH2F("hempty", Form(";%s;%s",xtitle[k].Data(),ytitle[k].Data()), 5, vxBins[k].front(), vxBins[k].back(), 10, 1.e-1, 2.e+1);
+      xjjroot::sethempty(hempty, 0, 0.3);
+      hempty->Draw();
+      TLegend* leg = new TLegend(0.53, 0.88-nPtBins*0.06*(1+plotwosub), 0.85, 0.88);
+      xjjroot::setleg(leg);
+      for(int i=0;i<nPtBins;i++)
         {
-          TCanvas* c = new TCanvas("c", "", 600, 600);
-          c->SetLogy();
-          TH2F* hempty = new TH2F("hempty", Form(";%s;%s",xtitle[k].Data(),ytitle[k].Data()), 5, vxBins[k].front(), vxBins[k].back(), 10, 1.e-1, 2.e+1);
-          xjjroot::sethempty(hempty, 0, 0.3);
-          hempty->Draw();
-          TLegend* leg = new TLegend(0.53, 0.88-nPtBins*0.06, 0.85, 0.88);
-          xjjroot::setleg(leg);
-          for(int i=0;i<nPtBins;i++)
+          TH1F* hSignalXsubRatio[2] = {ahSignalRsubRatio[i], ahSignalZsubRatio[i]};
+          TH1F* hSignalXnormRatio[2] = {ahSignalRnormRatio[0][i], ahSignalZnormRatio[0][i]};
+          xjjroot::setthgrstyle(hSignalXsubRatio[k], amcolor[i], amstyle[0][i], 1.2, amcolor[i], 1, 1, -1, -1, -1);
+          hSignalXsubRatio[k]->Draw("pe same");
+          TString tleg = ptBins[i+1]==999?Form("p_{T}^{D} > %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str()):Form("%s < p_{T}^{D} < %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str(),xjjc::number_remove_zero(ptBins[i+1]).c_str());
+          leg->AddEntry(hSignalXsubRatio[k], tleg.Data(), "p");
+
+          if(plotwosub)
             {
-              TH1F* hSignalXnormRatio = k==0?ahSignalRnormRatio[l][i]:ahSignalZnormRatio[l][i];
-              xjjroot::setthgrstyle(hSignalXnormRatio, amcolor[i], amstyle[i], 1.2, amcolor[i], 1, 1, -1, -1, -1);
-              hSignalXnormRatio->Draw("pe same");
-              leg->AddEntry(hSignalXnormRatio, Form("%s < p_{T}^{D} < %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str(),xjjc::number_remove_zero(ptBins[i+1]).c_str()), "p");
-              xjjroot::drawCMS("");
-              Float_t texxpos = 0.22, texypos = 0.90, texdypos = 0.053;
-              for(std::vector<TString>::const_iterator it=vectex.begin(); it!=vectex.end(); it++)
-                xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), *it);
+              xjjroot::setthgrstyle(hSignalXnormRatio[k], amcolor[i], amstyle[1][i], 1.2, amcolor[i], 1, 1, -1, -1, -1);
+              hSignalXnormRatio[k]->Draw("pe same");
+              leg->AddEntry(hSignalXnormRatio[k], "before bkg sub", "p");
             }
-          leg->Draw();
-          c->SaveAs(Form("plotratios/cratio_%s_%s_%s.pdf",outputname.Data(),tRef[l].Data(),tname[k].Data()));
-          delete leg;
-          delete hempty;
-          delete c;
+
+          xjjroot::drawCMS("");
+          Float_t texxpos = 0.22, texypos = 0.90, texdypos = 0.053;
+          for(std::vector<TString>::const_iterator it=vectex.begin(); it!=vectex.end(); it++)
+            xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), *it);
         }
+      leg->Draw();
+      c->SaveAs(Form("plotratios/cratio_%s_%s.pdf",outputname.Data(),tname[k].Data()));
+      delete leg;
+      delete hempty;
+      delete c;
     }
 }
 

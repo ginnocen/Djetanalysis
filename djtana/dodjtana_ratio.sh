@@ -3,7 +3,7 @@
 
 # Select the systems the macros run on 
 iCOL=(0 1)
-jJET=(0)
+jJET=(1)
 kRECOGEN=(0 1 2 3)
 
 ##
