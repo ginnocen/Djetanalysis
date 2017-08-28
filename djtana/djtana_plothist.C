@@ -1,12 +1,12 @@
 #include "djtana.h"
 
 void djtana_plothist(TString inputhistname, TString outputname,
-                     TString collisionsyst,
+                     TString collisionsyst, Int_t isMC,
                      Float_t jetptmin, Float_t jetetamin, Float_t jetetamax,
                      Int_t plotref = 1)
 {
-  int arguerr(TString collisionsyst, Int_t plotref);
-  if(arguerr(collisionsyst, plotref)) return;
+  int arguerr(TString collisionsyst, Int_t isMC, Int_t plotref);
+  if(arguerr(collisionsyst, isMC, plotref)) return;
 
   xjjroot::setgstyle();
 
@@ -28,13 +28,14 @@ void djtana_plothist(TString inputhistname, TString outputname,
   TString             ytitle[2]        =  {"#rho(#DeltaR)",      "#rho(z)"};
   TString             tname[2]         =  {"dr",                 "z"};
   std::vector<float>  vxBins[2]        =  {vdrBins,              vzBins};
+  Float_t yaxismin = isMC?1.e-5:1.e-7, yaxismax = isMC?1.e+3:1.e+1;
 
   // plot
   for(int k=0;k<2;k++)
     {
       TCanvas* c = new TCanvas("c", "", 600, 600);
       c->SetLogy();
-      TH2F* hempty = new TH2F("hempty", Form(";%s;%s",xtitle[k].Data(),ytitle[k].Data()), 5, vxBins[k].front(), vxBins[k].back(), 10, 1.e-7, 1.e+1);
+      TH2F* hempty = new TH2F("hempty", Form(";%s;%s",xtitle[k].Data(),ytitle[k].Data()), 5, vxBins[k].front(), vxBins[k].back(), 10, yaxismin, yaxismax);
       hempty->GetXaxis()->SetNdivisions(505);
       xjjroot::sethempty(hempty, 0, 0.5);
       hempty->Draw();
@@ -66,9 +67,9 @@ void djtana_plothist(TString inputhistname, TString outputname,
 
 int main(int argc, char* argv[])
 {
-  if(argc==7)
+  if(argc==8)
     {
-      djtana_plothist(argv[1], argv[2], argv[3], atof(argv[4]), atof(argv[5]), atof(argv[6]));
+      djtana_plothist(argv[1], argv[2], argv[3], atoi(argv[4]), atof(argv[5]), atof(argv[6]), atof(argv[7]));
       return 0;
     }
   else
@@ -78,11 +79,16 @@ int main(int argc, char* argv[])
     }
 }
 
-int arguerr(TString collisionsyst, Int_t plotref)
+int arguerr(TString collisionsyst, Int_t isMC, Int_t plotref)
 {
   if(collsyst_list.find(collisionsyst)==collsyst_list.end())
     {
       std::cout<<"\033[1;31merror:\033[0m invalid \"collisionsyst\""<<std::endl;
+      return 1;
+    } 
+  if(isMC!=0 && isMC!=1)
+    {
+      std::cout<<"\033[1;31merror:\033[0m invalid \"isMC\""<<std::endl;
       return 1;
     }
   if(plotref!=0 && plotref!=1)
@@ -90,6 +96,6 @@ int arguerr(TString collisionsyst, Int_t plotref)
       std::cout<<"\033[1;31merror:\033[0m invalid \"plotref\""<<std::endl;
       return 1;
     }
-  return 0;
+ return 0;
 }
 
