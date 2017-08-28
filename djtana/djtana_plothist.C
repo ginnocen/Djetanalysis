@@ -54,7 +54,8 @@ void djtana_plothist(TString inputhistname, TString outputname,
             }
         }
       xjjroot::drawCMS(collisionsyst);
-      Float_t texxpos = 0.22, texypos = 0.90, texdypos = 0.053;
+      Float_t texxpos = 0.22, texypos = 0.85, texdypos = 0.06;
+      texypos += texdypos;
       for(std::vector<TString>::const_iterator it=vectex.begin(); it!=vectex.end(); it++)
         xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), *it);
       leg->Draw();

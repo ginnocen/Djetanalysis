@@ -12,11 +12,10 @@
 
 namespace xjjroot
 {
-  const float x_tex_left_top = 0.23;
-  const float y_tex_left_top = 0.91;
-  const float dy_tex_left_top = 0.06;
-
-  const TString tper = "%";
+  const float margin_pad_left = 0.18;
+  const float margin_pad_right = 0.043;
+  const float margin_pad_bottom = 0.145;
+  const float margin_pad_top = 0.1;
 
   void setgstyle();
   template <class T> void sethempty(T* hempty, Float_t xoffset=0, Float_t yoffset=0);
@@ -44,10 +43,10 @@ void xjjroot::setgstyle()
   gStyle->SetEndErrorSize(0);
   gStyle->SetTextSize(0.05);
   gStyle->SetTextFont(42);
-  gStyle->SetPadRightMargin(0.043);
-  gStyle->SetPadLeftMargin(0.18);
-  gStyle->SetPadTopMargin(0.1);
-  gStyle->SetPadBottomMargin(0.145);
+  gStyle->SetPadRightMargin(xjjroot::margin_pad_right);
+  gStyle->SetPadLeftMargin(xjjroot::margin_pad_left);
+  gStyle->SetPadTopMargin(xjjroot::margin_pad_top);
+  gStyle->SetPadBottomMargin(xjjroot::margin_pad_bottom);
   gStyle->SetTitleX(.0f);
 }
 

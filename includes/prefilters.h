@@ -1,8 +1,11 @@
 #ifndef _PREFILTERS_H_
 #define _PREFILTERS_H_
 
+#include <iostream>
+#include <iomanip>
 #include <vector>
 #include <map>
+#include <TString.h>
 
 Float_t ptBins[] = {4, 20, 999};
 Float_t drBins[] = {0, 0.1, 0.2, 0.5};
