@@ -115,7 +115,7 @@ then
                     tPOSTFIX=Djet_$(produce_postfix $i $j $k)
                     echo -e "-- Processing ${FUNCOLOR}djtana_plotratio.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
                     # set -x
-                    ./djtana_plotratio.exe "rootfiles/ratio_${tPOSTFIX}" "$tPOSTFIX" ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]}
+                    ./djtana_plotratio.exe "rootfiles/ratio_${tPOSTFIX}" "$tPOSTFIX" ${ISMC[i]} ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]}
                     # set +x
                     echo
                 fi

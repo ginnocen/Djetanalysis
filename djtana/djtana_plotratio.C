@@ -1,6 +1,7 @@
 #include "djtana.h"
 
 void djtana_plotratio(TString inputhistname, TString outputname,
+                      Int_t isMC,
                       Float_t jetptmin, Float_t jetetamin, Float_t jetetamax,
                       Int_t plotwosub = 1)
 {
@@ -23,18 +24,18 @@ void djtana_plotratio(TString inputhistname, TString outputname,
   std::vector<float> vdrBins, vzBins;
   for(int j=0;j<sizeof(drBins)/sizeof(drBins[0]);j++) vdrBins.push_back(drBins[j]);
   for(int j=0;j<sizeof(zBins)/sizeof(zBins[0]);j++) vzBins.push_back(zBins[j]);
-  TString             xtitle[2]             =  {"#DeltaR",                                  "z = p_{T}^{D} / p_{T}^{jet}"};
-  TString             ytitle[2]             =  {"#rho(#DeltaR)_{PbPb}/#rho(#DeltaR)_{pp}",  "#rho(z)_{PbPb}/#rho(z)_{pp}"};
-  TString             tname[2]              =  {"dr",                                       "z"};
-  std::vector<float>  vxBins[2]             =  {vdrBins,                                    vzBins};
-
+  TString            xtitle[2] = {"#DeltaR",                                                                                             "z = p_{T}^{D} / p_{T}^{jet}"};
+  TString            ytitle[2] = {isMC?"#rho(#DeltaR)_{PYTHIA+HYDJET}/#rho(#DeltaR)_{PYTHIA}":"#rho(#DeltaR)_{PbPb}/#rho(#DeltaR)_{pp}", isMC?"#rho(z)_{PYTHIA+HYDJET}/#rho(z)_{PYTHIA}":"#rho(z)_{PbPb}/#rho(z)_{pp}"};
+  TString            tname[2]  = {"dr",                                                                                                  "z"};
+  std::vector<float> vxBins[2] = {vdrBins,                                                                                               vzBins};
+  Float_t yaxismin = isMC?0.7:1.e-1, yaxismax = isMC?1.3:2.e+1;
 
   // plot
   for(int k=0;k<2;k++)
     {
       TCanvas* c = new TCanvas("c", "", 600, 600);
-      c->SetLogy();
-      TH2F* hempty = new TH2F("hempty", Form(";%s;%s",xtitle[k].Data(),ytitle[k].Data()), 5, vxBins[k].front(), vxBins[k].back(), 10, 1.e-1, 2.e+1);
+      if(!isMC) c->SetLogy();
+      TH2F* hempty = new TH2F("hempty", Form(";%s;%s",xtitle[k].Data(),ytitle[k].Data()), 5, vxBins[k].front(), vxBins[k].back(), 10, yaxismin, yaxismax);
       xjjroot::sethempty(hempty, 0, 0.3);
       hempty->Draw();
       TLegend* leg = new TLegend(0.53, 0.88-nPtBins*0.06*(1+plotwosub), 0.85, 0.88);
@@ -70,9 +71,9 @@ void djtana_plotratio(TString inputhistname, TString outputname,
 
 int main(int argc, char* argv[])
 {
-  if(argc==6)
+  if(argc==7)
     {
-      djtana_plotratio(argv[1], argv[2], atof(argv[3]), atof(argv[4]), atof(argv[5]));
+      djtana_plotratio(argv[1], argv[2], atoi(argv[3]), atof(argv[4]), atof(argv[5]), atof(argv[6]));
       return 0;
     }
   else
