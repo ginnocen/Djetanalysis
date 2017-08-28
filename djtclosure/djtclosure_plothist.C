@@ -8,7 +8,8 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
   int arguerr(std::vector<TString>inputhistname, TString collisionsyst, Int_t plotref);
   if(arguerr(inputhistname, collisionsyst, plotref)) return;
 
-  xjjroot::setgstyle();
+  if(createhists("plothist")) return;
+  // xjjroot::setgstyle();
 
   std::vector<TFile*> infhist(nCases, 0);
   for(int m=0;m<nCases;m++)
@@ -32,29 +33,55 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
   TString             ytitle[2]        =  {"#rho(#DeltaR)",      "#rho(z)"};
   TString             tname[2]         =  {"dr",                 "z"};
   std::vector<float>  vxBins[2]        =  {vdrBins,              vzBins};
-  Float_t yaxismin = 1.e-5, yaxismax = 1.e+3;
+  Float_t yaxismin = 1.1e-5, yaxismax = 1.e+3;
+  Float_t yPullaxismin = 1-1, yPullaxismax = 1+1;
+  Float_t ypaddiv = 3./4, yPullpaddiv = 1-ypaddiv;
+
+  // calculate pull
+  for(int k=0;k<2;k++)
+    {
+      for(int i=0;i<nPtBins;i++)
+        {
+          for(int m=0;m<nCases;m++)
+            {
+              for(int l=0;l<nRefBins;l++)
+                {
+                  if(l && !plotref) continue;
+                  TH1F* hSignalXnorm = k==0?ahSignalRnorm[m][l][i]:ahSignalZnorm[m][l][i];
+                  TH1F* hSignalXnormTruth = k==0?ahSignalRnorm[nCases-1][l][i]:ahSignalZnorm[nCases-1][l][i];
+                  TH1F* hSignalXnormPull = k==0?ahSignalRnormPull[m][l][i]:ahSignalZnormPull[m][l][i];
+                  hSignalXnormPull->Divide(hSignalXnorm, hSignalXnormTruth);
+                }
+            }
+        }
+    }
+  
 
   // plot
   for(int k=0;k<2;k++)
     {
       for(int i=0;i<nPtBins;i++)
         {
-          TCanvas* c = new TCanvas("c", "", 600, 600);
-          c->SetLogy();
+          TCanvas* c = new TCanvas("c", "", 600, 600 / ypaddiv);
+          TPad* pXsec = new TPad("pXsec", "", 0, 1-ypaddiv, 1, 1);
+          pXsec->SetMargin(xjjroot::margin_pad_left, xjjroot::margin_pad_right, 0, xjjroot::margin_pad_top);
+          pXsec->Draw();
+          pXsec->cd();
+          pXsec->SetLogy();
           TH2F* hempty = new TH2F("hempty", Form(";%s;%s",xtitle[k].Data(),ytitle[k].Data()), 5, vxBins[k].front(), vxBins[k].back(), 10, yaxismin, yaxismax);
           hempty->GetXaxis()->SetNdivisions(505);
           xjjroot::sethempty(hempty, 0, 0.5);
           hempty->Draw();
-          TLegend* leg = new TLegend(0.53, 0.88-nCases*0.06, 0.85, 0.88);
+          TLegend* leg = new TLegend(0.58, 0.88-nCases*0.06, 0.90, 0.88);
           xjjroot::setleg(leg);
-          TLegend* legref = new TLegend(0.55, 0.17, 1.27, 0.23);
+          TLegend* legref = new TLegend(0.56, 0.17-xjjroot::margin_pad_bottom, 1.30, 0.23-xjjroot::margin_pad_bottom);
           xjjroot::setleg(legref);
           legref->SetNColumns(nCases);
           for(int l=0;l<nRefBins;l++)
             {
               if(l && !plotref) continue;
               for(int m=0;m<nCases;m++)
-                {                  
+                {
                   TH1F* hSignalXnorm = k==0?ahSignalRnorm[m][l][i]:ahSignalZnorm[m][l][i];
                   xjjroot::setthgrstyle(hSignalXnorm, amcolor[m], amstyle[l], 1.2, amcolor[m], 1, 1, -1, -1, -1);
                   hSignalXnorm->Draw("pe same");
@@ -63,16 +90,56 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
                 }
             }
           xjjroot::drawCMS(collisionsyst);
-          Float_t texxpos = 0.22, texypos = 0.90, texdypos = 0.053;
+          Float_t texxpos = 0.22, texypos = 0.85, texdypos = 0.06;
+          texypos += texdypos;
           for(std::vector<TString>::const_iterator it=vectex.begin(); it!=vectex.end(); it++)
             xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), *it);
-          TString tpt = ptBins[i+1]==999?Form("p_{T}^{D} > %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str()):Form("%s < p_{T}^{D} < %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str(),xjjc::number_remove_zero(ptBins[i+1]).c_str());
+          TString tpt = ptBins[i+1]>=999?Form("p_{T}^{D} > %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str()):Form("%s < p_{T}^{D} < %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str(),xjjc::number_remove_zero(ptBins[i+1]).c_str());
           xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), tpt.Data());
           leg->Draw();
           legref->Draw();
+
+          c->cd();
+          TPad* pPull = new TPad("pPull", "", 0, 0, 1, yPullpaddiv);
+          pPull->SetMargin(xjjroot::margin_pad_left, xjjroot::margin_pad_right, xjjroot::margin_pad_top*1/yPullpaddiv, 0);
+          pPull->Draw();
+          pPull->cd();
+          TH2F* hemptyPull = new TH2F("hemptyPull", Form(";%s;%s",xtitle[k].Data(),"X / truth"), 5, vxBins[k].front(), vxBins[k].back(), 10, yPullaxismin, yPullaxismax);
+          hemptyPull->GetXaxis()->SetNdivisions(505);
+          hemptyPull->GetYaxis()->SetNdivisions(504);
+          xjjroot::sethempty(hemptyPull, 0, 0.5);
+          hemptyPull->GetYaxis()->SetTitleSize(hemptyPull->GetYaxis()->GetTitleSize() * (ypaddiv / yPullpaddiv));
+          hemptyPull->GetXaxis()->SetTitleSize(hemptyPull->GetXaxis()->GetTitleSize() * (ypaddiv / yPullpaddiv));
+          hemptyPull->GetYaxis()->SetLabelSize(hemptyPull->GetYaxis()->GetLabelSize() * (ypaddiv / yPullpaddiv));
+          hemptyPull->GetXaxis()->SetLabelSize(hemptyPull->GetXaxis()->GetLabelSize() * (ypaddiv / yPullpaddiv));
+          hemptyPull->GetYaxis()->SetTitleOffset(hemptyPull->GetYaxis()->GetTitleOffset() / (ypaddiv / yPullpaddiv));
+          hemptyPull->GetXaxis()->SetTitleOffset(hemptyPull->GetXaxis()->GetTitleOffset() / (ypaddiv / yPullpaddiv) *(1+1.8));
+          hemptyPull->GetYaxis()->SetLabelOffset(hemptyPull->GetYaxis()->GetLabelOffset() / (ypaddiv / yPullpaddiv) *(1+12));
+          hemptyPull->GetXaxis()->SetLabelOffset(hemptyPull->GetXaxis()->GetLabelOffset() / (ypaddiv / yPullpaddiv));
+          hemptyPull->Draw();
+          for(int l=0;l<nRefBins;l++)
+            {
+              if(l && !plotref) continue;
+              for(int m=0;m<nCases;m++)
+                {
+                  if(m==nCases-1) continue;
+                  TH1F* hSignalXnormPull = k==0?ahSignalRnormPull[m][l][i]:ahSignalZnormPull[m][l][i];
+                  xjjroot::setthgrstyle(hSignalXnormPull, amcolor[m], amstyle[l], 1.2, amcolor[m], 1, 1, -1, -1, -1);
+                  hSignalXnormPull->Draw("pe same");
+                }
+            }
+          TBox* box = new TBox(-0.07, 1.8, -0.01, 2.0);
+          box->SetFillColor(kWhite);
+          box->Draw();
+
           c->SaveAs(Form("plotxsecs/cclosure_xsec_%s_%s_pt_%s_%s.pdf",outputname.Data(),tname[k].Data(),xjjc::number_to_string(ptBins[i]).c_str(),xjjc::number_to_string(ptBins[i+1]).c_str()));
+
+          delete box;
           delete leg;
+          delete hemptyPull;
           delete hempty;
+          delete pPull;
+          delete pXsec;
           delete c;
         }
     }

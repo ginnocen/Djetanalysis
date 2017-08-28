@@ -37,6 +37,7 @@ void djtana_plotratio(TString inputhistname, TString outputname,
       if(!isMC) c->SetLogy();
       TH2F* hempty = new TH2F("hempty", Form(";%s;%s",xtitle[k].Data(),ytitle[k].Data()), 5, vxBins[k].front(), vxBins[k].back(), 10, yaxismin, yaxismax);
       xjjroot::sethempty(hempty, 0, 0.3);
+      hempty->GetXaxis()->SetNdivisions(505);
       hempty->Draw();
       TLegend* leg = new TLegend(0.53, 0.88-nPtBins*0.06*(1+plotwosub), 0.85, 0.88);
       xjjroot::setleg(leg);
@@ -57,7 +58,8 @@ void djtana_plotratio(TString inputhistname, TString outputname,
             }
 
           xjjroot::drawCMS("");
-          Float_t texxpos = 0.22, texypos = 0.90, texdypos = 0.053;
+          Float_t texxpos = 0.22, texypos = 0.85, texdypos = 0.06;
+          texypos += texdypos;
           for(std::vector<TString>::const_iterator it=vectex.begin(); it!=vectex.end(); it++)
             xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), *it);
         }
