@@ -181,7 +181,7 @@ int writehists(Option_t* option)
         }
       return 0;
     }
-  if(opt=="usehist")
+  if(opt.Contains("usehist"))
     {
       for(int i=0;i<nPtBins;i++)
         {
@@ -193,6 +193,9 @@ int writehists(Option_t* option)
               ahSignalZ[l][i]->Write();
               ahSignalRnorm[l][i]->Write();
               ahSignalZnorm[l][i]->Write();
+              if(!opt.Contains("recod")) continue;
+              ahREfficiency[l][i]->Write();
+              ahZEfficiency[l][i]->Write();
             }
           ahSignalRsub[i]->Write();
           ahSignalZsub[i]->Write();
@@ -243,7 +246,6 @@ int gethists(TFile* inf, Option_t* option)
               ahREfficiency[l][i] = (TH1F*)inf->Get(Form("hREfficiency_%s_pt_%d",tRef[l].Data(),i));
               ahDenREfficiency[l][i] = (TH1F*)inf->Get(Form("hDenREfficiency_%s_pt_%d",tRef[l].Data(),i));
               ahNumREfficiency[l][i] = (TH1F*)inf->Get(Form("hNumREfficiency_%s_pt_%d",tRef[l].Data(),i));
-              ahDenREfficiency[l][i] = (TH1F*)inf->Get(Form("hDenREfficiency_%s_pt_%d",tRef[l].Data(),i));
               ahZEfficiency[l][i] = (TH1F*)inf->Get(Form("hZEfficiency_%s_pt_%d",tRef[l].Data(),i));
               ahNumZEfficiency[l][i] = (TH1F*)inf->Get(Form("hNumZEfficiency_%s_pt_%d",tRef[l].Data(),i));
               ahDenZEfficiency[l][i] = (TH1F*)inf->Get(Form("hDenZEfficiency_%s_pt_%d",tRef[l].Data(),i));
@@ -261,7 +263,7 @@ int gethists(TFile* inf, Option_t* option)
         }
       return 0;
     }
-  if(opt=="plothist")
+  if(opt.Contains("plothist"))
     {
       for(int i=0;i<nPtBins;i++)
         {
@@ -269,45 +271,31 @@ int gethists(TFile* inf, Option_t* option)
             {
               ahSignalRnorm[l][i] = (TH1F*)inf->Get(Form("hSignalRnorm_%s_pt_%d",tRef[l].Data(),i));
               ahSignalZnorm[l][i] = (TH1F*)inf->Get(Form("hSignalZnorm_%s_pt_%d",tRef[l].Data(),i));
+              if(!opt.Contains("recod")) continue;
+              ahREfficiency[l][i] = (TH1F*)inf->Get(Form("hREfficiency_%s_pt_%d",tRef[l].Data(),i));
+              ahZEfficiency[l][i] = (TH1F*)inf->Get(Form("hZEfficiency_%s_pt_%d",tRef[l].Data(),i));
             }
           ahSignalRsub[i] = (TH1F*)inf->Get(Form("hSignalRsub_pt_%d",i));
           ahSignalZsub[i] = (TH1F*)inf->Get(Form("hSignalZsub_pt_%d",i));
         }
       return 0;
     }
-  if(opt=="saveratiopp")
+  if(opt.Contains("saveratio") && (opt.Contains("pp")||opt.Contains("pbpb")))
     {
+      Int_t isPbPb = opt.Contains("pp")?0:1;
       for(int i=0;i<nPtBins;i++)
         {
           for(int l=0;l<nRefBins;l++)
             {
-              ahSignalRnormP[0][l][i] = (TH1F*)inf->Get(Form("hSignalRnorm_%s_pt_%d",tRef[l].Data(),i));
-              ahSignalRnormP[0][l][i]->SetName(Form("hSignalRnorm_%s_pt_%d_%s",tRef[l].Data(),i,"pp"));
-              ahSignalZnormP[0][l][i] = (TH1F*)inf->Get(Form("hSignalZnorm_%s_pt_%d",tRef[l].Data(),i));
-              ahSignalZnormP[0][l][i]->SetName(Form("hSignalZnorm_%s_pt_%d_%s",tRef[l].Data(),i,"pp"));
+              ahSignalRnormP[isPbPb][l][i] = (TH1F*)inf->Get(Form("hSignalRnorm_%s_pt_%d",tRef[l].Data(),i));
+              ahSignalRnormP[isPbPb][l][i]->SetName(Form("hSignalRnorm_%s_pt_%d_%s",tRef[l].Data(),i,tPbPb[isPbPb].Data()));
+              ahSignalZnormP[isPbPb][l][i] = (TH1F*)inf->Get(Form("hSignalZnorm_%s_pt_%d",tRef[l].Data(),i));
+              ahSignalZnormP[isPbPb][l][i]->SetName(Form("hSignalZnorm_%s_pt_%d_%s",tRef[l].Data(),i,tPbPb[isPbPb].Data()));
             }
-          ahSignalRsubP[0][i] = (TH1F*)inf->Get(Form("hSignalRsub_pt_%d",i));
-          ahSignalRsubP[0][i]->SetName(Form("hSignalRsub_pt_%d_%s",i,"pp"));
-          ahSignalZsubP[0][i] = (TH1F*)inf->Get(Form("hSignalZsub_pt_%d",i));
-          ahSignalZsubP[0][i]->SetName(Form("hSignalZsub_pt_%d_%s",i,"pp"));
-        }
-      return 0;
-    }
-  if(opt=="saveratiopbpb")
-    {
-      for(int i=0;i<nPtBins;i++)
-        {
-          for(int l=0;l<nRefBins;l++)
-            {
-              ahSignalRnormP[1][l][i] = (TH1F*)inf->Get(Form("hSignalRnorm_%s_pt_%d",tRef[l].Data(),i));
-              ahSignalRnormP[1][l][i]->SetName(Form("hSignalRnorm_%s_pt_%d_%s",tRef[l].Data(),i,"PbPb"));
-              ahSignalZnormP[1][l][i] = (TH1F*)inf->Get(Form("hSignalZnorm_%s_pt_%d",tRef[l].Data(),i));
-              ahSignalZnormP[1][l][i]->SetName(Form("hSignalZnorm_%s_pt_%d_%s",tRef[l].Data(),i,"PbPb"));
-            }
-          ahSignalRsubP[1][i] = (TH1F*)inf->Get(Form("hSignalRsub_pt_%d",i));
-          ahSignalRsubP[1][i]->SetName(Form("hSignalRsub_pt_%d_%s",i,"PbPb"));
-          ahSignalZsubP[1][i] = (TH1F*)inf->Get(Form("hSignalZsub_pt_%d",i));
-          ahSignalZsubP[1][i]->SetName(Form("hSignalZsub_pt_%d_%s",i,"PbPb"));
+          ahSignalRsubP[isPbPb][i] = (TH1F*)inf->Get(Form("hSignalRsub_pt_%d",i));
+          ahSignalRsubP[isPbPb][i]->SetName(Form("hSignalRsub_pt_%d_%s",i,tPbPb[isPbPb].Data()));
+          ahSignalZsubP[isPbPb][i] = (TH1F*)inf->Get(Form("hSignalZsub_pt_%d",i));
+          ahSignalZsubP[isPbPb][i]->SetName(Form("hSignalZsub_pt_%d_%s",i,tPbPb[isPbPb].Data()));
         }
       return 0;
     }
