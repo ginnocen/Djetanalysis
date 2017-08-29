@@ -142,6 +142,16 @@ then
                 then
                     tPOSTFIX=Djet_$(produce_postfix $i $j $k)
                     echo -e "-- Processing ${FUNCOLOR}djtana_usehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
+                    if [ ! -f "rootfiles/hist_${tPOSTFIX}.root" ]
+                    then
+                        echo -e "${ERRCOLOR}error:${NC} rootfiles/hist_${tPOSTFIX}.root doesn't exist. Process djtana_savehist.C first."
+                        continue
+                    fi
+                    if [ ! -f "rootfiles/masstpl_${tPOSTFIX}.root" ] && [[ $k -eq 0  ||  $k -eq 2 ]]
+                    then
+                        echo -e "${ERRCOLOR}error:${NC} rootfiles/masstpl_${tPOSTFIX}.root doesn't exist. Process djtana_savetpl.C first."
+                        continue
+                    fi
                     # set -x
                     ./djtana_usehist.exe "rootfiles/hist_${tPOSTFIX}" "rootfiles/masstpl_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}" $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]}
                     # set +x
@@ -169,6 +179,11 @@ then
                 then
                     tPOSTFIX=Djet_$(produce_postfix $i $j $k)
                     echo -e "-- Processing ${FUNCOLOR}djtana_plothist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
+                    if [ ! -f "rootfiles/xsec_${tPOSTFIX}.root" ]
+                    then
+                        echo -e "${ERRCOLOR}error:${NC} rootfiles/xsec_${tPOSTFIX}.root doesn't exist. Process djtana_usehist.C first."
+                        continue
+                    fi
                     # set -x
                     ./djtana_plothist.exe "rootfiles/xsec_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}" ${ISMC[i]} ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]}
                     # set +x
@@ -180,5 +195,3 @@ then
 fi
 
 rm djtana_plothist.exe
-
-

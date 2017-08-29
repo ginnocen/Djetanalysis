@@ -13,6 +13,8 @@ Float_t zBins[] = {0, 0.2, 0.4, 0.6, 0.8, 1.0};
 const int nCoBins = 2;
 std::map<TString, int> collsyst_list = {{"pp", 0}, {"PbPb", 1}};
 TString tMC[] = {"data", "MC"};
+TString tPbPb[] = {"pp", "PbPb"};
+
 //
 const int nPtBins = sizeof(ptBins)/sizeof(ptBins[0])-1;
 const int nDrBins = sizeof(drBins)/sizeof(drBins[0])-1;

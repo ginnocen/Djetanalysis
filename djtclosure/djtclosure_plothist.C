@@ -9,7 +9,6 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
   if(arguerr(inputhistname, collisionsyst, plotref)) return;
 
   if(createhists("plothist")) return;
-  // xjjroot::setgstyle();
 
   std::vector<TFile*> infhist(nCases, 0);
   for(int m=0;m<nCases;m++)
@@ -29,7 +28,7 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
   std::vector<float> vdrBins, vzBins;
   for(int j=0;j<sizeof(drBins)/sizeof(drBins[0]);j++) vdrBins.push_back(drBins[j]);
   for(int j=0;j<sizeof(zBins)/sizeof(zBins[0]);j++) vzBins.push_back(zBins[j]);
-  TString             xtitle[2]        =  {"#DeltaR",            "z = p_{T}^{D} / p_{T}^{jet}"};
+  TString             xtitle[2]        =  {"#DeltaR",            "z = p^{D}_{T} / p^{jet}_{T}"};
   TString             ytitle[2]        =  {"#rho(#DeltaR)",      "#rho(z)"};
   TString             tname[2]         =  {"dr",                 "z"};
   std::vector<float>  vxBins[2]        =  {vdrBins,              vzBins};
@@ -55,7 +54,6 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
             }
         }
     }
-  
 
   // plot
   for(int k=0;k<2;k++)
@@ -96,6 +94,7 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
             xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), *it);
           TString tpt = ptBins[i+1]>=999?Form("p_{T}^{D} > %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str()):Form("%s < p_{T}^{D} < %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str(),xjjc::number_remove_zero(ptBins[i+1]).c_str());
           xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), tpt.Data());
+          if(k) xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), "#DeltaR < 0.3");
           leg->Draw();
           legref->Draw();
 

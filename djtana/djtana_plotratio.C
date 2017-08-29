@@ -62,6 +62,7 @@ void djtana_plotratio(TString inputhistname, TString outputname,
           texypos += texdypos;
           for(std::vector<TString>::const_iterator it=vectex.begin(); it!=vectex.end(); it++)
             xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), *it);
+          if(k) xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), "#DeltaR < 0.3");
         }
       leg->Draw();
       c->SaveAs(Form("plotratios/cratio_%s_%s.pdf",outputname.Data(),tname[k].Data()));

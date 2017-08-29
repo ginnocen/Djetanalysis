@@ -20,74 +20,77 @@ void djtana_usehist(TString inputhistname, TString inputtplname, TString outputn
       if(gethists(inftpl, "tpl")) return;
     }
 
+  std::vector<TString> vectex =
+    {
+      "|y^{D}| < 2",
+      Form("p_{T}^{jet} > %s GeV/c",xjjc::number_remove_zero(jetptmin).c_str()),
+      Form("%s < |#eta^{jet}| < %s",xjjc::number_remove_zero(jetetamin).c_str(),xjjc::number_remove_zero(jetetamax).c_str()),
+    };
+
   std::vector<float> vdrBins, vzBins;
   for(int j=0;j<sizeof(drBins)/sizeof(drBins[0]);j++) vdrBins.push_back(drBins[j]);
   for(int j=0;j<sizeof(zBins)/sizeof(zBins[0]);j++) vzBins.push_back(zBins[j]);
 
   xjjroot::dfitter* dft = new xjjroot::dfitter("");
   
-  for(int i=0;i<nPtBins;i++)
+  std::vector<TString>             tleg                =  {"#DeltaR",                    "p_{T}^{D}/p_{T}^{jet}"};
+  std::vector<TString>             tname               =  {"dr",                         "z"};
+  std::vector<std::vector<float>>  vxBins              =  {vdrBins,                      vzBins};
+  std::vector<TH1F**>              hHistoXMass         =  {(TH1F**)ahHistoRMass,         (TH1F**)ahHistoZMass};
+  std::vector<TH1F**>              hHistoXMassSignal   =  {(TH1F**)ahHistoRMassSignal,   (TH1F**)ahHistoZMassSignal};
+  std::vector<TH1F**>              hHistoXMassSwapped  =  {(TH1F**)ahHistoRMassSwapped,  (TH1F**)ahHistoZMassSwapped};
+  std::vector<TH1F**>              hSignalXraw         =  {(TH1F**)ahSignalRraw,         (TH1F**)ahSignalZraw};
+  std::vector<TH1F**>              hSignalX            =  {(TH1F**)ahSignalR,            (TH1F**)ahSignalZ};
+  std::vector<TH1F**>              hSignalXsub         =  {(TH1F**)ahSignalRsub,         (TH1F**)ahSignalZsub};
+  std::vector<TH1F**>              hSignalXnorm        =  {(TH1F**)ahSignalRnorm,        (TH1F**)ahSignalZnorm};
+  std::vector<TH1F**>              hXEfficiency        =  {(TH1F**)ahREfficiency,        (TH1F**)ahZEfficiency};
+
+  for(int k=0;k<2;k++)
     {
-      for(int l=0;l<nRefBins;l++)
+      for(int i=0;i<nPtBins;i++)
         {
-          TString               tleg[2]          =  {"#DeltaR",            "p_{T}^{D} / p_{T}^{jet}"};
-          TString               tname[2]         =  {"dr",                 "z"};
-          std::vector<float>    vxBins[2]         = {vdrBins,              vzBins};
-          TH1F*                 hSignalXraw[2]   =  {ahSignalRraw[l][i],   ahSignalZraw[l][i]};
-          TH1F*                 hSignalX[2]      =  {ahSignalR[l][i],      ahSignalZ[l][i]};
-          TH1F*                 hSignalXnorm[2]  =  {ahSignalRnorm[l][i],  ahSignalZnorm[l][i]};
-          TH1F*                 hXEfficiency[2]  =  {ahREfficiency[l][i],  ahZEfficiency[l][i]};
-          for(int k=0;k<2;k++)
+          for(int l=0;l<nRefBins;l++)
             {
               if(isrecoD)
                 {
                   for(int j=0;j<vxBins[k].size()-1;j++)
                     {
-                      TH1F* hHistoXMass = k==0?ahHistoRMass[l][i][j]:ahHistoZMass[l][i][j];
-                      TH1F* hHistoXMassSignal = k==0?ahHistoRMassSignal[l][i][j]:ahHistoZMassSignal[l][i][j];
-                      TH1F* hHistoXMassSwapped = k==0?ahHistoRMassSwapped[l][i][j]:ahHistoZMassSwapped[l][i][j];
-                      std::vector<TString> vectex = 
-                        {
-                          Form("%s < p_{T}^{D} < %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str(),xjjc::number_remove_zero(ptBins[i+1]).c_str()),
-                          "|y^{D}| < 2",
-                          Form("p_{T}^{jet} > %s GeV/c",xjjc::number_remove_zero(jetptmin).c_str()),
-                          Form("%s < |#eta^{jet}| < %s",xjjc::number_remove_zero(jetetamin).c_str(),xjjc::number_remove_zero(jetetamax).c_str()),
-                          Form("%s < %s < %s",xjjc::number_remove_zero(vxBins[k].at(j)).c_str(),tleg[k].Data(),xjjc::number_remove_zero(vxBins[k].at(j+1)).c_str())
-                        };
-                      dft->fit(hHistoXMass, hHistoXMassSignal, hHistoXMassSwapped, collisionsyst, Form("plotfits/cmass_%s_%s_pt_%d_%s_%d",outputname.Data(),tRef[l].Data(),i,tname[k].Data(),j), vectex);
-                      hSignalXraw[k]->SetBinContent(j+1, dft->GetY());
-                      hSignalXraw[k]->SetBinError(j+1, dft->GetYE());
-                      hSignalX[k]->SetBinContent(j+1, dft->GetY());
-                      hSignalX[k]->SetBinError(j+1, dft->GetYE());
-                      hSignalXnorm[k]->SetBinContent(j+1, dft->GetY() / hSignalXnorm[k]->GetBinWidth(j+1));
-                      hSignalXnorm[k]->SetBinError(j+1, dft->GetYE() / hSignalXnorm[k]->GetBinWidth(j+1));
+                      vectex.push_back(Form("%s < p_{T}^{D} < %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str(),xjjc::number_remove_zero(ptBins[i+1]).c_str()));
+                      vectex.push_back(Form("%s < %s < %s",xjjc::number_remove_zero(vxBins[k].at(j)).c_str(),tleg[k].Data(),xjjc::number_remove_zero(vxBins[k].at(j+1)).c_str()));
+                      dft->fit((hHistoXMass.at(k))[(l*nPtBins+i)*(vxBins[k].size()-1)+j], (hHistoXMassSignal.at(k))[(l*nPtBins+i)*(vxBins[k].size()-1)+j], (hHistoXMassSwapped.at(k))[(l*nPtBins+i)*(vxBins[k].size()-1)+j], collisionsyst, Form("plotfits/cmass_%s_%s_pt_%d_%s_%d",outputname.Data(),tRef[l].Data(),i,tname[k].Data(),j), vectex);
+                      vectex.pop_back();
+                      vectex.pop_back();
+                      (hSignalXraw.at(k))[l*nPtBins+i]->SetBinContent(j+1, dft->GetY());
+                      (hSignalXraw.at(k))[l*nPtBins+i]->SetBinError(j+1, dft->GetYE());
+                      (hSignalX.at(k))[l*nPtBins+i]->SetBinContent(j+1, dft->GetY());
+                      (hSignalX.at(k))[l*nPtBins+i]->SetBinError(j+1, dft->GetYE());
+                      (hSignalXnorm.at(k))[l*nPtBins+i]->SetBinContent(j+1, dft->GetY() / (hSignalXnorm.at(k))[l*nPtBins+i]->GetBinWidth(j+1));
+                      (hSignalXnorm.at(k))[l*nPtBins+i]->SetBinError(j+1, dft->GetYE() / (hSignalXnorm.at(k))[l*nPtBins+i]->GetBinWidth(j+1));
                     }
-                  hSignalX[k]->Divide(hXEfficiency[k]);
-                  hSignalXnorm[k]->Divide(hXEfficiency[k]);
+                  (hSignalX.at(k))[l*nPtBins+i]->Divide((hXEfficiency.at(k))[l*nPtBins+i]);
+                  (hSignalXnorm.at(k))[l*nPtBins+i]->Divide((hXEfficiency.at(k))[l*nPtBins+i]);
                 }
               else
                 {
                   for(int j=0;j<vxBins[k].size()-1;j++) 
                     {
-                      TH1F* hHistoXMass = k==0?ahHistoRMass[l][i][j]:ahHistoZMass[l][i][j];
-                      hSignalX[k]->SetBinContent(j+1, hHistoXMass->Integral());
-                      hSignalX[k]->SetBinError(j+1, TMath::Sqrt(hHistoXMass->Integral()));
-                      hSignalXnorm[k]->SetBinContent(j+1, hHistoXMass->Integral() / hSignalXnorm[k]->GetBinWidth(j+1));
-                      hSignalXnorm[k]->SetBinError(j+1, TMath::Sqrt(hHistoXMass->Integral()) / hSignalXnorm[k]->GetBinWidth(j+1));
+                      (hSignalX.at(k))[l*nPtBins+i]->SetBinContent(j+1, (hHistoXMass.at(k))[(l*nPtBins+i)*(vxBins[k].size()-1)+j]->Integral());
+                      (hSignalX.at(k))[l*nPtBins+i]->SetBinError(j+1, TMath::Sqrt((hHistoXMass.at(k))[(l*nPtBins+i)*(vxBins[k].size()-1)+j]->Integral()));
+                      (hSignalXnorm.at(k))[l*nPtBins+i]->SetBinContent(j+1, (hHistoXMass.at(k))[(l*nPtBins+i)*(vxBins[k].size()-1)+j]->Integral() / (hSignalXnorm.at(k))[l*nPtBins+i]->GetBinWidth(j+1));
+                      (hSignalXnorm.at(k))[l*nPtBins+i]->SetBinError(j+1, TMath::Sqrt((hHistoXMass.at(k))[(l*nPtBins+i)*(vxBins[k].size()-1)+j]->Integral()) / (hSignalXnorm.at(k))[l*nPtBins+i]->GetBinWidth(j+1));
                     }
                 }
-              hSignalXnorm[k]->Scale(1./hNjets->GetBinContent(1));
-            }
+              (hSignalXnorm.at(k))[l*nPtBins+i]->Scale(1./hNjets->GetBinContent(1));
+            }        
+          (hSignalXsub.at(k))[i]->Add((hSignalXnorm.at(k))[0*nPtBins+i], (hSignalXnorm.at(k))[1*nPtBins+i], 1, -1);
         }
-      ahSignalRsub[i]->Add(ahSignalRnorm[0][i], ahSignalRnorm[1][i], 1, -1);
-      ahSignalZsub[i]->Add(ahSignalZnorm[0][i], ahSignalZnorm[1][i], 1, -1);      
     }
   delete dft;
   
 
   TFile* outf = new TFile(Form("rootfiles/xsec_%s.root",outputname.Data()), "recreate");
   outf->cd();
-  if(writehists("usehist")) return;
+  if(writehists(Form("usehist %s", isrecoD?"recoD":""))) return;
   outf->Write();
   outf->Close();
 

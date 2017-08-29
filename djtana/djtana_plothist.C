@@ -24,10 +24,11 @@ void djtana_plothist(TString inputhistname, TString outputname,
   std::vector<float> vdrBins, vzBins;
   for(int j=0;j<sizeof(drBins)/sizeof(drBins[0]);j++) vdrBins.push_back(drBins[j]);
   for(int j=0;j<sizeof(zBins)/sizeof(zBins[0]);j++) vzBins.push_back(zBins[j]);
-  TString             xtitle[2]        =  {"#DeltaR",            "z = p_{T}^{D} / p_{T}^{jet}"};
-  TString             ytitle[2]        =  {"#rho(#DeltaR)",      "#rho(z)"};
-  TString             tname[2]         =  {"dr",                 "z"};
-  std::vector<float>  vxBins[2]        =  {vdrBins,              vzBins};
+  std::vector<TH1F**>              hSignalXnorm  =  {(TH1F**)ahSignalRnorm,  (TH1F**)ahSignalZnorm};
+  std::vector<TString>             xtitle        =  {"#DeltaR",              "z = p_{T}^{D} / p_{T}^{jet}"};
+  std::vector<TString>             ytitle        =  {"#rho(#DeltaR)",        "#rho(z)"};
+  std::vector<TString>             tname         =  {"dr",                   "z"};
+  std::vector<std::vector<float>>  vxBins        =  {vdrBins,                vzBins};
   Float_t yaxismin = isMC?1.e-5:1.e-7, yaxismax = isMC?1.e+3:1.e+1;
 
   // plot
@@ -46,11 +47,10 @@ void djtana_plothist(TString inputhistname, TString outputname,
           for(int l=0;l<nRefBins;l++)
             {
               if(l && !plotref) continue;
-              TH1F* hSignalXnorm = k==0?ahSignalRnorm[l][i]:ahSignalZnorm[l][i];
-              xjjroot::setthgrstyle(hSignalXnorm, amcolor[i], amstyle[l][i], 1.2, amcolor[i], 1, 1, -1, -1, -1);
-              hSignalXnorm->Draw("pe same");
+              xjjroot::setthgrstyle((hSignalXnorm.at(k))[l*nPtBins+i], amcolor[i], amstyle[l][i], 1.2, amcolor[i], 1, 1, -1, -1, -1);
+              (hSignalXnorm.at(k))[l*nPtBins+i]->Draw("pe same");
               TString tleg = l==1?"#eta reflection":(ptBins[i+1]==999?Form("p_{T}^{D} > %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str()):Form("%s < p_{T}^{D} < %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str(),xjjc::number_remove_zero(ptBins[i+1]).c_str()));
-              leg->AddEntry(hSignalXnorm, tleg.Data(), "p");
+              leg->AddEntry((hSignalXnorm.at(k))[l*nPtBins+i], tleg.Data(), "p");
             }
         }
       xjjroot::drawCMS(collisionsyst);
@@ -58,6 +58,7 @@ void djtana_plothist(TString inputhistname, TString outputname,
       texypos += texdypos;
       for(std::vector<TString>::const_iterator it=vectex.begin(); it!=vectex.end(); it++)
         xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), *it);
+      if(k) xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), "#DeltaR < 0.3");
       leg->Draw();
       c->SaveAs(Form("plotxsecs/cxsec_%s_%s.pdf",outputname.Data(),tname[k].Data()));
       delete leg;
@@ -97,6 +98,6 @@ int arguerr(TString collisionsyst, Int_t isMC, Int_t plotref)
       std::cout<<"\033[1;31merror:\033[0m invalid \"plotref\""<<std::endl;
       return 1;
     }
- return 0;
+  return 0;
 }
 
