@@ -5,7 +5,7 @@ DIRPREFIX="../djtana/"
 
 # Select the systems the macros run on 
 iCOL=(0 1)
-jJET=(1)
+jJET=(0)
 
 ##
 
@@ -77,13 +77,22 @@ for i in ${iCOL[@]}
 do
     for j in ${jJET[@]}
     do
-        tPOSTFIX=Djet_$(produce_postfix $i $j)
-        tPOSTFIX_rDrJ=Djet_$(produce_postfix $i $j 0)
-        tPOSTFIX_gDrJ=Djet_$(produce_postfix $i $j 1)
-        tPOSTFIX_rDgJ=Djet_$(produce_postfix $i $j 2)
-        tPOSTFIX_gDgJ=Djet_$(produce_postfix $i $j 3)
         echo -e "-- Processing ${FUNCOLOR}djtclosure_plothist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
-        ./djtclosure_plothist.exe "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_rDrJ}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_gDrJ}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_rDgJ}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_gDgJ}" "$tPOSTFIX" "${COLSYST[i]}" ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]}
+        tPOSTFIX=Djet_$(produce_postfix $i $j)
+        k=0
+        filenexist=0
+        for rg in ${RECOGEN[@]}
+        do
+            tPOSTFIX_RG[k]=Djet_$(produce_postfix $i $j $k)
+            if [ ! -f "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[k]}.root" ]
+            then
+                echo -e "${ERRCOLOR}error:${NC} ${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[k]}.root doesn't exist. Process ../djtana/djtana_usehist.C first."
+                filenexist=$(($filenexist+1))
+            fi
+            k=$(($k+1))
+        done
+        [ $filenexist -ne 0 ] && continue
+        ./djtclosure_plothist.exe "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[0]}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[1]}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[2]}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[3]}" "$tPOSTFIX" "${COLSYST[i]}" ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]}
         echo
     done
 done
