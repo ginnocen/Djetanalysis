@@ -1,6 +1,11 @@
 #!/bin/bash
 # dodjtana.sh #
 
+DO_SAVETPL=${1:-0}
+DO_SAVEHIST=${2:-0}
+DO_USEHIST=${3:-0}
+DO_PLOTHIST=${4:-0}
+
 # Select the systems the macros run on 
 iCOL=(0 1 2 3)
 jJET=(1)
@@ -34,12 +39,10 @@ INPUTMCNAME=(
     '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170510_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_pthatweight.root'
 )
 
-DO_SAVETPL=${1:-0}
-DO_SAVEHIST=${2:-0}
-DO_USEHIST=${3:-0}
-DO_PLOTHIST=${4:-0}
-
 # Do not touch the macros below if you don't know what they mean #
+
+[[ $DO_SAVETPL -eq 0 && $DO_SAVEHIST -eq 0 && $DO_USEHIST -eq 0 && $DO_PLOTHIST -eq 0 ]] && echo "./dodjtana.sh [DO_SAVETPL] [DO_SAVEHIST] [DO_USEHIST] [DO_PLOTHIST]"
+
 #
 nCOL=${#COLSYST[@]}
 nRECOGEN=${#RECOGEN[@]}
@@ -80,7 +83,7 @@ function produce_postfix()
 FOLDERS=("plotfits" "plotxsecs" "rootfiles")
 for i in ${FOLDERS[@]}
 do
-    if [ ! -d $i ]
+    if [[ ! -d $i ]]
     then
 	mkdir -p $i
     fi
@@ -98,23 +101,19 @@ do
     do
         for k in ${kRECOGEN[@]}
         do
-            if [ $k -eq 0 ] || [ ${ISMC[i]} -eq 1 ] # only RecoD_RecoJet will run for data
+            if [[ $k -eq 0 || ${ISMC[i]} -eq 1 ]] # only RecoD_RecoJet will run for data
             then
                 tPOSTFIX=Djet_$(produce_postfix $i $j $k)
-                if [ $DO_SAVETPL -eq 1 ]
+                if [[ $DO_SAVETPL -eq 1 ]]
                 then
                     echo -e "-- Processing ${FUNCOLOR}djtana_savetpl.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
-                    # set -x
                     ./djtana_savetpl.exe "${INPUTMCNAME[i]}" "rootfiles/masstpl_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} &
-                    # set +x
                     echo
                 fi
-                if [ $DO_SAVEHIST -eq 1 ]
+                if [[ $DO_SAVEHIST -eq 1 ]]
                 then
                     echo -e "-- Processing ${FUNCOLOR}djtana_savehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
-                    # set -x
                     ./djtana_savehist.exe "${INPUTDANAME[i]}" "rootfiles/hist_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} &
-                    # set +x
                     echo
                 fi
             fi
@@ -130,7 +129,7 @@ rm djtana_savetpl.exe
 # djtana_usehist.C #
 g++ djtana_usehist.C $(root-config --cflags --libs) -g -o djtana_usehist.exe || return 1;
 
-if [ $DO_USEHIST -eq 1 ]
+if [[ $DO_USEHIST -eq 1 ]]
 then
     for i in ${iCOL[@]}
     do
@@ -138,23 +137,13 @@ then
         do
             for k in ${kRECOGEN[@]}
             do
-                if [ $k -eq 0 ] || [ ${ISMC[i]} -eq 1 ] # only RecoD_RecoJet will run for data
+                if [[ $k -eq 0 || ${ISMC[i]} -eq 1 ]] # only RecoD_RecoJet will run for data
                 then
                     tPOSTFIX=Djet_$(produce_postfix $i $j $k)
                     echo -e "-- Processing ${FUNCOLOR}djtana_usehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
-                    if [ ! -f "rootfiles/hist_${tPOSTFIX}.root" ]
-                    then
-                        echo -e "${ERRCOLOR}error:${NC} rootfiles/hist_${tPOSTFIX}.root doesn't exist. Process djtana_savehist.C first."
-                        continue
-                    fi
-                    if [ ! -f "rootfiles/masstpl_${tPOSTFIX}.root" ] && [[ $k -eq 0  ||  $k -eq 2 ]]
-                    then
-                        echo -e "${ERRCOLOR}error:${NC} rootfiles/masstpl_${tPOSTFIX}.root doesn't exist. Process djtana_savetpl.C first."
-                        continue
-                    fi
-                    # set -x
+                    [[ ! -f "rootfiles/hist_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/hist_${tPOSTFIX}.root doesn't exist. Process djtana_savehist.C first."; continue; }
+                    [[ ! -f "rootfiles/masstpl_${tPOSTFIX}.root"  && ( $k -eq 0  ||  $k -eq 2 ) ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/masstpl_${tPOSTFIX}.root doesn't exist. Process djtana_savetpl.C first."; continue; }
                     ./djtana_usehist.exe "rootfiles/hist_${tPOSTFIX}" "rootfiles/masstpl_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}" $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]}
-                    # set +x
                     echo
                 fi
             done
@@ -167,7 +156,7 @@ rm djtana_usehist.exe
 # djtana_plothist.C #
 g++ djtana_plothist.C $(root-config --cflags --libs) -g -o djtana_plothist.exe || return 1;
 
-if [ $DO_PLOTHIST -eq 1 ]
+if [[ $DO_PLOTHIST -eq 1 ]]
 then
     for i in ${iCOL[@]}
     do
@@ -175,18 +164,12 @@ then
         do
             for k in ${kRECOGEN[@]}
             do
-                if [ $k -eq 0 ] || [ ${ISMC[i]} -eq 1 ] # only RecoD_RecoJet will run for data
+                if [[ $k -eq 0 || ${ISMC[i]} -eq 1 ]] # only RecoD_RecoJet will run for data
                 then
                     tPOSTFIX=Djet_$(produce_postfix $i $j $k)
                     echo -e "-- Processing ${FUNCOLOR}djtana_plothist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
-                    if [ ! -f "rootfiles/xsec_${tPOSTFIX}.root" ]
-                    then
-                        echo -e "${ERRCOLOR}error:${NC} rootfiles/xsec_${tPOSTFIX}.root doesn't exist. Process djtana_usehist.C first."
-                        continue
-                    fi
-                    # set -x
+                    [[ ! -f "rootfiles/xsec_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/xsec_${tPOSTFIX}.root doesn't exist. Process djtana_usehist.C first."; continue; }
                     ./djtana_plothist.exe "rootfiles/xsec_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}" ${ISMC[i]} ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]}
-                    # set +x
                     echo
                 fi
             done

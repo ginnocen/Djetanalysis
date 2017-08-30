@@ -62,7 +62,7 @@ function produce_postfix()
 FOLDERS=("plotxsecs")
 for i in ${FOLDERS[@]}
 do
-    if [ ! -d $i ]
+    if [[ ! -d $i ]]
     then
 	mkdir -p $i
     fi
@@ -84,14 +84,10 @@ do
         for rg in ${RECOGEN[@]}
         do
             tPOSTFIX_RG[k]=Djet_$(produce_postfix $i $j $k)
-            if [ ! -f "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[k]}.root" ]
-            then
-                echo -e "${ERRCOLOR}error:${NC} ${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[k]}.root doesn't exist. Process ../djtana/djtana_usehist.C first."
-                filenexist=$(($filenexist+1))
-            fi
+            [[ ! -f "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[k]}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} ${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[k]}.root doesn't exist. Process ../djtana/djtana_usehist.C first."; filenexist=$(($filenexist+1)); }
             k=$(($k+1))
         done
-        [ $filenexist -ne 0 ] && continue
+        [[ $filenexist -ne 0 ]] && continue
         ./djtclosure_plothist.exe "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[0]}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[1]}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[2]}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[3]}" "$tPOSTFIX" "${COLSYST[i]}" ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]}
         echo
     done
