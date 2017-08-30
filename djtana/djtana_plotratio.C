@@ -24,10 +24,12 @@ void djtana_plotratio(TString inputhistname, TString outputname,
   std::vector<float> vdrBins, vzBins;
   for(int j=0;j<sizeof(drBins)/sizeof(drBins[0]);j++) vdrBins.push_back(drBins[j]);
   for(int j=0;j<sizeof(zBins)/sizeof(zBins[0]);j++) vzBins.push_back(zBins[j]);
-  TString            xtitle[2] = {"#DeltaR",                                                                                             "z = p_{T}^{D} / p_{T}^{jet}"};
-  TString            ytitle[2] = {isMC?"#rho(#DeltaR)_{PYTHIA+HYDJET}/#rho(#DeltaR)_{PYTHIA}":"#rho(#DeltaR)_{PbPb}/#rho(#DeltaR)_{pp}", isMC?"#rho(z)_{PYTHIA+HYDJET}/#rho(z)_{PYTHIA}":"#rho(z)_{PbPb}/#rho(z)_{pp}"};
-  TString            tname[2]  = {"dr",                                                                                                  "z"};
-  std::vector<float> vxBins[2] = {vdrBins,                                                                                               vzBins};
+  std::vector<TH1F**> hSignalXsubRatio  = {(TH1F**)ahSignalRsubRatio, (TH1F**)ahSignalZsubRatio};
+  std::vector<TH1F**> hSignalXnormRatio  = {(TH1F**)ahSignalRnormRatio, (TH1F**)ahSignalZnormRatio};
+  std::vector<TString> xtitle  = {"#DeltaR", "z = p_{T}^{D} / p_{T}^{jet}"};
+  std::vector<TString> ytitle  = {isMC?"#rho(#DeltaR)_{PYTHIA+HYDJET}/#rho(#DeltaR)_{PYTHIA}":"#rho(#DeltaR)_{PbPb}/#rho(#DeltaR)_{pp}", isMC?"#rho(z)_{PYTHIA+HYDJET}/#rho(z)_{PYTHIA}":"#rho(z)_{PbPb}/#rho(z)_{pp}"};
+  std::vector<TString> tname  = {"dr", "z"};
+  std::vector<std::vector<float>> vxBins  = {vdrBins, vzBins};
   Float_t yaxismin = isMC?0.7:1.e-1, yaxismax = isMC?1.3:2.e+1;
 
   // plot
@@ -43,18 +45,16 @@ void djtana_plotratio(TString inputhistname, TString outputname,
       xjjroot::setleg(leg);
       for(int i=0;i<nPtBins;i++)
         {
-          TH1F* hSignalXsubRatio[2] = {ahSignalRsubRatio[i], ahSignalZsubRatio[i]};
-          TH1F* hSignalXnormRatio[2] = {ahSignalRnormRatio[0][i], ahSignalZnormRatio[0][i]};
-          xjjroot::setthgrstyle(hSignalXsubRatio[k], amcolor[i], amstyle[0][i], 1.2, amcolor[i], 1, 1, -1, -1, -1);
-          hSignalXsubRatio[k]->Draw("pe same");
+          xjjroot::setthgrstyle((hSignalXsubRatio.at(k))[i], amcolor[i], amstyle[0][i], 1.2, amcolor[i], 1, 1, -1, -1, -1);
+          (hSignalXsubRatio.at(k))[i]->Draw("pe same");
           TString tleg = ptBins[i+1]==999?Form("p_{T}^{D} > %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str()):Form("%s < p_{T}^{D} < %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str(),xjjc::number_remove_zero(ptBins[i+1]).c_str());
-          leg->AddEntry(hSignalXsubRatio[k], tleg.Data(), "p");
+          leg->AddEntry((hSignalXsubRatio.at(k))[i], tleg.Data(), "p");
 
           if(plotwosub)
             {
-              xjjroot::setthgrstyle(hSignalXnormRatio[k], amcolor[i], amstyle[1][i], 1.2, amcolor[i], 1, 1, -1, -1, -1);
-              hSignalXnormRatio[k]->Draw("pe same");
-              leg->AddEntry(hSignalXnormRatio[k], "before bkg sub", "p");
+              xjjroot::setthgrstyle((hSignalXnormRatio.at(k))[0*nPtBins+i], amcolor[i], amstyle[1][i], 1.2, amcolor[i], 1, 1, -1, -1, -1);
+              (hSignalXnormRatio.at(k))[0*nPtBins+i]->Draw("pe same");
+              leg->AddEntry((hSignalXnormRatio.at(k))[0*nPtBins+i], "before bkg sub", "p");
             }
 
           xjjroot::drawCMS("");

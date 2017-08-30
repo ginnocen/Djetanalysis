@@ -33,7 +33,7 @@ void djtana_usehist(TString inputhistname, TString inputtplname, TString outputn
 
   xjjroot::dfitter* dft = new xjjroot::dfitter("");
   
-  std::vector<TString>             tleg                =  {"#DeltaR",                    "p_{T}^{D}/p_{T}^{jet}"};
+  std::vector<TString>             tleg                =  {"#DeltaR",                    "p_{T}^{D} / p_{T}^{jet}"};
   std::vector<TString>             tname               =  {"dr",                         "z"};
   std::vector<std::vector<float>>  vxBins              =  {vdrBins,                      vzBins};
   std::vector<TH1F**>              hHistoXMass         =  {(TH1F**)ahHistoRMass,         (TH1F**)ahHistoZMass};
