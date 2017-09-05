@@ -1,6 +1,9 @@
 #!/bin/bash
 # dodjtana_ratio.sh #
 
+DO_SAVERATIO=${1:-0}
+DO_PLOTRATIO=${2:-0}
+
 # Select the systems the macros run on 
 iCOL=(0 1)
 jJET=(1)
@@ -19,11 +22,10 @@ JETETAMAX=(2.0 1.6)
 # nRECOGEN loop
 RECOGEN=('RecoD_RecoJet' 'GenD_RecoJet' 'RecoD_GenJet' 'GenD_GenJet')
 
-#
-DO_SAVERATIO=${1:-0}
-DO_PLOTRATIO=${2:-0}
-
 # Do not touch the macros below if you don't know what they mean #
+
+[[ $DO_SAVERATIO -eq 0 && $DO_PLOTRATIO -eq 0 ]] && echo "./dodjtana_ratio.sh [DO_SAVERATIO] [DO_PLOTRATIO]"
+
 #
 nCOL=${#COLSYST[@]}
 nRECOGEN=${#RECOGEN[@]}
@@ -64,7 +66,7 @@ function produce_postfix()
 FOLDERS=("plotratios" "rootfiles")
 for i in ${FOLDERS[@]}
 do
-    if [ ! -d $i ]
+    if [[ ! -d $i ]]
     then
 	mkdir -p $i
     fi
@@ -75,7 +77,7 @@ done
 # djtana_saveratio.C #
 g++ djtana_saveratio.C $(root-config --cflags --libs) -g -o djtana_saveratio.exe || return 1;
 
-if [ $DO_SAVERATIO -eq 1 ]
+if [[ $DO_SAVERATIO -eq 1 ]]
 then
     for i in ${iCOL[@]}
     do
@@ -83,12 +85,14 @@ then
         do
             for k in ${kRECOGEN[@]}
             do
-                if [ $k -eq 0 ] || [ ${ISMC[i]} -eq 1 ] # only RecoD_RecoJet will run for data
+                if [[ $k -eq 0 || ${ISMC[i]} -eq 1 ]] # only RecoD_RecoJet will run for data
                 then
-                    tPOSTFIX=Djet_$(produce_postfix $i $j $k)
                     tPOSTFIXPP=Djet_pp_$(produce_postfix $i $j $k)
                     tPOSTFIXPbPb=Djet_PbPb_$(produce_postfix $i $j $k)
+                    tPOSTFIX=Djet_$(produce_postfix $i $j $k)
                     echo -e "-- Processing ${FUNCOLOR}djtana_saveratio.C${NC} :: ${ARGCOLOR}PbPb/pp${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
+                    [[ ! -f "rootfiles/xsec_${tPOSTFIXPP}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/xsec_${tPOSTFIXPP}.root doesn't exist. Process djtana_usehist.C first."; continue; }
+                    [[ ! -f "rootfiles/xsec_${tPOSTFIXPbPb}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/xsec_${tPOSTFIXPbPb}.root doesn't exist. Process djtana_usehist.C first."; continue; }
                     ./djtana_saveratio.exe "rootfiles/xsec_${tPOSTFIXPP}" "rootfiles/xsec_${tPOSTFIXPbPb}" "rootfiles/ratio_$tPOSTFIX" ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]}
                     echo
                 fi
@@ -102,7 +106,7 @@ rm djtana_saveratio.exe
 # djtana_plotratio.C #
 g++ djtana_plotratio.C $(root-config --cflags --libs) -g -o djtana_plotratio.exe || return 1;
 
-if [ $DO_PLOTRATIO -eq 1 ]
+if [[ $DO_PLOTRATIO -eq 1 ]]
 then
     for i in ${iCOL[@]}
     do
@@ -110,13 +114,12 @@ then
         do
             for k in ${kRECOGEN[@]}
             do
-                if [ $k -eq 0 ] || [ ${ISMC[i]} -eq 1 ] # only RecoD_RecoJet will run for data
+                if [[ $k -eq 0 || ${ISMC[i]} -eq 1 ]] # only RecoD_RecoJet will run for data
                 then
                     tPOSTFIX=Djet_$(produce_postfix $i $j $k)
                     echo -e "-- Processing ${FUNCOLOR}djtana_plotratio.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
-                    # set -x
+                    [[ ! -f "rootfiles/ratio_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/ratio_${tPOSTFIX}.root doesn't exist. Process djtana_saveratio.C first."; continue; }
                     ./djtana_plotratio.exe "rootfiles/ratio_${tPOSTFIX}" "$tPOSTFIX" ${ISMC[i]} ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]}
-                    # set +x
                     echo
                 fi
             done

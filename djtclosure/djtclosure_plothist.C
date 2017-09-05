@@ -28,10 +28,13 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
   std::vector<float> vdrBins, vzBins;
   for(int j=0;j<sizeof(drBins)/sizeof(drBins[0]);j++) vdrBins.push_back(drBins[j]);
   for(int j=0;j<sizeof(zBins)/sizeof(zBins[0]);j++) vzBins.push_back(zBins[j]);
-  TString             xtitle[2]        =  {"#DeltaR",            "z = p^{D}_{T} / p^{jet}_{T}"};
-  TString             ytitle[2]        =  {"#rho(#DeltaR)",      "#rho(z)"};
-  TString             tname[2]         =  {"dr",                 "z"};
-  std::vector<float>  vxBins[2]        =  {vdrBins,              vzBins};
+  std::vector<TString>            xtitle           = {"#DeltaR",                 "z = p^{D}_{T} / p^{jet}_{T}"};
+  std::vector<TString>            ytitle           = {"#rho(#DeltaR)",           "#rho(z)"};
+  std::vector<TString>            tname            = {"dr",                      "z"};
+  std::vector<std::vector<float>> vxBins           = {vdrBins,                   vzBins};
+  std::vector<TH1F**>             hSignalXnorm     = {(TH1F**)ahSignalRnorm,     (TH1F**)ahSignalZnorm};
+  std::vector<TH1F**>             hSignalXnormPull = {(TH1F**)ahSignalRnormPull, (TH1F**)ahSignalZnormPull};
+
   Float_t yaxismin = 1.1e-5, yaxismax = 1.e+3;
   Float_t yPullaxismin = 1-1, yPullaxismax = 1+1;
   Float_t ypaddiv = 3./4, yPullpaddiv = 1-ypaddiv;
@@ -46,10 +49,8 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
               for(int l=0;l<nRefBins;l++)
                 {
                   if(l && !plotref) continue;
-                  TH1F* hSignalXnorm = k==0?ahSignalRnorm[m][l][i]:ahSignalZnorm[m][l][i];
-                  TH1F* hSignalXnormTruth = k==0?ahSignalRnorm[nCases-1][l][i]:ahSignalZnorm[nCases-1][l][i];
-                  TH1F* hSignalXnormPull = k==0?ahSignalRnormPull[m][l][i]:ahSignalZnormPull[m][l][i];
-                  hSignalXnormPull->Divide(hSignalXnorm, hSignalXnormTruth);
+                  (hSignalXnormPull.at(k))[(m*nRefBins+l)*nPtBins+i]->Divide((hSignalXnorm.at(k))[(m*nRefBins+l)*nPtBins+i], 
+                                                                             (hSignalXnorm.at(k))[((nCases-1)*nRefBins+l)*nPtBins+i]); // hSignalXnorm[nCases-1][l][i] is truth
                 }
             }
         }
@@ -80,11 +81,10 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
               if(l && !plotref) continue;
               for(int m=0;m<nCases;m++)
                 {
-                  TH1F* hSignalXnorm = k==0?ahSignalRnorm[m][l][i]:ahSignalZnorm[m][l][i];
-                  xjjroot::setthgrstyle(hSignalXnorm, amcolor[m], amstyle[l], 1.2, amcolor[m], 1, 1, -1, -1, -1);
-                  hSignalXnorm->Draw("pe same");
-                  if(!l) leg->AddEntry(hSignalXnorm, legCases[m].Data(), "p");
-                  else legref->AddEntry(hSignalXnorm, m==(nCases-1)?"#eta reflection":"", "p");
+                  xjjroot::setthgrstyle((hSignalXnorm.at(k))[(m*nRefBins+l)*nPtBins+i], amcolor[m], amstyle[l], 1.2, amcolor[m], 1, 1, -1, -1, -1);
+                  (hSignalXnorm.at(k))[(m*nRefBins+l)*nPtBins+i]->Draw("pe same");
+                  if(!l) leg->AddEntry((hSignalXnorm.at(k))[(m*nRefBins+l)*nPtBins+i], legCases[m].Data(), "p");
+                  else legref->AddEntry((hSignalXnorm.at(k))[(m*nRefBins+l)*nPtBins+i], m==(nCases-1)?"#eta reflection":"", "p");
                 }
             }
           xjjroot::drawCMS(collisionsyst);
@@ -122,9 +122,8 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
               for(int m=0;m<nCases;m++)
                 {
                   if(m==nCases-1) continue;
-                  TH1F* hSignalXnormPull = k==0?ahSignalRnormPull[m][l][i]:ahSignalZnormPull[m][l][i];
-                  xjjroot::setthgrstyle(hSignalXnormPull, amcolor[m], amstyle[l], 1.2, amcolor[m], 1, 1, -1, -1, -1);
-                  hSignalXnormPull->Draw("pe same");
+                  xjjroot::setthgrstyle((hSignalXnormPull.at(k))[(m*nRefBins+l)*nPtBins+i], amcolor[m], amstyle[l], 1.2, amcolor[m], 1, 1, -1, -1, -1);
+                  (hSignalXnormPull.at(k))[(m*nRefBins+l)*nPtBins+i]->Draw("pe same");
                 }
             }
           TBox* box = new TBox(-0.07, 1.8, -0.01, 2.0);
