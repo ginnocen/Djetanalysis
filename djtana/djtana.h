@@ -193,9 +193,6 @@ int writehists(Option_t* option)
               ahSignalZ[l][i]->Write();
               ahSignalRnorm[l][i]->Write();
               ahSignalZnorm[l][i]->Write();
-              if(!opt.Contains("recod")) continue;
-              ahREfficiency[l][i]->Write();
-              ahZEfficiency[l][i]->Write();
             }
           ahSignalRsub[i]->Write();
           ahSignalZsub[i]->Write();
@@ -271,9 +268,6 @@ int gethists(TFile* inf, Option_t* option)
             {
               ahSignalRnorm[l][i] = (TH1F*)inf->Get(Form("hSignalRnorm_%s_pt_%d",tRef[l].Data(),i));
               ahSignalZnorm[l][i] = (TH1F*)inf->Get(Form("hSignalZnorm_%s_pt_%d",tRef[l].Data(),i));
-              if(!opt.Contains("recod")) continue;
-              ahREfficiency[l][i] = (TH1F*)inf->Get(Form("hREfficiency_%s_pt_%d",tRef[l].Data(),i));
-              ahZEfficiency[l][i] = (TH1F*)inf->Get(Form("hZEfficiency_%s_pt_%d",tRef[l].Data(),i));
             }
           ahSignalRsub[i] = (TH1F*)inf->Get(Form("hSignalRsub_pt_%d",i));
           ahSignalZsub[i] = (TH1F*)inf->Get(Form("hSignalZsub_pt_%d",i));

@@ -15,7 +15,8 @@
  *   "3" : Using 3-Gaussian function to model signal (default is 2-Gaussian function)     * 
  *   "Y" : Draw yield info                                                                * 
  *   "C" : Draw chi2 info                                                                 * 
- *   "S" : Draw lines at signal region and side bands                                     * 
+ *   "L" : Draw lines at signal region and side bands                                     * 
+ *   "S" : Draw significance info and lines at signal region                              * 
  *   "D" : Draw all details                                                               * 
  *   "V" : Switch off Quiet mode of fitting                                               * 
  *   "X" : Do not save plots                                                              * 
@@ -96,6 +97,7 @@ namespace xjjroot
     Bool_t f3gaus;
     Bool_t fdrawyield;
     Bool_t fdrawchi2;
+    Bool_t fdrawsignif;
     Bool_t fdrawsigsid;
     Bool_t ffitverbose;
     Bool_t fdrawdetail;
@@ -160,9 +162,11 @@ void xjjroot::dfitter::resolveoption()
   fdrawchi2 = false;
   if(foption.Contains("C")) fdrawchi2 = true;
   fdrawsigsid = false;
-  if(foption.Contains("S")) fdrawsigsid = true;
+  if(foption.Contains("L")) fdrawsigsid = true;
+  fdrawsignif = false;
+  if(foption.Contains("S")) fdrawsignif = true;
   fdrawdetail = false;
-  if(foption.Contains("D")) {fdrawdetail = true; fdrawyield = true; fdrawchi2 = true; fdrawsigsid = true;}
+  if(foption.Contains("D")) {fdrawdetail = true; fdrawyield = true; fdrawchi2 = true; fdrawsigsid = true; fdrawsignif = true;}
   ffitverbose = false;
   if(foption.Contains("V")) ffitverbose = true;
   fsaveplot = true;
@@ -268,12 +272,15 @@ TF1* xjjroot::dfitter::fit(const TH1* hmass, const TH1* hmassMCSignal, const TH1
   fun_background->Draw("same");   
   fun_mass->Draw("same");
   fun_swap->Draw("same");
-  if(fdrawsigsid)
+  if(fdrawsigsid || fdrawsignif)
     {
       fun_not_mass->SetRange(mass_dzero_signal_l,mass_dzero_signal_h);
       fun_not_mass->Draw("same");
       drawline(mass_dzero_signal_l, 0, mass_dzero_signal_l, fun_f->Eval(mass_dzero_signal_l), fun_not_mass->GetLineColor(), fun_not_mass->GetLineStyle(), fun_not_mass->GetLineWidth());
       drawline(mass_dzero_signal_h, 0, mass_dzero_signal_h, fun_f->Eval(mass_dzero_signal_h), fun_not_mass->GetLineColor(), fun_not_mass->GetLineStyle(), fun_not_mass->GetLineWidth());
+    }
+  if(fdrawsigsid)
+    {
       drawline(mass_dzero_sideband_l_p, 0, mass_dzero_sideband_l_p, fun_f->Eval(mass_dzero_sideband_l_p), fun_not_mass->GetLineColor(), fun_not_mass->GetLineStyle(), fun_not_mass->GetLineWidth());
       drawline(mass_dzero_sideband_h_p, 0, mass_dzero_sideband_h_p, fun_f->Eval(mass_dzero_sideband_h_p), fun_not_mass->GetLineColor(), fun_not_mass->GetLineStyle(), fun_not_mass->GetLineWidth());
       drawline(mass_dzero_sideband_l_n, 0, mass_dzero_sideband_l_n, fun_f->Eval(mass_dzero_sideband_l_n), fun_not_mass->GetLineColor(), fun_not_mass->GetLineStyle(), fun_not_mass->GetLineWidth());
@@ -297,10 +304,13 @@ TF1* xjjroot::dfitter::fit(const TH1* hmass, const TH1* hmassMCSignal, const TH1
       drawtex(texxpos, texypos=(texypos-texdypos), Form("#chi^{2} / ndf = %.1f / %.0f",Chi2,NDF));
       drawtex(texxpos, texypos=(texypos-texdypos), Form("Prob = %.2f%s",Chi2Prob*100,"%"));
     }
-  if(fdrawdetail)
+  if(fdrawsignif)
     {
       drawtex(texxpos, texypos=(texypos-texdypos), Form("S = %.0f, B = %.0f",S,B));
       drawtex(texxpos, (texypos=(texypos-texdypos)) + 0.01, Form("S/#sqrt{S+B} = %.1f",S/TMath::Sqrt(S+B)));
+    }
+  if(fdrawdetail)
+    {
       drawtex(texxpos, texypos=(texypos-texdypos), Form("N#scale[0.6]{#lower[0.7]{sig}}/(N#scale[0.6]{#lower[0.7]{sig}}+N#scale[0.6]{#lower[0.7]{swap}}) = %.2f",fun_f->GetParameter(7)));
     }
   
