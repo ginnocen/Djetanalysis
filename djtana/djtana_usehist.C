@@ -31,7 +31,7 @@ void djtana_usehist(TString inputhistname, TString inputtplname, TString outputn
   for(int j=0;j<sizeof(drBins)/sizeof(drBins[0]);j++) vdrBins.push_back(drBins[j]);
   for(int j=0;j<sizeof(zBins)/sizeof(zBins[0]);j++) vzBins.push_back(zBins[j]);
 
-  xjjroot::dfitter* dft = new xjjroot::dfitter("");
+  xjjroot::dfitter* dft = new xjjroot::dfitter("S");
   
   std::vector<TString>             tleg                =  {"#DeltaR",                    "p_{T}^{D} / p_{T}^{jet}"};
   std::vector<TString>             tname               =  {"dr",                         "z"};
@@ -87,6 +87,40 @@ void djtana_usehist(TString inputhistname, TString inputtplname, TString outputn
     }
   delete dft;
   
+  if(isrecoD)
+    {
+      for(int k=0;k<2;k++)
+        {
+          TCanvas* c = new TCanvas("c", "", 600, 600);
+          TH2F* hempty = new TH2F("hempty", Form(";%s;%s",tleg[k].Data(),"#alpha x #epsilon_{reco} x #epsilon_{sel}"), 5, vxBins[k].front(), vxBins[k].back(), 10, 0, 1.);
+          hempty->GetXaxis()->SetNdivisions(505);
+          xjjroot::sethempty(hempty, 0, 0.5);
+          hempty->Draw();
+          TLegend* leg = new TLegend(0.53, 0.88-nPtBins*nRefBins*0.06, 0.85, 0.88);
+          xjjroot::setleg(leg);
+          for(int i=0;i<nPtBins;i++)
+            {
+              for(int l=0;l<nRefBins;l++)
+                {
+                  xjjroot::setthgrstyle((hXEfficiency.at(k))[l*nPtBins+i], amcolor[i], amstyle[l][i], 1.2, amcolor[i], 1, 1, -1, -1, -1);
+                  (hXEfficiency.at(k))[l*nPtBins+i]->Draw("pe same");
+                  TString tleg = l==1?"#eta reflection":(ptBins[i+1]==999?Form("p_{T}^{D} > %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str()):Form("%s < p_{T}^{D} < %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str(),xjjc::number_remove_zero(ptBins[i+1]).c_str()));
+                  leg->AddEntry((hXEfficiency.at(k))[l*nPtBins+i], tleg.Data(), "p");
+                }
+            }
+          xjjroot::drawCMS(collisionsyst);
+          Float_t texxpos = 0.22, texypos = 0.85, texdypos = 0.06;
+          texypos += texdypos;
+          for(std::vector<TString>::const_iterator it=vectex.begin(); it!=vectex.end(); it++)
+            xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), *it);
+          if(k) xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), "#DeltaR < 0.3");
+          leg->Draw();
+          c->SaveAs(Form("ploteff/ceff_%s_%s.pdf",outputname.Data(),tname[k].Data()));
+          delete leg;
+          delete hempty;
+          delete c;
+        }
+    }
 
   TFile* outf = new TFile(Form("rootfiles/xsec_%s.root",outputname.Data()), "recreate");
   outf->cd();
