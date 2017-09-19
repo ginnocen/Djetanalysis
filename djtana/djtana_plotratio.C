@@ -30,7 +30,7 @@ void djtana_plotratio(TString inputhistname, TString outputname,
   std::vector<TString> ytitle  = {isMC?"#rho(#DeltaR)_{PYTHIA+HYDJET}/#rho(#DeltaR)_{PYTHIA}":"#rho(#DeltaR)_{PbPb}/#rho(#DeltaR)_{pp}", isMC?"#rho(z)_{PYTHIA+HYDJET}/#rho(z)_{PYTHIA}":"#rho(z)_{PbPb}/#rho(z)_{pp}"};
   std::vector<TString> tname  = {"dr", "z"};
   std::vector<std::vector<float>> vxBins  = {vdrBins, vzBins};
-  Float_t yaxismin = isMC?0.7:1.e-1, yaxismax = isMC?1.3:2.e+1;
+  Float_t yaxismin = isMC?0.5:1.e-1, yaxismax = isMC?1.5:2.e+1;
 
   // plot
   for(int k=0;k<2;k++)
