@@ -3,7 +3,7 @@
 void djtana_plotratio(TString inputhistname, TString outputname,
                       Int_t isMC,
                       Float_t jetptmin, Float_t jetetamin, Float_t jetetamax,
-                      Int_t plotwosub = 1)
+                      Int_t plotwosub = 0)
 {
   int arguerr();
   if(arguerr()) return;
@@ -41,6 +41,7 @@ void djtana_plotratio(TString inputhistname, TString outputname,
       xjjroot::sethempty(hempty, 0, 0.3);
       hempty->GetXaxis()->SetNdivisions(505);
       hempty->Draw();
+      xjjroot::drawline(vxBins[k].front(), 1, vxBins[k].back(), 1, kGray+2, 2, 2);
       TLegend* leg = new TLegend(0.53, 0.88-nPtBins*0.06*(1+plotwosub), 0.85, 0.88);
       xjjroot::setleg(leg);
       for(int i=0;i<nPtBins;i++)
@@ -65,7 +66,7 @@ void djtana_plotratio(TString inputhistname, TString outputname,
           if(k) xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), "#DeltaR < 0.3");
         }
       leg->Draw();
-      c->SaveAs(Form("plotratios/cratio_%s_%s.pdf",outputname.Data(),tname[k].Data()));
+      c->SaveAs(Form("plotratios/cratio_%s_%s.pdf",tname[k].Data(),outputname.Data()));
       delete leg;
       delete hempty;
       delete c;
