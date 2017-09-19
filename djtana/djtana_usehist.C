@@ -115,7 +115,7 @@ void djtana_usehist(TString inputhistname, TString inputtplname, TString outputn
             xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), *it);
           if(k) xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), "#DeltaR < 0.3");
           leg->Draw();
-          c->SaveAs(Form("ploteff/ceff_%s_%s.pdf",outputname.Data(),tname[k].Data()));
+          c->SaveAs(Form("ploteff/ceff_%s_%s.pdf",tname[k].Data(),outputname.Data()));
           delete leg;
           delete hempty;
           delete c;

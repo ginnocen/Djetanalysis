@@ -25,6 +25,7 @@ void djtana_plothist(TString inputhistname, TString outputname,
   for(int j=0;j<sizeof(drBins)/sizeof(drBins[0]);j++) vdrBins.push_back(drBins[j]);
   for(int j=0;j<sizeof(zBins)/sizeof(zBins[0]);j++) vzBins.push_back(zBins[j]);
   std::vector<TH1F**>              hSignalXnorm  =  {(TH1F**)ahSignalRnorm,  (TH1F**)ahSignalZnorm};
+  std::vector<TH1F**>              hSignalXsub   =  {(TH1F**)ahSignalRsub,   (TH1F**)ahSignalZsub};
   std::vector<TString>             xtitle        =  {"#DeltaR",              "z = p_{T}^{D} / p_{T}^{jet}"};
   std::vector<TString>             ytitle        =  {"#rho(#DeltaR)",        "#rho(z)"};
   std::vector<TString>             tname         =  {"dr",                   "z"};
@@ -34,6 +35,7 @@ void djtana_plothist(TString inputhistname, TString outputname,
   // plot
   for(int k=0;k<2;k++)
     {
+      //
       TCanvas* c = new TCanvas("c", "", 600, 600);
       c->SetLogy();
       TH2F* hempty = new TH2F("hempty", Form(";%s;%s",xtitle[k].Data(),ytitle[k].Data()), 5, vxBins[k].front(), vxBins[k].back(), 10, yaxismin, yaxismax);
@@ -60,7 +62,32 @@ void djtana_plothist(TString inputhistname, TString outputname,
         xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), *it);
       if(k) xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), "#DeltaR < 0.3");
       leg->Draw();
-      c->SaveAs(Form("plotxsecs/cxsec_%s_%s.pdf",outputname.Data(),tname[k].Data()));
+      c->SaveAs(Form("plotxsecs/cxsec_%s_%s.pdf",tname[k].Data(),outputname.Data()));
+
+      //
+      TCanvas* csub = new TCanvas("csub", "", 600, 600);
+      csub->SetLogy();
+      hempty->Draw();
+      TLegend* legsub = new TLegend(0.53, 0.88-nPtBins*0.06, 0.85, 0.88);
+      xjjroot::setleg(legsub);
+      for(int i=0;i<nPtBins;i++)
+        {
+          xjjroot::setthgrstyle((hSignalXsub.at(k))[i], amcolor[i], amstyle[0][i], 1.2, amcolor[i], 1, 1, -1, -1, -1);
+          (hSignalXsub.at(k))[i]->Draw("pe same");
+          TString tleg = ptBins[i+1]==999?Form("p_{T}^{D} > %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str()):Form("%s < p_{T}^{D} < %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str(),xjjc::number_remove_zero(ptBins[i+1]).c_str());
+          legsub->AddEntry((hSignalXsub.at(k))[i], tleg.Data(), "p");
+        }
+      xjjroot::drawCMS(collisionsyst);
+      texypos = 0.85;
+      texypos += texdypos;
+      for(std::vector<TString>::const_iterator it=vectex.begin(); it!=vectex.end(); it++)
+        xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), *it);
+      if(k) xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), "#DeltaR < 0.3");
+      legsub->Draw();
+      csub->SaveAs(Form("plotxsecs/cxsecsub_%s_%s.pdf",tname[k].Data(),outputname.Data()));
+
+      delete legsub;
+      delete csub;
       delete leg;
       delete hempty;
       delete c;
