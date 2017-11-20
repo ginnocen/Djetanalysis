@@ -8,7 +8,7 @@ fi
 
 #
 isMC=0
-isPP=1
+isPP=0
 MAXFILENO=5
 ifCHECKEMPTY=0
 
@@ -17,9 +17,9 @@ movetosubmit=${1:-0}
 runjobs=${2:-0}
 merger=${3:-0}
 
-INPUTDIR="/mnt/hadoop/cms/store/user/wangj/HighPtLowerJets/crab_HiForestAOD_DfinderData_pp_20170614_HighPtLowerJets_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar/170615_172204/0000/"
+INPUTDIR="/mnt/hadoop/cms/store/user/ginnocen/HIHardProbes/crab_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_26March/170327_025517/0000/"
 OUTPUTPRIDIR="/mnt/hadoop/cms/store/user/jwang/Djetsgfal/"
-OUTPUTSUBDIR="DjetFiles_20171120_pp_5TeV_HighPtLowerJets_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614"
+OUTPUTSUBDIR="DjetFiles_20171120_PbPb_5TeV_HIHardProbes_skimmed_1unit_part1_26March_20170326"
 
 MERGEOUTPUTDIR="/export/d00/scratch/jwang/Djets/data/"
 WORKDIR="/work/$USER/Djet/"
