@@ -14,13 +14,22 @@ isPP=$6
 isMC=$7
 ifCHECKEMPTY=$8
 
+PROXYFILE=$(ls /tmp/ -lt | grep $USER | grep -m 1 x509 | awk '{print $NF}')
+
+OUTFILE="skim_djet"
+
 rm filelist.txt
-ls $DATASET  | awk '{print "" $0}' >> filelist.txt
+ls $DATASET | grep -v "/" | grep -v -e '^[[:space:]]*$' | awk '{print "" $0}' >> filelist.txt
+
+SRM_PREFIX="/mnt/hadoop/"
+SRM_PATH=${DESTINATION#${SRM_PREFIX}}
 
 if [ ! -d $DESTINATION ]
 then
-    mkdir -p $DESTINATION
+    # gfal-mkdir -p srm://se01.cmsaf.mit.edu:8443/srm/v2/server?SFN=$DESTINATION
+    gfal-mkdir -p gsiftp://se01.cmsaf.mit.edu:2811/${SRM_PATH}
 fi
+
 if [ ! -d $LOGDIR ]
 then
     mkdir -p $LOGDIR
@@ -35,11 +44,11 @@ do
     fi
     #ifexist=`ls ${DESTINATION}/skim_djet_$i`
     #if [ -z $ifexist ]
-    if [ ! -f ${DESTINATION}/skim_djet_$i ] && [ -f ${DATASET}/$i ]
+    if [ ! -f ${DESTINATION}/${OUTFILE}_$i ] && [ -f ${DATASET}/$i ]
     then
         if [ -s ${DATASET}/$i ] || [ $ifCHECKEMPTY -eq 0 ]
         then
-            echo -e "\033[38;5;242mSubmitting a job for output\033[0m ${DESTINATION}/skim_djet_$i"
+            echo -e "\033[38;5;242mSubmitting a job for output\033[0m ${DESTINATION}/${OUTFILE}_$i"
             infn=`echo $i | awk -F "." '{print $1}'`
             INFILE="${DATASET}/$i"
 	    
@@ -49,22 +58,26 @@ Universe     = vanilla
 Initialdir   = $PWD/
 Notification = Error
 Executable   = $PWD/skim_djet_checkfile.sh
-Arguments    = $INFILE $DESTINATION skim_djet_${infn}.root $RESIDUALS $isPP $isMC
+Arguments    = $INFILE $DESTINATION ${OUTFILE}_${infn}.root $RESIDUALS $isPP $isMC $PROXYFILE
 GetEnv       = True
 Output       = $LOGDIR/log-${infn}.out
 Error        = $LOGDIR/log-${infn}.err
 Log          = $LOGDIR/log-${infn}.log
 Rank         = Mips
 +AccountingGroup = "group_cmshi.$(whoami)"
+requirements = GLIDEIN_Site == "MIT_CampusFactory" && BOSCOGroup == "bosco_cmshi" && HAS_CVMFS_cms_cern_ch && BOSCOCluster == "ce03.cmsaf.mit.edu"
+job_lease_duration = 240
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT
-transfer_input_files = D_jet_skim.exe,residuals.tgz
+transfer_input_files = D_jet_skim.exe,residuals.tgz,/tmp/$PROXYFILE
 
 Queue 
 EOF
-            condor_submit -pool submit.mit.edu:9615 -name submit.mit.edu -spool skim-djet.condor
-            mv skim-djet.condor $LOGDIR/log-${infn}.condor
-            counter=$(($counter+1))	
+
+condor_submit skim-djet.condor -name submit.mit.edu
+# condor_submit -pool submit.mit.edu:9615 -name submit.mit.edu -spool skim-djet.condor
+mv skim-djet.condor $LOGDIR/log-${infn}.condor
+counter=$(($counter+1))	
         fi
     fi
 done
