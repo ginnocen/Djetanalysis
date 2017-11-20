@@ -68,12 +68,6 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
   if (!hlt_tree) { printf("Could not access hlt tree!\n"); return 1; }
   hlt_tree->SetBranchStatus("*", 0);
   djt.set_hlt_tree(hlt_tree,isPP);
-  int HLT_HISinglePhoton40_Eta1p5_v1;
-  int HLT_HISinglePhoton40_Eta1p5_v2;
-  int HLT_HISinglePhoton40_Eta1p5ForPPRef_v1;
-  _SET_BRANCH_ADDRESS(hlt_tree, HLT_HISinglePhoton40_Eta1p5_v1, HLT_HISinglePhoton40_Eta1p5_v1);
-  _SET_BRANCH_ADDRESS(hlt_tree, HLT_HISinglePhoton40_Eta1p5_v2, HLT_HISinglePhoton40_Eta1p5_v2);
-  _SET_BRANCH_ADDRESS(hlt_tree, HLT_HISinglePhoton40_Eta1p5ForPPRef_v1, HLT_HISinglePhoton40_Eta1p5ForPPRef_v1);
   foutput->cd();  
   TTree* hlt_new = hlt_tree->CloneTree(0);
   hlt_new->SetName("hlt");

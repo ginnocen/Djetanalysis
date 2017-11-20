@@ -998,30 +998,18 @@ void DJetTree::set_hlt_tree(TTree* ht, Bool_t isPP)
   if(isPP) //pp
     {
       ht->SetBranchStatus("HLT_L1MinimumBias*",1);
+      ht->SetBranchStatus("HLT_AK4*",1);
       ht->SetBranchStatus("HLT_Dmeson*",1);
-      ht->SetBranchStatus("HLT_AK4CaloJet40_Eta5p1_v1*",1);
-      ht->SetBranchStatus("HLT_AK4CaloJet60_Eta5p1_v1*",1);
-      ht->SetBranchStatus("HLT_AK4CaloJet80_Eta5p1_v1*",1);
-      ht->SetBranchStatus("L1_SingleJet16_BptxAND*",1);
-      ht->SetBranchStatus("L1_SingleJet24_BptxAND*",1);
-      ht->SetBranchStatus("L1_SingleJet28_BptxAND*",1);
-      ht->SetBranchStatus("L1_SingleJet40_BptxAND*",1);
-      ht->SetBranchStatus("L1_SingleJet48_BptxAND*",1);      
+      ht->SetBranchStatus("L1_SingleJet*",1);
     }
   else //PbPb
     {
       ht->SetBranchStatus("HLT_HIL1MinimumBias*",1);
       ht->SetBranchStatus("HLT_HIDmeson*",1);
-      ht->SetBranchStatus("HLT_HIPuAK4CaloJet*",1);
-      ht->SetBranchStatus("L1_MinimumBiasHF1_AND",1);
-      ht->SetBranchStatus("L1_MinimumBiasHF2_AND",1);
-      ht->SetBranchStatus("L1_SingleS1Jet16_BptxAND*", 1);
-      ht->SetBranchStatus("L1_SingleS1Jet28_BptxAND*", 1);
-      ht->SetBranchStatus("L1_SingleS1Jet32_BptxAND*", 1);
-      ht->SetBranchStatus("L1_SingleJet44_BptxAND*",   1);
-      ht->SetBranchStatus("L1_SingleS1Jet52_BptxAND*", 1);
-      ht->SetBranchStatus("L1_SingleS1Jet56_BptxAND*", 1);
-      ht->SetBranchStatus("L1_SingleS1Jet64_BptxAND*", 1);
+      ht->SetBranchStatus("HLT_HIPuAK4*",1);
+      ht->SetBranchStatus("L1_MinimumBiasHF*",1);
+      ht->SetBranchStatus("L1_SingleS1Jet*",1);
+      ht->SetBranchStatus("L1_SingleJet*",1);
     }
 
 }
