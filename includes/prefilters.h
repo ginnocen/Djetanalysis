@@ -9,7 +9,8 @@
 
 Float_t ptBins[] = {4, 20, 999};
 // Float_t drBins[] = {0, 0.1, 0.2, 0.5};
-Float_t drBins[] = {0, 0.05, 0.1, 0.2, 0.3, 0.5};
+// Float_t drBins[] = {0, 0.05, 0.1, 0.2, 0.3, 0.5};
+Float_t drBins[] = {0, 0.05, 0.1, 0.15, 0.3, 0.5};
 Float_t zBins[] = {0, 0.2, 0.4, 0.6, 0.8, 1.0};
 const int nCoBins = 2;
 std::map<TString, int> collsyst_list = {{"pp", 0}, {"PbPb", 1}};
@@ -48,7 +49,7 @@ Float_t cutval_list_Dsvpv[nCoBins][nPtBins][nDrBins] =
     {{3.26,  3.26,  3.23,  3.57,  3.57},
      {2.86,  2.86,  2.34,  3.22,  3.22}},
     {{4.44,  4.44,  4.95,  4.34,  4.34},
-     {2.68,  2.68,  3.57,  2.08,  4.34}}
+     {2.68,  2.68,  3.57,  2.08,  2.08}}
   };
 Float_t cutval_list_Dalpha[nCoBins][nPtBins][nDrBins] = 
   {
