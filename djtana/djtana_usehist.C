@@ -61,11 +61,11 @@ void djtana_usehist(TString inputhistname, TString inputtplname, TString outputn
                       vectex.pop_back();
                       vectex.pop_back();
                       (hSignalXraw.at(k))[l*nPtBins+i]->SetBinContent(j+1, dft->GetY());
-                      (hSignalXraw.at(k))[l*nPtBins+i]->SetBinError(j+1, dft->GetYE());
+                      (hSignalXraw.at(k))[l*nPtBins+i]->SetBinError(j+1, dft->GetY()>0?dft->GetYE():0);
                       (hSignalX.at(k))[l*nPtBins+i]->SetBinContent(j+1, dft->GetY());
-                      (hSignalX.at(k))[l*nPtBins+i]->SetBinError(j+1, dft->GetYE());
+                      (hSignalX.at(k))[l*nPtBins+i]->SetBinError(j+1, dft->GetY()>0?dft->GetYE():0);
                       (hSignalXnorm.at(k))[l*nPtBins+i]->SetBinContent(j+1, dft->GetY() / (hSignalXnorm.at(k))[l*nPtBins+i]->GetBinWidth(j+1));
-                      (hSignalXnorm.at(k))[l*nPtBins+i]->SetBinError(j+1, dft->GetYE() / (hSignalXnorm.at(k))[l*nPtBins+i]->GetBinWidth(j+1));
+                      (hSignalXnorm.at(k))[l*nPtBins+i]->SetBinError(j+1, (dft->GetY()>0?dft->GetYE():0) / (hSignalXnorm.at(k))[l*nPtBins+i]->GetBinWidth(j+1));
                     }
                   (hSignalX.at(k))[l*nPtBins+i]->Divide((hXEfficiency.at(k))[l*nPtBins+i]);
                   (hSignalXnorm.at(k))[l*nPtBins+i]->Divide((hXEfficiency.at(k))[l*nPtBins+i]);
