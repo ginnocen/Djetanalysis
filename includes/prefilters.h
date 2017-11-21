@@ -8,9 +8,8 @@
 #include <TString.h>
 
 Float_t ptBins[] = {4, 20, 999};
-// Float_t drBins[] = {0, 0.1, 0.2, 0.5};
 // Float_t drBins[] = {0, 0.05, 0.1, 0.2, 0.3, 0.5};
-Float_t drBins[] = {0, 0.05, 0.1, 0.15, 0.3, 0.5};
+Float_t drBins[] = {0, 0.02, 0.05, 0.1, 0.3, 0.5};
 Float_t zBins[] = {0, 0.2, 0.4, 0.6, 0.8, 1.0};
 const int nCoBins = 2;
 std::map<TString, int> collsyst_list = {{"pp", 0}, {"PbPb", 1}};
@@ -25,15 +24,6 @@ const int nZBins = sizeof(zBins)/sizeof(zBins[0])-1;
 std::vector<TString> cutval_list_skim[nCoBins] = {{"pBeamScrapingFilter", "pPAprimaryVertexFilter"}, 
                                                   {"pclusterCompatibilityFilter", "pprimaryVertexFilter", "phfCoincFilter3"}};
 
-// Hlt selections
-std::vector<TString> cutval_list_hlt[nCoBins][nPtBins] = 
-  {
-    {{"HLT_DmesonPPTrackingGlobal_Dpt15_v1"}, 
-     {"HLT_DmesonPPTrackingGlobal_Dpt15_v1"}},
-    {{"HLT_HIDmesonHITrackingGlobal_Dpt20_v1"}, 
-     {"HLT_HIDmesonHITrackingGlobal_Dpt20_v1"}}
-  };
-
 Float_t cutval_Dy = 2.0;
 /*
   {
@@ -46,17 +36,17 @@ Float_t cutval_Dy = 2.0;
 */
 Float_t cutval_list_Dsvpv[nCoBins][nPtBins][nDrBins] = 
   {
-    {{3.26,  3.26,  3.23,  3.57,  3.57},
-     {2.86,  2.86,  2.34,  3.22,  3.22}},
-    {{4.44,  4.44,  4.95,  4.34,  4.34},
-     {2.68,  2.68,  3.57,  2.08,  2.08}}
+    {{3.26,  3.26,  3.26,  3.23,  3.57},
+     {2.86,  2.86,  2.86,  2.34,  3.22}},
+    {{4.44,  4.44,  4.44,  4.34,  4.34},
+     {2.68,  2.68,  2.68,  2.08,  2.08}}
   };
 Float_t cutval_list_Dalpha[nCoBins][nPtBins][nDrBins] = 
   {
-    {{0.039,  0.039,  0.033,  0.046,  0.046},
-     {0.037,  0.037,  0.039,  0.014,  0.014}},
-    {{0.040,  0.040,  0.038,  0.049,  0.049},
-     {0.038,  0.038,  0.044,  0.107,  0.107}}
+    {{0.039,  0.039,  0.039,  0.046,  0.046},
+     {0.037,  0.037,  0.037,  0.039,  0.014}},
+    {{0.040,  0.040,  0.040,  0.038,  0.049},
+     {0.038,  0.038,  0.038,  0.107,  0.107}}
   };
 Float_t cutval_list_Dchi2cl[nCoBins][nPtBins][nDrBins] = 
   {
@@ -125,7 +115,6 @@ int initcutval_bindep(TString collisionsyst, int ipt, int idr)
   cutval_Dsvpv = cutval_list_Dsvpv[icollsyst][ipt][idr];
   cutval_Dalpha = cutval_list_Dalpha[icollsyst][ipt][idr];
   cutval_Dchi2cl = cutval_list_Dchi2cl[icollsyst][ipt][idr];
-  cutval_hlt = cutval_list_hlt[icollsyst][ipt];
   return 0;
 }
 
