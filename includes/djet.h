@@ -18,7 +18,8 @@ class djet
 {
 public:
   TTree*                fChain;   //!pointer to the analyzed TTree or TChain
-
+  TTree*                fHlt;
+  
   // Declaration of leaf types
   Int_t                 isPP;
   UInt_t                run;
@@ -275,8 +276,12 @@ public:
   std::vector<float>**   ajeteta[ncases]   =   {&jeteta_akpu3pf,      &jeteta_akpu3pf,      &geneta_akpu3pf,   &geneta_akpu3pf};
   std::vector<float>**   ajetphi[ncases]   =   {&jetphi_akpu3pf,      &jetphi_akpu3pf,      &genphi_akpu3pf,   &genphi_akpu3pf};
 
+  Int_t HLT_AK4Jet40;
+  Int_t HLT_AK4Jet60;
+  Int_t HLT_AK4Jet80;
+
   // djet(TTree* tree=0);
-  djet(TString infname);
+  djet(TString infname, Int_t ispp);
   virtual ~djet();
   virtual void Show(Long64_t entry = -1);
 
@@ -285,10 +290,13 @@ public:
   void setGcut(Float_t _cut_Gy);
   void setjetcut(Float_t _cut_jetpt_min, Float_t _cut_jeteta_min, Float_t _cut_jeteta_max);
   void setbindepcut(Float_t _cut_Dsvpv, Float_t _cut_Dalpha);
-  Int_t isDselected(Int_t j, Option_t* option);
-  Int_t isjetselected(Int_t j, Option_t* option);
+  int isDselected(Int_t j, Option_t* option);
+  int isjetselected(Int_t j, Option_t* option);
+  int ishltselected(Option_t* option);
 
 private:
+  Int_t             fispp;
+
   Float_t           fsettrkcut;
   Float_t           fsetDcut;
   Float_t           fsetGcut;
@@ -306,7 +314,7 @@ private:
   Float_t           cut_jeteta_min;
   Float_t           cut_jeteta_max;
 
-  virtual void Init(TTree *tree);
+  virtual void Init(TTree *tree, TTree *hlt);
   virtual Bool_t Notify();
   virtual void Init_member();
 
@@ -321,14 +329,16 @@ private:
   }
 */
 
-djet::djet(TString infname) : fChain(0) 
+djet::djet(TString infname, Int_t ispp) : fChain(0), fHlt(0), fispp(ispp) 
 {
   TFile* inf = new TFile(infname.Data());
   if(!inf->IsOpen()) return;
   TTree* tree = (TTree*)inf->Get("djt");
   if(!tree) return;
+  TTree* hlt = (TTree*)inf->Get("hlt");
+  if(!hlt) return;
   Init_member();
-  Init(tree);
+  Init(tree, hlt);
 }
 
 void djet::Init_member()
@@ -359,7 +369,7 @@ djet::~djet()
   delete fChain->GetCurrentFile();
 }
 
-void djet::Init(TTree *tree)
+void djet::Init(TTree *tree, TTree *hlt)
 {
   // Set object pointer
   jetptCorr_akpu3pf = 0;
@@ -811,6 +821,30 @@ void djet::Init(TTree *tree)
   fChain->SetBranchAddress("Gtk2phi", &Gtk2phi);
   fChain->SetBranchAddress("pthatweight", &pthatweight);
   fChain->SetBranchAddress("maxDgenpt", &maxDgenpt);
+
+  if(!hlt) return;
+  fHlt = hlt;
+  fHlt->SetMakeClass(1);
+  fHlt->SetBranchStatus("*", 0);
+  if(fispp)
+    {
+      fHlt->SetBranchStatus("HLT_AK4PFJet40_Eta5p1_v1", 1);
+      fHlt->SetBranchStatus("HLT_AK4PFJet60_Eta5p1_v1", 1);
+      fHlt->SetBranchStatus("HLT_AK4PFJet80_Eta5p1_v1", 1);
+      fHlt->SetBranchAddress("HLT_AK4PFJet40_Eta5p1_v1", &HLT_AK4Jet40);
+      fHlt->SetBranchAddress("HLT_AK4PFJet60_Eta5p1_v1", &HLT_AK4Jet60);
+      fHlt->SetBranchAddress("HLT_AK4PFJet80_Eta5p1_v1", &HLT_AK4Jet80);
+    }
+  else
+    {
+      fHlt->SetBranchStatus("HLT_HIPuAK4CaloJet40_Eta5p1_v1", 1);
+      fHlt->SetBranchStatus("HLT_HIPuAK4CaloJet60_Eta5p1_v1", 1);
+      fHlt->SetBranchStatus("HLT_HIPuAK4CaloJet80_Eta5p1_v1", 1);
+      fHlt->SetBranchAddress("HLT_HIPuAK4CaloJet40_Eta5p1_v1", &HLT_AK4Jet40);
+      fHlt->SetBranchAddress("HLT_HIPuAK4CaloJet60_Eta5p1_v1", &HLT_AK4Jet60);
+      fHlt->SetBranchAddress("HLT_HIPuAK4CaloJet80_Eta5p1_v1", &HLT_AK4Jet80);      
+    }
+
   Notify();
 }
 
@@ -919,5 +953,21 @@ int djet::isjetselected(int j, Option_t* option)
     }
   return -3;
 }
+
+int djet::ishltselected(Option_t* option)
+{
+  TString opt = option;
+  opt.ToLower();
+  
+  if(opt=="nohlt") return 1;
+  if(opt.Contains("jet40")) return HLT_AK4Jet40;
+  if(opt.Contains("jet60")) return HLT_AK4Jet60;
+  if(opt.Contains("jet80")) return HLT_AK4Jet80;
+
+  std::cout<<"error: invalid option for ishltselected"<<std::endl;
+  return -1;
+
+}
+
 
 #endif
