@@ -10,7 +10,9 @@ void djtana_savetpl(TString inputname, TString outputname,
 
   if(createhists("savetpl")) return;
 
-  djet djt(inputname);
+  Int_t ispp = collisionsyst=="pp"?1:0;
+
+  djet djt(inputname, ispp);
   djt.setjetcut(jetptmin, jetetamin, jetetamax);
   djt.setGcut(cutval_Dy);
   initcutval(collisionsyst);

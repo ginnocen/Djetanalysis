@@ -3,14 +3,16 @@
 void djtana_savehist(TString inputname, TString outputname, 
                      TString collisionsyst, Int_t isMC, Int_t irecogen,
                      Float_t jetptmin, Float_t jetetamin, Float_t jetetamax, 
-                     Int_t maxevt=-1)
+                     TString hltsel="noHLT", Int_t maxevt=-1)
 {
   int arguerr(TString collisionsyst, Int_t irecogen, Int_t isMC);
   if(arguerr(collisionsyst, irecogen, isMC)) return;
 
   if(createhists("savehist")) return;
 
-  djet djt(inputname);
+  Int_t ispp = collisionsyst=="pp"?1:0;
+ 
+  djet djt(inputname, ispp);
   djt.setjetcut(jetptmin, jetetamin, jetetamax);
   djt.setGcut(cutval_Dy);
   initcutval(collisionsyst);
@@ -23,15 +25,22 @@ void djtana_savehist(TString inputname, TString outputname,
       if(i%10000==0) std::cout<<std::setiosflags(std::ios::left)<<"  [ \033[1;36m"<<std::setw(10)<<i<<"\033[0m"<<" / "<<std::setw(10)<<rnentries<<" ] "<<"\033[1;36m"<<std::setw(4)<<Form("%.0f%s",100.*i/rnentries,"%")<<"\033[0m"<<"   >>   djtana_savehist("<<std::setw(5)<<Form("%s,",collisionsyst.Data())<<" "<<std::setw(5)<<Form("%s,",tMC[isMC].Data())<<" "<<std::setw(20)<<Form("%sD_%sjet)", djt.aDopt[irecogen].Data(), djt.ajetopt[irecogen].Data())<<"\r"<<std::flush;
       //
       djt.fChain->GetEntry(i);
+      djt.fHlt->GetEntry(i);
       //
+
       // to add event selection ...
-      
+      if(djt.ishltselected(hltsel) < 0) return;
+      if(!djt.ishltselected(hltsel)) continue;
+
+      // loop jets
       for(int jj=0;jj<*(djt.anjet[irecogen]);jj++)
         {
           int djtjetsel = djt.isjetselected(jj, djt.ajetopt[irecogen]);
           if(djtjetsel < 0) return;
           if(!djtjetsel) continue;
           ncountjet++;
+
+          // loop D
           for(int jd=0;jd<*(djt.anD[irecogen]);jd++)
             {
               Int_t ibinpt = xjjc::findibin(&ptBins, (**djt.aDpt[irecogen])[jd]);
@@ -83,14 +92,14 @@ void djtana_savehist(TString inputname, TString outputname,
 
 int main(int argc, char* argv[])
 {
-  if(argc==10)
+  if(argc==11)
     {
-      djtana_savehist(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), atof(argv[6]), atof(argv[7]), atof(argv[8]), atoi(argv[9]));
+      djtana_savehist(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), atof(argv[6]), atof(argv[7]), atof(argv[8]), argv[9], atoi(argv[10]));
       return 0;
     }
-  if(argc==9)
+  if(argc==10)
     {
-      djtana_savehist(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), atof(argv[6]), atof(argv[7]), atof(argv[8]));
+      djtana_savehist(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), atof(argv[6]), atof(argv[7]), atof(argv[8]), argv[9]);
       return 0;
     }
   else if(argc==1)
@@ -98,7 +107,8 @@ int main(int argc, char* argv[])
       djtana_savehist("/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight.root",
                       "test",
                       "pp", 1, 0,
-                      40, 0.3, 1.6, 100000);
+                      40, 0.3, 1.6, 
+                      "noHLT", 100000);
       return 0;
     }
   else
