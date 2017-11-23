@@ -189,6 +189,7 @@ TF1* xjjroot::dfitter::fit(const TH1* hmass, const TH1* hmassMCSignal, const TH1
   setgstyle();
   TCanvas* c = new TCanvas("c", "" , 600, 600);
   
+  fun_f->SetParLimits(0,  0,     1.e+5);
   fun_f->SetParLimits(4,  -1000, 1000);
   fun_f->SetParLimits(10, 0.001, 0.05);
   fun_f->SetParLimits(2,  0.01,  0.5);
@@ -263,6 +264,15 @@ TF1* xjjroot::dfitter::fit(const TH1* hmass, const TH1* hmassMCSignal, const TH1
   h->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
   h->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
   r = h->Fit("fun_f", Form("%s S",fitoption.Data()),"", min_hist_dzero, max_hist_dzero);
+
+  if(h->GetEntries()==0)
+    {
+      fun_f->SetParameter(0, 0);
+      fun_f->SetParameter(3, 0);
+      fun_f->SetParameter(4, 0);
+      fun_f->SetParameter(5, 0);
+      fun_f->SetParameter(6, 0);
+    }
 
   fparamfun_f = true;
   setfunparameters();
