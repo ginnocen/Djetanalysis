@@ -4,9 +4,10 @@
 DIRPREFIX="../djtana/"
 
 # Select the systems the macros run on 
-iCOL=(1)
+iCOL=(0)
 jJET=(0)
 kRECOGEN=(0 1 2 3)
+HLTOPT="noHLT"
 ##
 
 # nCOL loop
@@ -15,9 +16,9 @@ ISMC=(1 0 1 0)
 tMC=('data' 'MC')
 
 # nJET loop
-JETPTMIN=(40 40)
-JETETAMIN=(0 0.3)
-JETETAMAX=(2.0 1.6)
+JETPTMIN=(4)
+JETETAMIN=(0)
+JETETAMAX=(2.0)
 
 # Do not touch the macros below if you don't know what they mean #
 #
@@ -32,12 +33,6 @@ INPUTDANAME=(
     '/export/d00/scratch/jwang/Djets/data/DjetFiles_20170619_pp_5TeV_HighPtLowerJets_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614.root'
     '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170510_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_pthatweight.root'
     '/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_2_3_4_26March_finalMerge2April_v1/merged_total.root'
-)
-INPUTMCNAME=(
-    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight.root'
-    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight.root'
-    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170510_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_pthatweight.root'
-    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170510_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_pthatweight.root'
 )
 
 # Do not touch the macros below if you don't know what they mean #
@@ -84,7 +79,7 @@ done
 
 ##
 # jetstudies_plothist.C #
-g++ jetstudies_savehisto.C $(root-config --cflags --libs) -g -o jetstudies_plothist.exe || return 1;
+g++ jetstudies_savehisto.C $(root-config --cflags --libs) -g -o jetstudies_savehisto.exe || return 1;
 
 for i in ${iCOL[@]}
 do
@@ -95,9 +90,9 @@ do
             if [[ $k -eq 0 || ${ISMC[i]} -eq 1 ]] # only RecoD_RecoJet will run for data
             then
                 tPOSTFIX=Djet_$(produce_postfix $i $j $k)
-                echo -e "-- Processing ${FUNCOLOR}djtana_savetpl.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
-                #./jetstudies_savehisto.exe "${INPUTDANAME[i]}" "jetstudies_results/hist_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} &
+                echo -e "-- Processing ${FUNCOLOR}jetstudies_savehisto.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
                 echo -e "-- Jet Parameters ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]}"
+                ./jetstudies_savehisto.exe "${INPUTDANAME[i]}" "jetstudies_results/hist_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} "${HLTOPT}" &
                 echo
             fi
         done

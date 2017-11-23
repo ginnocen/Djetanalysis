@@ -23,52 +23,46 @@ TString tRef[nRefBins] = {"eta", "etaref"};
 Color_t amcolor[nPtBins] = {kBlack, kRed};
 Style_t amstyle[nRefBins][nPtBins] = {{20,     21},   {24,     25}};
 
-TH1F* hJetPtSpectrumInclusive[nRefBins][nPtBins][nDrBins];
-TH1F* hJetPtSpectrumDmeson[nRefBins][nPtBins][nDrBins];
+TH1F* hJetPtSpectrumInclusive;
+TH1F* hJetPtSpectrumDmeson[nRefBins][nPtBins];
 
 //
 int createhists(Option_t* option)
 {
   TString opt  = option;
   opt.ToLower();
-  if(opt=="savetpl")
+  
+  if(opt=="savehist")
     {
-          for(int i=0;i<nPtBins;i++)
+      hJetPtSpectrumInclusive = new TH1F("hJetPtSpectrumInclusive", ";pt_{inclusive jet};", 200, 0,200.0);
+      for(int i=0;i<nPtBins;i++)
         {
           for(int l=0;l<nRefBins;l++)
-            {
-              for(int j=0;j<nDrBins;j++) 
-                {
-                  hJetPtSpectrumInclusive[l][i][j] = new TH1F(Form("hJetPtSpectrumInclusive_%s_pt_%d_dr_%d",tRef[l].Data(),i,j), ";pt_{#piK} (GeV/c^{2});Entries / (5 MeV/c^{2})", 60, 1.7, 2.0);
-                  hJetPtSpectrumDmeson[l][i][j] = new TH1F(Form("hJetPtSpectrumDmeson_%s_pt_%d_dr_%d",tRef[l].Data(),i,j), ";m_{#piK} (GeV/c^{2});Entries / (5 MeV/c^{2})", 60, 1.7, 2.0);
-                }
-            }
-        }
-      return 0;
+          {
+             hJetPtSpectrumDmeson[l][i] = new TH1F(Form("hJetPtSpectrumDmeson_%s_pt_%d",tRef[l].Data(),i), ";pt_{inclusive jet};", 200, 0,200.0);
+          }
+       }
+       return 0;
     }
 }
-
+   
 int writehists(Option_t* option)
 {
   TString opt  = option;
   opt.ToLower();
 
-  if(opt=="savetpl")
+  if(opt=="savehist")
     {
+      hJetPtSpectrumInclusive->Write();
       for(int i=0;i<nPtBins;i++)
         {
           for(int l=0;l<nRefBins;l++)
-            {
-              for(int j=0;j<nDrBins;j++) 
-                {
-                  hJetPtSpectrumInclusive[l][i][j]->Write();
-                  hJetPtSpectrumDmeson[l][i][j]->Write();
-                }
-            }
-        }
-      return 0;
+          {
+             hJetPtSpectrumDmeson[l][i]->Write();
+          }
+       }
+       return 0;
     }
-
   std::cout<<"error: invalid option for writehists()"<<std::endl;
   return 1;
 }
