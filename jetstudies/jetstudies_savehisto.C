@@ -3,7 +3,7 @@
 void jetstudies_savehisto(TString inputname, TString outputname, 
                      TString collisionsyst, Int_t isMC, Int_t irecogen,
                      Float_t jetptmin, Float_t jetetamin, Float_t jetetamax, 
-                     TString hltsel="noHLT", Int_t maxevt=1000000)
+                     TString hltsel="noHLT", Int_t maxevt=-1)
 {
 
   int arguerr(TString collisionsyst, Int_t irecogen, Int_t isMC);

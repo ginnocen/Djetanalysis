@@ -34,12 +34,12 @@ int createhists(Option_t* option)
   
   if(opt=="savehist")
     {
-      hJetPtSpectrumInclusive = new TH1F("hJetPtSpectrumInclusive", ";pt_{inclusive jet};", 200, 0,200.0);
+      hJetPtSpectrumInclusive = new TH1F("hJetPtSpectrumInclusive", ";pt_{inclusive jet};", 1000, 0,1000.0);
       for(int i=0;i<nPtBins;i++)
         {
           for(int l=0;l<nRefBins;l++)
           {
-             hJetPtSpectrumDmeson[l][i] = new TH1F(Form("hJetPtSpectrumDmeson_%s_pt_%d",tRef[l].Data(),i), ";pt_{inclusive jet};", 200, 0,200.0);
+             hJetPtSpectrumDmeson[l][i] = new TH1F(Form("hJetPtSpectrumDmeson_%s_pt_%d",tRef[l].Data(),i), ";pt_{inclusive jet};", 1000, 0,1000.0);
           }
        }
        return 0;

@@ -39,6 +39,9 @@ void djtana_savehist(TString inputname, TString outputname,
           if(djtjetsel < 0) return;
           if(!djtjetsel) continue;
           ncountjet++;
+          
+          // fill histogram for JEC
+          hJetPtSpectrumInclusive->Fill((float)(**djt.ajetpt[irecogen])[jj]);
 
           // loop D
           for(int jd=0;jd<*(djt.anD[irecogen]);jd++)
@@ -70,6 +73,8 @@ void djtana_savehist(TString inputname, TString outputname,
                   ahHistoRMass[l][ibinpt][ibindr]->Fill(Dmass);
 
                   if(deltaR[l]>0.3) continue; // ... to discuss
+                  // fill histogram for JEC
+                  hJetPtSpectrumDmeson[l][ibinpt]->Fill((float)(**djt.ajetpt[irecogen])[jj]);
                   Int_t ibinz = xjjc::findibin(&zBins, zvariable);
                   if(ibinz<0) continue;
                   ahHistoZMass[l][ibinpt][ibinz]->Fill(Dmass);

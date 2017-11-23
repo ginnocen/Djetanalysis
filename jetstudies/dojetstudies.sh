@@ -16,7 +16,7 @@ ISMC=(1 0 1 0)
 tMC=('data' 'MC')
 
 # nJET loop
-JETPTMIN=(4)
+JETPTMIN=(30)
 JETETAMIN=(0)
 JETETAMAX=(2.0)
 

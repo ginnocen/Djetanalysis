@@ -55,6 +55,9 @@ TH1F* ahSignalZsubP[2][nPtBins];
 TH1F* ahSignalRsubRatio[nPtBins];
 TH1F* ahSignalZsubRatio[nPtBins];
 
+// histograms for JEC studies
+TH1F* hJetPtSpectrumInclusive;
+TH1F* hJetPtSpectrumDmeson[nRefBins][nPtBins];
 //
 int createhists(Option_t* option)
 {
@@ -90,10 +93,13 @@ int createhists(Option_t* option)
   if(opt=="savehist")
     {
       hNjets = new TH1F("hNjets", "", 1, 0, 1);
+      hJetPtSpectrumInclusive = new TH1F("hJetPtSpectrumInclusive", ";pt_{inclusive jet};", 1000, 0,1000.0);
+
       for(int i=0;i<nPtBins;i++)
         {
           for(int l=0;l<nRefBins;l++)
             {
+              hJetPtSpectrumDmeson[l][i] = new TH1F(Form("hJetPtSpectrumDmeson_%s_pt_%d",tRef[l].Data(),i), ";pt_{dmeson jet};", 200, 0,200.0);
               for(int j=0;j<nDrBins;j++) ahHistoRMass[l][i][j] = new TH1F(Form("hHistoRMass_%s_pt_%d_dr_%d",tRef[l].Data(),i,j), ";m_{#piK} (GeV/c^{2});Entries / (5 MeV/c^{2})", 60, 1.7, 2.0);
               for(int j=0;j<nZBins;j++) ahHistoZMass[l][i][j] = new TH1F(Form("hHistoZMass_%s_pt_%d_z_%d",tRef[l].Data(),i,j), ";m_{#piK} (GeV/c^{2});Entries / (5 MeV/c^{2})", 60, 1.7, 2.0);
             }
@@ -171,10 +177,12 @@ int writehists(Option_t* option)
   if(opt=="savehist")
     {
       hNjets->Write();
+      hJetPtSpectrumInclusive->Write();
       for(int i=0;i<nPtBins;i++)
         {
           for(int l=0;l<nRefBins;l++)
             {
+              hJetPtSpectrumDmeson[l][i]->Write();
               for(int j=0;j<nDrBins;j++) ahHistoRMass[l][i][j]->Write();
               for(int j=0;j<nZBins;j++) ahHistoZMass[l][i][j]->Write();
             }
@@ -224,10 +232,12 @@ int gethists(TFile* inf, Option_t* option)
   if(opt=="hist")
     {
       hNjets = (TH1F*)inf->Get("hNjets");
+      hJetPtSpectrumInclusive = (TH1F*)inf->Get("hJetPtSpectrumInclusive");
       for(int i=0;i<nPtBins;i++)
         {
           for(int l=0;l<nRefBins;l++)
             {
+              hJetPtSpectrumDmeson[l][i] = (TH1F*)inf->Get(Form("hJetPtSpectrumDmeson_%s_pt_%d",tRef[l].Data(),i));
               for(int j=0;j<nDrBins;j++) ahHistoRMass[l][i][j] = (TH1F*)inf->Get(Form("hHistoRMass_%s_pt_%d_dr_%d",tRef[l].Data(),i,j));
               for(int j=0;j<nZBins;j++) ahHistoZMass[l][i][j] = (TH1F*)inf->Get(Form("hHistoZMass_%s_pt_%d_z_%d",tRef[l].Data(),i,j));
             }
