@@ -76,6 +76,7 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
           TLegend* legref = new TLegend(0.56, 0.17-xjjroot::margin_pad_bottom, 1.30, 0.23-xjjroot::margin_pad_bottom);
           xjjroot::setleg(legref);
           legref->SetNColumns(nCases);
+          
           for(int l=0;l<nRefBins;l++)
             {
               if(l && !plotref) continue;
