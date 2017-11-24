@@ -99,7 +99,7 @@ int createhists(Option_t* option)
         {
           for(int l=0;l<nRefBins;l++)
             {
-              hJetPtSpectrumDmeson[l][i] = new TH1F(Form("hJetPtSpectrumDmeson_%s_pt_%d",tRef[l].Data(),i), ";pt_{dmeson jet};", 200, 0,200.0);
+              hJetPtSpectrumDmeson[l][i] = new TH1F(Form("hJetPtSpectrumDmeson_%s_pt_%d",tRef[l].Data(),i), ";pt_{dmeson jet};", 1000, 0, 1000.0);
               for(int j=0;j<nDrBins;j++) ahHistoRMass[l][i][j] = new TH1F(Form("hHistoRMass_%s_pt_%d_dr_%d",tRef[l].Data(),i,j), ";m_{#piK} (GeV/c^{2});Entries / (5 MeV/c^{2})", 60, 1.7, 2.0);
               for(int j=0;j<nZBins;j++) ahHistoZMass[l][i][j] = new TH1F(Form("hHistoZMass_%s_pt_%d_z_%d",tRef[l].Data(),i,j), ";m_{#piK} (GeV/c^{2});Entries / (5 MeV/c^{2})", 60, 1.7, 2.0);
             }
