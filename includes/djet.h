@@ -960,9 +960,12 @@ int djet::ishltselected(Option_t* option)
   opt.ToLower();
   
   if(opt=="nohlt") return 1;
-  if(opt.Contains("jet40")) return HLT_AK4Jet40;
-  if(opt.Contains("jet60")) return HLT_AK4Jet60;
-  if(opt.Contains("jet80")) return HLT_AK4Jet80;
+  if(opt.Contains("jet40jet60jet80")) return HLT_AK4Jet40||HLT_AK4Jet60||HLT_AK4Jet80;
+  if(opt.Contains("jet60jet80") && !opt.Contains("jet40")) return HLT_AK4Jet60||HLT_AK4Jet80;
+  if(opt.Contains("jet40jet60") && !opt.Contains("jet80")) return HLT_AK4Jet40||HLT_AK4Jet60;
+  if(opt.Contains("jet40") && !opt.Contains("jet60") && !opt.Contains("jet80")) return HLT_AK4Jet40;
+  if(opt.Contains("jet60") && !opt.Contains("jet40") && !opt.Contains("jet80")) return HLT_AK4Jet60;
+  if(opt.Contains("jet80") && !opt.Contains("jet40") && !opt.Contains("jet60")) return HLT_AK4Jet80;
 
   std::cout<<"error: invalid option for ishltselected"<<std::endl;
   return -1;
