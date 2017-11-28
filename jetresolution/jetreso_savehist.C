@@ -30,7 +30,7 @@ void jetreso_savehist(TString inputname, TString outputname, TString collisionsy
           Int_t ibinpt = xjjc::findibin(&jtptBins, (*djt.gjetpt_akpu3pf)[jj]);
           if(ibinpt<0) continue;
 
-          ahHistoResoPt[ibinpt]->Fill((*djt.jetptCorr_akpu3pf)[jj]/(*djt.gjetpt_akpu3pf)[jj], djt.pthatweight);
+          ahHistoResoPt[ibinpt]->Fill((*djt.jetpt_akpu3pf)[jj]/(*djt.gjetpt_akpu3pf)[jj], djt.pthatweight);
           ahHistoResoPhi[ibinpt]->Fill((*djt.jetphi_akpu3pf)[jj]-(*djt.gjetphi_akpu3pf)[jj], djt.pthatweight);
           ahHistoResoEta[ibinpt]->Fill((*djt.jeteta_akpu3pf)[jj]-(*djt.gjeteta_akpu3pf)[jj], djt.pthatweight);
 

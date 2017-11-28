@@ -6,8 +6,9 @@ DO_SAVEHIST=${2:-0}
 DO_USEHIST=${3:-0}
 DO_PLOTHIST=${4:-0}
 
-# HLTOPT="noHLT"
-HLTOPT="HLT_AK4PFJet40_Eta5p1_v1"
+HLTOPT="noHLT"
+# HLTOPT="HLT_AK4PFJet60_Eta5p1_v1"
+# HLTOPT="HLT_HIPuAK4CaloJet60Jet80_Eta5p1_v1"
 
 # Select the systems the macros run on 
 iCOL=(1)
@@ -21,7 +22,7 @@ COLSYST=('pp' 'pp' 'PbPb' 'PbPb')
 ISMC=(1 0 1 0)
 
 # nJET loop
-JETPTMIN=(40 40)
+JETPTMIN=(40 60)
 JETETAMIN=(0 0.3)
 JETETAMAX=(2.0 1.6)
 
@@ -34,7 +35,8 @@ INPUTDANAME=(
     # '/export/d00/scratch/jwang/Djets/data/DjetFiles_20170619_pp_5TeV_HighPtLowerJets_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614.root'
     '/export/d00/scratch/jwang/Djets/data/DjetFiles_20171120_pp_5TeV_HighPtLowerJets_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614.root'
     '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170510_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_pthatweight.root'
-    '/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_2_3_4_26March_finalMerge2April_v1/merged_total.root'
+    # '/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_2_3_4_26March_finalMerge2April_v1/merged_total.root'
+    '/export/d00/scratch/jwang/Djets/data/DjetFiles_20171120_PbPb_5TeV_HIHardProbes_skimmed_1unit_part1234_26March_20170326_HLTHIPuAK4CaloJet406080.root'
 )
 INPUTMCNAME=(
     '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight.root'

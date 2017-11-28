@@ -12,6 +12,7 @@
 #include <TH2F.h>
 #include <TLegend.h>
 #include <TCanvas.h>
+#include <TF1.h>
 
 Float_t jtptBins[] = {30, 40, 50, 60, 70, 80, 100, 120, 140, 160, 180, 200, 250, 300};
 const int nJtptBins = sizeof(jtptBins)/sizeof(jtptBins[0])-1;
@@ -21,6 +22,9 @@ TH1F* ahHistoResoPt[nJtptBins];
 TH1F* ahHistoResoPhi[nJtptBins];
 TH1F* ahHistoResoEta[nJtptBins];
 
+TH1F* hResoPt;
+TH1F* hResoPhi;
+TH1F* hResoEta;
 
 //
 int createhists(Option_t* option)
@@ -31,13 +35,20 @@ int createhists(Option_t* option)
     {
       for(int i=0;i<nJtptBins;i++)
         {
-          ahHistoResoPt[i] = new TH1F(Form("hHistoResoPt_%d",i), ";Gen Jet p_{T} (GeV/c);", 50, 0, 2);
+          ahHistoResoPt[i] = new TH1F(Form("hHistoResoPt_%d",i), ";p_{T}^{reco} / p_{T}^{gen};", 50, 0, 2);
           ahHistoResoPt[i]->Sumw2();
-          ahHistoResoPhi[i] = new TH1F(Form("hHistoResoPhi_%d",i), ";Gen Jet p_{T} (GeV/c);", 50, -0.08, 0.08);
+          ahHistoResoPhi[i] = new TH1F(Form("hHistoResoPhi_%d",i), ";#phi^{reco} - #phi^{gen};", 50, -0.08, 0.08);
           ahHistoResoPhi[i]->Sumw2();
-          ahHistoResoEta[i] = new TH1F(Form("hHistoResoEta_%d",i), ";Gen Jet p_{T} (GeV/c);", 50, -0.08, 0.08);
+          ahHistoResoEta[i] = new TH1F(Form("hHistoResoEta_%d",i), ";#eta^{reco} - #eta^{gen};", 50, -0.08, 0.08);
           ahHistoResoEta[i]->Sumw2();
         }
+      return 0;
+    }
+  if(opt=="usehist")
+    {
+      hResoPt = new TH1F("hResoPt", ";Gen Jet p_{T} (GeV/c);p_{T}^{reco} / p_{T}^{gen}", nJtptBins, jtptBins);
+      hResoPhi = new TH1F("hResoPhi", ";Gen Jet p_{T} (GeV/c);#phi^{reco} - #phi^{gen}", nJtptBins, jtptBins);
+      hResoEta = new TH1F("hResoEta", ";Gen Jet p_{T} (GeV/c);#eta^{reco} - #eta^{gen}", nJtptBins, jtptBins);
       return 0;
     }
   std::cout<<"error: invalid option for createhists()"<<std::endl;
