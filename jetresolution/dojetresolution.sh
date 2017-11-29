@@ -58,7 +58,7 @@ function produce_postfix()
 }
 
 #
-FOLDERS=("rootfiles" "plotpulls")
+FOLDERS=("rootfiles" "plotpulls" "plotresos")
 for i in ${FOLDERS[@]}
 do
     if [[ ! -d $i ]]
@@ -95,25 +95,24 @@ then
         tPOSTFIX=Djet_reso_$(produce_postfix $i)
         echo -e "-- Processing ${FUNCOLOR}jetreso_usehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
         [[ ! -f "rootfiles/hist_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/hist_${tPOSTFIX}.root doesn't exist. Process jetreso_savehist.C first."; continue; }
-        ./jetreso_usehist.exe "rootfiles/hist_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}"
+        ./jetreso_usehist.exe "rootfiles/hist_${tPOSTFIX}" "${tPOSTFIX}" "${COLSYST[i]}"
         echo
     done
 fi
 rm jetreso_usehist.exe
 
 # jetreso_plothist.C #
-# g++ jetreso_plothist.C $(root-config --cflags --libs) -g -o jetreso_plothist.exe || return 1;
 
-# if [[ $DO_PLOTHIST -eq 1 ]]
-# then
-#     for i in ${iCOL[@]}
-#     do
-#         tPOSTFIX=Djet_reso_$(produce_postfix $i)
-#         echo -e "-- Processing ${FUNCOLOR}jetreso_plothist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
-#         [[ ! -f "rootfiles/xsec_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/xsec_${tPOSTFIX}.root doesn't exist. Process jetreso_usehist.C first."; continue; }
-#         ./jetreso_plothist.exe "rootfiles/xsec_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}" ${ISMC[i]} ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]}
-#         echo
-#     done
-# fi
-
-# rm jetreso_plothist.exe
+g++ jetreso_plothist.C $(root-config --cflags --libs) -g -o jetreso_plothist.exe || return 1;
+if [[ $DO_PLOTHIST -eq 1 ]]
+then
+    for i in ${iCOL[@]}
+    do
+        tPOSTFIX=Djet_reso_$(produce_postfix $i)
+        echo -e "-- Processing ${FUNCOLOR}jetreso_plothist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
+        [[ ! -f "rootfiles/reso_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/reso_${tPOSTFIX}.root doesn't exist. Process jetreso_usehist.C first."; continue; }
+        ./jetreso_plothist.exe "rootfiles/reso_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}"
+        echo
+    done
+fi
+rm jetreso_plothist.exe
