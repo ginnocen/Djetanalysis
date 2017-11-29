@@ -118,4 +118,23 @@ int initcutval_bindep(TString collisionsyst, int ipt, int idr)
   return 0;
 }
 
+int initcutval_bindep_flat(TString collisionsyst, int ipt)
+{
+  if(collsyst_list.find(collisionsyst)==collsyst_list.end())
+    {
+      std::cout<<"\033[1;31merror:\033[0m invalid \"collisionsyst\" - initcutval()"<<std::endl;
+      return 1;
+    }
+  if(ipt<0 || ipt>=nPtBins) return 2;
+
+  int icollsyst = collsyst_list[collisionsyst];
+  cutval_trkPt = cutval_list_trkPt[icollsyst][ipt][0];
+  cutval_trkEta = cutval_list_trkEta[icollsyst][ipt][0];
+  cutval_trkPtErr = cutval_list_trkPtErr[icollsyst][ipt][0];
+  cutval_Dsvpv = cutval_list_Dsvpv[icollsyst][ipt][0];
+  cutval_Dalpha = cutval_list_Dalpha[icollsyst][ipt][0];
+  cutval_Dchi2cl = cutval_list_Dchi2cl[icollsyst][ipt][0];
+  return 0;
+}
+
 #endif

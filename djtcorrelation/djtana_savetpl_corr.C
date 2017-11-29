@@ -37,12 +37,13 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
           // reco
           
           hJetPhi->Fill((**djt.ajetphi[irecogen])[jj]);
+          hJetEta->Fill((**djt.ajeteta[irecogen])[jj]);
           
           for(int jd=0;jd<*(djt.anD[irecogen]);jd++)
             {
               Int_t ibinpt = xjjc::findibin(&ptBins, (**djt.aDpt[irecogen])[jd]);
-              if(ibinpt<0) continue;              
-
+              if(ibinpt<0) continue;   
+                         
               // to add pt-dependent event selection ...
               
               Float_t deltaphi = TMath::ACos(TMath::Cos((**djt.aDphi[irecogen])[jd] - (**djt.ajetphi[irecogen])[jj]));
@@ -51,7 +52,21 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
               Float_t deltaR[nRefBins] = {(float)TMath::Sqrt(pow(deltaphi, 2) + pow(deltaeta, 2)),
                                           (float)TMath::Sqrt(pow(deltaphi, 2) + pow(deltaetaref, 2))};
               Float_t zvariable = (**djt.aDpt[irecogen])[jd]/(**djt.ajetpt[irecogen])[jj];
-              
+
+              Int_t result_initcutval = initcutval_bindep_flat(collisionsyst,ibinpt);
+              if(result_initcutval) return;
+              djt.settrkcut(cutval_trkPt, cutval_trkEta, cutval_trkPtErr);
+              djt.setDcut(cutval_Dsvpv, cutval_Dalpha, cutval_Dchi2cl, cutval_Dy);                  
+              Int_t djtDsel = djt.isDselected(jd, djt.aDopt[irecogen]);
+              if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
+              if(!djtDsel) continue;
+
+              hDPhi[ibinpt]->Fill((**djt.aDphi[irecogen])[jd]);
+              hDEta[ibinpt]->Fill((**djt.aDeta[irecogen])[jd]);
+              hDdelPhi[ibinpt]->Fill(deltaphi);
+              hDdelEta[ibinpt]->Fill(deltaeta);
+              hCorr[ibinpt]->Fill(deltaeta,deltaphi);
+              /*
               for(int l=0;l<nRefBins;l++)
                 {
                   Int_t ibindr = xjjc::findibin(&drBins, deltaR[l]);
@@ -80,8 +95,10 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
                     }
                   if((*djt.Dgen)[jd]==23344) ahHistoZMassSwapped[l][ibinpt][ibinz]->Fill((*djt.Dmass)[jd]);
                 }
+                */
             }
           // gen
+          /*
           for(int jd=0;jd<*(djt.anD[irecogen+1]);jd++)
             {
               Int_t ibinpt = xjjc::findibin(&ptBins, (**djt.aDpt[irecogen+1])[jd]);
@@ -107,6 +124,7 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
                   ahDenZEfficiency[l][ibinpt]->Fill(zvariable);
                 }
             }
+            */
         }
     }
   std::cout<<std::setiosflags(std::ios::left)<<"  Processed "<<"\033[1;31m"<<rnentries<<"\033[0m out of\033[1;31m "<<nentries<<"\033[0m event(s)."<<"   >>   djtana_savetpl_corr("<<std::setw(5)<<Form("%s,",collisionsyst.Data())<<" "<<std::setw(5)<<Form("%s,",tMC[isMC].Data())<<" "<<std::setw(30)<<Form("%sD_%sjet)", djt.aDopt[irecogen].Data(), djt.ajetopt[irecogen].Data())<<std::endl;

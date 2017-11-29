@@ -58,6 +58,12 @@ TH1F* ahSignalZsubRatio[nPtBins];
 // histograms for correlation studies
 
 TH1F* hJetPhi;
+TH1F* hJetEta;
+TH1F* hDPhi[nPtBins];
+TH1F* hDEta[nPtBins];
+TH1F* hDdelPhi[nPtBins];
+TH1F* hDdelEta[nPtBins];
+TH2F* hCorr[nPtBins];
 
 //
 int createhists(Option_t* option)
@@ -66,10 +72,16 @@ int createhists(Option_t* option)
   opt.ToLower();
   if(opt=="savetpl")
     { 
-      hJetPhi=new TH1F("hJetPhi", ";#Phi;",50,0., 2*TMath::Pi());
+      hJetPhi=new TH1F("hJetPhi", ";#phi;",50,0., 2*TMath::Pi());
+      hJetEta=new TH1F("hJetEta", ";#eta;",50,-2.,2.);
       hNjets = new TH1F("hNjets", "", 1, 0, 1); // ... is it necessary
       for(int i=0;i<nPtBins;i++)
         {
+          hDPhi[i]=new TH1F(Form("hDPhi_pt_%d",i),";#phi;",50,0.,2*TMath::Pi());
+          hDEta[i]=new TH1F(Form("hDEta_pt_%d",i),";#eta;",50,-2.,2.);
+          hDdelPhi[i]=new TH1F(Form("hDdelPhi_pt_%d",i),";#Delta#phi;",50,-2*TMath::Pi(),2*TMath::Pi());
+          hDdelEta[i]=new TH1F(Form("hDdelEta_pt_%d",i),";#Delta#eta;",50,-4.,4.);
+          hCorr[i]=new TH2F(Form("hCorr_pt_%d",i),";#Delta#eta;#Delta#phi;",50,-4.,4.,50,-2*TMath::Pi(),2*TMath::Pi());
           for(int l=0;l<nRefBins;l++)
             {
               ahREfficiency[l][i] = new TH1F(Form("hREfficiency_%s_pt_%d",tRef[l].Data(),i), ";#DeltaR;", nDrBins, drBins);
@@ -150,8 +162,14 @@ int writehists(Option_t* option)
     {
       hNjets->Write(); // ... is it necessary
       hJetPhi->Write();
+      hJetEta->Write();
       for(int i=0;i<nPtBins;i++)
         {
+          hDPhi[i]->Write();
+          hDEta[i]->Write();
+          hDdelPhi[i]->Write();
+          hDdelEta[i]->Write();
+          hCorr[i]->Write();
           for(int l=0;l<nRefBins;l++)
             {
               ahREfficiency[l][i]->Write();
