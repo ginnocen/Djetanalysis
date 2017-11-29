@@ -1,17 +1,19 @@
 #include "jetresolution.h"
 
 void jetreso_savehist(TString inputname, TString outputname, TString collisionsyst,
-                      // Float_t jetetamin, Float_t jetetamax,
                       Int_t maxevt=-1)
 {
   int arguerr(TString collisionsyst);
   if(arguerr(collisionsyst)) return;
 
   if(createhists("savehist")) return;
-
   Int_t ispp = collisionsyst=="pp"?1:0;
-
   djet djt(inputname, ispp);
+
+  TF1* fScalePt = new TF1("fScalePt", "[0]+[1]/TMath::Sqrt(x)+[2]/x");
+  fScalePt->SetParameter(0, 1.00);
+  fScalePt->SetParameter(1, -0.13);
+  fScalePt->SetParameter(2, 2.08);
 
   int64_t nentries = djt.fChain->GetEntriesFast();
   int rnentries = (maxevt>0&&maxevt<=nentries)?maxevt:nentries;
@@ -25,15 +27,20 @@ void jetreso_savehist(TString inputname, TString outputname, TString collisionsy
       // loop jets
       for(int jj=0;jj<djt.njet_akpu3pf;jj++)
         {
-          if(TMath::Abs((*djt.gjeteta_akpu3pf)[jj])>1.6) continue;
-
+          Int_t ibineta = xjjc::findibin(&jtetaBins, (*djt.gjeteta_akpu3pf)[jj]);
+          if(ibineta<0) continue;
           Int_t ibinpt = xjjc::findibin(&jtptBins, (*djt.gjetpt_akpu3pf)[jj]);
           if(ibinpt<0) continue;
 
-          ahHistoResoPt[ibinpt]->Fill((*djt.jetpt_akpu3pf)[jj]/(*djt.gjetpt_akpu3pf)[jj], djt.pthatweight);
-          ahHistoResoPhi[ibinpt]->Fill((*djt.jetphi_akpu3pf)[jj]-(*djt.gjetphi_akpu3pf)[jj], djt.pthatweight);
-          ahHistoResoEta[ibinpt]->Fill((*djt.jeteta_akpu3pf)[jj]-(*djt.gjeteta_akpu3pf)[jj], djt.pthatweight);
+          ahHistoResoPt[0][ibinpt]->Fill((*djt.jetpt_akpu3pf)[jj]/(*djt.gjetpt_akpu3pf)[jj], djt.pthatweight);
+          ahHistoResoPtCorr[0][ibinpt]->Fill(((*djt.jetpt_akpu3pf)[jj]/fScalePt->Eval((*djt.gjetpt_akpu3pf)[jj]))/(*djt.gjetpt_akpu3pf)[jj], djt.pthatweight);
+          ahHistoResoPhi[0][ibinpt]->Fill((*djt.jetphi_akpu3pf)[jj]-(*djt.gjetphi_akpu3pf)[jj], djt.pthatweight);
+          ahHistoResoEta[0][ibinpt]->Fill((*djt.jeteta_akpu3pf)[jj]-(*djt.gjeteta_akpu3pf)[jj], djt.pthatweight);
 
+          ahHistoResoPt[ibineta+1][ibinpt]->Fill((*djt.jetpt_akpu3pf)[jj]/(*djt.gjetpt_akpu3pf)[jj], djt.pthatweight);
+          ahHistoResoPtCorr[ibineta+1][ibinpt]->Fill(((*djt.jetpt_akpu3pf)[jj]/fScalePt->Eval((*djt.gjetpt_akpu3pf)[jj]))/(*djt.gjetpt_akpu3pf)[jj], djt.pthatweight);
+          ahHistoResoPhi[ibineta+1][ibinpt]->Fill((*djt.jetphi_akpu3pf)[jj]-(*djt.gjetphi_akpu3pf)[jj], djt.pthatweight);
+          ahHistoResoEta[ibineta+1][ibinpt]->Fill((*djt.jeteta_akpu3pf)[jj]-(*djt.gjeteta_akpu3pf)[jj], djt.pthatweight);
         }
     }
   std::cout<<std::setiosflags(std::ios::left)<<"  Processed "<<"\033[1;31m"<<rnentries<<"\033[0m out of\033[1;31m "<<nentries<<"\033[0m event(s)."<<"   >>   jetreso_savehist("<<std::setw(30)<<Form("%s)",collisionsyst.Data())<<std::endl;
