@@ -287,8 +287,15 @@ int gethists(TFile* inf, Option_t* option)
     }
   if(opt.Contains("plothist"))
     {
+      hJetPhi = (TH1F*)inf->Get("hJetPhi");
+      hJetEta = (TH1F*)inf->Get("hJetEta");
       for(int i=0;i<nPtBins;i++)
         {
+          hDEta[i] = (TH1F*)inf->Get(Form("hDEta_pt_%d",i));
+          hDPhi[i] = (TH1F*)inf->Get(Form("hDPhi_pt_%d",i));
+          hDdelPhi[i] = (TH1F*)inf->Get(Form("hDdelPhi_pt_%d",i));
+          hDdelEta[i] = (TH1F*)inf->Get(Form("hDdelEta_pt_%d",i));
+          hCorr[i] = (TH2F*)inf->Get(Form("hCorr_pt_%d",i));
           for(int l=0;l<nRefBins;l++)
             {
               ahSignalRnorm[l][i] = (TH1F*)inf->Get(Form("hSignalRnorm_%s_pt_%d",tRef[l].Data(),i));

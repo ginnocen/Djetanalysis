@@ -24,8 +24,20 @@ void djtana_plothist(TString inputhistname, TString outputname,
   std::vector<float> vdrBins, vzBins;
   for(int j=0;j<sizeof(drBins)/sizeof(drBins[0]);j++) vdrBins.push_back(drBins[j]);
   for(int j=0;j<sizeof(zBins)/sizeof(zBins[0]);j++) vzBins.push_back(zBins[j]);
+  Float_t jet_ymax = 20000;
+  Float_t D_ymax = 20000;
   std::vector<TH1F**>              hSignalXnorm  =  {(TH1F**)ahSignalRnorm,  (TH1F**)ahSignalZnorm};
   std::vector<TH1F**>              hSignalXsub   =  {(TH1F**)ahSignalRsub,   (TH1F**)ahSignalZsub};
+  std::vector<TH1F*>               hJetHists     =  {(TH1F*)hJetPhi,         (TH1F*)hJetEta};
+  std::vector<Float_t>             jetmins       =  {0.,                     -2.};
+  std::vector<Float_t>             jetmaxes      =  {2*TMath::Pi(),          2.};
+  std::vector<Float_t>             jetymax       =  {350000.,                450000.};
+  std::vector<TString>             jettitle      =  {"#phi",                 "#eta"};
+  std::vector<TH1F**>              hDHists       =  {(TH1F**)hDPhi,          (TH1F**)hDEta,                   (TH1F**)hDdelPhi,   (TH1F**)hDdelEta};   
+  std::vector<Float_t>             Dmins         =  {0.,                     -2.,                             -2*TMath::Pi(),     -4.};
+  std::vector<Float_t>             Dmaxes        =  {2*TMath::Pi(),          2.,                              2*TMath::Pi(),      4.};   
+  std::vector<Float_t>             Dymax         =  {8000.,                  18000.,                          180000.,            90000.};
+  std::vector<TString>             Dtitle        =  {"#phi",                 "#eta",                          "#Delta#phi",       "#Delta#eta"};                         
   std::vector<TString>             xtitle        =  {"#DeltaR",              "z = p_{T}^{D} / p_{T}^{jet}"};
   std::vector<TString>             ytitle        =  {"#rho(#DeltaR)",        "#rho(z)"};
   std::vector<TString>             tname         =  {"dr",                   "z"};
@@ -33,6 +45,39 @@ void djtana_plothist(TString inputhistname, TString outputname,
   Float_t yaxismin = isMC?1.e-5:1.e-7, yaxismax = isMC?1.e+3:1.e+1;
 
   // plot
+  for(int i=0;i<2;i++)
+    {
+      TCanvas* c = new TCanvas("c","",600,600);      
+      TH2F* hempty = new TH2F("hempty",Form(";%s;",jettitle[i].Data()),1,jetmins[i],jetmaxes[i],1,0.,jetymax[i]);
+      xjjroot::sethempty(hempty,0,0.5);
+      hempty->Draw();
+      xjjroot::setthgrstyle(hJetHists[i],kBlack,20,1.2,kBlack,1,1,-1,-1,-1);
+      hJetHists[i]->Draw("pe same");
+      xjjroot::drawCMS(collisionsyst);
+      c->SaveAs("%s.pdf",hJetHists[i].Data());
+      delete c;
+      delete hempty;
+    }
+  for(int i=0;i<4;i++)
+    {
+      for(int j=0;j<nPtBins;j++)
+        {
+          TCanvas* c = new TCanvas("c","",600,600);      
+          TH2F* hempty = new TH2F("hempty",Form("pt_{%d};%s;",j,Dtitle[i].Data()),1,Dmins[i],Dmaxes[i],1,0.,Dymax[i]);
+          xjjroot::sethempty(hempty,0,0.5);
+          hempty->Draw();
+          xjjroot::setthgrstyle((hDHists.at(i))[j],kBlack,20,1.2,kBlack,1,1,-1,-1,-1);
+          (hDHists.at(i))[j]->Draw("pe same");
+          xjjroot::drawCMS(collisionsyst);
+          c->SaveAs("%s_pt_%d.pdf",(hDHists.at(i))[j].Data(),j);
+          delete c;
+          delete hempty;
+        }
+    }
+  TCanvas* c = new TCanvas("c","",600,600);
+  hCorr->Draw("surf1 fb");
+  c->SaveAs("Correlation.pdf");
+  delete c;      
   for(int k=0;k<2;k++)
     {
       //
