@@ -68,7 +68,7 @@ void jetreso_plothist(TString inputhistname, TString outputname,
           xjjroot::setthgrstyle(hScalePtCorr[k][j], jtetaColor[j], 24, 1.2, jtetaColor[j], 1, 1, -1, -1, -1);
           hScalePtCorr[k][j]->Draw("same pe");
           TString tleg = j==0?"Incl. #eta":Form("%.1f < |#eta^{gen jet}| < %.1f",jtetaBins[j-1],jtetaBins[j]);
-          if(k==0) legScalePtCorr->AddEntry(hScalePtCorr[k][j], tleg.Data(), "p");
+          legScalePtCorr->AddEntry(hScalePtCorr[k][j], tleg.Data(), "p");
         } 
       Float_t texxpos = 0.22, texypos = 0.85, texdypos = 0.06; texypos += texdypos;
       if(!ispp) xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), texcent);

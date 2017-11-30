@@ -1,12 +1,12 @@
 #include "jetresolution.h"
 
 void jetreso_savehist(TString inputname, TString outputname, TString collisionsyst,
-                      Int_t ifCorr=0, Int_t maxevt=-1)
+                      Int_t ifCorr=1, Int_t maxevt=-1)
 {
   int arguerr(TString collisionsyst);
   if(arguerr(collisionsyst)) return;
   Int_t ispp = collisionsyst=="pp"?1:0;
-  setnCentBins(ispp);
+  init(ispp);
 
   if(createhists("savehist")) return;
   djet djt(inputname, ispp);

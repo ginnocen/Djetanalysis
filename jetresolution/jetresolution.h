@@ -24,6 +24,10 @@ Float_t centBins[] = {0, 30, 100};
 const int NCentBins = sizeof(centBins)/sizeof(centBins[0])-1;
 int nCentBins = 0;
 void setnCentBins(Int_t ispp) {nCentBins = ispp?1:NCentBins;}
+Float_t xrangeAng;
+void setxrangeAng(Int_t ispp) {xrangeAng = ispp?0.05:0.08;}
+
+void init(Int_t ispp) {setnCentBins(ispp); setxrangeAng(ispp);}
 
 TH1F* ahHistoResoPt[NCentBins][nJtetaBins+1][nJtptBins];
 TH1F* ahHistoResoPtCorr[NCentBins][nJtetaBins+1][nJtptBins];
@@ -56,9 +60,9 @@ int createhists(Option_t* option)
                   ahHistoResoPt[k][j][i]->Sumw2();
                   ahHistoResoPtCorr[k][j][i] = new TH1F(Form("hHistoResoPtCorr_%d_%d_%d",k,j,i), ";p_{T}^{reco} / p_{T}^{gen}, Corr;", 50, 0, 2);
                   ahHistoResoPtCorr[k][j][i]->Sumw2();
-                  ahHistoResoPhi[k][j][i] = new TH1F(Form("hHistoResoPhi_%d_%d_%d",k,j,i), ";#phi^{reco} - #phi^{gen};", 50, -0.08, 0.08);
+                  ahHistoResoPhi[k][j][i] = new TH1F(Form("hHistoResoPhi_%d_%d_%d",k,j,i), ";#phi^{reco} - #phi^{gen};", 50, 0-xrangeAng, xrangeAng);
                   ahHistoResoPhi[k][j][i]->Sumw2();
-                  ahHistoResoEta[k][j][i] = new TH1F(Form("hHistoResoEta_%d_%d_%d",k,j,i), ";#eta^{reco} - #eta^{gen};", 50, -0.08, 0.08);
+                  ahHistoResoEta[k][j][i] = new TH1F(Form("hHistoResoEta_%d_%d_%d",k,j,i), ";#eta^{reco} - #eta^{gen};", 50, 0-xrangeAng, xrangeAng);
                   ahHistoResoEta[k][j][i]->Sumw2();
                 }
             }
