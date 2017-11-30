@@ -6,13 +6,9 @@ DO_SAVEHIST=${2:-0}
 DO_USEHIST=${3:-0}
 DO_PLOTHIST=${4:-0}
 
-HLTOPT="noHLT"
-# HLTOPT="HLT_AK4PFJet60_Eta5p1_v1"
-# HLTOPT="HLT_HIPuAK4CaloJet60Jet80_Eta5p1_v1"
-
 # Select the systems the macros run on 
 iCOL=(1)
-jJET=(1)
+jJET=(0 1)
 kRECOGEN=(0 1 2 3)
 
 ##
@@ -23,8 +19,10 @@ ISMC=(1 0 1 0)
 
 # nJET loop
 JETPTMIN=(40 60)
-JETETAMIN=(0 0.3)
-JETETAMAX=(2.0 1.6)
+JETETAMIN=(0.3 0.3)
+JETETAMAX=(1.6 1.6)
+HLTOPT=("HLT_AK4PFJet40Jet60_Eta5p1_v1" "HLT_AK4PFJet60_Eta5p1_v1")
+# HLTOPT=("HLT_HIPuAK4CaloJet40Jet60Jet80_Eta5p1_v1" "HLT_HIPuAK4CaloJet60Jet80_Eta5p1_v1")
 
 # nRECOGEN loop
 RECOGEN=('RecoD_RecoJet' 'GenD_RecoJet' 'RecoD_GenJet' 'GenD_GenJet')
@@ -82,7 +80,7 @@ function produce_postfix()
         echo -e "\033[1;31merror:${NC} invalid argument number - produce_postfix()"
         return 1
     fi
-    echo ${COLSYST[$1]}_${tMC[${ISMC[$1]}]}_${RECOGEN[$3]}_jetpt_$(float_to_string ${JETPTMIN[$2]})_jeteta_$(float_to_string ${JETETAMIN[$2]})_$(float_to_string ${JETETAMAX[$2]})_${HLTOPT}
+    echo ${COLSYST[$1]}_${tMC[${ISMC[$1]}]}_${RECOGEN[$3]}_jetpt_$(float_to_string ${JETPTMIN[$2]})_jeteta_$(float_to_string ${JETETAMIN[$2]})_$(float_to_string ${JETETAMAX[$2]})_${HLTOPT[$2]}
 }
 
 #
@@ -119,7 +117,7 @@ do
                 if [[ $DO_SAVEHIST -eq 1 ]]
                 then
                     echo -e "-- Processing ${FUNCOLOR}djtana_savehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
-                    ./djtana_savehist.exe "${INPUTDANAME[i]}" "rootfiles/hist_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} "${HLTOPT}" &
+                    ./djtana_savehist.exe "${INPUTDANAME[i]}" "rootfiles/hist_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} "${HLTOPT[j]}" &
                     echo
                 fi
             fi

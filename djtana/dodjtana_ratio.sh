@@ -5,8 +5,8 @@ DO_SAVERATIO=${1:-0}
 DO_PLOTRATIO=${2:-0}
 
 # Select the systems the macros run on 
-iCOL=(0 1)
-jJET=(1)
+iCOL=(0)
+jJET=(0 1)
 kRECOGEN=(0 1 2 3)
 
 ##
@@ -15,9 +15,11 @@ kRECOGEN=(0 1 2 3)
 ISMC=(0 1)
 
 # nJET loop
-JETPTMIN=(40 40)
-JETETAMIN=(0 0.3)
-JETETAMAX=(2.0 1.6)
+JETPTMIN=(40 60)
+JETETAMIN=(0.3 0.3)
+JETETAMAX=(1.6 1.6)
+HLTOPTPP=("HLT_AK4PFJet40Jet60_Eta5p1_v1" "HLT_AK4PFJet60_Eta5p1_v1")
+HLTOPTPbPb=("HLT_HIPuAK4CaloJet40Jet60Jet80_Eta5p1_v1" "HLT_HIPuAK4CaloJet60Jet80_Eta5p1_v1")
 
 # nRECOGEN loop
 RECOGEN=('RecoD_RecoJet' 'GenD_RecoJet' 'RecoD_GenJet' 'GenD_GenJet')
@@ -87,9 +89,9 @@ then
             do
                 if [[ $k -eq 0 || ${ISMC[i]} -eq 1 ]] # only RecoD_RecoJet will run for data
                 then
-                    tPOSTFIXPP=Djet_pp_$(produce_postfix $i $j $k)
-                    tPOSTFIXPbPb=Djet_PbPb_$(produce_postfix $i $j $k)
-                    tPOSTFIX=Djet_$(produce_postfix $i $j $k)
+                    tPOSTFIXPP=Djet_pp_$(produce_postfix $i $j $k)_${HLTOPTPP[j]}
+                    tPOSTFIXPbPb=Djet_PbPb_$(produce_postfix $i $j $k)_${HLTOPTPbPb[j]}
+                    tPOSTFIX=Djet_$(produce_postfix $i $j $k)_${HLTOPTPP[j]}_${HLTOPTPbPb[j]}
                     echo -e "-- Processing ${FUNCOLOR}djtana_saveratio.C${NC} :: ${ARGCOLOR}PbPb/pp${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
                     [[ ! -f "rootfiles/xsec_${tPOSTFIXPP}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/xsec_${tPOSTFIXPP}.root doesn't exist. Process djtana_usehist.C first."; continue; }
                     [[ ! -f "rootfiles/xsec_${tPOSTFIXPbPb}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/xsec_${tPOSTFIXPbPb}.root doesn't exist. Process djtana_usehist.C first."; continue; }
@@ -116,7 +118,7 @@ then
             do
                 if [[ $k -eq 0 || ${ISMC[i]} -eq 1 ]] # only RecoD_RecoJet will run for data
                 then
-                    tPOSTFIX=Djet_$(produce_postfix $i $j $k)
+                    tPOSTFIX=Djet_$(produce_postfix $i $j $k)_${HLTOPTPP[j]}_${HLTOPTPbPb[j]}
                     echo -e "-- Processing ${FUNCOLOR}djtana_plotratio.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
                     [[ ! -f "rootfiles/ratio_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/ratio_${tPOSTFIX}.root doesn't exist. Process djtana_saveratio.C first."; continue; }
                     ./djtana_plotratio.exe "rootfiles/ratio_${tPOSTFIX}" "$tPOSTFIX" ${ISMC[i]} ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]}
