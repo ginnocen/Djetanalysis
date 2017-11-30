@@ -6,7 +6,7 @@ DO_USEHIST=${2:-0}
 DO_PLOTHIST=${3:-0}
 
 # Select the systems the macros run on 
-iCOL=(1)
+iCOL=(0 1)
 
 ##
 

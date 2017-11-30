@@ -54,7 +54,7 @@ int createhists(Option_t* option)
                 {
                   ahHistoResoPt[k][j][i] = new TH1F(Form("hHistoResoPt_%d_%d_%d",k,j,i), ";p_{T}^{reco} / p_{T}^{gen};", 50, 0, 2);
                   ahHistoResoPt[k][j][i]->Sumw2();
-                  ahHistoResoPtCorr[k][j][i] = new TH1F(Form("hHistoResoPtCorr_%d_%d_%d",k,j,i), ";p_{T}^{reco} / p_{T}^{gen};", 50, 0, 2);
+                  ahHistoResoPtCorr[k][j][i] = new TH1F(Form("hHistoResoPtCorr_%d_%d_%d",k,j,i), ";p_{T}^{reco} / p_{T}^{gen}, Corr;", 50, 0, 2);
                   ahHistoResoPtCorr[k][j][i]->Sumw2();
                   ahHistoResoPhi[k][j][i] = new TH1F(Form("hHistoResoPhi_%d_%d_%d",k,j,i), ";#phi^{reco} - #phi^{gen};", 50, -0.08, 0.08);
                   ahHistoResoPhi[k][j][i]->Sumw2();
@@ -71,14 +71,14 @@ int createhists(Option_t* option)
         {
           for(int j=0;j<nJtetaBins+1;j++)
             {
-              hResoPt[k][j] = new TH1F(Form("hResoPt_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);p_{T}^{reco} / p_{T}^{gen}", nJtptBins, jtptBins);
-              hResoPtCorr[k][j] = new TH1F(Form("hResoPtCorr_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);p_{T}^{reco} / p_{T}^{gen}", nJtptBins, jtptBins);
-              hResoPhi[k][j] = new TH1F(Form("hResoPhi_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);#phi^{reco} - #phi^{gen}", nJtptBins, jtptBins);
-              hResoEta[k][j] = new TH1F(Form("hResoEta_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);#eta^{reco} - #eta^{gen}", nJtptBins, jtptBins);
-              hScalePt[k][j] = new TH1F(Form("hScalePt_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);p_{T}^{reco} / p_{T}^{gen}", nJtptBins, jtptBins);
-              hScalePtCorr[k][j] = new TH1F(Form("hScalePtCorr_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);p_{T}^{reco} / p_{T}^{gen}", nJtptBins, jtptBins);
-              hScalePhi[k][j] = new TH1F(Form("hScalePhi_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);p_{T}^{reco} / p_{T}^{gen}", nJtptBins, jtptBins);
-              hScaleEta[k][j] = new TH1F(Form("hScaleEta_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);p_{T}^{reco} / p_{T}^{gen}", nJtptBins, jtptBins);
+              hResoPt[k][j] = new TH1F(Form("hResoPt_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);#sigma(p_{T}^{reco} / p_{T}^{gen})", nJtptBins, jtptBins);
+              hResoPtCorr[k][j] = new TH1F(Form("hResoPtCorr_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);#sigma(p_{T}^{reco} / p_{T}^{gen}), Corr", nJtptBins, jtptBins);
+              hResoPhi[k][j] = new TH1F(Form("hResoPhi_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);#sigma(#phi^{reco} - #phi^{gen})", nJtptBins, jtptBins);
+              hResoEta[k][j] = new TH1F(Form("hResoEta_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);#sigma(#eta^{reco} - #eta^{gen})", nJtptBins, jtptBins);
+              hScalePt[k][j] = new TH1F(Form("hScalePt_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);#mu(p_{T}^{reco} / p_{T}^{gen})", nJtptBins, jtptBins);
+              hScalePtCorr[k][j] = new TH1F(Form("hScalePtCorr_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);#mu(p_{T}^{reco} / p_{T}^{gen}), Corr", nJtptBins, jtptBins);
+              hScalePhi[k][j] = new TH1F(Form("hScalePhi_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);#mu(p_{T}^{reco} / p_{T}^{gen})", nJtptBins, jtptBins);
+              hScaleEta[k][j] = new TH1F(Form("hScaleEta_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);#mu(p_{T}^{reco} / p_{T}^{gen})", nJtptBins, jtptBins);
             }
         }
       return 0;
