@@ -1,19 +1,26 @@
 #include "jetresolution.h"
 
 void jetreso_savehist(TString inputname, TString outputname, TString collisionsyst,
-                      Int_t maxevt=-1)
+                      Int_t ifCorr=0, Int_t maxevt=-1)
 {
   int arguerr(TString collisionsyst);
   if(arguerr(collisionsyst)) return;
+  Int_t ispp = collisionsyst=="pp"?1:0;
+  setnCentBins(ispp);
 
   if(createhists("savehist")) return;
-  Int_t ispp = collisionsyst=="pp"?1:0;
   djet djt(inputname, ispp);
 
-  TF1* fScalePt = new TF1("fScalePt", "[0]+[1]/TMath::Sqrt(x)+[2]/x");
-  fScalePt->SetParameter(0, 1.00);
-  fScalePt->SetParameter(1, -0.13);
-  fScalePt->SetParameter(2, 2.08);
+  TString correction = ifCorr?"[0]+[1]/TMath::Sqrt(x)+[2]/x":"1+0*([0]+[1]+[2])";
+  std::vector<std::vector<Float_t>>* paramfScalePt = ispp?&paramfScalePt_pp:&paramfScalePt_PbPb;
+  TF1** fScalePt = new TF1*[nCentBins]; 
+  for(int k=0;k<nCentBins;k++)
+    {
+      fScalePt[k] = new TF1(Form("fScalePt_%d",k), correction.Data());
+      fScalePt[k]->SetParameter(0, paramfScalePt->at(k).at(0));
+      fScalePt[k]->SetParameter(1, paramfScalePt->at(k).at(1));
+      fScalePt[k]->SetParameter(2, paramfScalePt->at(k).at(2));
+    }
 
   int64_t nentries = djt.fChain->GetEntriesFast();
   int rnentries = (maxevt>0&&maxevt<=nentries)?maxevt:nentries;
@@ -23,6 +30,8 @@ void jetreso_savehist(TString inputname, TString outputname, TString collisionsy
       //
       djt.fChain->GetEntry(i);
       //
+      Int_t ibincent = ispp?0:xjjc::findibin(&centBins, (float)(djt.hiBin/2.));
+      if(ibincent<0) {std::cout<<"wrong ibincent"<<std::endl; return;}
 
       // loop jets
       for(int jj=0;jj<djt.njet_akpu3pf;jj++)
@@ -32,15 +41,17 @@ void jetreso_savehist(TString inputname, TString outputname, TString collisionsy
           Int_t ibinpt = xjjc::findibin(&jtptBins, (*djt.gjetpt_akpu3pf)[jj]);
           if(ibinpt<0) continue;
 
-          ahHistoResoPt[0][ibinpt]->Fill((*djt.jetpt_akpu3pf)[jj]/(*djt.gjetpt_akpu3pf)[jj], djt.pthatweight);
-          ahHistoResoPtCorr[0][ibinpt]->Fill(((*djt.jetpt_akpu3pf)[jj]/fScalePt->Eval((*djt.gjetpt_akpu3pf)[jj]))/(*djt.gjetpt_akpu3pf)[jj], djt.pthatweight);
-          ahHistoResoPhi[0][ibinpt]->Fill((*djt.jetphi_akpu3pf)[jj]-(*djt.gjetphi_akpu3pf)[jj], djt.pthatweight);
-          ahHistoResoEta[0][ibinpt]->Fill((*djt.jeteta_akpu3pf)[jj]-(*djt.gjeteta_akpu3pf)[jj], djt.pthatweight);
+          // Float_t weight = djt.pthatweight;
+          Float_t weight = 1;
+          ahHistoResoPt[ibincent][0][ibinpt]->Fill((*djt.jetpt_akpu3pf)[jj]/(*djt.gjetpt_akpu3pf)[jj], weight);
+          ahHistoResoPtCorr[ibincent][0][ibinpt]->Fill(((*djt.jetpt_akpu3pf)[jj]/fScalePt[ibincent]->Eval((*djt.gjetpt_akpu3pf)[jj]))/(*djt.gjetpt_akpu3pf)[jj], weight);
+          ahHistoResoPhi[ibincent][0][ibinpt]->Fill((*djt.jetphi_akpu3pf)[jj]-(*djt.gjetphi_akpu3pf)[jj], weight);
+          ahHistoResoEta[ibincent][0][ibinpt]->Fill((*djt.jeteta_akpu3pf)[jj]-(*djt.gjeteta_akpu3pf)[jj], weight);
 
-          ahHistoResoPt[ibineta+1][ibinpt]->Fill((*djt.jetpt_akpu3pf)[jj]/(*djt.gjetpt_akpu3pf)[jj], djt.pthatweight);
-          ahHistoResoPtCorr[ibineta+1][ibinpt]->Fill(((*djt.jetpt_akpu3pf)[jj]/fScalePt->Eval((*djt.gjetpt_akpu3pf)[jj]))/(*djt.gjetpt_akpu3pf)[jj], djt.pthatweight);
-          ahHistoResoPhi[ibineta+1][ibinpt]->Fill((*djt.jetphi_akpu3pf)[jj]-(*djt.gjetphi_akpu3pf)[jj], djt.pthatweight);
-          ahHistoResoEta[ibineta+1][ibinpt]->Fill((*djt.jeteta_akpu3pf)[jj]-(*djt.gjeteta_akpu3pf)[jj], djt.pthatweight);
+          ahHistoResoPt[ibincent][ibineta+1][ibinpt]->Fill((*djt.jetpt_akpu3pf)[jj]/(*djt.gjetpt_akpu3pf)[jj], weight);
+          ahHistoResoPtCorr[ibincent][ibineta+1][ibinpt]->Fill(((*djt.jetpt_akpu3pf)[jj]/fScalePt[ibincent]->Eval((*djt.gjetpt_akpu3pf)[jj]))/(*djt.gjetpt_akpu3pf)[jj], weight);
+          ahHistoResoPhi[ibincent][ibineta+1][ibinpt]->Fill((*djt.jetphi_akpu3pf)[jj]-(*djt.gjetphi_akpu3pf)[jj], weight);
+          ahHistoResoEta[ibincent][ibineta+1][ibinpt]->Fill((*djt.jeteta_akpu3pf)[jj]-(*djt.gjeteta_akpu3pf)[jj], weight);
         }
     }
   std::cout<<std::setiosflags(std::ios::left)<<"  Processed "<<"\033[1;31m"<<rnentries<<"\033[0m out of\033[1;31m "<<nentries<<"\033[0m event(s)."<<"   >>   jetreso_savehist("<<std::setw(30)<<Form("%s)",collisionsyst.Data())<<std::endl;
@@ -53,20 +64,25 @@ void jetreso_savehist(TString inputname, TString outputname, TString collisionsy
   outf->Close();
 }
 
-int main(int argc, char* argv[])
-{
-  if(argc==5)
-    {
-      jetreso_savehist(argv[1], argv[2], argv[3], atoi(argv[4]));
-      return 0;
-    }
-  if(argc==4)
-    {
-      jetreso_savehist(argv[1], argv[2], argv[3]);
-      return 0;
-    }
-  return 1;
-}
+  int main(int argc, char* argv[])
+  {
+    if(argc==6)
+      {
+        jetreso_savehist(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]));
+        return 0;
+      }
+    if(argc==5)
+      {
+        jetreso_savehist(argv[1], argv[2], argv[3], atoi(argv[4]));
+        return 0;
+      }
+    if(argc==4)
+      {
+        jetreso_savehist(argv[1], argv[2], argv[3]);
+        return 0;
+      }
+    return 1;
+  }
 
 int arguerr(TString collisionsyst)
 {

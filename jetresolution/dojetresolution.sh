@@ -6,18 +6,17 @@ DO_USEHIST=${2:-0}
 DO_PLOTHIST=${3:-0}
 
 # Select the systems the macros run on 
-iCOL=(0)
+iCOL=(1)
 
 ##
 
 # nCOL loop
 COLSYST=('pp' 'PbPb')
-# ISMC=(1 0 1 0)
 
 # dataset[nCOL]
 INPUTDANAME=(
     '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20171127_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight.root'
-    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170510_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_pthatweight.root'
+    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20171127_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_pthatweight.root'
 )
 
 # Do not touch the macros below if you don't know what they mean #
