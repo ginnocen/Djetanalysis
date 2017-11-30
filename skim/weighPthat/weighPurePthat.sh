@@ -1,13 +1,13 @@
 #!/bin/bash
 
 ###
-INPUTFILE="/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_noweight.root"
-OUTPUTFILE="/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight.root"
+INPUTFILE="/export/d00/scratch/jwang/Djets/MC/DjetFiles_20171127_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_noweight.root"
+OUTPUTFILE="/export/d00/scratch/jwang/Djets/MC/DjetFiles_20171127_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_pthatweight.root"
 
 ## pp
 
 # Dzero prompt
-sed '1iconst int nBins=9; float pthatBin[nBins]={0,5,10,15,30,50,80,120,170}; float crosssec[nBins+1]={6.885e+09,1.516e+09,2.113e+08,5.524e+07,4.411e+06,5.986e+05,8.142e+04,1.329e+04,2.404e+03,0.}; int genSignal[2]={1,2};' weighPurePthat.C > weighPurePthat_tmp.C
+# sed '1iconst int nBins=9; float pthatBin[nBins]={0,5,10,15,30,50,80,120,170}; float crosssec[nBins+1]={6.885e+09,1.516e+09,2.113e+08,5.524e+07,4.411e+06,5.986e+05,8.142e+04,1.329e+04,2.404e+03,0.}; int genSignal[2]={1,2};' weighPurePthat.C > weighPurePthat_tmp.C
 
 # Dzero nonprompt
 #sed '1iconst int nBins=9; float pthatBin[nBins]={0,5,10,15,30,50,80,120,170}; float crosssec[nBins+1]={1.895e+08,1.393e+08,3.798e+07,1.206e+07,1.231e+06,1.853e+05,2.725e+04,4.566e+03,8.569e+02,0.}; int genSignal[2]={1,2};' weighPurePthat.C > weighPurePthat_tmp.C
@@ -15,7 +15,7 @@ sed '1iconst int nBins=9; float pthatBin[nBins]={0,5,10,15,30,50,80,120,170}; fl
 ## PbPb
 
 # Dzero prompt
-#sed '1iconst int nBins=9; float pthatBin[nBins]={0,5,10,15,30,50,80,120,170}; float crosssec[nBins+1]={6.885e+09,1.516e+09,2.113e+08,5.524e+07,4.411e+06,5.986e+05,8.142e+04,1.329e+04,2.404e+03,0.}; int genSignal[2]={1,2};' weighPurePthat.C > weighPurePthat_tmp.C
+sed '1iconst int nBins=9; float pthatBin[nBins]={0,5,10,15,30,50,80,120,170}; float crosssec[nBins+1]={6.885e+09,1.516e+09,2.113e+08,5.524e+07,4.411e+06,5.986e+05,8.142e+04,1.329e+04,2.404e+03,0.}; int genSignal[2]={1,2};' weighPurePthat.C > weighPurePthat_tmp.C
 
 # Dzero nonprompt
 #sed '1iconst int nBins=9; float pthatBin[nBins]={0,5,10,15,30,50,80,120,170}; float crosssec[nBins+1]={1.895e+08,1.393e+08,3.798e+07,1.206e+07,1.231e+06,1.853e+05,2.725e+04,4.566e+03,8.569e+02,0.}; int genSignal[2]={1,2};' weighPurePthat.C > weighPurePthat_tmp.C
