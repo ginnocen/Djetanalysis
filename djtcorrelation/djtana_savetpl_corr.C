@@ -183,10 +183,12 @@ int arguerr(TString collisionsyst, Int_t irecogen)
       std::cout<<"\033[1;31merror:\033[0m invalid \"irecogen\""<<std::endl;
       return 1;
     }
+/*
   if(irecogen==1 || irecogen==3)
     {
       std::cout<<"\"irecogen\" indicates genD, skip djtana_savetpl_corr()."<<std::endl;
       return 2;
     }
+*/
   return 0;
 }

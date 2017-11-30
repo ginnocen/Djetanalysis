@@ -48,9 +48,9 @@ INPUTMCNAME=(
     #'/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170510_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_pthatweight.root'
     #'/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170510_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_pthatweight.root'
     '/mnt/T2_US_MIT/submit-hi2/scratch/jwang/Djets/MC/DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight.root'
-    '/mnt/T2_US_MIT/submit-hi2/scratch/jwang/Djets/data/DjetFiles_20170619_pp_5TeV_HighPtLowerJets_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614.root'
+    '/mnt/T2_US_MIT/submit-hi2/scratch/jwang/Djets/MC/DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight.root'
     '/mnt/T2_US_MIT/submit-hi2/scratch/jwang/Djets/MC/DjetFiles_20170510_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_pthatweight.root'
-    '/mnt/T2_US_MIT/submit-hi2/scratch/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_2_3_4_26March_finalMerge2April_v1/merged_total.root'
+    '/mnt/T2_US_MIT/submit-hi2/scratch/jwang/Djets/MC/DjetFiles_20170510_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_pthatweight.root'
 )
 
 # Path to rootfiles directory
@@ -118,8 +118,8 @@ do
     do
         for k in ${kRECOGEN[@]}
         do
-            if [[ $k -eq 0 || ${ISMC[i]} -eq 1 ]] # only RecoD_RecoJet will run for data
-            then
+            #if [[ $k -eq 0 || ${ISMC[i]} -eq 1 ]] # only RecoD_RecoJet will run for data
+            #then
                 tPOSTFIX=Djet_$(produce_postfix $i $j $k)
                 if [[ $DO_SAVETPL -eq 1 ]]
                 then
@@ -139,7 +139,7 @@ do
                     ./djtana_plothist.exe "${PATHTOROOTFILES}/rootfiles/masstpl_${tPOSTFIX}" "${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} &
                     echo
                 fi
-            fi
+            #fi
         done
     done
 done

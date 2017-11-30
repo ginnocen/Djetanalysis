@@ -51,7 +51,7 @@ void djtana_plothist(TString inputhistname, TString outputname,
       xjjroot::setthgrstyle(hJetHists[i],kBlack,20,1.2,kBlack,1,1,-1,-1,-1);
       hJetHists[i]->Draw("pe same");
       xjjroot::drawCMS(collisionsyst);
-      c->SaveAs(Form("plots/%s_%s.pdf",outputname.Data(),hJetHists[i]->GetName()));
+      c->SaveAs(Form("plots/%s_%s.pdf",hJetHists[i]->GetName(),outputname.Data()));
       delete c;
       delete hempty;
     }
@@ -66,7 +66,7 @@ void djtana_plothist(TString inputhistname, TString outputname,
           xjjroot::setthgrstyle((hDHists.at(i))[j],kBlack,20,1.2,kBlack,1,1,-1,-1,-1);
           (hDHists.at(i))[j]->Draw("pe same");
           xjjroot::drawCMS(collisionsyst);
-          c->SaveAs(Form("plots/%s_%s.pdf",outputname.Data(),(hDHists.at(i))[j]->GetName()));
+          c->SaveAs(Form("plots/%s_%s.pdf",(hDHists.at(i))[j]->GetName(),outputname.Data()));
           delete c;
           delete hempty;
         }
@@ -74,8 +74,9 @@ void djtana_plothist(TString inputhistname, TString outputname,
   for(int i=0;i<nPtBins;i++)
     {
       TCanvas* c = new TCanvas("c","",600,600);
+      hCorr[i]->SetMaximum(1500);
       hCorr[i]->Draw("surf1 fb same");
-      c->SaveAs(Form("plots/%s_Correlation_pt_%d.pdf",outputname.Data(),i));
+      c->SaveAs(Form("plots/Correlation_pt_%d_%s.pdf",i,outputname.Data()));
       delete c;
     } 
 }
