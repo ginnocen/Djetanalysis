@@ -10,7 +10,7 @@ void djtana_plothist(TString inputhistname, TString outputname,
   xjjroot::setgstyle();
 
   TFile* infhist = new TFile(Form("%s.root",inputhistname.Data()));
-  if(infhist->IsZombie()) return;
+  if(infhist.IsZombie()) return;
 
   if(!infhist->IsOpen()) return;
   if(gethists(infhist, "plothist")) return;

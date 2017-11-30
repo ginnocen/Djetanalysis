@@ -72,16 +72,16 @@ int createhists(Option_t* option)
   opt.ToLower();
   if(opt=="savetpl")
     { 
-      hJetPhi=new TH1F("hJetPhi", ";#phi;",50,0., TMath::Pi());
+      hJetPhi=new TH1F("hJetPhi", ";#phi;",50,0., 2*TMath::Pi());
       hJetEta=new TH1F("hJetEta", ";#eta;",50,-2.,2.);
       hNjets = new TH1F("hNjets", "", 1, 0, 1); // ... is it necessary
       for(int i=0;i<nPtBins;i++)
         {
-          hDPhi[i]=new TH1F(Form("hDPhi_pt_%d",i),";#phi;",50,0.,TMath::Pi());
+          hDPhi[i]=new TH1F(Form("hDPhi_pt_%d",i),";#phi;",50,0.,2*TMath::Pi());
           hDEta[i]=new TH1F(Form("hDEta_pt_%d",i),";#eta;",50,-2.,2.);
-          hDdelPhi[i]=new TH1F(Form("hDdelPhi_pt_%d",i),";#Delta#phi;",50,0.,TMath::Pi());
+          hDdelPhi[i]=new TH1F(Form("hDdelPhi_pt_%d",i),";#Delta#phi;",50,-2*TMath::Pi(),2*TMath::Pi());
           hDdelEta[i]=new TH1F(Form("hDdelEta_pt_%d",i),";#Delta#eta;",50,-4.,4.);
-          hCorr[i]=new TH2F(Form("hCorr_pt_%d",i),";#Delta#eta;#Delta#phi;",50,-4.,4.,50,0.,TMath::Pi());
+          hCorr[i]=new TH2F(Form("hCorr_pt_%d",i),";#Delta#eta;#Delta#phi;",50,-4.,4.,50,-2*TMath::Pi(),2*TMath::Pi());
           for(int l=0;l<nRefBins;l++)
             {
               ahREfficiency[l][i] = new TH1F(Form("hREfficiency_%s_pt_%d",tRef[l].Data(),i), ";#DeltaR;", nDrBins, drBins);
@@ -295,7 +295,7 @@ int gethists(TFile* inf, Option_t* option)
           hDPhi[i] = (TH1F*)inf->Get(Form("hDPhi_pt_%d",i));
           hDdelPhi[i] = (TH1F*)inf->Get(Form("hDdelPhi_pt_%d",i));
           hDdelEta[i] = (TH1F*)inf->Get(Form("hDdelEta_pt_%d",i));
-          hCorr[i] = (TH2F*)inf->Get(Form("hCorr_pt_%d",i));
+          hCorr[i] = (TH1F*)inf->Get(Form("hCorr_pt_%d",i));
           for(int l=0;l<nRefBins;l++)
             {
               ahSignalRnorm[l][i] = (TH1F*)inf->Get(Form("hSignalRnorm_%s_pt_%d",tRef[l].Data(),i));

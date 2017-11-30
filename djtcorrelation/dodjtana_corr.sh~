@@ -136,7 +136,7 @@ do
                 if [[ $DO_PLOTHIST -eq 1 ]]
                 then
                     echo -e "-- Processing ${FUNCOLOR}djtana_plothist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
-                    ./djtana_plothist.exe "${PATHTOROOTFILES}/rootfiles/masstpl_${tPOSTFIX}" "${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} &
+                    ./djtana_plothist.exe "${PATHTOROOTFILES}/rootfiles/masstpl_${tPOSTFIX}" "rootfiles/plothist_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} &
                     echo
                 fi
             fi
