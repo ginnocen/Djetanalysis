@@ -6,7 +6,7 @@ void jetreso_usehist(TString inputhistname, TString outputname,
   int arguerr(TString collisionsyst);
   if(arguerr(collisionsyst)) return;
   Int_t ispp = collisionsyst=="pp"?1:0;
-  setnCentBins(ispp);
+  init(ispp);
   
   xjjroot::setgstyle();
 
@@ -20,8 +20,8 @@ void jetreso_usehist(TString inputhistname, TString outputname,
   std::vector<TH1F**>   hScaleX       =  {(TH1F**)hScalePt,            (TH1F**)hScalePtCorr,             (TH1F**)hScalePhi,         (TH1F**)hScaleEta};
   std::vector<TH1F**>   hResoX        =  {(TH1F**)hResoPt,             (TH1F**)hResoPtCorr,              (TH1F**)hResoPhi,          (TH1F**)hResoEta};
   std::vector<TString>  xtitle        =  {"p_{T}^{reco}/p_{T}^{gen}",  "p_{T}^{reco}/p_{T}^{gen},Corr",  "#phi^{reco}-#phi^{gen}",  "#eta^{reco}-#eta^{gen}"};
-  std::vector<Float_t>  xmin          =  {0,                           0,                                -0.08,                     -0.08};
-  std::vector<Float_t>  xmax          =  {2,                           2,                                0.08,                      0.08};
+  std::vector<Float_t>  xmin          =  {0,                           0,                                0-xrangeAng,               0-xrangeAng};
+  std::vector<Float_t>  xmax          =  {2,                           2,                                xrangeAng,                 xrangeAng};
   std::vector<Float_t>  ymin          =  {0,                           0,                                0,                         0};
   std::vector<Float_t>  ymax          =  {0.2,                         0.2,                              (float)(ispp?0.3:0.1),     (float)(ispp?0.3:0.1)};
   std::vector<Float_t>  param0        =  {1,                           1,                                0.01,                      0.01};

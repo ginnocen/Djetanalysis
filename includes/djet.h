@@ -272,7 +272,7 @@ public:
   std::vector<float>**   aDphi[ncases]     =   {&Dphi,                &Gphi,                &Dphi,             &Gphi};
   TString                ajetopt[ncases]   =   {"reco",               "reco",               "gen",             "gen"};
   int*                   anjet[ncases]     =   {&njet_akpu3pf,        &njet_akpu3pf,        &ngen_akpu3pf,     &ngen_akpu3pf};
-  std::vector<float>**   ajetpt[ncases]    =   {&jetptCorr_akpu3pf,   &jetptCorr_akpu3pf,   &genpt_akpu3pf,    &genpt_akpu3pf};
+  std::vector<float>**   ajetpt[ncases]    =   {&jetpt_akpu3pf,       &jetpt_akpu3pf,       &genpt_akpu3pf,    &genpt_akpu3pf};
   std::vector<float>**   ajeteta[ncases]   =   {&jeteta_akpu3pf,      &jeteta_akpu3pf,      &geneta_akpu3pf,   &geneta_akpu3pf};
   std::vector<float>**   ajetphi[ncases]   =   {&jetphi_akpu3pf,      &jetphi_akpu3pf,      &genphi_akpu3pf,   &genphi_akpu3pf};
 
@@ -281,7 +281,7 @@ public:
   Int_t HLT_AK4Jet80;
 
   // djet(TTree* tree=0);
-  djet(TString infname, Int_t ispp);
+  djet(TString infname, Int_t ispp, Int_t isMC);
   virtual ~djet();
   virtual void Show(Long64_t entry = -1);
 
@@ -294,14 +294,6 @@ public:
   int isjetselected(Int_t j, Option_t* option);
   int ishltselected(Option_t* option);
 
-private:
-  Int_t             fispp;
-
-  Float_t           fsettrkcut;
-  Float_t           fsetDcut;
-  Float_t           fsetGcut;
-  Float_t           fsetjetcut;
-
   Float_t           cut_trkPt;
   Float_t           cut_trkEta;
   Float_t           cut_trkPtErr;
@@ -313,6 +305,15 @@ private:
   Float_t           cut_jetpt_min;
   Float_t           cut_jeteta_min;
   Float_t           cut_jeteta_max;
+
+private:
+  Int_t             fispp;
+  Int_t             fisMC;
+
+  Float_t           fsettrkcut;
+  Float_t           fsetDcut;
+  Float_t           fsetGcut;
+  Float_t           fsetjetcut;
 
   virtual void Init(TTree *tree, TTree *hlt);
   virtual Bool_t Notify();
@@ -329,7 +330,7 @@ private:
   }
 */
 
-djet::djet(TString infname, Int_t ispp) : fChain(0), fHlt(0), fispp(ispp) 
+djet::djet(TString infname, Int_t ispp, Int_t isMC) : fChain(0), fHlt(0), fispp(ispp), fisMC(isMC)
 {
   TFile* inf = new TFile(infname.Data());
   if(!inf->IsOpen()) return;
@@ -828,21 +829,21 @@ void djet::Init(TTree *tree, TTree *hlt)
   fHlt->SetBranchStatus("*", 0);
   if(fispp)
     {
-      fHlt->SetBranchStatus("HLT_AK4PFJet40_Eta5p1_v1", 1);
-      fHlt->SetBranchStatus("HLT_AK4PFJet60_Eta5p1_v1", 1);
-      fHlt->SetBranchStatus("HLT_AK4PFJet80_Eta5p1_v1", 1);
-      fHlt->SetBranchAddress("HLT_AK4PFJet40_Eta5p1_v1", &HLT_AK4Jet40);
-      fHlt->SetBranchAddress("HLT_AK4PFJet60_Eta5p1_v1", &HLT_AK4Jet60);
-      fHlt->SetBranchAddress("HLT_AK4PFJet80_Eta5p1_v1", &HLT_AK4Jet80);
+      fHlt->SetBranchStatus(fisMC?"HLT_AK4PFJet40_Eta5p1ForPPRef_v1":"HLT_AK4PFJet40_Eta5p1_v1", 1);
+      fHlt->SetBranchStatus(fisMC?"HLT_AK4PFJet60_Eta5p1ForPPRef_v1":"HLT_AK4PFJet60_Eta5p1_v1", 1);
+      fHlt->SetBranchStatus(fisMC?"HLT_AK4PFJet80_Eta5p1ForPPRef_v1":"HLT_AK4PFJet80_Eta5p1_v1", 1);
+      fHlt->SetBranchAddress(fisMC?"HLT_AK4PFJet40_Eta5p1ForPPRef_v1":"HLT_AK4PFJet40_Eta5p1_v1", &HLT_AK4Jet40);
+      fHlt->SetBranchAddress(fisMC?"HLT_AK4PFJet60_Eta5p1ForPPRef_v1":"HLT_AK4PFJet60_Eta5p1_v1", &HLT_AK4Jet60);
+      fHlt->SetBranchAddress(fisMC?"HLT_AK4PFJet80_Eta5p1ForPPRef_v1":"HLT_AK4PFJet80_Eta5p1_v1", &HLT_AK4Jet80);
     }
   else
     {
-      fHlt->SetBranchStatus("HLT_HIPuAK4CaloJet40_Eta5p1_v1", 1);
-      fHlt->SetBranchStatus("HLT_HIPuAK4CaloJet60_Eta5p1_v1", 1);
-      fHlt->SetBranchStatus("HLT_HIPuAK4CaloJet80_Eta5p1_v1", 1);
-      fHlt->SetBranchAddress("HLT_HIPuAK4CaloJet40_Eta5p1_v1", &HLT_AK4Jet40);
-      fHlt->SetBranchAddress("HLT_HIPuAK4CaloJet60_Eta5p1_v1", &HLT_AK4Jet60);
-      fHlt->SetBranchAddress("HLT_HIPuAK4CaloJet80_Eta5p1_v1", &HLT_AK4Jet80);      
+      fHlt->SetBranchStatus(fisMC?"HLT_HIPuAK4CaloJet40_Eta5p1_v2":"HLT_HIPuAK4CaloJet40_Eta5p1_v1", 1);
+      fHlt->SetBranchStatus(fisMC?"HLT_HIPuAK4CaloJet60_Eta5p1_v2":"HLT_HIPuAK4CaloJet60_Eta5p1_v1", 1);
+      fHlt->SetBranchStatus(fisMC?"HLT_HIPuAK4CaloJet80_Eta5p1_v2":"HLT_HIPuAK4CaloJet80_Eta5p1_v1", 1);
+      fHlt->SetBranchAddress(fisMC?"HLT_HIPuAK4CaloJet40_Eta5p1_v2":"HLT_HIPuAK4CaloJet40_Eta5p1_v1", &HLT_AK4Jet40);
+      fHlt->SetBranchAddress(fisMC?"HLT_HIPuAK4CaloJet60_Eta5p1_v2":"HLT_HIPuAK4CaloJet60_Eta5p1_v1", &HLT_AK4Jet60);
+      fHlt->SetBranchAddress(fisMC?"HLT_HIPuAK4CaloJet80_Eta5p1_v2":"HLT_HIPuAK4CaloJet80_Eta5p1_v1", &HLT_AK4Jet80);      
     }
 
   Notify();
@@ -941,7 +942,7 @@ int djet::isjetselected(int j, Option_t* option)
   if(!fsetjetcut) _KERROR_SETCUT(jet, jet);
   if(opt.Contains("r"))
     {
-      if((*jetptCorr_akpu3pf)[j] > cut_jetpt_min && 
+      if((*jetpt_akpu3pf)[j] > cut_jetpt_min && 
          TMath::Abs((*jeteta_akpu3pf)[j]) > cut_jeteta_min && TMath::Abs((*jeteta_akpu3pf)[j]) < cut_jeteta_max) return 1;
       else return 0;
     }

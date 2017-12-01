@@ -6,41 +6,47 @@ DO_SAVEHIST=${2:-0}
 DO_USEHIST=${3:-0}
 DO_PLOTHIST=${4:-0}
 
+ifScale=1
+ifSmear=1
+
 # Select the systems the macros run on 
-iCOL=(1)
-jJET=(0 1)
+iCOL=(0)
+jJET=(0)
 kRECOGEN=(0 1 2 3)
 
 ##
+# scaleNsmear
+tScale=("woScale" "wScale")
+tSmear=("woSmear" "wSmear")
 
 # nCOL loop
 COLSYST=('pp' 'pp' 'PbPb' 'PbPb')
 ISMC=(1 0 1 0)
 
 # nJET loop
-JETPTMIN=(40 60)
-JETETAMIN=(0.3 0.3)
-JETETAMAX=(1.6 1.6)
-HLTOPT=("HLT_AK4PFJet40Jet60_Eta5p1_v1" "HLT_AK4PFJet60_Eta5p1_v1")
-# HLTOPT=("HLT_HIPuAK4CaloJet40Jet60Jet80_Eta5p1_v1" "HLT_HIPuAK4CaloJet60Jet80_Eta5p1_v1")
+JETPTMIN=(40 40 60)
+JETETAMIN=(0.3 0.3 0.3)
+JETETAMAX=(1.6 1.6 1.6)
+HLTOPT=("noHLT" "HLTJet40Jet60" "HLTJet60")
+# HLTOPT=("noHLT" "HLTJet40Jet60Jet80" "HLTJet60Jet80")
 
 # nRECOGEN loop
 RECOGEN=('RecoD_RecoJet' 'GenD_RecoJet' 'RecoD_GenJet' 'GenD_GenJet')
 
 # dataset[nCOL]
 INPUTDANAME=(
-    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight.root'
+    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20171127_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight.root'
     # '/export/d00/scratch/jwang/Djets/data/DjetFiles_20170619_pp_5TeV_HighPtLowerJets_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614.root'
     '/export/d00/scratch/jwang/Djets/data/DjetFiles_20171120_pp_5TeV_HighPtLowerJets_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614.root'
-    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170510_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_pthatweight.root'
+    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20171127_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_pthatweight.root'
     # '/export/d00/scratch/ginnocen/DjetFiles_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_2_3_4_26March_finalMerge2April_v1/merged_total.root'
     '/export/d00/scratch/jwang/Djets/data/DjetFiles_20171120_PbPb_5TeV_HIHardProbes_skimmed_1unit_part1234_26March_20170326_HLTHIPuAK4CaloJet406080.root'
 )
 INPUTMCNAME=(
-    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight.root'
-    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight.root'
-    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170510_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_pthatweight.root'
-    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170510_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_pthatweight.root'
+    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20171127_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight.root'
+    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20171127_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight.root'
+    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20171127_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_pthatweight.root'
+    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20171127_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_pthatweight.root'
 )
 
 # Do not touch the macros below if you don't know what they mean #
@@ -80,7 +86,7 @@ function produce_postfix()
         echo -e "\033[1;31merror:${NC} invalid argument number - produce_postfix()"
         return 1
     fi
-    echo ${COLSYST[$1]}_${tMC[${ISMC[$1]}]}_${RECOGEN[$3]}_jetpt_$(float_to_string ${JETPTMIN[$2]})_jeteta_$(float_to_string ${JETETAMIN[$2]})_$(float_to_string ${JETETAMAX[$2]})_${HLTOPT[$2]}
+    echo ${COLSYST[$1]}_${tMC[${ISMC[$1]}]}_${RECOGEN[$3]}_jetpt_$(float_to_string ${JETPTMIN[$2]})_jeteta_$(float_to_string ${JETETAMIN[$2]})_$(float_to_string ${JETETAMAX[$2]})_${HLTOPT[$2]}_${tScale[$ifScale]}_${tSmear[$ifSmear]}
 }
 
 #
@@ -117,7 +123,7 @@ do
                 if [[ $DO_SAVEHIST -eq 1 ]]
                 then
                     echo -e "-- Processing ${FUNCOLOR}djtana_savehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
-                    ./djtana_savehist.exe "${INPUTDANAME[i]}" "rootfiles/hist_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} "${HLTOPT[j]}" &
+                    ./djtana_savehist.exe "${INPUTDANAME[i]}" "rootfiles/hist_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} "${HLTOPT[j]}" ${ifScale} ${ifSmear} &
                     echo
                 fi
             fi

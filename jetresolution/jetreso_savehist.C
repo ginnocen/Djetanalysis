@@ -1,15 +1,15 @@
 #include "jetresolution.h"
 
 void jetreso_savehist(TString inputname, TString outputname, TString collisionsyst,
-                      Int_t ifCorr=0, Int_t maxevt=-1)
+                      Int_t ifCorr=1, Int_t maxevt=-1)
 {
   int arguerr(TString collisionsyst);
   if(arguerr(collisionsyst)) return;
   Int_t ispp = collisionsyst=="pp"?1:0;
-  setnCentBins(ispp);
+  init(ispp);
 
   if(createhists("savehist")) return;
-  djet djt(inputname, ispp);
+  djet djt(inputname, ispp, 1);
 
   TString correction = ifCorr?"[0]+[1]/TMath::Sqrt(x)+[2]/x":"1+0*([0]+[1]+[2])";
   std::vector<std::vector<Float_t>>* paramfScalePt = ispp?&paramfScalePt_pp:&paramfScalePt_PbPb;
@@ -17,9 +17,7 @@ void jetreso_savehist(TString inputname, TString outputname, TString collisionsy
   for(int k=0;k<nCentBins;k++)
     {
       fScalePt[k] = new TF1(Form("fScalePt_%d",k), correction.Data());
-      fScalePt[k]->SetParameter(0, paramfScalePt->at(k).at(0));
-      fScalePt[k]->SetParameter(1, paramfScalePt->at(k).at(1));
-      fScalePt[k]->SetParameter(2, paramfScalePt->at(k).at(2));
+      fScalePt[k]->SetParameters(paramfScalePt->at(k).at(0), paramfScalePt->at(k).at(1), paramfScalePt->at(k).at(2));
     }
 
   int64_t nentries = djt.fChain->GetEntriesFast();

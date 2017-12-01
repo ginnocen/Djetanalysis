@@ -6,12 +6,14 @@
 #include "../includes/xjjcuti.h"
 #include "../includes/xjjrootuti.h"
 #include "../includes/dfitter.h"
+#include "../includes/paramCorr.h"
 #include <iostream>
 #include <iomanip>
 #include <TMath.h>
 #include <TH1F.h>
 #include <TH2F.h>
 #include <TLegend.h>
+#include <TRandom2.h>
 
 const Float_t DZERO_MASS = 1.8649;
 
