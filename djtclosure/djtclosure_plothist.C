@@ -130,7 +130,7 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
           box->SetFillColor(kWhite);
           box->Draw();
 
-          c->SaveAs(Form("plotxsecs/cclosure_xsec_%s_%s_pt_%s_%s.pdf",outputname.Data(),tname[k].Data(),xjjc::number_to_string(ptBins[i]).c_str(),xjjc::number_to_string(ptBins[i+1]).c_str()));
+          c->SaveAs(Form("plotclosure/cclosure_xsec_%s_%s_pt_%s_%s.pdf",outputname.Data(),tname[k].Data(),xjjc::number_to_string(ptBins[i]).c_str(),xjjc::number_to_string(ptBins[i+1]).c_str()));
 
           delete box;
           delete leg;

@@ -20,10 +20,7 @@ const int nJtptBins = sizeof(jtptBins)/sizeof(jtptBins[0])-1;
 Float_t jtetaBins[] = {0, 1.0, 1.6};
 const int nJtetaBins = sizeof(jtetaBins)/sizeof(jtetaBins[0])-1;
 Color_t jtetaColor[] = {kBlack, kBlue, kRed+2};
-Float_t centBins[] = {0, 30, 100};
-const int NCentBins = sizeof(centBins)/sizeof(centBins[0])-1;
-int nCentBins = 0;
-void setnCentBins(Int_t ispp) {nCentBins = ispp?1:NCentBins;}
+
 Float_t xrangeAng;
 void setxrangeAng(Int_t ispp) {xrangeAng = ispp?0.05:0.08;}
 

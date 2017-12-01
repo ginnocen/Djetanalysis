@@ -15,6 +15,10 @@ const int nCoBins = 2;
 std::map<TString, int> collsyst_list = {{"pp", 0}, {"PbPb", 1}};
 TString tMC[] = {"data", "MC"};
 TString tPbPb[] = {"pp", "PbPb"};
+Float_t centBins[] = {0, 30, 100};
+const int NCentBins = sizeof(centBins)/sizeof(centBins[0])-1;
+int nCentBins = 0;
+void setnCentBins(Int_t ispp) {nCentBins = ispp?1:NCentBins;}
 
 //
 const int nPtBins = sizeof(ptBins)/sizeof(ptBins[0])-1;

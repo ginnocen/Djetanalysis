@@ -1,13 +1,19 @@
 #!/bin/bash
 # dodjtclosure.sh #
 
-DIRPREFIX="../djtana/"
+DIRPREFIX="../djtana_wosmear/"
+
+ifScale=0
+ifSmear=0
 
 # Select the systems the macros run on 
 iCOL=(0 1)
 jJET=(1)
 
 ##
+# scaleNsmear
+tScale=("woScale" "wScale")
+tSmear=("woSmear" "wSmear")
 
 # nCOL loop
 COLSYST=('pp' 'PbPb')
@@ -48,10 +54,10 @@ function produce_postfix()
 {
     if [[ $# -eq 3 ]]
     then
-        echo ${COLSYST[$1]}_MC_${RECOGEN[$3]}_jetpt_$(float_to_string ${JETPTMIN[$2]})_jeteta_$(float_to_string ${JETETAMIN[$2]})_$(float_to_string ${JETETAMAX[$2]})
+        echo ${COLSYST[$1]}_MC_${RECOGEN[$3]}_jetpt_$(float_to_string ${JETPTMIN[$2]})_jeteta_$(float_to_string ${JETETAMIN[$2]})_$(float_to_string ${JETETAMAX[$2]})_noHLT_${tScale[$ifScale]}_${tSmear[$ifSmear]}
     elif [[ $# -eq 2 ]]
     then
-        echo ${COLSYST[$1]}_jetpt_$(float_to_string ${JETPTMIN[$2]})_jeteta_$(float_to_string ${JETETAMIN[$2]})_$(float_to_string ${JETETAMAX[$2]})
+        echo ${COLSYST[$1]}_jetpt_$(float_to_string ${JETPTMIN[$2]})_jeteta_$(float_to_string ${JETETAMIN[$2]})_$(float_to_string ${JETETAMAX[$2]})_noHLT_${tScale[$ifScale]}_${tSmear[$ifSmear]}
     else
         echo -e "\033[1;31merror:${NC} invalid argument number - produce_postfix()"
         return 1
@@ -59,7 +65,7 @@ function produce_postfix()
 }
 
 #
-FOLDERS=("plotxsecs")
+FOLDERS=("plotclosure")
 for i in ${FOLDERS[@]}
 do
     if [[ ! -d $i ]]
