@@ -1,7 +1,7 @@
 #!/bin/bash
 # dodjtclosure.sh #
 
-DIRPREFIX="../djtana_wosmear/"
+DIRPREFIX="../djtana/"
 
 ifScale=0
 ifSmear=0
