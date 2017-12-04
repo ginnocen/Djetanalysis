@@ -53,9 +53,6 @@ INPUTMCNAME=(
     '/mnt/T2_US_MIT/submit-hi2/scratch/jwang/Djets/MC/DjetFiles_20170510_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_pthatweight.root'
 )
 
-# Path to rootfiles directory
-PATHTOROOTFILES=('~/CMSSW_7_5_8_patch3/src/Djetanalysis/djtcorrelation')
-
 # Do not touch the macros below if you don't know what they mean #
 
 [[ $DO_SAVETPL -eq 0 && $DO_SAVEHIST -eq 0 && $DO_USEHIST -eq 0 && $DO_PLOTHIST -eq 0 ]] && echo "./dodjtana.sh [DO_SAVETPL] [DO_SAVEHIST] [DO_USEHIST] [DO_PLOTHIST]"
@@ -118,8 +115,8 @@ do
     do
         for k in ${kRECOGEN[@]}
         do
-            #if [[ $k -eq 0 || ${ISMC[i]} -eq 1 ]] # only RecoD_RecoJet will run for data
-            #then
+            if [[ $k -eq 0 || ${ISMC[i]} -eq 1 ]] # only RecoD_RecoJet will run for data
+            then
                 tPOSTFIX=Djet_$(produce_postfix $i $j $k)
                 if [[ $DO_SAVETPL -eq 1 ]]
                 then
@@ -136,10 +133,10 @@ do
                 if [[ $DO_PLOTHIST -eq 1 ]]
                 then
                     echo -e "-- Processing ${FUNCOLOR}djtana_plothist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
-                    ./djtana_plothist.exe "${PATHTOROOTFILES}/rootfiles/masstpl_${tPOSTFIX}" "${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} &
+                    ./djtana_plothist.exe "rootfiles/masstpl_${tPOSTFIX}" "${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} &
                     echo
                 fi
-            #fi
+            fi
         done
     done
 done
