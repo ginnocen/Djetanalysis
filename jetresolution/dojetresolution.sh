@@ -5,6 +5,7 @@ DO_SAVEHIST=${1:-0}
 DO_USEHIST=${2:-0}
 DO_PLOTHIST=${3:-0}
 
+ifCorr=1
 # Select the systems the macros run on 
 iCOL=(0 1)
 
@@ -57,7 +58,7 @@ function produce_postfix()
 }
 
 #
-FOLDERS=("rootfiles" "plotpulls" "plotresos")
+FOLDERS=("rootfiles" "plotresos" "plotfits" "plotfitsall")
 for i in ${FOLDERS[@]}
 do
     if [[ ! -d $i ]]
@@ -77,10 +78,11 @@ do
     if [[ $DO_SAVEHIST -eq 1 ]]
     then
         echo -e "-- Processing ${FUNCOLOR}jetreso_savehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
-        ./jetreso_savehist.exe "${INPUTDANAME[i]}" "rootfiles/hist_${tPOSTFIX}" "${COLSYST[i]}" 
+        ./jetreso_savehist.exe "${INPUTDANAME[i]}" "rootfiles/hist_${tPOSTFIX}" "${COLSYST[i]}" "$ifCorr" &
         echo
     fi
 done
+wait
 rm jetreso_savehist.exe
 
 

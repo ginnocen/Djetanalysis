@@ -1,7 +1,7 @@
 #include "jetresolution.h"
 
 void jetreso_plothist(TString inputhistname, TString outputname,
-                      TString collisionsyst)
+                      TString collisionsyst, Int_t verboseonplot=0)
 {
   int arguerr(TString collisionsyst);
   if(arguerr(collisionsyst)) return;
@@ -30,17 +30,18 @@ void jetreso_plothist(TString inputhistname, TString outputname,
           TString tleg = j==0?"Incl. #eta":Form("%.1f < |#eta^{gen jet}| < %.1f",jtetaBins[j-1],jtetaBins[j]);
           legScalePt->AddEntry(hScalePt[k][j], tleg.Data(), "p");
         }
-      TF1* fScalePt = new TF1("fScalePt", "[0]+[1]/TMath::Sqrt(x)+[2]/x", jtptBins[0], jtptBins[nJtptBins]);
+      TF1* fScalePt = new TF1("fScalePt", "[0]+[1]/TMath::Sqrt(x)+[2]/x+[3]/(x*x)", jtptBins[0], jtptBins[nJtptBins]);
+      fScalePt->SetParLimits(0, 0.98, 1.02);
       fScalePt->SetParameter(0, 1);
       fScalePt->SetParameter(1, 0);
       fScalePt->SetParameter(2, 0.5);
-      // if(ispp) fScalePt->FixParameter(3, 0);
+      if(ispp) fScalePt->FixParameter(3, 0);
       fScalePt->SetLineWidth(3);
       fScalePt->SetLineColor(kGray+3);
       fScalePt->SetLineStyle(2);
       hScalePt[k][0]->Fit("fScalePt", "L q", "", jtptBins[0], jtptBins[nJtptBins]);
-      hScalePt[k][0]->Fit("fScalePt", "m", "", jtptBins[0], jtptBins[nJtptBins]);
-      xjjroot::drawtex(0.22, 0.2, Form("%.2f%s%.2f/#sqrt{x}%s%.2f/x",fScalePt->GetParameter(0),fScalePt->GetParameter(1)>=0?"+":"-",TMath::Abs(fScalePt->GetParameter(1)),fScalePt->GetParameter(2)>=0?"+":"-",TMath::Abs(fScalePt->GetParameter(2))));
+      hScalePt[k][0]->Fit("fScalePt", "m q", "", jtptBins[0], jtptBins[nJtptBins]);
+      xjjroot::drawtex(0.22, 0.2, Form("%.2f%s%.2f/#sqrt{x}%s%.2f/x%s%.2f/(x*x)",fScalePt->GetParameter(0),fScalePt->GetParameter(1)>=0?"+":"-",TMath::Abs(fScalePt->GetParameter(1)),fScalePt->GetParameter(2)>=0?"+":"-",TMath::Abs(fScalePt->GetParameter(2)),fScalePt->GetParameter(3)>=0?"+":"-",TMath::Abs(fScalePt->GetParameter(3))));
       xjjroot::drawCMS(collisionsyst); 
       legScalePt->Draw();
       Float_t texxpos = 0.22, texypos = 0.85, texdypos = 0.06; texypos += texdypos;
@@ -97,12 +98,10 @@ void jetreso_plothist(TString inputhistname, TString outputname,
           legResoPt->AddEntry(hResoPt[k][j], tleg.Data(), "p");
         }
       TF1* fResoPt = new TF1("fResoPt", "TMath::Sqrt([0]*[0]+[1]*[1]/x+[2]*[2]/(x*x))", jtptBins[0], jtptBins[nJtptBins]);
-      fResoPt->SetParameter(0, 0.06);
-      // if(ispp) fResoPt->SetParameter(0, 0.06);
-      // else fResoPt->FixParameter(0, 0.073);
-      fResoPt->SetParameter(1, 0.95);
-      // if(ispp || k==(nCentBins-1)) fResoPt->SetParameter(1, 0.95);
-      // else fResoPt->FixParameter(1, 1.141);
+      if(!ispp) fResoPt->SetParLimits(0, param0fResoPt_pp_param-param0fResoPt_pp_err, param0fResoPt_pp_param+param0fResoPt_pp_err);
+      if(!(ispp || k==(nCentBins-1))) fResoPt->SetParLimits(1, param1fResoPt_peri_param-param1fResoPt_peri_err, param1fResoPt_peri_param+param1fResoPt_peri_err);
+      fResoPt->SetParameter(0, ispp?0.060:param0fResoPt_pp_param);
+      fResoPt->SetParameter(1, ispp?0.85:param1fResoPt_peri_param);
       if(ispp || k==(nCentBins-1)) fResoPt->FixParameter(2, 0);
       fResoPt->SetLineWidth(3);
       fResoPt->SetLineColor(kGray+3);
@@ -114,6 +113,7 @@ void jetreso_plothist(TString inputhistname, TString outputname,
       Float_t texxpos = 0.22, texypos = 0.85, texdypos = 0.06; texypos += texdypos;
       if(!ispp) xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), texcent);
       xjjroot::drawtex(0.22, 0.2, Form("#sqrt{%.3f^{2}+%.3f^{2}/x+%.3f^{2}/(x*x)}",TMath::Abs(fResoPt->GetParameter(0)),TMath::Abs(fResoPt->GetParameter(1)),TMath::Abs(fResoPt->GetParameter(2))));
+      if(verboseonplot) xjjroot::drawtex(0.22, 0.26, Form("[0]=%.3f#pm%.3f, [1]=%.3f#pm%.3f, [2]=%.3f#pm%.3f",TMath::Abs(fResoPt->GetParameter(0)),fResoPt->GetParError(0),TMath::Abs(fResoPt->GetParameter(1)),fResoPt->GetParError(1),TMath::Abs(fResoPt->GetParameter(2)),fResoPt->GetParError(2)));
       cResoPt->SaveAs(Form("plotresos/cResoPt_%s_%d.pdf",outputname.Data(),k));
       delete fResoPt;
       delete legResoPt;
@@ -138,12 +138,10 @@ void jetreso_plothist(TString inputhistname, TString outputname,
           legResoPtCorr->AddEntry(hResoPtCorr[k][j], tleg.Data(), "p");
         }
       TF1* fResoPtCorr = new TF1("fResoPtCorr", "TMath::Sqrt([0]*[0]+[1]*[1]/x+[2]*[2]/(x*x))", jtptBins[0], jtptBins[nJtptBins]);
-      fResoPtCorr->SetParameter(0, 0.06);
-      // if(ispp) fResoPtCorr->SetParameter(0, 0.06);
-      // else fResoPtCorr->FixParameter(0, 0.082);
-      fResoPtCorr->SetParameter(1, 0.95);
-      // if(ispp || k==(nCentBins-1)) fResoPtCorr->SetParameter(1, 0.95);
-      // else fResoPtCorr->FixParameter(1, 1.091);
+      if(!ispp) fResoPtCorr->SetParLimits(0, param0fResoPtCorr_pp_param-param0fResoPtCorr_pp_err, param0fResoPtCorr_pp_param+param0fResoPtCorr_pp_err);
+      if(!(ispp || k==(nCentBins-1))) fResoPtCorr->SetParLimits(1, param1fResoPtCorr_peri_param-param1fResoPtCorr_peri_err, param1fResoPtCorr_peri_param+param1fResoPtCorr_peri_err);
+      fResoPtCorr->SetParameter(0, ispp?0.060:param0fResoPtCorr_pp_param);
+      fResoPtCorr->SetParameter(1, ispp?0.85:param1fResoPtCorr_peri_param);
       if(ispp || k==(nCentBins-1)) fResoPtCorr->FixParameter(2, 0);
       fResoPtCorr->SetLineWidth(3);
       fResoPtCorr->SetLineColor(kGray+3);
@@ -155,6 +153,7 @@ void jetreso_plothist(TString inputhistname, TString outputname,
       Float_t texxpos = 0.22, texypos = 0.85, texdypos = 0.06; texypos += texdypos;
       if(!ispp) xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), texcent);
       xjjroot::drawtex(0.22, 0.2, Form("#sqrt{%.3f^{2}+%.3f^{2}/x+%.3f^{2}/(x*x)}",TMath::Abs(fResoPtCorr->GetParameter(0)),TMath::Abs(fResoPtCorr->GetParameter(1)),TMath::Abs(fResoPtCorr->GetParameter(2))));
+      if(verboseonplot) xjjroot::drawtex(0.22, 0.26, Form("[0]=%.3f#pm%.3f, [1]=%.3f#pm%.3f, [2]=%.3f#pm%.3f",TMath::Abs(fResoPtCorr->GetParameter(0)),fResoPtCorr->GetParError(0),TMath::Abs(fResoPtCorr->GetParameter(1)),fResoPtCorr->GetParError(1),TMath::Abs(fResoPtCorr->GetParameter(2)),fResoPtCorr->GetParError(2)));
       cResoPtCorr->SaveAs(Form("plotresos/cResoPtCorr_%s_%d.pdf",outputname.Data(),k));
       delete fResoPtCorr;
       delete legResoPtCorr;
@@ -192,6 +191,7 @@ void jetreso_plothist(TString inputhistname, TString outputname,
       Float_t texxpos = 0.22, texypos = 0.85, texdypos = 0.06; texypos += texdypos;
       if(!ispp) xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), texcent);
       xjjroot::drawtex(0.22, 0.2, Form("#sqrt{%.3f^{2}+%.3f^{2}/x+%.3f^{2}/(x*x)}",TMath::Abs(fResoPhi->GetParameter(0)),TMath::Abs(fResoPhi->GetParameter(1)),TMath::Abs(fResoPhi->GetParameter(2))));
+      if(verboseonplot) xjjroot::drawtex(0.22, 0.26, Form("[0]=%.3f#pm%.3f, [1]=%.3f#pm%.3f, [2]=%.3f#pm%.3f",TMath::Abs(fResoPhi->GetParameter(0)),fResoPhi->GetParError(0),TMath::Abs(fResoPhi->GetParameter(1)),fResoPhi->GetParError(1),TMath::Abs(fResoPhi->GetParameter(2)),fResoPhi->GetParError(2)));
       cResoPhi->SaveAs(Form("plotresos/cResoPhi_%s_%d.pdf",outputname.Data(),k));
       delete fResoPhi;
       delete legResoPhi;
@@ -229,6 +229,7 @@ void jetreso_plothist(TString inputhistname, TString outputname,
       Float_t texxpos = 0.22, texypos = 0.85, texdypos = 0.06; texypos += texdypos;
       if(!ispp) xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), texcent);
       xjjroot::drawtex(0.22, 0.2, Form("#sqrt{%.3f^{2}+%.3f^{2}/x+%.3f^{2}/(x*x)}",TMath::Abs(fResoEta->GetParameter(0)),TMath::Abs(fResoEta->GetParameter(1)),TMath::Abs(fResoEta->GetParameter(2))));
+      if(verboseonplot) xjjroot::drawtex(0.22, 0.26, Form("[0]=%.3f#pm%.3f, [1]=%.3f#pm%.3f, [2]=%.3f#pm%.3f",TMath::Abs(fResoEta->GetParameter(0)),fResoEta->GetParError(0),TMath::Abs(fResoEta->GetParameter(1)),fResoEta->GetParError(1),TMath::Abs(fResoEta->GetParameter(2)),fResoEta->GetParError(2)));
       cResoEta->SaveAs(Form("plotresos/cResoEta_%s_%d.pdf",outputname.Data(),k));
       delete fResoEta;
       delete legResoEta;
