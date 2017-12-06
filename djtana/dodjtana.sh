@@ -14,8 +14,8 @@ DO_SAVEHIST=${2:-0}
 DO_USEHIST=${3:-0}
 DO_PLOTHIST=${4:-0}
 
-ifScale=0
-ifSmear=0
+ifScale=1
+ifSmear=1
 
 # Select the systems the macros run on 
 iCOL=(0 2)
