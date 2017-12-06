@@ -3,15 +3,16 @@
 
 DIRPREFIX="../djtana/"
 
-ifScale=0
-ifSmear=0
+DO_PLOTHIST=${1:-0}
+DO_COMPJES=${2:-0}
 
 # Select the systems the macros run on 
 iCOL=(0 1)
 jJET=(1)
+lScaleSmear=(0 1)
 
 ##
-# scaleNsmear
+# nScaleSmear
 tScale=("woScale" "wScale")
 tSmear=("woSmear" "wSmear")
 
@@ -27,6 +28,7 @@ JETETAMAX=(2.0 1.6)
 #
 nCOL=${#COLSYST[@]}
 nJET=${#JETPTMIN[@]}
+nScaleSmear=${#tScale[@]}
 
 RECOGEN=('RecoD_RecoJet' 'GenD_RecoJet' 'RecoD_GenJet' 'GenD_GenJet')
 
@@ -52,12 +54,15 @@ function float_to_string()
 
 function produce_postfix()
 {
-    if [[ $# -eq 3 ]]
+    if [[ $# -eq 4 ]]
     then
-        echo ${COLSYST[$1]}_MC_${RECOGEN[$3]}_jetpt_$(float_to_string ${JETPTMIN[$2]})_jeteta_$(float_to_string ${JETETAMIN[$2]})_$(float_to_string ${JETETAMAX[$2]})_noHLT_${tScale[$ifScale]}_${tSmear[$ifSmear]}
+        echo ${COLSYST[$1]}_MC_${RECOGEN[$3]}_jetpt_$(float_to_string ${JETPTMIN[$2]})_jeteta_$(float_to_string ${JETETAMIN[$2]})_$(float_to_string ${JETETAMAX[$2]})_noHLT_${tScale[$4]}_${tSmear[$4]}
+    elif [[ $# -eq 3 ]]
+    then
+        echo ${COLSYST[$1]}_jetpt_$(float_to_string ${JETPTMIN[$2]})_jeteta_$(float_to_string ${JETETAMIN[$2]})_$(float_to_string ${JETETAMAX[$2]})_noHLT_${tScale[$3]}_${tSmear[$3]}
     elif [[ $# -eq 2 ]]
     then
-        echo ${COLSYST[$1]}_jetpt_$(float_to_string ${JETPTMIN[$2]})_jeteta_$(float_to_string ${JETETAMIN[$2]})_$(float_to_string ${JETETAMAX[$2]})_noHLT_${tScale[$ifScale]}_${tSmear[$ifSmear]}
+        echo ${COLSYST[$1]}_jetpt_$(float_to_string ${JETPTMIN[$2]})_jeteta_$(float_to_string ${JETETAMIN[$2]})_$(float_to_string ${JETETAMAX[$2]})_noHLT
     else
         echo -e "\033[1;31merror:${NC} invalid argument number - produce_postfix()"
         return 1
@@ -65,7 +70,7 @@ function produce_postfix()
 }
 
 #
-FOLDERS=("plotclosure")
+FOLDERS=("plotclosure" "plotjes")
 for i in ${FOLDERS[@]}
 do
     if [[ ! -d $i ]]
@@ -75,29 +80,65 @@ do
 done
 
 ##
+[[ $DO_PLOTHIST -eq 0 && $DO_COMPJES -eq 0 ]] && echo "./dodjtana.sh [DO_PLOTHIST] [DO_COMPJES]"
+
+##
 
 # djtclosure_plothist.C #
 g++ djtclosure_plothist.C $(root-config --cflags --libs) -g -o djtclosure_plothist.exe || return 1;
-
-for i in ${iCOL[@]}
-do
-    for j in ${jJET[@]}
+if [[ $DO_PLOTHIST -eq 1 ]]
+then
+    for l in ${lScaleSmear[@]}
     do
-        echo -e "-- Processing ${FUNCOLOR}djtclosure_plothist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
-        tPOSTFIX=Djet_$(produce_postfix $i $j)
-        k=0
-        filenexist=0
-        for rg in ${RECOGEN[@]}
+        for i in ${iCOL[@]}
         do
-            tPOSTFIX_RG[k]=Djet_$(produce_postfix $i $j $k)
-            [[ ! -f "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[k]}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} ${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[k]}.root doesn't exist. Process ../djtana/djtana_usehist.C first."; filenexist=$(($filenexist+1)); }
-            k=$(($k+1))
+            for j in ${jJET[@]}
+            do
+                echo -e "-- Processing ${FUNCOLOR}djtclosure_plothist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tScale[l]}${NC}, ${ARGCOLOR}${tSmear[l]}${NC}"
+                tPOSTFIX=Djet_$(produce_postfix $i $j $l)
+                k=0
+                filenexist=0
+                for rg in ${RECOGEN[@]}
+                do
+                    tPOSTFIX_RG[k]=Djet_$(produce_postfix $i $j $k $l)
+                    [[ ! -f "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[k]}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} ${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[k]}.root doesn't exist. Process ../djtana/djtana_usehist.C first."; filenexist=$(($filenexist+1)); }
+                    k=$(($k+1))
+                done
+                [[ $filenexist -ne 0 ]] && continue
+                ./djtclosure_plothist.exe "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[0]}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[1]}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[2]}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[3]}" "$tPOSTFIX" "${COLSYST[i]}" ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]}
+                echo
+            done
         done
-        [[ $filenexist -ne 0 ]] && continue
-        ./djtclosure_plothist.exe "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[0]}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[1]}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[2]}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[3]}" "$tPOSTFIX" "${COLSYST[i]}" ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]}
-        echo
     done
-done
-
+fi
 rm djtclosure_plothist.exe
+
+
+# djtclosure_compjes.C #
+g++ djtclosure_compjes.C $(root-config --cflags --libs) -g -o djtclosure_compjes.exe || return 1;
+if [[ $DO_COMPJES -eq 1 ]]
+then
+    for i in ${iCOL[@]}
+    do
+        for j in ${jJET[@]}
+        do
+            echo -e "-- Processing ${FUNCOLOR}djtclosure_compjes.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
+            tPOSTFIX=Djet_$(produce_postfix $i $j)
+            k=0
+            filenexist=0
+            for rg in ${RECOGEN[@]}
+            do
+                tPOSTFIX_RG_woScaleSmear[k]=Djet_$(produce_postfix $i $j $k 0)
+                [[ ! -f "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG_woScaleSmear[k]}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} ${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG_woScaleSmear[k]}.root doesn't exist. Process ../djtana/djtana_usehist.C first."; filenexist=$(($filenexist+1)); }
+                tPOSTFIX_RG_wScaleSmear[k]=Djet_$(produce_postfix $i $j $k 1)
+                [[ ! -f "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG_wScaleSmear[k]}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} ${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG_wScaleSmear[k]}.root doesn't exist. Process ../djtana/djtana_usehist.C first."; filenexist=$(($filenexist+1)); }
+                k=$(($k+1))
+            done
+            [[ $filenexist -ne 0 ]] && continue
+            ./djtclosure_compjes.exe "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG_woScaleSmear[0]}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG_woScaleSmear[1]}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG_woScaleSmear[2]}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG_woScaleSmear[3]}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG_wScaleSmear[0]}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG_wScaleSmear[1]}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG_wScaleSmear[2]}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG_wScaleSmear[3]}" "$tPOSTFIX" "${COLSYST[i]}" ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]}
+            echo
+        done
+    done
+fi
+rm djtclosure_compjes.exe
 

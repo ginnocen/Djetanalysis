@@ -21,10 +21,17 @@ TString tRef[nRefBins] = {"eta", "etaref"};
 const int nCases = 4;
 TString tCases[nCases] = {"RecoD_RecoJet", "GenD_RecoJet", "RecoD_GenJet", "GenD_GenJet"};
 TString legCases[nCases] = {"RecoD, RecoJet", "GenD, RecoJet", "RecoD, GenJet", "GenD, GenJet"};
+TString tJes[2] = {"wojes", "wjes"};
+const int nScaleorSmear = 2;
+TString tScaleorSmear[nScaleorSmear] = {"Scale", "Smear"};
+TString tCasesJet[nScaleorSmear] = {"RecoJet", "GenJet"};
+TString tCasesD[2] = {"RecoD", "GenD"};
 
 //
 Color_t amcolor[nCases] = {kBlack, kAzure-1, kGreen+3, kRed+1};
 Style_t amstyle[nRefBins] = {20, 24};
+Color_t amcolorJes[nPtBins] = {kBlack, kRed+1};
+Style_t amstyleJes[nScaleorSmear] = {20, 21};
 
 // TH1F* hNjets;
 
@@ -37,10 +44,16 @@ TH1F* ahSignalZsub[nCases][nPtBins];
 TH1F* ahSignalRsubPull[nCases][nPtBins];
 TH1F* ahSignalZsubPull[nCases][nPtBins];
 
+TH1F* ahSignalRsubjes[nCases*2][nPtBins];
+TH1F* ahSignalZsubjes[nCases*2][nPtBins];
+TH1F* ahSignalRsubjesPull[nCases][nPtBins];
+TH1F* ahSignalZsubjesPull[nCases][nPtBins];
+
 TH1F* ahSignalRsubRatio[nCases][nPtBins];
 TH1F* ahSignalZsubRatio[nCases][nPtBins];
 TH1F* ahSignalRsubRatioPull[nCases][nPtBins];
 TH1F* ahSignalZsubRatioPull[nCases][nPtBins];
+
 
 //
 int createhists(Option_t* option)
@@ -61,6 +74,18 @@ int createhists(Option_t* option)
                 }
               ahSignalRsubPull[m][i] = new TH1F(Form("hSignalRsubPull_pt_%d_%s",i,tCases[m].Data()), ";;", nDrBins, drBins);
               ahSignalZsubPull[m][i] = new TH1F(Form("hSignalZsubPull_pt_%d_%s",i,tCases[m].Data()), ";;", nZBins, zBins);
+            }
+        }
+      return 0;
+    }
+  if(opt=="compjes")
+    {
+      for(int m=0;m<nCases;m++)
+        {
+          for(int i=0;i<nPtBins;i++)
+            {
+              ahSignalRsubjesPull[m][i] = new TH1F(Form("hSignalRsubjesPull_pt_%d_%s",i,tCases[m].Data()), ";;", nDrBins, drBins);
+              ahSignalZsubjesPull[m][i] = new TH1F(Form("hSignalZsubjesPull_pt_%d_%s",i,tCases[m].Data()), ";;", nZBins, zBins);
             }
         }
       return 0;
@@ -103,6 +128,20 @@ int gethists(std::vector<TFile*> inf, Option_t* option)
               ahSignalRsub[m][i]->SetName(Form("hSignalRsub_pt_%d_%s",i,tCases[m].Data()));
               ahSignalZsub[m][i] = (TH1F*)inf[m]->Get(Form("hSignalZsub_pt_%d",i));
               ahSignalZsub[m][i]->SetName(Form("hSignalZsub_pt_%d_%s",i,tCases[m].Data()));
+            }
+        }
+      return 0;
+    }
+  if(opt=="compjes")
+    {
+      for(int m=0;m<(nCases*2);m++)
+        {
+          for(int i=0;i<nPtBins;i++)
+            {
+              ahSignalRsubjes[m][i] = (TH1F*)inf[m]->Get(Form("hSignalRsub_pt_%d",i));
+              ahSignalRsubjes[m][i]->SetName(Form("hSignalRsub_pt_%d_%s_%s",i,tCases[m].Data(),tJes[m/nCases].Data()));
+              ahSignalZsubjes[m][i] = (TH1F*)inf[m]->Get(Form("hSignalZsub_pt_%d",i));
+              ahSignalZsubjes[m][i]->SetName(Form("hSignalZsub_pt_%d_%s_%s",i,tCases[m].Data(),tJes[m/nCases].Data()));
             }
         }
       return 0;
