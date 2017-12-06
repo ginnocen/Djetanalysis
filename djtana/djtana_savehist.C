@@ -48,13 +48,13 @@ void djtana_savehist(TString inputname, TString outputname,
           if(djt.ajetopt[irecogen]=="reco" && jescale)
             {
               std::vector<std::vector<Float_t>>* paramfScalePt = ispp?&paramfScalePt_pp:&paramfScalePt_PbPb;
-              Float_t vScalePt = paramfScalePt->at(ibincent).at(0) + paramfScalePt->at(ibincent).at(1)/TMath::Sqrt((**djt.ajetpt[irecogen])[jj]) + paramfScalePt->at(ibincent).at(1)/(**djt.ajetpt[irecogen])[jj];
+              Float_t vScalePt = paramfScalePt->at(ibincent).at(0) + paramfScalePt->at(ibincent).at(1)/TMath::Sqrt((**djt.ajetpt[irecogen])[jj]) + paramfScalePt->at(ibincent).at(2)/(**djt.ajetpt[irecogen])[jj] + paramfScalePt->at(ibincent).at(3)/((**djt.ajetpt[irecogen])[jj]*(**djt.ajetpt[irecogen])[jj]);
               jetpt = (**djt.ajetpt[irecogen])[jj]/vScalePt;
             }
 
           if(djt.ajetopt[irecogen]=="gen" && gensmear)
             {
-              std::vector<std::vector<Float_t>>* paramfResoPt = ispp?&paramfResoPt_pp:&paramfResoPt_PbPb;
+              std::vector<std::vector<Float_t>>* paramfResoPt = ispp?&paramfResoPtCorr_pp:&paramfResoPtCorr_PbPb;
               Float_t sigmaPt = paramfResoPt->at(ibincent).at(0)*paramfResoPt->at(ibincent).at(0) + paramfResoPt->at(ibincent).at(1)*paramfResoPt->at(ibincent).at(1)/jetpt + paramfResoPt->at(ibincent).at(2)*paramfResoPt->at(ibincent).at(2)/(jetpt*jetpt);
               jetpt = (**djt.ajetpt[irecogen])[jj] * pRandom2->Gaus(1, sigmaPt);
 
