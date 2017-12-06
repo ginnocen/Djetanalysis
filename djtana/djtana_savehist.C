@@ -41,6 +41,8 @@ void djtana_savehist(TString inputname, TString outputname,
       // loop jets
       for(int jj=0;jj<*(djt.anjet[irecogen]);jj++)
         {
+          if(isMC && (**djt.asubid[irecogen])[jj]!=0) continue;
+
           Float_t jetpt = (**djt.ajetpt[irecogen])[jj];
           Float_t jetphi = (**djt.ajetphi[irecogen])[jj];
           Float_t jeteta = (**djt.ajeteta[irecogen])[jj];

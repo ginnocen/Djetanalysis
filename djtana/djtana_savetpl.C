@@ -30,6 +30,8 @@ void djtana_savetpl(TString inputname, TString outputname,
       
       for(int jj=0;jj<*(djt.anjet[irecogen]);jj++)
         {
+          if((**djt.asubid[irecogen])[jj]!=0) continue;
+
           int djtjetsel = djt.isjetselected(jj, djt.ajetopt[irecogen]);
           if(djtjetsel < 0) return;
           if(!djtjetsel) continue;
