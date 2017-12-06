@@ -34,12 +34,17 @@ void jetreso_usehist(TString inputhistname, TString outputname,
       for(int j=0;j<nJtetaBins+1;j++)
         {
           TString texjteta = j==0?"Incl. #eta":Form("%.1f < |#eta^{gen jet}| < %.1f", jtetaBins[j-1], jtetaBins[j]);
-          for(int i=0;i<nJtptBins;i++)
+          for(int l=0;l<4;l++)
             {
-              TString texjtpt = Form("%.0f < p_{T}^{gen jet} < %.0f GeV", jtptBins[i], jtptBins[i+1]);
-
-              for(int l=0;l<4;l++)
+              TCanvas* c15 = new TCanvas("c15", "", 1000, 600);
+              c15->Divide(5, 3);
+              TH2F* hemptyX = new TH2F("hemptyX", Form(";%s;Probability", xtitle.at(l).Data()), 10, xmin.at(l), xmax.at(l), 10, ymin.at(l), ymax.at(l));
+              xjjroot::sethempty(hemptyX, 0, 0.4);
+              std::vector<TF1*>* afX = new std::vector<TF1*>(nJtptBins);
+              std::vector<TF1*>* afX1 = new std::vector<TF1*>(nJtptBins);
+              for(int i=0;i<nJtptBins;i++)
                 {
+                  TString texjtpt = Form("%.0f < p_{T}^{gen jet} < %.0f GeV", jtptBins[i], jtptBins[i+1]);
                   TF1* fX = new TF1("fX", "[0]*Gaus(x,[1],[2])/(TMath::Sqrt(2*3.14159265)*[2])", xmin.at(l), xmax.at(l));
                   fX->SetLineWidth(3);
                   fX->SetLineColor(kBlue);
@@ -48,8 +53,7 @@ void jetreso_usehist(TString inputhistname, TString outputname,
                   fX->SetParameter(1, param1.at(l));
                   fX->SetParameter(2, param2.at(l));
                   TCanvas* cX = new TCanvas("cX", "", 600, 600);
-                  TH2F* hemptyX = new TH2F("hemptyX", Form(";%s;Probability", xtitle.at(l).Data()), 10, xmin.at(l), xmax.at(l), 10, ymin.at(l), ymax.at(l));
-                  xjjroot::sethempty(hemptyX, 0, 0.4);
+                  cX->cd();
                   hemptyX->Draw();
                   (ahHistoResoX.at(l))[k*nJtptBins*(nJtetaBins+1)+j*nJtptBins+i]->Scale(1./(ahHistoResoX.at(l))[k*nJtptBins*(nJtetaBins+1)+j*nJtptBins+i]->Integral());
                   xjjroot::setthgrstyle((ahHistoResoX.at(l))[k*nJtptBins*(nJtetaBins+1)+j*nJtptBins+i], kBlack, 24, 1.2, kBlack, 1, 1, -1, -1, -1);
@@ -64,13 +68,15 @@ void jetreso_usehist(TString inputhistname, TString outputname,
                   fX1->SetLineWidth(3);
                   fX1->SetLineColor(kRed);
                   fX1->Draw("same");
-                  (ahHistoResoX.at(l))[k*nJtptBins*(nJtetaBins+1)+j*nJtptBins+i]->Fit("fX", "L q", "", param1.at(l)-sigmaX, param1.at(l)+sigmaX);
-                  (ahHistoResoX.at(l))[k*nJtptBins*(nJtetaBins+1)+j*nJtptBins+i]->Fit("fX", "m q", "", param1.at(l)-sigmaX, param1.at(l)+sigmaX);
+                  (ahHistoResoX.at(l))[k*nJtptBins*(nJtetaBins+1)+j*nJtptBins+i]->Fit("fX", "L q", "", param1.at(l)-2*sigmaX, param1.at(l)+2*sigmaX);
+                  (ahHistoResoX.at(l))[k*nJtptBins*(nJtetaBins+1)+j*nJtptBins+i]->Fit("fX", "m q", "", param1.at(l)-2*sigmaX, param1.at(l)+2*sigmaX);
                   fX->Draw("same");
                   (hScaleX.at(l))[k*(nJtetaBins+1)+j]->SetBinContent(i+1, fX->GetParameter(1));
                   (hScaleX.at(l))[k*(nJtetaBins+1)+j]->SetBinError(i+1, fX->GetParError(1));
                   (hResoX.at(l))[k*(nJtetaBins+1)+j]->SetBinContent(i+1, fX->GetParameter(2));
                   (hResoX.at(l))[k*(nJtetaBins+1)+j]->SetBinError(i+1, fX->GetParError(2));
+                  afX->at(i) = xjjroot::copyobject(fX, Form("fX%d",i));
+                  afX1->at(i) = xjjroot::copyobject(fX1, Form("fX%d",i));
                   Float_t texxpos = 0.22, texypos = 0.85, texdypos = 0.06; texypos += texdypos;
                   xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), texjtpt);
                   xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), texjteta);
@@ -79,13 +85,34 @@ void jetreso_usehist(TString inputhistname, TString outputname,
                   xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), Form("#mu = %.3f #pm %.3f", fX->GetParameter(1), fX->GetParError(1)));
                   xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), Form("#sigma = %.3f #pm %.3f", fX->GetParameter(2), fX->GetParError(2)));
                   xjjroot::drawCMS(collisionsyst);
-                  cX->SaveAs(Form("plotpulls/cfit%s_%s_%d_%d_%d.pdf",name.at(l).Data(),outputname.Data(),k,j,i));
+                  cX->SaveAs(Form("plotfits/cfit%s_%s_%d_%d_%d.pdf",name.at(l).Data(),outputname.Data(),k,j,i));
+
+                  c15->cd(i+1);
+                  hemptyX->Draw();
+                  (ahHistoResoX.at(l))[k*nJtptBins*(nJtetaBins+1)+j*nJtptBins+i]->Draw("same pe");
+                  afX1->at(i)->Draw("same");
+                  afX->at(i)->Draw("same");
+                  texxpos = 0.22; texypos = 0.85; texdypos = 0.06; texypos += texdypos;
+                  xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), texjtpt);
+                  if(!i)
+                    {
+                      xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), texjteta);
+                      if(!ispp) xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), texcent);
+                      xjjroot::drawCMS(collisionsyst);
+                    }
+                  texxpos = 0.65; texypos = 0.85; texdypos = 0.06; texypos += texdypos;
+                  xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), Form("#mu = %.3f #pm %.3f", fX->GetParameter(1), fX->GetParError(1)));
+                  xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), Form("#sigma = %.3f #pm %.3f", fX->GetParameter(2), fX->GetParError(2)));
 
                   delete fX1;
-                  delete hemptyX;
                   delete cX;
                   delete fX;
                 }
+              c15->SaveAs(Form("plotfitsall/cfitall%s_%s_%d_%d.pdf",name.at(l).Data(),outputname.Data(),k,j));
+              delete afX1;
+              delete afX;
+              delete hemptyX;
+              delete c15;
             }
         }
     }
