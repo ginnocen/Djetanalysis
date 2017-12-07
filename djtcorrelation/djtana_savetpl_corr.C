@@ -19,6 +19,7 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
 
   int64_t nentries = djt.fChain->GetEntriesFast();
   int rnentries = (maxevt>0&&maxevt<=nentries)?maxevt:nentries;
+  //int rnentries = 50000;
   int ncountjet = 0;
   for(int i=0;i<rnentries;i++)
     {

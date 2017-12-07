@@ -94,7 +94,7 @@ function produce_postfix()
 }
 
 #
-FOLDERS=("plotfits" "plotxsecs" "ploteff" "rootfiles")
+FOLDERS=("plotfits" "plotxsecs" "ploteff" "rootfiles" "plots")
 for i in ${FOLDERS[@]}
 do
     if [[ ! -d $i ]]
