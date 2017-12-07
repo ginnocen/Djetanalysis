@@ -132,7 +132,7 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
   std::cout<<std::endl;
 
   hNjets->SetBinContent(1, ncountjet);
-  for(int l=0;l<nRefBins;l++)
+  /*for(int l=0;l<nRefBins;l++)
     {
       for(int i=0;i<nPtBins;i++)
         {
@@ -144,6 +144,7 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
           ahZEfficiency[l][i]->Divide(ahNumZEfficiency[l][i], ahDenZEfficiency[l][i]);
         }
     }
+  */
 
   TFile* outf = new TFile(Form("%s.root",outputname.Data()), "recreate");
   outf->cd();

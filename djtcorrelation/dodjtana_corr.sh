@@ -121,7 +121,7 @@ do
                 if [[ $DO_SAVETPL -eq 1 ]]
                 then
                     echo -e "-- Processing ${FUNCOLOR}djtana_savetpl_corr.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
-                    ./djtana_savetpl_corr.exe "${INPUTMCNAME[i]}" "rootfiles/masstpl_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} &
+                    ./djtana_savetpl_corr.exe "${INPUTDANAME[i]}" "rootfiles/masstpl_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} &
                     echo
                 fi
                 if [[ $DO_SAVEHIST -eq 1 ]]
