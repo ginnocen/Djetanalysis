@@ -1,0 +1,9 @@
+#include "djtana.h"
+
+void djtana_plothist(TString inputhistname, TString outputname,
+                     TString collisionsyst, Int_t isMC,
+                     Float_t jetptmin, Float_t jetetamin, Float_t jetetamax,
+                     Int_t plotref = 1)
+{
+
+}
