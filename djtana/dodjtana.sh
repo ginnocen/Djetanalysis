@@ -19,7 +19,7 @@ ifSmear=1
 
 # Select the systems the macros run on 
 iCOL=(0 2)
-jJET=(0)
+jJET=(3)
 kRECOGEN=(0 1 2 3)
 
 ##
@@ -32,11 +32,11 @@ COLSYST=('pp' 'pp' 'PbPb' 'PbPb')
 ISMC=(1 0 1 0)
 
 # nJET loop
-JETPTMIN=(40 40 60)
-JETETAMIN=(0.3 0.3 0.3)
-JETETAMAX=(1.6 1.6 1.6)
-HLTOPT=("noHLT" "HLTJet40Jet60" "HLTJet60")
-# HLTOPT=("noHLT" "HLTJet40Jet60Jet80" "HLTJet60Jet80")
+JETPTMIN=(40 40 60 60)
+JETETAMIN=(0.3 0.3 0.3 0.3)
+JETETAMAX=(1.6 1.6 1.6 1.6)
+HLTOPT=("noHLT" "HLTJet40Jet60" "HLTJet60" "noHLT")
+# HLTOPT=("noHLT" "HLTJet40Jet60Jet80" "HLTJet60Jet80" "noHLT")
 
 # nRECOGEN loop
 RECOGEN=('RecoD_RecoJet' 'GenD_RecoJet' 'RecoD_GenJet' 'GenD_GenJet')
