@@ -131,7 +131,7 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
                   (hSignalXnormPull.at(k))[(m*nRefBins+l)*nPtBins+i]->Draw("pe same");
                 }
             }
-          TBox* box = new TBox(-0.07, 1.8, -0.01, 2.0);
+          TBox* box = new TBox(-0.07, yPullaxismax[k]-0.2, -0.01, yPullaxismax[k]);
           box->SetFillColor(kWhite);
           box->Draw();
 
