@@ -58,7 +58,7 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
               if(result_initcutval) return;
               djt.settrkcut(cutval_trkPt, cutval_trkEta, cutval_trkPtErr);
               djt.setDcut(cutval_Dsvpv, cutval_Dalpha, cutval_Dchi2cl, cutval_Dy);                  
-              Int_t djtDsel = djt.isDselected(jd, djt.aDopt[irecogen]);
+              Int_t djtDsel = djt.isDselected_hp(jd, djt.aDopt[irecogen], true);
               if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
               if(!djtDsel) continue;
 
