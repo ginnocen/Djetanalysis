@@ -8,7 +8,7 @@ DO_COMPJES=${2:-0}
 
 # Select the systems the macros run on 
 iCOL=(0 1)
-jJET=(1)
+jJET=(1 2)
 lScaleSmear=(0 1)
 
 ##
@@ -20,9 +20,9 @@ tSmear=("woSmear" "wSmear")
 COLSYST=('pp' 'PbPb')
 
 # nJET loop
-JETPTMIN=(40 40)
-JETETAMIN=(0 0.3)
-JETETAMAX=(2.0 1.6)
+JETPTMIN=(40 40 60)
+JETETAMIN=(0 0.3 0.3)
+JETETAMAX=(2.0 1.6 1.6)
 
 # Do not touch the macros below if you don't know what they mean #
 #

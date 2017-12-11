@@ -158,6 +158,8 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
           hempty->GetXaxis()->SetNdivisions(505);
           xjjroot::sethempty(hempty, 0, 0.5);
           hempty->Draw();
+          xjjroot::drawbox(vxBins[k].front(), 0.9, vxBins[k].back(), 1.1);
+          xjjroot::drawline(vxBins[k].front(), 1.0, vxBins[k].back(), 1.0, kGray+2, 2, 3);
           TLegend* leg = new TLegend(0.58, 0.88-(nCases-1)*0.06, 0.90, 0.88);
           xjjroot::setleg(leg);
           for(int m=0;m<nCases;m++)
