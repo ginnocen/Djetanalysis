@@ -1,4 +1,6 @@
 #include "djtana.h"
+#include "TString.h"
+#include "TRegexp.h"
 
 void djtana_plothist(TString inputhistname, TString outputname,
                      TString collisionsyst, Int_t isMC,
@@ -51,7 +53,15 @@ void djtana_plothist(TString inputhistname, TString outputname,
       xjjroot::setthgrstyle(hJetHists[i],kBlack,20,1.2,kBlack,1,1,-1,-1,-1);
       hJetHists[i]->Draw("pe same");
       xjjroot::drawCMS(collisionsyst);
-      c->SaveAs(Form("plots/%s_%s.pdf",hJetHists[i]->GetName(),outputname.Data()));
+      TRegexp re("_pt_.");
+      TString name = hJetHists[i]->GetName();
+      name(re) = "";
+      TString fullname = hJetHists[i]->GetName();
+      fullname += "_";
+      // Saves twice for easy comparison; this one compares the same histogram in different datasets
+      c->SaveAs(Form("plots/%s/%s.pdf",name.Data(),fullname.Append(outputname).Data()));
+      // And this one compares different histograms in the same dataset
+      c->SaveAs(Form("plots/%s/%s.pdf",outputname.Data(),fullname.Data()));
       delete c;
       delete hempty;
     }
@@ -66,7 +76,13 @@ void djtana_plothist(TString inputhistname, TString outputname,
           xjjroot::setthgrstyle((hDHists.at(i))[j],kBlack,20,1.2,kBlack,1,1,-1,-1,-1);
           (hDHists.at(i))[j]->Draw("pe same");
           xjjroot::drawCMS(collisionsyst);
-          c->SaveAs(Form("plots/%s_%s.pdf",(hDHists.at(i))[j]->GetName(),outputname.Data()));
+          TRegexp re("_pt_.");
+          TString name = (hDHists.at(i))[j]->GetName();
+          name(re) = "";
+          TString fullname = (hDHists.at(i))[j]->GetName();
+          fullname += "_";
+          c->SaveAs(Form("plots/%s/%s.pdf",name.Data(),fullname.Append(outputname).Data()));
+          c->SaveAs(Form("plots/%s/%s.pdf",outputname.Data(),fullname.Data()));
           delete c;
           delete hempty;
         }
@@ -76,7 +92,8 @@ void djtana_plothist(TString inputhistname, TString outputname,
       TCanvas* c = new TCanvas("c","",600,600);
       hCorr[i]->SetMaximum(1500);
       hCorr[i]->Draw("surf1 fb same");
-      c->SaveAs(Form("plots/Correlation_pt_%d_%s.pdf",i,outputname.Data()));
+      c->SaveAs(Form("plots/Correlation/Correlation_pt_%d_%s.pdf",i,outputname.Data()));
+      c->SaveAs(Form("plots/%s/Correlation_pt_%d.pdf",outputname.Data(),i));
       delete c;
     } 
 }

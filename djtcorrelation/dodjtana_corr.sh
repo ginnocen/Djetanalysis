@@ -109,6 +109,17 @@ done
 
 ##
 
+PLOTFOLDERS=("hDEta" "hDPhi" "hDdelEta" "hDdelPhi" "hJetEta" "hJetPhi" "Correlation")
+cd plots
+for i in ${PLOTFOLDERS[@]}
+do
+    if [[ ! -d $i ]]
+    then
+    mkdir -p $i
+    fi
+done
+cd ..
+
 # djtana_savetpl_corr.C + djtana_savehist.C #
 g++ djtana_savetpl_corr.C $(root-config --cflags --libs) -g -o djtana_savetpl_corr.exe || return 1;
 g++ djtana_plothist.C $(root-config --cflags --libs) -g -o djtana_plothist.exe || return 1;
@@ -122,6 +133,12 @@ do
             if [[ k -eq 0 || ${ISMC[i]} -eq 1 ]] # only RecoD_RecoJet will run for data
             then
                 tPOSTFIX=Djet_$(produce_postfix $i $j $k)
+                cd plots
+                if [[ ! -d $tPOSTFIX ]]
+                then
+                    mkdir -p $tPOSTFIX
+                fi
+                cd ..
                 if [[ $DO_SAVETPL -eq 1 ]]
                 then
                     echo -e "-- Processing ${FUNCOLOR}djtana_savetpl_corr.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
