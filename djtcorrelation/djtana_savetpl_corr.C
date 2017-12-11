@@ -12,7 +12,7 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
 
   Int_t ispp = collisionsyst=="pp"?1:0;
 
-  djet djt(inputname, ispp);
+  djet djt(inputname, ispp, isMC);
   djt.setjetcut(jetptmin, jetetamin, jetetamax);
   djt.setGcut(cutval_Dy);
   initcutval(collisionsyst);
@@ -67,6 +67,7 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
               hDdelPhi[ibinpt]->Fill(deltaphi);
               hDdelEta[ibinpt]->Fill(deltaeta);
               hCorr[ibinpt]->Fill(deltaeta,deltaphi);
+              
               /*
               for(int l=0;l<nRefBins;l++)
                 {
