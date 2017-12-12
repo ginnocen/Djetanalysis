@@ -72,7 +72,7 @@ void djtclosure_compjes(std::vector<TString> inputhistwojes, std::vector<TString
           hempty[n]->Draw();
           xjjroot::drawbox(vxBins[k].front(), 0.9, vxBins[k].back(), 1.1);
           xjjroot::drawline(vxBins[k].front(), 1.0, vxBins[k].back(), 1.0, kGray+2, 2, 3);
-          leg[n] = new TLegend(0.50, 0.88-(nPtBins*2)*0.06, 0.90, 0.88);
+          leg[n] = new TLegend(0.48, 0.88-(nPtBins*2)*0.06, 0.75, 0.88);
           xjjroot::setleg(leg[n]);
         }
       for(int m=0;m<nCases;m++)
