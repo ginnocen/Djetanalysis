@@ -107,22 +107,25 @@ do
     fi
 done
 
-##
-
 PLOTFOLDERS=("hDEta" "hDPhi" "hDdelEta" "hDdelPhi" "hJetEta" "hJetPhi" "Correlation")
 cd plots
-for i in ${PLOTFOLDERS[@]}
+for j in ${PLOTFOLDERS[@]}
 do
-    if [[ ! -d $i ]]
+    if [[ ! -d $j ]]
     then
-    mkdir -p $i
+        mkdir -p $j
     fi
 done
 cd ..
 
+
+##
+
 # djtana_savetpl_corr.C + djtana_savehist.C #
 g++ djtana_savetpl_corr.C $(root-config --cflags --libs) -g -o djtana_savetpl_corr.exe || return 1;
 g++ djtana_plothist.C $(root-config --cflags --libs) -g -o djtana_plothist.exe || return 1;
+g++ djtana_tree.C $(root-config --cflags --libs) -g -o djtana_tree.exe || return 1;
+
 
 for i in ${iCOL[@]}
 do
@@ -130,38 +133,47 @@ do
     do
         for k in ${kRECOGEN[@]}
         do
-            if [[ k -eq 0 || ${ISMC[i]} -eq 1 ]] # only RecoD_RecoJet will run for data
-            then
-                tPOSTFIX=Djet_$(produce_postfix $i $j $k)
-                cd plots
-                if [[ ! -d $tPOSTFIX ]]
+                if [[ k -eq 0 || ${ISMC[i]} -eq 1 ]] # only RecoD_RecoJet will run for data
                 then
-                    mkdir -p $tPOSTFIX
+                    tPOSTFIX=Djet_$(produce_postfix $i $j $k)
+                    cd plots
+                    if [[ ! -d ${tPOSTFIX} ]]
+                    then
+                        mkdir -p ${tPOSTFIX}
+                    fi
+                    cd ..
+                    if [[ $DO_SAVETPL -eq 1 ]]
+                    then
+                        echo -e "-- Processing ${FUNCOLOR}djtana_savetpl_corr.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
+                        ./djtana_savetpl_corr.exe "${INPUTDANAME[i]}" "rootfiles/masstpl_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} &
+                        echo
+                    fi
+                    if [[ $DO_PLOTHIST -eq 1 ]]
+                    then
+                        echo -e "-- Processing ${FUNCOLOR}djtana_plothist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
+                        ./djtana_plothist.exe "rootfiles/masstpl_${tPOSTFIX}" "${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} &
+                        echo
+                    fi 
+                    if [[ $DO_USEHIST -eq 1 && l -eq 0 ]]
+                    then
+                        echo -e "-- Processing ${FUNCOLOR}djtana_tree.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
+                        ./djtana_tree.exe "${INPUTDANAME[i]}" "${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} &
+                    fi
                 fi
-                cd ..
-                if [[ $DO_SAVETPL -eq 1 ]]
-                then
-                    echo -e "-- Processing ${FUNCOLOR}djtana_savetpl_corr.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
-                    ./djtana_savetpl_corr.exe "${INPUTDANAME[i]}" "rootfiles/masstpl_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} &
-                    echo
-                fi
-                if [[ $DO_SAVEHIST -eq 1 ]]
-                then
-                    echo -e "-- Processing ${FUNCOLOR}djtana_savehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
-                    ./djtana_savehist.exe "${INPUTDANAME[i]}" "rootfiles/hist_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} "${HLTOPT}" &
-                    echo
-                fi
-                if [[ $DO_PLOTHIST -eq 1 ]]
-                then
-                    echo -e "-- Processing ${FUNCOLOR}djtana_plothist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
-                    ./djtana_plothist.exe "rootfiles/masstpl_${tPOSTFIX}" "${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} &
-                    echo
-                fi
-            fi
         done
     done
 done
 
 wait
-rm djtana_savetpl_corr.exe
-rm djtana_plothist.exe
+if [[ $DO_PLOTHIST -eq 1 ]]
+then
+    rm djtana_plothist.exe
+fi
+if [[ $DO_SAVETPL -eq 1 ]]
+then
+    rm djtana_savetpl_corr.exe
+fi
+if [[ $DO_USEHIST -eq 1 ]]
+then
+    rm djtana_tree.exe
+fi

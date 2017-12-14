@@ -2,8 +2,7 @@
 
 void djtana_savetpl_corr(TString inputname, TString outputname, 
                     TString collisionsyst, Int_t isMC, Int_t irecogen,
-                    Float_t jetptmin, Float_t jetetamin, Float_t jetetamax, 
-                    Int_t maxevt=-1)
+                    Float_t jetptmin, Float_t jetetamin, Float_t jetetamax, Int_t maxevt=-1)
 {
   int arguerr(TString collisionsyst, Int_t irecogen);
   if(arguerr(collisionsyst, irecogen)) return;
@@ -19,7 +18,7 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
 
   int64_t nentries = djt.fChain->GetEntriesFast();
   int rnentries = (maxevt>0&&maxevt<=nentries)?maxevt:nentries;
-  //int rnentries = 50000;
+  //int rnentries = 500000;
   int ncountjet = 0;
   for(int i=0;i<rnentries;i++)
     {
@@ -58,7 +57,7 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
               if(result_initcutval) return;
               djt.settrkcut(cutval_trkPt, cutval_trkEta, cutval_trkPtErr);
               djt.setDcut(cutval_Dsvpv, cutval_Dalpha, cutval_Dchi2cl, cutval_Dy);                  
-              Int_t djtDsel = djt.isDselected_hp(jd, djt.aDopt[irecogen], true);
+              Int_t djtDsel = djt.isDselected(jd, djt.aDopt[irecogen]);
               if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
               if(!djtDsel) continue;
 

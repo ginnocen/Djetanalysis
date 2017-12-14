@@ -77,7 +77,7 @@ int createhists(Option_t* option)
       hNjets = new TH1F("hNjets", "", 1, 0, 1); // ... is it necessary
       for(int i=0;i<nPtBins;i++)
         {
-          hDPhi[i]=new TH1F(Form("hDPhi_pt_%d",i),";#phi;",50,0.,TMath::Pi());
+          hDPhi[i]=new TH1F(Form("hDPhi_pt_%d",i),";#phi;",50,-TMath::Pi(),TMath::Pi());
           hDEta[i]=new TH1F(Form("hDEta_pt_%d",i),";#eta;",50,-2.,2.);
           hDdelPhi[i]=new TH1F(Form("hDdelPhi_pt_%d",i),";#Delta#phi;",50,0.,TMath::Pi());
           hDdelEta[i]=new TH1F(Form("hDdelEta_pt_%d",i),";#Delta#eta;",50,-4.,4.);

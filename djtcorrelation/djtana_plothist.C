@@ -1,6 +1,7 @@
 #include "djtana.h"
 #include "TString.h"
 #include "TRegexp.h"
+#include "../includes/djet.h"
 
 void djtana_plothist(TString inputhistname, TString outputname,
                      TString collisionsyst, Int_t isMC,
@@ -10,6 +11,7 @@ void djtana_plothist(TString inputhistname, TString outputname,
   int arguerr(TString collisionsyst, Int_t isMC, Int_t plotref);
   if(arguerr(collisionsyst, isMC, plotref)) return;
   xjjroot::setgstyle();
+  
 
   TFile* infhist = new TFile(Form("%s.root",inputhistname.Data()));
   if(infhist->IsZombie()) return;
@@ -34,7 +36,7 @@ void djtana_plothist(TString inputhistname, TString outputname,
   std::vector<Float_t>             jetmaxes      =  {(Float_t)TMath::Pi(),   2.};
   std::vector<TString>             jettitle      =  {"#phi",                 "#eta"};
   std::vector<TH1F**>              hDHists       =  {(TH1F**)hDPhi,          (TH1F**)hDEta,                   (TH1F**)hDdelPhi,         (TH1F**)hDdelEta};   
-  std::vector<Float_t>             Dmins         =  {0.,                     -2.,                             0.,                       -4.};
+  std::vector<Float_t>             Dmins         =  {-(Float_t)TMath::Pi(),                     -2.,                             0.,                       -4.};
   std::vector<Float_t>             Dmaxes        =  {(Float_t)TMath::Pi(),   2.,                              (Float_t)TMath::Pi(),     4.};   
   std::vector<TString>             Dtitle        =  {"#phi",                 "#eta",                          "#Delta#phi",             "#Delta#eta"};                         
   std::vector<TString>             xtitle        =  {"#DeltaR",              "z = p_{T}^{D} / p_{T}^{jet}"};
