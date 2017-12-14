@@ -922,14 +922,16 @@ int djet::isDselected(int j, Option_t* option)
          ((*DsvpvDistance)[j]/(*DsvpvDisErr)[j]) > cut_Dsvpv &&
          (*Dalpha)[j] < cut_Dalpha &&
          (*Dchi2cl)[j] >cut_Dchi2cl &&
-         TMath::Abs((*Dy)[j]) < cut_Dy) return 1;
+         TMath::Abs((*Dy)[j]) < cut_Dy
+         ) return 1;
       else return 0;
     }
   if(opt.Contains("g"))
     {
       if(!fsetGcut) _KERROR_SETCUT(G, D);
       if(((*GisSignal)[j]==1 || (*GisSignal)[j]==2) &&
-         TMath::Abs((*Gy)[j]) < cut_Gy) return 1;
+         TMath::Abs((*Gy)[j]) < cut_Gy
+         ) return 1;
       else return 0;
     }
   return -3;

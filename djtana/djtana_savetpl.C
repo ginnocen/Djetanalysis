@@ -27,6 +27,9 @@ void djtana_savetpl(TString inputname, TString outputname,
       djt.fChain->GetEntry(i);
       //
       // to add event selection ...
+
+      Float_t evtweight = 1;
+      // Float_t evtweight = djt.pthatweight;
       
       for(int jj=0;jj<*(djt.anjet[irecogen]);jj++)
         {
@@ -64,20 +67,20 @@ void djtana_savetpl(TString inputname, TString outputname,
                   if(!djtDsel) continue;
                   if((*djt.Dgen)[jd]==23333) 
                     {
-                      ahHistoRMassSignal[l][ibinpt][ibindr]->Fill((*djt.Dmass)[jd]);
-                      ahNumREfficiency[l][ibinpt]->Fill(deltaR[l]);
+                      ahHistoRMassSignal[l][ibinpt][ibindr]->Fill((*djt.Dmass)[jd], evtweight);
+                      ahNumREfficiency[l][ibinpt]->Fill(deltaR[l], evtweight);
                     }
-                  if((*djt.Dgen)[jd]==23344) ahHistoRMassSwapped[l][ibinpt][ibindr]->Fill((*djt.Dmass)[jd]);
+                  if((*djt.Dgen)[jd]==23344) ahHistoRMassSwapped[l][ibinpt][ibindr]->Fill((*djt.Dmass)[jd], evtweight);
 
                   if(deltaR[l]>0.3) continue; // ... to discuss
                   Int_t ibinz = xjjc::findibin(&zBins, zvariable);
                   if(ibinz<0) continue;
                   if((*djt.Dgen)[jd]==23333) 
                     {
-                      ahHistoZMassSignal[l][ibinpt][ibinz]->Fill((*djt.Dmass)[jd]);
-                      ahNumZEfficiency[l][ibinpt]->Fill(zvariable);
+                      ahHistoZMassSignal[l][ibinpt][ibinz]->Fill((*djt.Dmass)[jd], evtweight);
+                      ahNumZEfficiency[l][ibinpt]->Fill(zvariable, evtweight);
                     }
-                  if((*djt.Dgen)[jd]==23344) ahHistoZMassSwapped[l][ibinpt][ibinz]->Fill((*djt.Dmass)[jd]);
+                  if((*djt.Dgen)[jd]==23344) ahHistoZMassSwapped[l][ibinpt][ibinz]->Fill((*djt.Dmass)[jd], evtweight);
                 }
             }
           // gen
@@ -100,10 +103,10 @@ void djtana_savetpl(TString inputname, TString outputname,
                   Int_t djtDsel = djt.isDselected(jd, djt.aDopt[irecogen+1]);
                   if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
                   if(!djtDsel) continue;
-                  ahDenREfficiency[l][ibinpt]->Fill(deltaR[l]);
+                  ahDenREfficiency[l][ibinpt]->Fill(deltaR[l], evtweight);
                   
                   if(deltaR[l]>0.3) continue; // ... to discuss
-                  ahDenZEfficiency[l][ibinpt]->Fill(zvariable);
+                  ahDenZEfficiency[l][ibinpt]->Fill(zvariable, evtweight);
                 }
             }
         }

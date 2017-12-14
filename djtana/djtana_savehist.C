@@ -38,6 +38,9 @@ void djtana_savehist(TString inputname, TString outputname,
       Int_t ibincent = ispp?0:xjjc::findibin(&centBins, (float)(djt.hiBin/2.));
       if(ibincent<0) {std::cout<<"wrong ibincent"<<std::endl; return;}
 
+      Float_t evtweight = 1;
+      // Float_t evtweight = isMC?djt.pthatweight:1.;
+
       // loop jets
       for(int jj=0;jj<*(djt.anjet[irecogen]);jj++)
         {
@@ -104,12 +107,12 @@ void djtana_savehist(TString inputname, TString outputname,
                   if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
                   if(!djtDsel) continue;
                   Float_t Dmass = irecogen%2==0?(*djt.Dmass)[jd]:DZERO_MASS;
-                  ahHistoRMass[l][ibinpt][ibindr]->Fill(Dmass);
+                  ahHistoRMass[l][ibinpt][ibindr]->Fill(Dmass, evtweight);
 
                   if(deltaR[l]>0.3) continue; // ... to discuss
                   Int_t ibinz = xjjc::findibin(&zBins, zvariable);
                   if(ibinz<0) continue;
-                  ahHistoZMass[l][ibinpt][ibinz]->Fill(Dmass);
+                  ahHistoZMass[l][ibinpt][ibinz]->Fill(Dmass, evtweight);
                 }
             }
         }

@@ -29,6 +29,8 @@ void jetreso_savehist(TString inputname, TString outputname, TString collisionsy
       for(int jj=0;jj<djt.njet_akpu3pf;jj++)
         {
           if((*djt.subid_akpu3pf)[jj]!=0) continue;
+          // if(TMath::Abs((*djt.gjetflavor_akpu3pf)[jj])!=4) continue;
+
           Int_t ibineta = xjjc::findibin(&jtetaBins, (*djt.gjeteta_akpu3pf)[jj]);
           if(ibineta<0) continue;
           Int_t ibinpt = xjjc::findibin(&jtptBins, (*djt.gjetpt_akpu3pf)[jj]);
