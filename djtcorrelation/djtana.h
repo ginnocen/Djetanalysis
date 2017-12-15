@@ -64,7 +64,10 @@ TH1F* hDEta[nPtBins];
 TH1F* hDdelPhi[nPtBins];
 TH1F* hDdelEta[nPtBins];
 TH2F* hCorr[nPtBins];
-
+TH2F* hDphivsDtrk1hit[nPtBins];
+TH2F* hDphivsDtrk2hit[nPtBins];
+TH2F* hDphivsDtrk1algo[nPtBins];
+TH2F* hDphivsDtrk2algo[nPtBins];
 //
 int createhists(Option_t* option)
 {
@@ -82,6 +85,10 @@ int createhists(Option_t* option)
           hDdelPhi[i]=new TH1F(Form("hDdelPhi_pt_%d",i),";#Delta#phi;",50,0.,TMath::Pi());
           hDdelEta[i]=new TH1F(Form("hDdelEta_pt_%d",i),";#Delta#eta;",50,-4.,4.);
           hCorr[i]=new TH2F(Form("hCorr_pt_%d",i),";#Delta#eta;#Delta#phi;",50,-4.,4.,50,0.,TMath::Pi());
+          hDphivsDtrk1hit[i]=new TH2F(Form("hDphivsDtrk1hit_pt_%d",i),";#phi;Dtrk1PixelHit",50,-TMath::Pi(),TMath::Pi(),50,0.,50.);
+          hDphivsDtrk2hit[i]=new TH2F(Form("hDphivsDtrk2hit_pt_%d",i),";#phi;Dtrk2PixelHit",50,-TMath::Pi(),TMath::Pi(),50,0.,50.);
+          hDphivsDtrk1algo[i]=new TH2F(Form("hDphivsDtrk1algo_pt_%d",i),";#phi;Dtrk1Algo",50,-TMath::Pi(),TMath::Pi(),50,0.,50.);
+          hDphivsDtrk2algo[i]=new TH2F(Form("hDphivsDtrk2algo_pt_%d",i),";#phi;Dtrk2Algo",50,-TMath::Pi(),TMath::Pi(),50,0.,50.);
           for(int l=0;l<nRefBins;l++)
             {
               ahREfficiency[l][i] = new TH1F(Form("hREfficiency_%s_pt_%d",tRef[l].Data(),i), ";#DeltaR;", nDrBins, drBins);
@@ -170,6 +177,10 @@ int writehists(Option_t* option)
           hDdelPhi[i]->Write();
           hDdelEta[i]->Write();
           hCorr[i]->Write();
+          hDphivsDtrk1hit[i]->Write();
+          hDphivsDtrk2hit[i]->Write();
+          hDphivsDtrk1algo[i]->Write();
+          hDphivsDtrk2algo[i]->Write();
           for(int l=0;l<nRefBins;l++)
             {
               ahREfficiency[l][i]->Write();
@@ -296,6 +307,10 @@ int gethists(TFile* inf, Option_t* option)
           hDdelPhi[i] = (TH1F*)inf->Get(Form("hDdelPhi_pt_%d",i));
           hDdelEta[i] = (TH1F*)inf->Get(Form("hDdelEta_pt_%d",i));
           hCorr[i] = (TH2F*)inf->Get(Form("hCorr_pt_%d",i));
+          hDphivsDtrk1hit[i] = (TH2F*)inf->Get(Form("hDphivsDtrk1hit_pt_%d",i));
+          hDphivsDtrk2hit[i] = (TH2F*)inf->Get(Form("hDphivsDtrk2hit_pt_%d",i));
+          hDphivsDtrk1algo[i] = (TH2F*)inf->Get(Form("hDphivsDtrk1algo_pt_%d",i));
+          hDphivsDtrk2algo[i] = (TH2F*)inf->Get(Form("hDphivsDtrk2algo_pt_%d",i));
           for(int l=0;l<nRefBins;l++)
             {
               ahSignalRnorm[l][i] = (TH1F*)inf->Get(Form("hSignalRnorm_%s_pt_%d",tRef[l].Data(),i));

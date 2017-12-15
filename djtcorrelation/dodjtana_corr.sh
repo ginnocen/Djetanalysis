@@ -107,7 +107,7 @@ do
     fi
 done
 
-PLOTFOLDERS=("hDEta" "hDPhi" "hDdelEta" "hDdelPhi" "hJetEta" "hJetPhi" "Correlation")
+PLOTFOLDERS=("hDEta" "hDPhi" "hDdelEta" "hDdelPhi" "hJetEta" "hJetPhi" "hCorr" "hDphivsDtrk1hit" "hDphivsDtrk2hit" "hDphivsDtrk1algo" "hDphivsDtrk2algo")
 cd plots
 for j in ${PLOTFOLDERS[@]}
 do

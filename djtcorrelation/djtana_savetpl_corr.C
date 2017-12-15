@@ -61,6 +61,10 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
               if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
               if(!djtDsel) continue;
 
+              hDphivsDtrk1hit[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk1PixelHit)[jd]);
+              hDphivsDtrk2hit[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk2PixelHit)[jd]);
+              hDphivsDtrk1algo[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk1Algo)[jd]);
+              hDphivsDtrk2algo[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk2Algo)[jd]);
               hDPhi[ibinpt]->Fill((**djt.aDphi[irecogen])[jd]);
               hDEta[ibinpt]->Fill((**djt.aDeta[irecogen])[jd]);
               hDdelPhi[ibinpt]->Fill(deltaphi);

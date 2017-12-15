@@ -6,7 +6,7 @@
 void djtana_pptrkhit()
 {
     xjjroot::setgstyle();
-    std::string gentype[5] = {"data_RecoD_RecoJet","MC_RecoD_RecoJet","MC_RecoD_GenJet","MC_GenD_RecoJet","MC_GenD_GenJet"};
+    std::string gentype[5] = {"data_RecoD_RecoJet","MC_RecoD_RecoJet","MC_GenD_RecoJet","MC_RecoD_GenJet","MC_GenD_GenJet"};
     Color_t gencols[5] = {kBlack,kRed,kBlue,kGreen,kOrange};
     Style_t genstyl[5] = {21,22,23,21,22};
     Int_t ispp = 1;
@@ -37,7 +37,8 @@ void djtana_pptrkhit()
             int64_t nentries = djt->fChain->GetEntriesFast();
             //int64_t nentries = 500000;
             TH1F* phis[5];
-            for(int k=0;k<5;k++) phis[k] = new TH1F(Form("%d",k),"",50,-TMath::Pi(),TMath::Pi());
+            for(int k=0;k<1;k++) phis[k] = new TH1F(Form("%d",k),"",50,-TMath::Pi(),TMath::Pi());
+            int highptcount = 0;
             for(int64_t m=0;m<nentries;m++)
             {
                 if(m%10000==0) std::cout << m << std::endl;
@@ -56,22 +57,31 @@ void djtana_pptrkhit()
                     for(int jd=0;jd<*(djt->anD[j]);jd++)
                     {
                         Int_t ibinpt = xjjc::findibin(&ptBins, (**djt->aDpt[j])[jd]);
-                        if(ibinpt<0) continue;
+                        if(ibinpt<0) 
+                        {
+                            if((**djt->aDpt[j])[jd] > 999.) 
+                            {
+                                highptcount++;
+                                std::cout << "bad pt: " << (**djt->aDpt[j])[jd] << std::endl;
+                            }
+                            continue;
+                        }
                         Int_t result_initcutval = initcutval_bindep_flat("pp",ibinpt);
                         if(result_initcutval)
                         {
-                            std::cout << "bad initcutval " << result_initcutval << "ibinpt: " << ibinpt << std::endl;
+                            //std::cout << "bad initcutval " << result_initcutval << "ibinpt: " << ibinpt << std::endl;
                             continue;
                         }
                         djt->settrkcut(cutval_trkPt, cutval_trkEta, cutval_trkPtErr);
                         djt->setDcut(cutval_Dsvpv, cutval_Dalpha, cutval_Dchi2cl, cutval_Dy);                  
                         Int_t djtDsel = djt->isDselected(jd, djt->aDopt[j]);
                         if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
-                        for(int k=0;k<5;k++) if(djtDsel && (*djt->Dtrk1PixelHit)[jd] >= k) phis[k]->Fill((**djt->aDphi[j])[jd]);
+                        for(int k=0;k<1;k++) if(djtDsel && (*djt->Dtrk1PixelHit)[jd] >= k) phis[k]->Fill((**djt->aDphi[j])[jd]);
                     }
                 }   
-            }            
-            for(int k=0;k<5;k++)
+            }
+            std::cout << "Highptcount = " << highptcount << std::endl;            
+            for(int k=0;k<1;k++)
             {
                 xjjroot::setthgrstyle(phis[k],gencols[k],genstyl[k],1.2,gencols[k],1,1,-1,-1,-1);
                 phis[k]->Sumw2();
@@ -88,7 +98,7 @@ void djtana_pptrkhit()
             std::cout << "saved" << std::endl;
             delete leg;
             delete c;
-            for(int k=0;k<5;k++) delete phis[k];
+            for(int k=0;k<1;k++) delete phis[k];
         }
         delete hempty;
         delete djt;

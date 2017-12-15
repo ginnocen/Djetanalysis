@@ -36,13 +36,14 @@ void djtana_plothist(TString inputhistname, TString outputname,
   std::vector<Float_t>             jetmaxes      =  {(Float_t)TMath::Pi(),   2.};
   std::vector<TString>             jettitle      =  {"#phi",                 "#eta"};
   std::vector<TH1F**>              hDHists       =  {(TH1F**)hDPhi,          (TH1F**)hDEta,                   (TH1F**)hDdelPhi,         (TH1F**)hDdelEta};   
-  std::vector<Float_t>             Dmins         =  {-(Float_t)TMath::Pi(),                     -2.,                             0.,                       -4.};
+  std::vector<Float_t>             Dmins         =  {-(Float_t)TMath::Pi(),  -2.,                             0.,                       -4.};
   std::vector<Float_t>             Dmaxes        =  {(Float_t)TMath::Pi(),   2.,                              (Float_t)TMath::Pi(),     4.};   
   std::vector<TString>             Dtitle        =  {"#phi",                 "#eta",                          "#Delta#phi",             "#Delta#eta"};                         
   std::vector<TString>             xtitle        =  {"#DeltaR",              "z = p_{T}^{D} / p_{T}^{jet}"};
   std::vector<TString>             ytitle        =  {"#rho(#DeltaR)",        "#rho(z)"};
   std::vector<TString>             tname         =  {"dr",                   "z"};
   std::vector<std::vector<float>>  vxBins        =  {vdrBins,                vzBins};
+  std::vector<TH2F**>              h2DHists      =  {hCorr,                  hDphivsDtrk1hit,                 hDphivsDtrk2hit,          hDphivsDtrk1algo,         hDphivsDtrk2algo}; 
 
   // plot
 
@@ -61,9 +62,9 @@ void djtana_plothist(TString inputhistname, TString outputname,
       TString fullname = hJetHists[i]->GetName();
       fullname += "_";
       // Saves twice for easy comparison; this one compares the same histogram in different datasets
-      c->SaveAs(Form("plots/%s/%s.pdf",name.Data(),fullname.Append(outputname).Data()));
+      c->SaveAs(Form("plots/%s/%s.png",name.Data(),fullname.Append(outputname).Data()));
       // And this one compares different histograms in the same dataset
-      c->SaveAs(Form("plots/%s/%s.pdf",outputname.Data(),fullname.Data()));
+      c->SaveAs(Form("plots/%s/%s.png",outputname.Data(),fullname.Data()));
       delete c;
       delete hempty;
     }
@@ -83,21 +84,30 @@ void djtana_plothist(TString inputhistname, TString outputname,
           name(re) = "";
           TString fullname = (hDHists.at(i))[j]->GetName();
           fullname += "_";
-          c->SaveAs(Form("plots/%s/%s.pdf",name.Data(),fullname.Append(outputname).Data()));
-          c->SaveAs(Form("plots/%s/%s.pdf",outputname.Data(),fullname.Data()));
+          c->SaveAs(Form("plots/%s/%s.png",name.Data(),fullname.Append(outputname).Data()));
+          c->SaveAs(Form("plots/%s/%s.png",outputname.Data(),fullname.Data()));
           delete c;
           delete hempty;
         }
     }
-  for(int i=0;i<nPtBins;i++)
-    {
-      TCanvas* c = new TCanvas("c","",600,600);
-      hCorr[i]->SetMaximum(1500);
-      hCorr[i]->Draw("surf1 fb same");
-      c->SaveAs(Form("plots/Correlation/Correlation_pt_%d_%s.pdf",i,outputname.Data()));
-      c->SaveAs(Form("plots/%s/Correlation_pt_%d.pdf",outputname.Data(),i));
-      delete c;
-    } 
+    for(int i=0;i<5;i++)
+    { 
+        for(int j=0;j<nPtBins;j++)
+        {
+            TCanvas* c = new TCanvas("c","",600,600);
+            c->SetRightMargin(0.13);
+            (h2DHists.at(i))[j]->GetYaxis()->SetRangeUser(0.,20.);
+            (h2DHists.at(i))[j]->Draw("colz same");
+            TRegexp re("_pt_.");
+            TString name = (h2DHists.at(i))[j]->GetName();
+            name(re) = "";
+            TString fullname = (h2DHists.at(i))[j]->GetName();
+            fullname += "_";
+            c->SaveAs(Form("plots/%s/%s.png",name.Data(),fullname.Append(outputname).Data()));
+          c->SaveAs(Form("plots/%s/%s.png",outputname.Data(),fullname.Data()));
+            delete c;
+        } 
+    }
 }
 
 int main(int argc, char* argv[])
