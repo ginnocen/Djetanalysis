@@ -96,7 +96,7 @@ void djtana_plothist(TString inputhistname, TString outputname,
         {
             TCanvas* c = new TCanvas("c","",600,600);
             c->SetRightMargin(0.13);
-            (h2DHists.at(i))[j]->GetYaxis()->SetRangeUser(0.,20.);
+            (h2DHists.at(i))[j]->GetYaxis()->SetRangeUser(0.,50.);
             (h2DHists.at(i))[j]->Draw("colz same");
             TRegexp re("_pt_.");
             TString name = (h2DHists.at(i))[j]->GetName();

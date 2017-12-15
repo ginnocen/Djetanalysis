@@ -8,18 +8,19 @@ void djtana_datamc()
     xjjroot::setgstyle();
     cout << "start" << endl;
     std::string collsyst[2] = {"pp", "PbPb"};
-    std::string gentype[5] = {"data_RecoD_RecoJet","MC_RecoD_RecoJet","MC_RecoD_GenJet","MC_GenD_RecoJet","MC_GenD_GenJet"};
-    Color_t gencols[5] = {kBlack,kRed,kBlue,kGreen,kOrange};
-    Style_t genstyl[5] = {20,21,22,23,24};
-    TH1F* phis[5];
-    TFile* f[5];
+    std::string gentype[2] = {"data_RecoD_RecoJet","MC_RecoD_RecoJet"};//,"MC_RecoD_GenJet","MC_GenD_RecoJet","MC_GenD_GenJet"};
+    Color_t gencols[2] = {kBlack,kRed};//,kBlue,kGreen,kOrange};
+    Style_t genstyl[2] = {20,21};//,22,23,24};
+    TH1F* phis[2];
+    TH1F* phiratio;
+    TFile* f[2];
     for(int i=0;i<2;i++)
     {
         for(int k=0;k<2;k++)
         {
             cout << i << endl;
             TLegend *leg = new TLegend(0.3,0.4,0.5,0.6);
-            for(int j=0;j<5;j++)
+            for(int j=0;j<2;j++)
             {
                 cout << j << endl;
                 f[j] = new TFile(Form("rootfiles/masstpl_Djet_%s_%s_jetpt_40p0_jeteta_0p0_2p0_noHLT.root",collsyst[i].c_str(),gentype[j].c_str()));
@@ -32,12 +33,18 @@ void djtana_datamc()
                 phis[j]->Sumw2();
                 phis[j]->Scale(1./phis[j]->Integral("w"));
             }
-            TCanvas *c = new TCanvas("c","",1000,1000);
+            phiratio = (TH1F*)phis[0]->Clone();
+            phiratio->Divide(phis[1]);
+            TCanvas *c = new TCanvas("c","",600,600);
+            TPad *p = new TPad("plot","",0.,0.3,1.,1.);
+            p->SetMargin(xjjroot::margin_pad_left,xjjroot::margin_pad_right,0,xjjroot::margin_pad_top);
+            p->Draw();
+            p->cd();
             TH2F* hempty = new TH2F("hempty",Form("D #phi for %s, pt_%d;#phi;",collsyst[i].c_str(),k),1,-TMath::Pi(),TMath::Pi(),1,0.,.025);
             xjjroot::sethempty(hempty,0,0.5);
             hempty->Draw();
             xjjroot::drawCMS(collsyst[i]);
-            for(int j=0;j<5;j++)
+            for(int j=0;j<2;j++)
             {
                 xjjroot::setthgrstyle(phis[j],gencols[j],genstyl[j],1.2,gencols[j],1,1,-1,-1,-1);
                 if(j!=4)phis[j]->DrawClone("pe same");
@@ -46,7 +53,27 @@ void djtana_datamc()
             }
             xjjroot::setleg(leg);
             leg->Draw();
+            c->cd();
+            TPad* pratio = new TPad("ratio","",0.,0.,1.,0.3);
+            pratio->SetMargin(xjjroot::margin_pad_left,xjjroot::margin_pad_right,xjjroot::margin_pad_top,0);
+            pratio->Draw();
+            pratio->cd();
+            TH2F* hempty2 = new TH2F("hempty2",";#phi;data/MC",1,-TMath::Pi(),TMath::Pi(),1,0.8,1.2);
+            xjjroot::sethempty(hempty2,0,0.5);
+            hempty2->GetXaxis()->SetTitleSize(hempty2->GetXaxis()->GetTitleSize() * 1./0.3);
+            hempty2->GetYaxis()->SetTitleSize(hempty2->GetXaxis()->GetTitleSize() * 1./0.3);
+            hempty2->GetXaxis()->SetLabelSize(hempty2->GetXaxis()->GetLabelSize() * 1./0.3);
+            hempty2->GetYaxis()->SetLabelSize(hempty2->GetYaxis()->GetLabelSize() * 1./0.3);
+            hempty2->GetXaxis()->SetTitleOffset(hempty2->GetXaxis()->GetTitleOffset() * 1./0.3);
+            hempty2->GetYaxis()->SetTitleOffset(hempty2->GetXaxis()->GetTitleOffset() * 1./0.3);
+            hempty2->GetXaxis()->SetLabelOffset(hempty2->GetXaxis()->GetLabelOffset() * 1./0.3);
+            hempty2->GetYaxis()->SetLabelOffset(hempty2->GetYaxis()->GetLabelOffset() * 1./0.3);
+            hempty2->Draw();
+            xjjroot::setthgrstyle(phiratio,kBlack,20,1.2,kBlack,1,1,-1,-1,-1);
+            phiratio->Draw();
             c->SaveAs(Form("plots/%s_mcdata_pt_%d.png",collsyst[i].c_str(),k));
+            delete p;
+            delete pratio;
             delete c;
         }
     }        
