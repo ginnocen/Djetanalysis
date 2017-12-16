@@ -101,6 +101,7 @@ int initcutval(TString collisionsyst)
     }
   int icollsyst = collsyst_list[collisionsyst];
   cutval_skim = cutval_list_skim[icollsyst];
+  return 0;
 }
 
 int initcutval_bindep(TString collisionsyst, int ipt, int idr)

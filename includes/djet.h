@@ -35,6 +35,7 @@ public:
   std::vector<float>*   jetpt_akpu3pf;
   std::vector<float>*   jeteta_akpu3pf;
   std::vector<float>*   jetphi_akpu3pf;
+  std::vector<int>*     jetnpfpart_akpu3pf;
   std::vector<float>*   gjetpt_akpu3pf;
   std::vector<float>*   gjeteta_akpu3pf;
   std::vector<float>*   gjetphi_akpu3pf;
@@ -378,6 +379,7 @@ void djet::Init(TTree *tree, TTree *hlt)
   jetpt_akpu3pf = 0;
   jeteta_akpu3pf = 0;
   jetphi_akpu3pf = 0;
+  jetnpfpart_akpu3pf = 0;
   gjetpt_akpu3pf = 0;
   gjeteta_akpu3pf = 0;
   gjetphi_akpu3pf = 0;
@@ -595,6 +597,7 @@ void djet::Init(TTree *tree, TTree *hlt)
   fChain->SetBranchAddress("jetpt_akpu3pf", &jetpt_akpu3pf);
   fChain->SetBranchAddress("jeteta_akpu3pf", &jeteta_akpu3pf);
   fChain->SetBranchAddress("jetphi_akpu3pf", &jetphi_akpu3pf);
+  fChain->SetBranchAddress("jetnpfpart_akpu3pf", &jetnpfpart_akpu3pf);
   fChain->SetBranchAddress("gjetpt_akpu3pf", &gjetpt_akpu3pf);
   fChain->SetBranchAddress("gjeteta_akpu3pf", &gjeteta_akpu3pf);
   fChain->SetBranchAddress("gjetphi_akpu3pf", &gjetphi_akpu3pf);

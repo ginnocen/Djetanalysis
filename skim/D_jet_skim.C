@@ -118,16 +118,16 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
   L2L3ResidualWFits* jet_corr = new L2L3ResidualWFits();
   jet_corr->setL2L3Residual(3, 3, false);
 
-  TF1* jetResidualFunction[4];
-  if (isHI) {
-    TFile* jetResidualFile = TFile::Open("Corrections/merged_Pythia8_Photon50_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1_0_20160801_pthat_50_RESIDUALCORR.root");
-    jetResidualFunction[3] = ((TH1F*)jetResidualFile->Get("resCorr_cent50to100_h"))->GetFunction("f1_p");
-    jetResidualFunction[2] = ((TH1F*)jetResidualFile->Get("resCorr_cent30to50_h"))->GetFunction("f1_p");
-    jetResidualFunction[1] = ((TH1F*)jetResidualFile->Get("resCorr_cent10to30_h"))->GetFunction("f1_p");
-    jetResidualFunction[0] = ((TH1F*)jetResidualFile->Get("resCorr_cent0to10_h"))->GetFunction("f1_p");
-  } else {
-    jetResidualFunction[0] = new TF1("f1_p", "(1+.5/x)", 5, 300);
-  }
+  // TF1* jetResidualFunction[4];
+  // if (isHI) {
+  //   TFile* jetResidualFile = TFile::Open("Corrections/merged_Pythia8_Photon50_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1_0_20160801_pthat_50_RESIDUALCORR.root");
+  //   jetResidualFunction[3] = ((TH1F*)jetResidualFile->Get("resCorr_cent50to100_h"))->GetFunction("f1_p");
+  //   jetResidualFunction[2] = ((TH1F*)jetResidualFile->Get("resCorr_cent30to50_h"))->GetFunction("f1_p");
+  //   jetResidualFunction[1] = ((TH1F*)jetResidualFile->Get("resCorr_cent10to30_h"))->GetFunction("f1_p");
+  //   jetResidualFunction[0] = ((TH1F*)jetResidualFile->Get("resCorr_cent0to10_h"))->GetFunction("f1_p");
+  // } else {
+  //   jetResidualFunction[0] = new TF1("f1_p", "(1+.5/x)", 5, 300);
+  // }
 
   /**********************************************************
    * BEGIN EVENT LOOP
