@@ -1,7 +1,8 @@
-#include "TRandom3.h"
+ #include "TRandom3.h"
 #include "TFile.h"
 #include "TH1.h"
 #include "TF1.h"
+#include "TMath.h"
 
 #include "D_jet_tree.h"
 #include "D_tree.h"
@@ -21,21 +22,21 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
   bool isHI = !isPP;
 
   /**********************************************************
-  * CREATE OUTPUT TREE
-  **********************************************************/
+   * CREATE OUTPUT TREE
+   **********************************************************/
   TFile* foutput = new TFile(output.c_str(), "recreate");
 
   TTree* outtree = new TTree("djt", "photon jet track tree");
   DJetTree djt(outtree);
   /**********************************************************
-  * OPEN INPUT FILES
-  **********************************************************/
+   * OPEN INPUT FILES
+   **********************************************************/
   TFile* finput = TFile::Open(input.c_str(), "read");
 
-#define _SET_BRANCH_ADDRESS(tree, branch, var) {    \
-  tree->SetBranchStatus(#branch, 1);                \
-  tree->SetBranchAddress(#branch, &var);            \
-}
+#define _SET_BRANCH_ADDRESS(tree, branch, var) {        \
+    tree->SetBranchStatus(#branch, 1);                  \
+    tree->SetBranchAddress(#branch, &var);              \
+  }
 
   TTree* event_tree = (TTree*)finput->Get("hiEvtAnalyzer/HiTree");
   if (!event_tree) { printf("Could not access event tree!\n"); return 1; }
@@ -96,27 +97,41 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
   jet_tree_akpu4pf->SetBranchStatus("*", 0);
   jetTree jt_akpu4pf(jet_tree_akpu4pf);
 
+  TTree* pfcand_tree = 0;
+  if (isPP) pfcand_tree = (TTree*)finput->Get("pfcandAnalyzer/pfTree");
+  else pfcand_tree = (TTree*)finput->Get("pfcandAnalyzerCS/pfTree");
+  if (!pfcand_tree) { printf("Could not access pfcand tree!\n"); return 1; }
+  pfcand_tree->SetBranchStatus("*", 0);
+  int nPFpart;
+  std::vector<float>* pfPt = 0;
+  std::vector<float>* pfEta = 0;
+  std::vector<float>* pfPhi = 0;
+  _SET_BRANCH_ADDRESS(pfcand_tree, nPFpart, nPFpart);
+  _SET_BRANCH_ADDRESS(pfcand_tree, pfPt, pfPt);
+  _SET_BRANCH_ADDRESS(pfcand_tree, pfEta, pfEta);
+  _SET_BRANCH_ADDRESS(pfcand_tree, pfPhi, pfPhi);
+
   /**********************************************************
-  * OPEN CORRECTION FILES
-  **********************************************************/
+   * OPEN CORRECTION FILES
+   **********************************************************/
 
   L2L3ResidualWFits* jet_corr = new L2L3ResidualWFits();
   jet_corr->setL2L3Residual(3, 3, false);
 
-  TF1* jetResidualFunction[4];
-  if (isHI) {
-    TFile* jetResidualFile = TFile::Open("Corrections/merged_Pythia8_Photon50_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1_0_20160801_pthat_50_RESIDUALCORR.root");
-    jetResidualFunction[3] = ((TH1F*)jetResidualFile->Get("resCorr_cent50to100_h"))->GetFunction("f1_p");
-    jetResidualFunction[2] = ((TH1F*)jetResidualFile->Get("resCorr_cent30to50_h"))->GetFunction("f1_p");
-    jetResidualFunction[1] = ((TH1F*)jetResidualFile->Get("resCorr_cent10to30_h"))->GetFunction("f1_p");
-    jetResidualFunction[0] = ((TH1F*)jetResidualFile->Get("resCorr_cent0to10_h"))->GetFunction("f1_p");
-  } else {
-    jetResidualFunction[0] = new TF1("f1_p", "(1+.5/x)", 5, 300);
-  }
+  // TF1* jetResidualFunction[4];
+  // if (isHI) {
+  //   TFile* jetResidualFile = TFile::Open("Corrections/merged_Pythia8_Photon50_Hydjet_MB-HINPbPbWinter16DR-75X_mcRun2_HeavyIon_forest_v1_0_20160801_pthat_50_RESIDUALCORR.root");
+  //   jetResidualFunction[3] = ((TH1F*)jetResidualFile->Get("resCorr_cent50to100_h"))->GetFunction("f1_p");
+  //   jetResidualFunction[2] = ((TH1F*)jetResidualFile->Get("resCorr_cent30to50_h"))->GetFunction("f1_p");
+  //   jetResidualFunction[1] = ((TH1F*)jetResidualFile->Get("resCorr_cent10to30_h"))->GetFunction("f1_p");
+  //   jetResidualFunction[0] = ((TH1F*)jetResidualFile->Get("resCorr_cent0to10_h"))->GetFunction("f1_p");
+  // } else {
+  //   jetResidualFunction[0] = new TF1("f1_p", "(1+.5/x)", 5, 300);
+  // }
 
   /**********************************************************
-  * BEGIN EVENT LOOP
-  **********************************************************/
+   * BEGIN EVENT LOOP
+   **********************************************************/
   int nevents = event_tree->GetEntries();
   for (int j = start; j < nevents; j++) {
     djt.clear_vectors();
@@ -160,22 +175,34 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
     }
 
     jet_tree_akpu3pf->GetEntry(j);
+    pfcand_tree->GetEntry(j);
 
     int njet_akpu3pf = 0;
     for (int ij = 0; ij < jt_akpu3pf.nref; ij++) {
-      if (jt_akpu3pf.jtpt[ij] > jetptmin && fabs(jt_akpu3pf.jteta[ij]) < 1.6) {
+      if (jt_akpu3pf.jtpt[ij] > jetptmin && fabs(jt_akpu3pf.jteta[ij]) < 2.0) {
+
         // jet energy correction
-        double xmin, xmax;
-        jetResidualFunction[centBin]->GetRange(xmin, xmax);
+        // double xmin, xmax;
+        // jetResidualFunction[centBin]->GetRange(xmin, xmax);
         float jetpt_corr = jt_akpu3pf.jtpt[ij];
-        if (jetpt_corr > xmin && jetpt_corr < xmax) {
-          jetpt_corr = jetpt_corr / jetResidualFunction[centBin]->Eval(jetpt_corr);
-        }
+        // if (jetpt_corr > xmin && jetpt_corr < xmax) {
+        //   jetpt_corr = jetpt_corr / jetResidualFunction[centBin]->Eval(jetpt_corr);
+        // }
 
-        jetpt_corr = jet_corr->get_corrected_pt(jetpt_corr, jt_akpu3pf.jteta[ij]);
-        if (jetpt_corr < 30) continue; // njet is not incremented
+        // jetpt_corr = jet_corr->get_corrected_pt(jetpt_corr, jt_akpu3pf.jteta[ij]);
+        // if (jetpt_corr < 30) continue; // njet is not incremented
 
+        int npfpart = 0;
+        for(int ip=0; ip<nPFpart; ip++)
+          {
+            if((*pfPt)[ip] < 2) continue;
+            float deltaphi = TMath::ACos(TMath::Cos((*pfPhi)[ip] - jt_akpu3pf.jtphi[ij]));
+            float deltaeta = (*pfEta)[ip] - jt_akpu3pf.jteta[ij];
+            float deltaR = TMath::Sqrt(pow(deltaphi, 2) + pow(deltaeta, 2));
+            if(deltaR < 0.3) npfpart++;
+          }
         djt.jetptCorr_akpu3pf.push_back(jetpt_corr);
+        djt.jetnpfpart_akpu3pf.push_back(npfpart);
         djt.jetpt_akpu3pf.push_back(jt_akpu3pf.jtpt[ij]);
         djt.jeteta_akpu3pf.push_back(jt_akpu3pf.jteta[ij]);
         djt.jetphi_akpu3pf.push_back(jt_akpu3pf.jtphi[ij]);
@@ -238,16 +265,16 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
 }
 
 int main(int argc, char* argv[]) {
-    if (argc == 5)
-        return D_jet_skim(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]));
-    else if (argc == 6)
-        return D_jet_skim(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), atof(argv[5]));
-    else if (argc == 7)
-        return D_jet_skim(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), atof(argv[5]), atoi(argv[6]));
-    else if (argc == 8)
-        return D_jet_skim(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), atof(argv[5]), atoi(argv[6]), atoi(argv[7]));
-    else
-        printf("Usage: ./D_jet_skim.exe [input] [output] [isPP] [isMC] [jetptmin] [start] [end]\n");
+  if (argc == 5)
+    return D_jet_skim(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]));
+  else if (argc == 6)
+    return D_jet_skim(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), atof(argv[5]));
+  else if (argc == 7)
+    return D_jet_skim(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), atof(argv[5]), atoi(argv[6]));
+  else if (argc == 8)
+    return D_jet_skim(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), atof(argv[5]), atoi(argv[6]), atoi(argv[7]));
+  else
+    printf("Usage: ./D_jet_skim.exe [input] [output] [isPP] [isMC] [jetptmin] [start] [end]\n");
 
-    return 1;
+  return 1;
 }
