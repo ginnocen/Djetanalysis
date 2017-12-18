@@ -60,9 +60,9 @@ void djtana_datamc()
             pratio->cd();
             TH2F* hempty2 = new TH2F("hempty2",";#phi;data/MC",1,-TMath::Pi(),TMath::Pi(),1,0.8,1.2);
             xjjroot::sethempty(hempty2,0,0.1);
-            hempty2->GetXaxis()->SetTitleSize(hempty2->GetXaxis()->GetTitleSize() / 0.4);
+            hempty2->GetXaxis()->SetTitleSize(hempty2->GetXaxis()->GetTitleSize() / 0.3);
             hempty2->GetYaxis()->SetTitleSize(hempty2->GetXaxis()->GetTitleSize() / 0.7);
-            hempty2->GetXaxis()->SetLabelSize(hempty2->GetXaxis()->GetLabelSize() / 0.4);
+            hempty2->GetXaxis()->SetLabelSize(hempty2->GetXaxis()->GetLabelSize() / 0.3);
             hempty2->GetYaxis()->SetLabelSize(hempty2->GetYaxis()->GetLabelSize() / 0.7);
             hempty2->GetXaxis()->SetTitleOffset(hempty2->GetXaxis()->GetTitleOffset() * 0.9);
             hempty2->GetYaxis()->SetTitleOffset(hempty2->GetXaxis()->GetTitleOffset() * 0.9);
