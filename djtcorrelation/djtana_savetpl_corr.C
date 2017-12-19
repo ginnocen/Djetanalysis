@@ -18,11 +18,11 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
 
   int64_t nentries = djt.fChain->GetEntriesFast();
   int rnentries = (maxevt>0&&maxevt<=nentries)?maxevt:nentries;
-  //int rnentries = 500000;
+  //int rnentries = 50000;
   int ncountjet = 0;
   for(int i=0;i<rnentries;i++)
     {
-      if(i%10000==0) std::cout<<std::setiosflags(std::ios::left)<<"  [ \033[1;36m"<<std::setw(10)<<i<<"\033[0m"<<" / "<<std::setw(10)<<rnentries<<" ] "<<"\033[1;36m"<<std::setw(4)<<Form("%.0f%s",100.*i/rnentries,"%")<<"\033[0m"<<"   >>   djtana_savetpl_corr("<<std::setw(5)<<Form("%s,",collisionsyst.Data())<<" "<<std::setw(5)<<Form("%s,",tMC[isMC].Data())<<" "<<std::setw(20)<<Form("%sD_%sjet)", djt.aDopt[irecogen].Data(), djt.ajetopt[irecogen].Data())<<"\r"<<std::flush;
+      if(i%10000==0) std::cout<<std::setiosflags(std::ios::left)<<"  [ \033[1;36m"<<std::setw(10)<<i<<"\033[0m"<<" / "<<std::setw(10)<<rnentries<<" ] "<<"\033[1;36m"<<std::setw(4)<<Form("%.0f%s",100.*i/rnentries,"%")<<"\033[0m"<<"   >>   djtana_savetpl_corr("<<std::setw(5)<<Form("%s,",collisionsyst.Data())<<" "<<std::setw(5)<<Form("%s,",tMC[isMC].Data())<<" "<<std::setw(20)<<Form("%sD_%sjet)", djt.aDopt[irecogen].Data(), djt.ajetopt[irecogen].Data())<<"\r"<<std::flush<<std::endl;
       //
       djt.fChain->GetEntry(i);
       //
@@ -61,10 +61,13 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
               if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
               if(!djtDsel) continue;
 
-              hDphivsDtrk1hit[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk1PixelHit)[jd]);
-              hDphivsDtrk2hit[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk2PixelHit)[jd]);
-              hDphivsDtrk1algo[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk1Algo)[jd]);
-              hDphivsDtrk2algo[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk2Algo)[jd]);
+              if(irecogen==0 || irecogen==2)
+              {
+                hDphivsDtrk1hit[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk1PixelHit)[jd]);
+                hDphivsDtrk2hit[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk2PixelHit)[jd]);
+                hDphivsDtrk1algo[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk1Algo)[jd]);
+                hDphivsDtrk2algo[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk2Algo)[jd]);
+              }
               hDPhi[ibinpt]->Fill((**djt.aDphi[irecogen])[jd]);
               hDEta[ibinpt]->Fill((**djt.aDeta[irecogen])[jd]);
               hDdelPhi[ibinpt]->Fill(deltaphi);

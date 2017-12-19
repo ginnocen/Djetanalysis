@@ -37,8 +37,7 @@ void djtana_pptrkhit()
             int64_t nentries = djt->fChain->GetEntriesFast();
             //int64_t nentries = 500000;
             TH1F* phis[5];
-            for(int k=0;k<1;k++) phis[k] = new TH1F(Form("%d",k),"",50,-TMath::Pi(),TMath::Pi());
-            int highptcount = 0;
+            for(int k=0;k<5;k++) phis[k] = new TH1F(Form("%d",k),"",50,-TMath::Pi(),TMath::Pi());
             for(int64_t m=0;m<nentries;m++)
             {
                 if(m%10000==0) std::cout << m << std::endl;
@@ -59,11 +58,6 @@ void djtana_pptrkhit()
                         Int_t ibinpt = xjjc::findibin(&ptBins, (**djt->aDpt[j])[jd]);
                         if(ibinpt<0) 
                         {
-                            if((**djt->aDpt[j])[jd] > 999.) 
-                            {
-                                highptcount++;
-                                std::cout << "bad pt: " << (**djt->aDpt[j])[jd] << std::endl;
-                            }
                             continue;
                         }
                         Int_t result_initcutval = initcutval_bindep_flat("pp",ibinpt);
@@ -76,12 +70,11 @@ void djtana_pptrkhit()
                         djt->setDcut(cutval_Dsvpv, cutval_Dalpha, cutval_Dchi2cl, cutval_Dy);                  
                         Int_t djtDsel = djt->isDselected(jd, djt->aDopt[j]);
                         if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
-                        for(int k=0;k<1;k++) if(djtDsel && (*djt->Dtrk1PixelHit)[jd] >= k) phis[k]->Fill((**djt->aDphi[j])[jd]);
+                        for(int k=0;k<5;k++) if(djtDsel && (*djt->Dtrk1PixelHit)[jd] >= k) phis[k]->Fill((**djt->aDphi[j])[jd]);
                     }
                 }   
-            }
-            std::cout << "Highptcount = " << highptcount << std::endl;            
-            for(int k=0;k<1;k++)
+            }            
+            for(int k=0;k<5;k++)
             {
                 xjjroot::setthgrstyle(phis[k],gencols[k],genstyl[k],1.2,gencols[k],1,1,-1,-1,-1);
                 phis[k]->Sumw2();
@@ -94,11 +87,11 @@ void djtana_pptrkhit()
             leg->Draw();
             std::cout << "leg" << std::endl;
             std::cout << gentype[j+1] << std::endl;
-            c->SaveAs(Form("plots/pptrkhit_%s.png",gentype[j+(isMC[i]==1)*1].c_str()));
+            c->SaveAs(Form("plots/pptrkhit_%s.pdf",gentype[j+(isMC[i]==1)*1].c_str()));
             std::cout << "saved" << std::endl;
             delete leg;
             delete c;
-            for(int k=0;k<1;k++) delete phis[k];
+            for(int k=0;k<5;k++) delete phis[k];
         }
         delete hempty;
         delete djt;

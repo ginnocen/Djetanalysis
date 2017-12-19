@@ -72,7 +72,7 @@ void djtana_datamc()
             xjjroot::setthgrstyle(phiratio,kBlack,20,1.2,kBlack,1,1,-1,-1,-1);
             phiratio->Draw("pe same");
             xjjroot::drawline(-TMath::Pi(),1.,TMath::Pi(),1.,kBlack,1,2);
-            c->SaveAs(Form("plots/%s_mcdata_pt_%d.png",collsyst[i].c_str(),k));
+            c->SaveAs(Form("plots/%s_mcdata_pt_%d.pdf",collsyst[i].c_str(),k));
             delete hempty;
             delete hempty2;
             delete p;
