@@ -4,10 +4,11 @@
 DO_SAVEHIST=${1:-0}
 DO_USEHIST=${2:-0}
 DO_PLOTHIST=${3:-0}
+DO_PLOTPAR=${4:-0}
 
-ifCorr=0
+ifCorr=1
 # Select the systems the macros run on 
-iCOL=(0)
+iCOL=(0 1)
 
 ##
 
@@ -22,7 +23,7 @@ INPUTDANAME=(
 
 # Do not touch the macros below if you don't know what they mean #
 
-[[ $DO_SAVEHIST -eq 0 && $DO_USEHIST -eq 0 && $DO_PLOTHIST -eq 0 ]] && echo "./dojetresolution.sh [DO_SAVEHIST] [DO_USEHIST] [DO_PLOTHIST]"
+[[ $DO_SAVEHIST -eq 0 && $DO_USEHIST -eq 0 && $DO_PLOTHIST -eq 0 && $DO_PLOTPAR -eq 0 ]] && echo "./dojetresolution.sh [DO_SAVEHIST] [DO_USEHIST] [DO_PLOTHIST] [DO_PLOTPAR]"
 
 #
 nCOL=${#COLSYST[@]}
@@ -112,8 +113,25 @@ then
         tPOSTFIX=Djet_reso_$(produce_postfix $i)
         echo -e "-- Processing ${FUNCOLOR}jetffscale_plothist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
         [[ ! -f "rootfiles/reso_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/reso_${tPOSTFIX}.root doesn't exist. Process jetffscale_usehist.C first."; continue; }
-        ./jetffscale_plothist.exe "rootfiles/reso_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}"
+        [[ ! -f "rootfiles/hist_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/hist_${tPOSTFIX}.root doesn't exist. Process jetffscale_savehist.C first."; continue; }
+        ./jetffscale_plothist.exe "rootfiles/reso_${tPOSTFIX}" "rootfiles/hist_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}"
         echo
     done
 fi
 rm jetffscale_plothist.exe
+
+# jetffscale_plotpar.C #
+
+g++ jetffscale_plotpar.C $(root-config --cflags --libs) -Werror -Wall -o jetffscale_plotpar.exe || return 1;
+if [[ $DO_PLOTPAR -eq 1 ]]
+then
+    for i in ${iCOL[@]}
+    do
+        tPOSTFIX=Djet_reso_$(produce_postfix $i)
+        echo -e "-- Processing ${FUNCOLOR}jetffscale_plotpar.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
+        [[ ! -f "rootfiles/scalepar_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/scalepar_${tPOSTFIX}.root doesn't exist. Process jetffscale_usehist.C first."; continue; }
+        ./jetffscale_plotpar.exe "rootfiles/scalepar_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}"
+        echo
+    done
+fi
+rm jetffscale_plotpar.exe

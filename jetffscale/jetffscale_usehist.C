@@ -44,6 +44,7 @@ void jetffscale_usehist(TString inputhistname, TString outputname,
               std::vector<TF1*>* afX1 = new std::vector<TF1*>(nJtnpfBins);
               for(int j=0;j<nJtnpfBins;j++)
                 {
+                  TString texjtnpf = Form("nPFcand = %.0f", jtnpfBins[j]);
                   c40->cd(j+1);
                   hemptyX->Draw();
                   afX->at(j) = new TF1(Form("fX%d",j), "[0]*Gaus(x,[1],[2])/(TMath::Sqrt(2*3.14159265)*[2])", xmin.at(l), xmax.at(l));
@@ -78,6 +79,7 @@ void jetffscale_usehist(TString inputhistname, TString outputname,
                   Float_t texxpos = 0.22, texypos = 0.85, texdypos = 0.06; texypos += texdypos;
                   xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), texjtpt);
                   xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), texjteta);
+                  xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), texjtnpf);
                   if(!ispp) xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), texcent);
                   texxpos = 0.65; texypos = 0.85; texdypos = 0.06; texypos += texdypos;
                   xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), Form("#mu = %.3f #pm %.3f", afX->at(j)->GetParameter(1), afX->at(j)->GetParError(1)));

@@ -11,10 +11,20 @@ void jetffscale_savehist(TString inputname, TString outputname, TString collisio
   if(createhists("savehist")) return;
   djet djt(inputname, ispp, 1);
 
-  std::vector<std::vector<Float_t>>* paramfScalePt = ispp?&paramfScalePt_pp:&paramfScalePt_PbPb;
+  std::vector<std::vector<Float_t>>* paramfP0 = ispp?&paramfP0_pp:&paramfP0_PbPb;
+  std::vector<std::vector<Float_t>>* paramfP1 = ispp?&paramfP1_pp:&paramfP1_PbPb;
 
   int64_t nentries = djt.fChain->GetEntriesFast();
   int rnentries = (maxevt>0&&maxevt<=nentries)?maxevt:nentries;
+  // std::vector<std::vector<TH2F*>> hvScalePt(nCentBins);
+  // for(int k=0;k<nCentBins;k++)
+  //   {
+  //     for(int i=0;i<nJtptBins;i++)
+  //       {
+  //         TH2F* temp = new TH2F(Form("hvScalePt_%d_%d",k,i), "", 40, 0, 40, 100, 0.7, 1.3);
+  //         hvScalePt.at(k).push_back(temp);
+  //       }
+  //   }
   for(int i=0;i<rnentries;i++)
     {
       if(i%10000==0) std::cout<<std::setiosflags(std::ios::left)<<"  [ \033[1;36m"<<std::setw(10)<<i<<"\033[0m"<<" / "<<std::setw(10)<<rnentries<<" ] "<<"\033[1;36m"<<std::setw(4)<<Form("%.0f%s",100.*i/rnentries,"%")<<"\033[0m"<<"   >>   jetffscale_savehist("<<std::setw(20)<<Form("%s)",collisionsyst.Data())<<"\r"<<std::flush;
@@ -39,7 +49,11 @@ void jetffscale_savehist(TString inputname, TString outputname, TString collisio
           Int_t ibinpt = xjjc::findibin(&jtptBins, (*djt.jetpt_akpu3pf)[jj]);
           if(ibinpt<0) continue;
           ahHistoResoNpfPt[ibincent][ibinpt][(*djt.jetnpfpart_akpu3pf)[jj]]->Fill((*djt.jetpt_akpu3pf)[jj]/(*djt.gjetpt_akpu3pf)[jj], weight);
-          Float_t vScalePt = ifCorr?(paramfScalePt->at(ibincent).at(0)+paramfScalePt->at(ibincent).at(1)/TMath::Sqrt((*djt.jetpt_akpu3pf)[jj])+paramfScalePt->at(ibincent).at(2)/(*djt.jetpt_akpu3pf)[jj]+paramfScalePt->at(ibincent).at(3)/((*djt.jetpt_akpu3pf)[jj]*(*djt.jetpt_akpu3pf)[jj])):1.;
+          Float_t pfP0 = paramfP0->at(ibincent).at(0)-TMath::Exp(paramfP0->at(ibincent).at(1)+paramfP0->at(ibincent).at(2)*(*djt.jetpt_akpu3pf)[jj]);
+          // Float_t pfP0 = paramfP0->at(ibincent).at(0)-TMath::Exp(paramfP0->at(ibincent).at(1)+paramfP0->at(ibincent).at(2)*(*djt.jetpt_akpu3pf)[jj]+paramfP0->at(ibincent).at(3)*(*djt.jetpt_akpu3pf)[jj]*(*djt.jetpt_akpu3pf)[jj]);
+          Float_t pfP1 = paramfP1->at(ibincent).at(0)-TMath::Exp(paramfP1->at(ibincent).at(1)+paramfP1->at(ibincent).at(2)*(*djt.jetpt_akpu3pf)[jj]+paramfP1->at(ibincent).at(3)*(*djt.jetpt_akpu3pf)[jj]*(*djt.jetpt_akpu3pf)[jj]);
+          Float_t vScalePt = ifCorr?(pfP1*((*djt.jetnpfpart_akpu3pf)[jj]-pfP0)):1;
+          hvScalePt[ibincent][ibinpt]->Fill((*djt.jetnpfpart_akpu3pf)[jj], vScalePt);
           ahHistoResoNpfPtCorr[ibincent][ibinpt][(*djt.jetnpfpart_akpu3pf)[jj]]->Fill(((*djt.jetpt_akpu3pf)[jj]/vScalePt)/(*djt.gjetpt_akpu3pf)[jj], weight);
         }
     }
@@ -49,6 +63,13 @@ void jetffscale_savehist(TString inputname, TString outputname, TString collisio
   TFile* outf = new TFile(Form("%s.root",outputname.Data()), "recreate");
   outf->cd();
   if(writehists("savehist")) return;
+  // for(int k=0;k<nCentBins;k++)
+  //   {
+  //     for(int i=0;i<nJtptBins;i++)
+  //       {
+  //         hvScalePt.at(k).at(i)->Write();
+  //       }
+  //   }
   outf->Write();
   outf->Close();
 }
