@@ -114,7 +114,7 @@ then
         echo -e "-- Processing ${FUNCOLOR}jetffscale_plothist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
         [[ ! -f "rootfiles/reso_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/reso_${tPOSTFIX}.root doesn't exist. Process jetffscale_usehist.C first."; continue; }
         [[ ! -f "rootfiles/hist_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/hist_${tPOSTFIX}.root doesn't exist. Process jetffscale_savehist.C first."; continue; }
-        ./jetffscale_plothist.exe "rootfiles/reso_${tPOSTFIX}" "rootfiles/hist_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}"
+        ./jetffscale_plothist.exe "rootfiles/reso_${tPOSTFIX}" "rootfiles/hist_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}" $ifCorr
         echo
     done
 fi
