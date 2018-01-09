@@ -175,6 +175,7 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
     }
 
     jet_tree_akpu3pf->GetEntry(j);
+    jet_tree_akpu4pf->GetEntry(j);
     pfcand_tree->GetEntry(j);
 
     int njet_akpu3pf = 0;
@@ -226,9 +227,18 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
       djt.gensubid_akpu3pf.push_back(jt_akpu3pf.gensubid[igen]);
     }
 
+    djt.ngen_akpu4pf = jt_akpu4pf.ngen;
+    for (int igen = 0; igen < jt_akpu4pf.ngen; ++igen) {
+      djt.genpt_akpu4pf.push_back(jt_akpu4pf.genpt[igen]);
+      djt.geneta_akpu4pf.push_back(jt_akpu4pf.geneta[igen]);
+      djt.genphi_akpu4pf.push_back(jt_akpu4pf.genphi[igen]);
+      djt.gensubid_akpu4pf.push_back(jt_akpu4pf.gensubid[igen]);
+    }
+
     int njet_akpu4pf = 0;
+    std::cout << jt_akpu4pf.nref << std::endl;
     for (int ij = 0; ij < jt_akpu4pf.nref; ij++) {
-      if (jt_akpu4pf.jtpt[ij] > 30 && fabs(jt_akpu4pf.jteta[ij]) < 1.6) {
+      if (jt_akpu4pf.jtpt[ij] > jetptmin && fabs(jt_akpu4pf.jteta[ij]) < 2.0) {
         float jetpt_corr = jt_akpu4pf.jtpt[ij];
         djt.jetptCorr_akpu4pf.push_back(jetpt_corr);
         djt.jetpt_akpu4pf.push_back(jt_akpu4pf.jtpt[ij]);
