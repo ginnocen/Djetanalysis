@@ -1,8 +1,8 @@
 #!/bin/bash
 
 ###
-INPUTFILE="/export/d00/scratch/jwang/Djets/MC/DjetFiles_20171127_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_noweight.root"
-OUTPUTFILE="/export/d00/scratch/jwang/Djets/MC/DjetFiles_20171127_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20170508_pthatweight.root"
+INPUTFILE="/export/d00/scratch/jwang/Djets/MC/DjetFiles_20171215_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20171214_noweight.root"
+OUTPUTFILE="/export/d00/scratch/jwang/Djets/MC/DjetFiles_20171215_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20171214_pthatweight.root"
 
 ## pp
 
