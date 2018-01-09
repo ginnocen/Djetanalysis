@@ -33,14 +33,14 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
   std::vector<TString>            tname            = {"dr",                      "z"};
   std::vector<std::vector<float>> vxBins           = {vdrBins,                   vzBins};
   std::vector<TH1F**>             hSignalXnorm     = {(TH1F**)ahSignalRnorm,     (TH1F**)ahSignalZnorm};
-  std::vector<TH1F**>             hSignalXnormPull = {(TH1F**)ahSignalRnormPull, (TH1F**)ahSignalZnormPull};
+  std::vector<TH1F**>             hSignalXnormRatio = {(TH1F**)ahSignalRnormRatio, (TH1F**)ahSignalZnormRatio};
   std::vector<TH1F**>             hSignalXsub      = {(TH1F**)ahSignalRsub,      (TH1F**)ahSignalZsub};
-  std::vector<TH1F**>             hSignalXsubPull  = {(TH1F**)ahSignalRsubPull,  (TH1F**)ahSignalZsubPull};
-  std::vector<float>              yPullaxismin     = {0.5,                       0.};
-  std::vector<float>              yPullaxismax     = {1.5,                       2.};
+  std::vector<TH1F**>             hSignalXsubRatio  = {(TH1F**)ahSignalRsubRatio,  (TH1F**)ahSignalZsubRatio};
+  std::vector<float>              yRatioaxismin     = {0.5,                       0.};
+  std::vector<float>              yRatioaxismax     = {1.5,                       2.};
 
   Float_t yaxismin = 1.1e-5, yaxismax = 1.e+3;
-  Float_t ypaddiv = 3./4, yPullpaddiv = 1-ypaddiv;
+  Float_t ypaddiv = 3./4, yRatiopaddiv = 1-ypaddiv;
 
   // calculate pull
   for(int k=0;k<2;k++)
@@ -52,10 +52,10 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
               for(int l=0;l<nRefBins;l++)
                 {
                   if(l && !plotref) continue;
-                  (hSignalXnormPull.at(k))[(m*nRefBins+l)*nPtBins+i]->Divide((hSignalXnorm.at(k))[(m*nRefBins+l)*nPtBins+i], 
+                  (hSignalXnormRatio.at(k))[(m*nRefBins+l)*nPtBins+i]->Divide((hSignalXnorm.at(k))[(m*nRefBins+l)*nPtBins+i], 
                                                                              (hSignalXnorm.at(k))[((nCases-1)*nRefBins+l)*nPtBins+i]); // hSignalXnorm[nCases-1][l][i] is truth
                 }
-              (hSignalXsubPull.at(k))[m*nPtBins+i]->Divide((hSignalXsub.at(k))[m*nPtBins+i], 
+              (hSignalXsubRatio.at(k))[m*nPtBins+i]->Divide((hSignalXsub.at(k))[m*nPtBins+i], 
                                                            (hSignalXsub.at(k))[(nCases-1)*nPtBins+i]); // hSignalXsub[nCases-1][i] is truth
             }
         }
@@ -104,34 +104,34 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
           legref->Draw();
 
           c->cd();
-          TPad* pPull = new TPad("pPull", "", 0, 0, 1, yPullpaddiv);
-          pPull->SetMargin(xjjroot::margin_pad_left, xjjroot::margin_pad_right, xjjroot::margin_pad_top*1/yPullpaddiv, 0);
-          pPull->Draw();
-          pPull->cd();
-          TH2F* hemptyPull = new TH2F("hemptyPull", Form(";%s;%s",xtitle[k].Data(),"X / truth"), 5, vxBins[k].front(), vxBins[k].back(), 10, yPullaxismin[k], yPullaxismax[k]);
-          hemptyPull->GetXaxis()->SetNdivisions(505);
-          hemptyPull->GetYaxis()->SetNdivisions(504);
-          xjjroot::sethempty(hemptyPull, 0, 0.4);
-          hemptyPull->GetYaxis()->SetTitleSize(hemptyPull->GetYaxis()->GetTitleSize() * (ypaddiv / yPullpaddiv));
-          hemptyPull->GetXaxis()->SetTitleSize(hemptyPull->GetXaxis()->GetTitleSize() * (ypaddiv / yPullpaddiv));
-          hemptyPull->GetYaxis()->SetLabelSize(hemptyPull->GetYaxis()->GetLabelSize() * (ypaddiv / yPullpaddiv));
-          hemptyPull->GetXaxis()->SetLabelSize(hemptyPull->GetXaxis()->GetLabelSize() * (ypaddiv / yPullpaddiv));
-          hemptyPull->GetYaxis()->SetTitleOffset(hemptyPull->GetYaxis()->GetTitleOffset() / (ypaddiv / yPullpaddiv));
-          hemptyPull->GetXaxis()->SetTitleOffset(hemptyPull->GetXaxis()->GetTitleOffset() / (ypaddiv / yPullpaddiv) *(1+1.8));
-          hemptyPull->GetYaxis()->SetLabelOffset(hemptyPull->GetYaxis()->GetLabelOffset() / (ypaddiv / yPullpaddiv) *(1+12));
-          hemptyPull->GetXaxis()->SetLabelOffset(hemptyPull->GetXaxis()->GetLabelOffset() / (ypaddiv / yPullpaddiv));
-          hemptyPull->Draw();
+          TPad* pRatio = new TPad("pRatio", "", 0, 0, 1, yRatiopaddiv);
+          pRatio->SetMargin(xjjroot::margin_pad_left, xjjroot::margin_pad_right, xjjroot::margin_pad_top*1/yRatiopaddiv, 0);
+          pRatio->Draw();
+          pRatio->cd();
+          TH2F* hemptyRatio = new TH2F("hemptyRatio", Form(";%s;%s",xtitle[k].Data(),"X / truth"), 5, vxBins[k].front(), vxBins[k].back(), 10, yRatioaxismin[k], yRatioaxismax[k]);
+          hemptyRatio->GetXaxis()->SetNdivisions(505);
+          hemptyRatio->GetYaxis()->SetNdivisions(504);
+          xjjroot::sethempty(hemptyRatio, 0, 0.4);
+          hemptyRatio->GetYaxis()->SetTitleSize(hemptyRatio->GetYaxis()->GetTitleSize() * (ypaddiv / yRatiopaddiv));
+          hemptyRatio->GetXaxis()->SetTitleSize(hemptyRatio->GetXaxis()->GetTitleSize() * (ypaddiv / yRatiopaddiv));
+          hemptyRatio->GetYaxis()->SetLabelSize(hemptyRatio->GetYaxis()->GetLabelSize() * (ypaddiv / yRatiopaddiv));
+          hemptyRatio->GetXaxis()->SetLabelSize(hemptyRatio->GetXaxis()->GetLabelSize() * (ypaddiv / yRatiopaddiv));
+          hemptyRatio->GetYaxis()->SetTitleOffset(hemptyRatio->GetYaxis()->GetTitleOffset() / (ypaddiv / yRatiopaddiv));
+          hemptyRatio->GetXaxis()->SetTitleOffset(hemptyRatio->GetXaxis()->GetTitleOffset() / (ypaddiv / yRatiopaddiv) *(1+1.8));
+          hemptyRatio->GetYaxis()->SetLabelOffset(hemptyRatio->GetYaxis()->GetLabelOffset() / (ypaddiv / yRatiopaddiv) *(1+12));
+          hemptyRatio->GetXaxis()->SetLabelOffset(hemptyRatio->GetXaxis()->GetLabelOffset() / (ypaddiv / yRatiopaddiv));
+          hemptyRatio->Draw();
           for(int l=0;l<nRefBins;l++)
             {
               if(l && !plotref) continue;
               for(int m=0;m<nCases;m++)
                 {
                   if(m==nCases-1) continue;
-                  xjjroot::setthgrstyle((hSignalXnormPull.at(k))[(m*nRefBins+l)*nPtBins+i], amcolor[m], amstyle[l], 1.2, amcolor[m], 1, 1, -1, -1, -1);
-                  (hSignalXnormPull.at(k))[(m*nRefBins+l)*nPtBins+i]->Draw("pe same");
+                  xjjroot::setthgrstyle((hSignalXnormRatio.at(k))[(m*nRefBins+l)*nPtBins+i], amcolor[m], amstyle[l], 1.2, amcolor[m], 1, 1, -1, -1, -1);
+                  (hSignalXnormRatio.at(k))[(m*nRefBins+l)*nPtBins+i]->Draw("pe same");
                 }
             }
-          TBox* box = new TBox(-0.07, yPullaxismax[k]-0.2, -0.01, yPullaxismax[k]);
+          TBox* box = new TBox(-0.07, yRatioaxismax[k]-0.2, -0.01, yRatioaxismax[k]);
           box->SetFillColor(kWhite);
           box->Draw();
 
@@ -139,9 +139,9 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
 
           delete box;
           delete leg;
-          delete hemptyPull;
+          delete hemptyRatio;
           delete hempty;
-          delete pPull;
+          delete pRatio;
           delete pXsec;
           delete c;
         }
@@ -154,7 +154,7 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
       for(int i=0;i<nPtBins;i++)
         {
           TCanvas* c = new TCanvas("c", "", 600, 600);
-          TH2F* hempty = new TH2F("hempty", Form(";%s;X / truth",xtitle[k].Data()), 5, vxBins[k].front(), vxBins[k].back(), 10, yPullaxismin[k], yPullaxismax[k]);
+          TH2F* hempty = new TH2F("hempty", Form(";%s;X / truth",xtitle[k].Data()), 5, vxBins[k].front(), vxBins[k].back(), 10, yRatioaxismin[k], yRatioaxismax[k]);
           hempty->GetXaxis()->SetNdivisions(505);
           xjjroot::sethempty(hempty, 0, 0.5);
           hempty->Draw();
@@ -165,9 +165,9 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
           for(int m=0;m<nCases;m++)
             {
               if(m==(nCases-1)) continue;
-              xjjroot::setthgrstyle((hSignalXsubPull.at(k))[m*nPtBins+i], amcolor[m], amstyle[0], 1.2, amcolor[m], 1, 1, -1, -1, -1);
-              (hSignalXsubPull.at(k))[m*nPtBins+i]->Draw("pe same");
-              leg->AddEntry((hSignalXsubPull.at(k))[m*nPtBins+i], legCases[m].Data(), "p");
+              xjjroot::setthgrstyle((hSignalXsubRatio.at(k))[m*nPtBins+i], amcolor[m], amstyle[0], 1.2, amcolor[m], 1, 1, -1, -1, -1);
+              (hSignalXsubRatio.at(k))[m*nPtBins+i]->Draw("pe same");
+              leg->AddEntry((hSignalXsubRatio.at(k))[m*nPtBins+i], legCases[m].Data(), "p");
             }
           xjjroot::drawCMS(collisionsyst);
           Float_t texxpos = 0.22, texypos = 0.85, texdypos = 0.06;

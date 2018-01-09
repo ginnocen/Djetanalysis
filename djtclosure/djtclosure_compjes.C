@@ -34,12 +34,12 @@ void djtclosure_compjes(std::vector<TString> inputhistwojes, std::vector<TString
   std::vector<TString>            tname            = {"dr",                      "z"};
   std::vector<std::vector<float>> vxBins           = {vdrBins,                   vzBins};
   std::vector<TH1F**>             hSignalXsubjes      = {(TH1F**)ahSignalRsubjes,      (TH1F**)ahSignalZsubjes};
-  std::vector<TH1F**>             hSignalXsubjesPull  = {(TH1F**)ahSignalRsubjesPull,  (TH1F**)ahSignalZsubjesPull};
-  std::vector<float>              yPullaxismin     = {0.5,                       0.};
-  std::vector<float>              yPullaxismax     = {1.5,                       2.};
+  std::vector<TH1F**>             hSignalXsubjesRatio  = {(TH1F**)ahSignalRsubjesRatio,  (TH1F**)ahSignalZsubjesRatio};
+  std::vector<float>              yRatioaxismin     = {0.5,                       0.};
+  std::vector<float>              yRatioaxismax     = {1.5,                       2.};
 
   Float_t yaxismin = 1.1e-5, yaxismax = 1.e+3;
-  Float_t ypaddiv = 3./4, yPullpaddiv = 1-ypaddiv;
+  Float_t ypaddiv = 3./4, yRatiopaddiv = 1-ypaddiv;
 
   // calculate pull
   for(int k=0;k<2;k++)
@@ -48,7 +48,7 @@ void djtclosure_compjes(std::vector<TString> inputhistwojes, std::vector<TString
         {
           for(int m=0;m<nCases;m++)
             {
-              (hSignalXsubjesPull.at(k))[m*nPtBins+i]->Divide((hSignalXsubjes.at(k))[(m+nCases)*nPtBins+i], 
+              (hSignalXsubjesRatio.at(k))[m*nPtBins+i]->Divide((hSignalXsubjes.at(k))[(m+nCases)*nPtBins+i], 
                                                               (hSignalXsubjes.at(k))[m*nPtBins+i]); //
             }
         }
@@ -83,9 +83,9 @@ void djtclosure_compjes(std::vector<TString> inputhistwojes, std::vector<TString
           for(int i=0;i<nPtBins;i++)
             {
               TString tpt = ptBins[i+1]>=999?Form("p_{T}^{D} > %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str()):Form("%s < p_{T}^{D} < %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str(),xjjc::number_remove_zero(ptBins[i+1]).c_str());
-              xjjroot::setthgrstyle((hSignalXsubjesPull.at(k))[m*nPtBins+i], amcolorJes[i], amstyleJes[iCaseD], 1.2, amcolorJes[i], 1, 1, -1, -1, -1);
-              (hSignalXsubjesPull.at(k))[m*nPtBins+i]->Draw("pe same");
-              leg[iCaseJet]->AddEntry((hSignalXsubjesPull.at(k))[m*nPtBins+i], Form("%s, %s", tCasesD[iCaseD].Data(), tpt.Data()), "p");
+              xjjroot::setthgrstyle((hSignalXsubjesRatio.at(k))[m*nPtBins+i], amcolorJes[i], amstyleJes[iCaseD], 1.2, amcolorJes[i], 1, 1, -1, -1, -1);
+              (hSignalXsubjesRatio.at(k))[m*nPtBins+i]->Draw("pe same");
+              leg[iCaseJet]->AddEntry((hSignalXsubjesRatio.at(k))[m*nPtBins+i], Form("%s, %s", tCasesD[iCaseD].Data(), tpt.Data()), "p");
             }
         }
       for(int n=0;n<nScaleorSmear;n++)
@@ -101,7 +101,7 @@ void djtclosure_compjes(std::vector<TString> inputhistwojes, std::vector<TString
           leg[n]->Draw();
           c[n]->SaveAs(Form("plotjes/ccomjes_subratio_%s_%s_%s.pdf",outputname.Data(),tname[k].Data(),tScaleorSmear[n].Data()));
           delete leg[n];
-          delete hempty[n];
+          delete hemptyRatio[n];
           delete c[n];
         }
 
