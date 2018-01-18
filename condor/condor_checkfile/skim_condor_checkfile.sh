@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [[ $# -ne 8 ]]; then
-    echo "usage: ./skim-condor.sh [input dir] [output dir] [max jobs] [log dir] [residuals] [isPP] [isMC] [check input empty]"
+if [[ $# -ne 9 ]]; then
+    echo "usage: ./skim-condor.sh [input dir] [output dir] [max jobs] [log dir] [residuals] [isPP] [isMC] [jetptmin] [check input empty]"
     exit 1
 fi
 
@@ -12,7 +12,8 @@ LOGDIR=$4
 RESIDUALS=$5
 isPP=$6
 isMC=$7
-ifCHECKEMPTY=$8
+JETPTMIN=$8
+ifCHECKEMPTY=$9
 
 PROXYFILE=$(ls /tmp/ -lt | grep $USER | grep -m 1 x509 | awk '{print $NF}')
 
@@ -58,7 +59,7 @@ Universe     = vanilla
 Initialdir   = $PWD/
 Notification = Error
 Executable   = $PWD/skim_djet_checkfile.sh
-Arguments    = $INFILE $DESTINATION ${OUTFILE}_${infn}.root $RESIDUALS $isPP $isMC $PROXYFILE
+Arguments    = $INFILE $DESTINATION ${OUTFILE}_${infn}.root $RESIDUALS $isPP $isMC $JETPTMIN $PROXYFILE
 GetEnv       = True
 Output       = $LOGDIR/log-${infn}.out
 Error        = $LOGDIR/log-${infn}.err

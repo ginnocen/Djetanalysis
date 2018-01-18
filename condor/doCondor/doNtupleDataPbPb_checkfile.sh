@@ -9,7 +9,7 @@ fi
 #
 isMC=0
 isPP=0
-MAXFILENO=5
+MAXFILENO=1000000000
 ifCHECKEMPTY=0
 
 #
@@ -17,9 +17,12 @@ movetosubmit=${1:-0}
 runjobs=${2:-0}
 merger=${3:-0}
 
-INPUTDIR="/mnt/hadoop/cms/store/user/ginnocen/HIHardProbes/crab_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_26March/170327_025517/0000/"
+# INPUTDIR="/mnt/hadoop/cms/store/user/ginnocen/HIHardProbes/crab_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part1_26March/170327_025517/0004/" # 0004
+# INPUTDIR="/mnt/hadoop/cms/store/user/ginnocen/HIHardProbes/crab_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part2_26March/170327_025543/0009/" # 0009
+# INPUTDIR="/mnt/hadoop/cms/store/user/ginnocen/HIHardProbes/crab_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part3_26March/170327_025650/0005/" # 0005
+INPUTDIR="/mnt/hadoop/cms/store/user/ginnocen/HIHardProbes/crab_PbPb_5TeV_HardProbes_Dfinder_skimmed_1unit_part4_26March/170327_025720/0002/" # 0002
 OUTPUTPRIDIR="/mnt/hadoop/cms/store/user/jwang/Djetsgfal/"
-OUTPUTSUBDIR="DjetFiles_20171120_PbPb_5TeV_HIHardProbes_skimmed_1unit_part1_26March_20170326"
+OUTPUTSUBDIR="DjetFiles_20171120_PbPb_5TeV_HIHardProbes_skimmed_1unit_part4_26March_20170326"
 
 MERGEOUTPUTDIR="/export/d00/scratch/jwang/Djets/data/"
 WORKDIR="/work/$USER/Djet/"
