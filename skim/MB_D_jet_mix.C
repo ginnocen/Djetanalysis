@@ -138,6 +138,12 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::string output)
         std::cout << "Could not get djt tree. Check DJet input file." << std::endl;
         return -2;
     }
+    TTree* hlt_tree = (TTree*)Dfile->Get("hlt");
+    if(!hlt_tree)
+    {
+        std::cout << "Could not get hlt tree. Check DJet input file." << std::endl;
+        return -2;
+    }
     TTree* MBjets[nJetCollections][nCentralityBins][nVertexBins][nEventPlaneBins];
     for(int i=0;i<nJetCollections;i++)
     {
@@ -168,7 +174,7 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::string output)
 
     
     //initialize output tree
-    TTree* djtMB_out = new TTree("djtMB","MB-mixed Djet events");
+    TTree* djtMB_out = new TTree("djt","MB-mixed Djet events");
     DJetTree djt(djtMB_out);
 
     //initialize randomizer
@@ -290,75 +296,75 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::string output)
         //MB mixing loop
         for(int j=0;j<nEventsToMix;j++)
         {
-            std::cout << j << std::endl;
+            //std::cout << j << std::endl;
             djt_tree->SetBranchStatus("*",1);
             djtMB_out->SetBranchStatus("*",1);
             //copy over everything from djt_tree first
             djt_tree->CopyAddresses(djtMB_out);
-            djtMB_out->Fill();
             //choose random MB event in correct bin (akpu3pf)
             djtMB_out->GetEntry(i*nEventsToMix+j);
             int nMB3events = MBjets[0][centbin][vzbin][evplaneBin]->GetEntries();
             MBjets[0][centbin][vzbin][evplaneBin]->GetEntry(rand.Integer(nMB3events));
             //replace jet variables with MB jet variables
-            outnjet_akpu3pf      = MBnref;
-            std::vector<float> MBjetptCorrvec;
-            std::vector<float> MBjetptvec;
-            std::vector<float> MBjetetavec;
-            std::vector<float> MBjetphivec;
-            std::vector<float> MBchargedSumvec;
+            djtMB_out->SetBranchAddress("njet_akpu3pf",&MBnref);
+            std::vector<float> MBjet3ptCorrvec;
+            std::vector<float> MBjet3ptvec;
+            std::vector<float> MBjet3etavec;
+            std::vector<float> MBjet3phivec;
+            std::vector<float> MB3chargedSumvec;
+            std::vector<float> MBjet4ptCorrvec;
+            std::vector<float> MBjet4ptvec;
+            std::vector<float> MBjet4etavec;
+            std::vector<float> MBjet4phivec;
+            std::vector<float> MB4chargedSumvec;
             for(int k=0;k<MBnref;k++)
             {
-                MBjetptCorrvec.push_back(MBjetptCorr[k]);
-                MBjetptvec.push_back(MBjetpt[k]);
-                MBjetetavec.push_back(MBjeteta[k]);
-                MBjetphivec.push_back(MBjetphi[k]);
-                MBchargedSumvec.push_back(MBchargedSum[k]);
+                MBjet3ptCorrvec.push_back(MBjetptCorr[k]);
+                MBjet3ptvec.push_back(MBjetpt[k]);
+                MBjet3etavec.push_back(MBjeteta[k]);
+                MBjet3phivec.push_back(MBjetphi[k]);
+                MB3chargedSumvec.push_back(MBchargedSum[k]);
             }
-            std::vector<float>* MBjetptCorrptr = &MBjetptCorrvec;
-            std::vector<float>* MBjetptptr = &MBjetptvec;
-            std::vector<float>* MBjetetaptr = &MBjetetavec;
-            std::vector<float>* MBjetphiptr = &MBjetphivec;
-            std::vector<float>* MBchargedSumptr = &MBchargedSumvec;
-            outjetptCorr_akpu3pf = MBjetptCorrptr;
-            outjetpt_akpu3pf     = MBjetptptr;
-            outjeteta_akpu3pf    = MBjetetaptr;
-            outjetphi_akpu3pf    = MBjetphiptr;
-            outchargedSum_akpu3pf= MBchargedSumptr;
-            MBjetptCorrvec.clear();
-            MBjetptvec.clear();
-            MBjetetavec.clear();
-            MBjetphivec.clear();
-            MBchargedSumvec.clear();
+            std::vector<float>* MB3jetptCorrptr = &MBjet3ptCorrvec;
+            std::vector<float>* MB3jetptptr = &MBjet3ptvec;
+            std::vector<float>* MB3jetetaptr = &MBjet3etavec;
+            std::vector<float>* MB3jetphiptr = &MBjet3phivec;
+            std::vector<float>* MB3chargedSumptr = &MB3chargedSumvec;
+            djtMB_out->SetBranchAddress("jetptCorr_akpu3pf",&MB3jetptCorrptr);
+            djtMB_out->SetBranchAddress("jetpt_akpu3pf",&MB3jetptptr);
+            djtMB_out->SetBranchAddress("jeteta_akpu3pf",&MB3jetetaptr);
+            djtMB_out->SetBranchAddress("jetphi_akpu3pf",&MB3jetphiptr);
+            djtMB_out->SetBranchAddress("chargedSum_akpu3pf",&MB3chargedSumptr);
             //choose random MB event in correct bin (akpu4pf)
             int nMB4events = MBjets[1][centbin][vzbin][evplaneBin]->GetEntries();
             MBjets[1][centbin][vzbin][evplaneBin]->GetEntry(rand.Integer(nMB4events));
             //replace jet variables with MB jet variables
-            outnjet_akpu4pf      = MBnref;
+            djtMB_out->SetBranchAddress("njet_akpu4pf",&MBnref);
             for(int k=0;k<MBnref;k++)
             {
-                MBjetptCorrvec.push_back(MBjetptCorr[k]);
-                MBjetptvec.push_back(MBjetpt[k]);
-                MBjetetavec.push_back(MBjeteta[k]);
-                MBjetphivec.push_back(MBjetphi[k]);
-                MBchargedSumvec.push_back(MBchargedSum[k]);
+                MBjet4ptCorrvec.push_back(MBjetptCorr[k]);
+                MBjet4ptvec.push_back(MBjetpt[k]);
+                MBjet4etavec.push_back(MBjeteta[k]);
+                MBjet4phivec.push_back(MBjetphi[k]);
+                MB4chargedSumvec.push_back(MBchargedSum[k]);
             }
-            outjetptCorr_akpu4pf = MBjetptCorrptr;
-            outjetpt_akpu4pf     = MBjetptptr;
-            outjeteta_akpu4pf    = MBjetetaptr;
-            outjetphi_akpu4pf    = MBjetphiptr;
-            outchargedSum_akpu4pf= MBchargedSumptr;
-            MBjetptCorrvec.clear();
-            MBjetptvec.clear();
-            MBjetetavec.clear();
-            MBjetphivec.clear();
-            MBchargedSumvec.clear();
+            std::vector<float>* MB4jetptCorrptr = &MBjet4ptCorrvec;
+            std::vector<float>* MB4jetptptr = &MBjet4ptvec;
+            std::vector<float>* MB4jetetaptr = &MBjet4etavec;
+            std::vector<float>* MB4jetphiptr = &MBjet4phivec;
+            std::vector<float>* MB4chargedSumptr = &MB4chargedSumvec;
+            djtMB_out->SetBranchAddress("jetptCorr_akpu4pf",&MB4jetptCorrptr);
+            djtMB_out->SetBranchAddress("jetpt_akpu4pf",&MB4jetptptr);
+            djtMB_out->SetBranchAddress("jeteta_akpu4pf",&MB4jetetaptr);
+            djtMB_out->SetBranchAddress("jetphi_akpu4pf",&MB4jetphiptr);
+            djtMB_out->SetBranchAddress("chargedSum_akpu4pf",&MB4chargedSumptr);
+            djtMB_out->Fill();
         }
-        djt_tree->Show(i);
     }
     
     outfile->cd();
     djtMB_out->Write("",TObject::kOverwrite);
+    hlt_tree->Write("",TObject::kOverwrite);
     outfile->Close();
     Dfile->Close();
     minbiasfile->Close();
