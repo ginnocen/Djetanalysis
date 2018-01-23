@@ -16,51 +16,12 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::string output)
     const int nCentralityBins = 5;
     const int nVertexBins = 3;
     const int nEventPlaneBins = 3;
-    const int nEventsToMix = 40;
+    const int nEventsToMix = 1;
 
     //input tree variables
     int hiBin;
     float vz;
     float hiEvtPlanes[29];
-    int njet_akpu3pf;
-    std::vector<float> *jetptCorr_akpu3pf=0;
-    std::vector<float> *jetpt_akpu3pf=0;
-    std::vector<float> *jeteta_akpu3pf=0;
-    std::vector<float> *jetphi_akpu3pf=0;
-    //std::vector<int> *jetnpfpart_akpu3pf;
-    //std::vector<float> *gjetpt_akpu3pf;
-    //std::vector<float> *gjeteta_akpu3pf;
-    //std::vector<float> *gjetphi_akpu3pf;
-    //std::vector<int> *gjetflavor_akpu3pf;
-    std::vector<float> *chargedSum_akpu3pf=0;
-    //std::vector<int> *subid_akpu3pf;
-
-    /*
-    //int ngen_akpu3pf;
-    std::vector<float> *genpt_akpu3pf;
-    std::vector<float> *geneta_akpu3pf;
-    std::vector<float> *genphi_akpu3pf;
-    std::vector<int> *gensubid_akpu3pf;
-    */
-    int njet_akpu4pf;
-    std::vector<float> *jetptCorr_akpu4pf=0;
-    std::vector<float> *jetpt_akpu4pf=0;
-    std::vector<float> *jeteta_akpu4pf=0;
-    std::vector<float> *jetphi_akpu4pf=0;
-    //std::vector<float> *gjetpt_akpu4pf;
-    //std::vector<float> *gjeteta_akpu4pf;
-    //std::vector<float> *gjetphi_akpu4pf;
-    //std::vector<int> *gjetflavor_akpu4pf;
-    std::vector<float> *chargedSum_akpu4pf=0;
-    //std::vector<int> *subid_akpu4pf;
-
-    /*
-    //int ngen_akpu4pf;
-    std::vector<float> *genpt_akpu4pf;
-    std::vector<float> *geneta_akpu4pf;
-    std::vector<float> *genphi_akpu4pf;
-    std::vector<int> *gensubid_akpu4pf;
-    */
 
     //MB tree variables
     int MBnref;
@@ -70,45 +31,6 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::string output)
     Float_t MBjeteta[maxjets];
     Float_t MBjetphi[maxjets];
     Float_t MBchargedSum[maxjets];
-
-    //output tree variables
-    int outhiBin;
-    float outvz;
-    float outhiEvtPlanes[29];
-    int outnjet_akpu3pf;
-    std::vector<float> *outjetptCorr_akpu3pf=0;
-    std::vector<float> *outjetpt_akpu3pf=0;
-    std::vector<float> *outjeteta_akpu3pf=0;
-    std::vector<float> *outjetphi_akpu3pf=0;
-    
-    //std::vector<int> *outjetnpfpart_akpu3pf;
-    //std::vector<float> *outgjetpt_akpu3pf;
-    //std::vector<float> *outgjeteta_akpu3pf;
-    //std::vector<float> *outgjetphi_akpu3pf;
-    //std::vector<int> *outgjetflavor_akpu3pf;
-    std::vector<float> *outchargedSum_akpu3pf=0;
-    //std::vector<int> *outsubid_akpu3pf;
-    
-
-    /*
-    //int outngen_akpu3pf;
-    std::vector<float> *outgenpt_akpu3pf;
-    std::vector<float> *outgeneta_akpu3pf;
-    std::vector<float> *outgenphi_akpu3pf;
-    std::vector<int> *outgensubid_akpu3pf;
-    */
-
-    int outnjet_akpu4pf;
-    std::vector<float> *outjetptCorr_akpu4pf=0;
-    std::vector<float> *outjetpt_akpu4pf=0;
-    std::vector<float> *outjeteta_akpu4pf=0;
-    std::vector<float> *outjetphi_akpu4pf=0;
-    std::vector<float> *outgjetpt_akpu4pf=0;
-    std::vector<float> *outgjeteta_akpu4pf=0;
-    std::vector<float> *outgjetphi_akpu4pf=0;
-    std::vector<int> *outgjetflavor_akpu4pf=0;
-    std::vector<float> *outchargedSum_akpu4pf=0;
-    std::vector<int> *outsubid_akpu4pf=0;
 
     /*
     //int outngen_akpu4pf;
@@ -125,13 +47,6 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::string output)
         std::cout << "Bad Djet input!" << std::endl;
         return -1;
     }    
-    TFile* minbiasfile = TFile::Open(MBfile.c_str(),"read");
-    if(minbiasfile->IsZombie())
-    {
-        std::cout << "Bad MB input!" << std::endl;
-        return -1;
-    }
-    TFile* outfile = new TFile(output.c_str(),"recreate");
     TTree* djt_tree = (TTree*)Dfile->Get("djt");
     if(djt_tree==0)
     {
@@ -144,6 +59,14 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::string output)
         std::cout << "Could not get hlt tree. Check DJet input file." << std::endl;
         return -2;
     }
+    TFile* minbiasfile = TFile::Open(MBfile.c_str(),"read");
+    if(minbiasfile->IsZombie())
+    {
+        std::cout << "Bad MB input!" << std::endl;
+        return -1;
+    }
+    
+    
     TTree* MBjets[nJetCollections][nCentralityBins][nVertexBins][nEventPlaneBins];
     for(int i=0;i<nJetCollections;i++)
     {
@@ -172,7 +95,7 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::string output)
     }
 
 
-    
+    TFile* outfile = new TFile(output.c_str(),"recreate");
     //initialize output tree
     TTree* djtMB_out = new TTree("djt","MB-mixed Djet events");
     DJetTree djt(djtMB_out);
@@ -187,105 +110,19 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::string output)
     djt_tree->SetBranchAddress("vz",&vz);
     djt_tree->SetBranchAddress("hiEvtPlanes",hiEvtPlanes);
 
-    djt_tree->SetBranchAddress("njet_akpu3pf",&njet_akpu3pf);
-    djt_tree->SetBranchAddress("jetptCorr_akpu3pf",&jetptCorr_akpu3pf);
-    djt_tree->SetBranchAddress("jetpt_akpu3pf",&jetpt_akpu3pf);
-    djt_tree->SetBranchAddress("jeteta_akpu3pf",&jeteta_akpu3pf);
-    djt_tree->SetBranchAddress("jetphi_akpu3pf",&jetphi_akpu3pf);
-    djt_tree->SetBranchAddress("chargedSum_akpu3pf",&chargedSum_akpu3pf);
-
-    //gen variables, not needed at present
-    /*
-    djt_tree->SetBranchAddress("gjetpt_akpu3pf",&gjetpt_akpu3pf);
-    djt_tree->SetBranchAddress("gjeteta_akpu3pf",&gjeteta_akpu3pf);
-    djt_tree->SetBranchAddress("gjetphi_akpu3pf",&gjetphi_akpu3pf);
-    djt_tree->SetBranchAddress("gjetflavor_akpu3pf",&gjetflavor_akpu3pf);
-    djt_tree->SetBranchAddress("subid_akpu3pf",&subid_akpu3pf);
-
-    djt_tree->SetBranchAddress("ngen_akpu3pf",&ngen_akpu3pf);
-    djt_tree->SetBranchAddress("genpt_akpu3pf",&genpt_akpu3pf);
-    djt_tree->SetBranchAddress("geneta_akpu3pf",&geneta_akpu3pf);
-    djt_tree->SetBranchAddress("genphi_akpu3pf",&genphi_akpu3pf);
-    djt_tree->SetBranchAddress("gensubid_akpu3pf",&gensubid_akpu3pf);
-    */
-
-    djt_tree->SetBranchAddress("njet_akpu4pf",&njet_akpu4pf);
-    djt_tree->SetBranchAddress("jetptCorr_akpu4pf",&jetptCorr_akpu4pf);
-    djt_tree->SetBranchAddress("jetpt_akpu4pf",&jetpt_akpu4pf);
-    djt_tree->SetBranchAddress("jeteta_akpu4pf",&jeteta_akpu4pf);
-    djt_tree->SetBranchAddress("jetphi_akpu4pf",&jetphi_akpu4pf);
-    djt_tree->SetBranchAddress("chargedSum_akpu4pf",&chargedSum_akpu4pf);
-
-    //gen variables, not needed at present
-    /*
-    djt_tree->SetBranchAddress("gjetpt_akpu4pf",&gjetpt_akpu4pf);
-    djt_tree->SetBranchAddress("gjeteta_akpu4pf",&gjeteta_akpu4pf);
-    djt_tree->SetBranchAddress("gjetphi_akpu4pf",&gjetphi_akpu4pf);
-    djt_tree->SetBranchAddress("gjetflavor_akpu4pf",&gjetflavor_akpu4pf);
-    djt_tree->SetBranchAddress("subid_akpu4pf",&subid_akpu4pf);
-
-    djt_tree->SetBranchAddress("ngen_akpu4pf",&ngen_akpu4pf);
-    djt_tree->SetBranchAddress("genpt_akpu4pf",&genpt_akpu4pf);
-    djt_tree->SetBranchAddress("geneta_akpu4pf",&geneta_akpu4pf);
-    djt_tree->SetBranchAddress("genphi_akpu4pf",&genphi_akpu4pf);
-    djt_tree->SetBranchAddress("gensubid_akpu4pf",&gensubid_akpu4pf);
-    */
-
-    //set output branch addresses
-
-    djtMB_out->SetBranchAddress("hiBin",&outhiBin);
-    djtMB_out->SetBranchAddress("vz",&outvz);
-    djtMB_out->SetBranchAddress("hiEvtPlanes",outhiEvtPlanes);
-
-    djtMB_out->SetBranchAddress("njet_akpu3pf",&outnjet_akpu3pf);
-    djtMB_out->SetBranchAddress("jetptCorr_akpu3pf",&outjetptCorr_akpu3pf);
-    djtMB_out->SetBranchAddress("jetpt_akpu3pf",&outjetpt_akpu3pf);
-    djtMB_out->SetBranchAddress("jeteta_akpu3pf",&outjeteta_akpu3pf);
-    djtMB_out->SetBranchAddress("jetphi_akpu3pf",&outjetphi_akpu3pf);
-    djtMB_out->SetBranchAddress("chargedSum_akpu3pf",&outchargedSum_akpu3pf);
-    //gen variables, not needed at present
-    /*
-    djtMB_out->SetBranchAddress("gjetpt_akpu3pf",&outgjetpt_akpu3pf);
-    djtMB_out->SetBranchAddress("gjeteta_akpu3pf",&outgjeteta_akpu3pf);
-    djtMB_out->SetBranchAddress("gjetphi_akpu3pf",&outgjetphi_akpu3pf);
-    djtMB_out->SetBranchAddress("gjetflavor_akpu3pf",&outgjetflavor_akpu3pf);
-    djtMB_out->SetBranchAddress("subid_akpu3pf",&outsubid_akpu3pf);
-
-    djtMB_out->SetBranchAddress("ngen_akpu3pf",&outngen_akpu3pf);
-    djtMB_out->SetBranchAddress("genpt_akpu3pf",&outgenpt_akpu3pf);
-    djtMB_out->SetBranchAddress("geneta_akpu3pf",&outgeneta_akpu3pf);
-    djtMB_out->SetBranchAddress("genphi_akpu3pf",&outgenphi_akpu3pf);
-    djtMB_out->SetBranchAddress("gensubid_akpu3pf",&outgensubid_akpu3pf);
-    */
-
-    djtMB_out->SetBranchAddress("njet_akpu4pf",&outnjet_akpu4pf);
-    djtMB_out->SetBranchAddress("jetptCorr_akpu4pf",&outjetptCorr_akpu4pf);
-    djtMB_out->SetBranchAddress("jetpt_akpu4pf",&outjetpt_akpu4pf);
-    djtMB_out->SetBranchAddress("jeteta_akpu4pf",&outjeteta_akpu4pf);
-    djtMB_out->SetBranchAddress("jetphi_akpu4pf",&outjetphi_akpu4pf);
-    djtMB_out->SetBranchAddress("gjetpt_akpu4pf",&outgjetpt_akpu4pf);
-    djtMB_out->SetBranchAddress("gjeteta_akpu4pf",&outgjeteta_akpu4pf);
-    djtMB_out->SetBranchAddress("gjetphi_akpu4pf",&outgjetphi_akpu4pf);
-    djtMB_out->SetBranchAddress("gjetflavor_akpu4pf",&outgjetflavor_akpu4pf);
-    djtMB_out->SetBranchAddress("chargedSum_akpu4pf",&outchargedSum_akpu4pf);
-    djtMB_out->SetBranchAddress("subid_akpu4pf",&outsubid_akpu4pf);
-
-    //djtMB_out->SetBranchAddress("ngen_akpu4pf",&outngen_akpu4pf);
-    //djtMB_out->SetBranchAddress("genpt_akpu4pf",&outgenpt_akpu4pf);
-    //djtMB_out->SetBranchAddress("geneta_akpu4pf",&outgeneta_akpu4pf);
-    //djtMB_out->SetBranchAddress("genphi_akpu4pf",&outgenphi_akpu4pf);
-    //djtMB_out->SetBranchAddress("gensubid_akpu4pf",&outgensubid_akpu4pf);  
-
     djt_tree->SetBranchStatus("*",1);
     djtMB_out->SetBranchStatus("*",1); 
+    hlt_tree->SetBranchStatus("*",1);
 
     int nevents = djt_tree->GetEntries();
+    djtMB_out->CopyAddresses(djt_tree);
 
     //event loop
     for(int i=0;i<nevents;i++)
     {
         std::cout << i << std::endl;
         djt_tree->GetEntry(i);
+        //std::cout << "entry" << std::endl;
         //determine appropriate MB jet tree
         int centbinwidth = 200/nCentralityBins;
         int centbin = hiBin/centbinwidth;
@@ -293,82 +130,64 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::string output)
         int vzbin = (vz+15)/vzbinwidth;
         float evplaneBinWidth = TMath::Pi()/nEventPlaneBins;
         int evplaneBin = (hiEvtPlanes[8]+(TMath::Pi()/2.)) / evplaneBinWidth;
+        //std::cout << "bins" << std::endl;
         //MB mixing loop
         for(int j=0;j<nEventsToMix;j++)
         {
             //std::cout << j << std::endl;
-            djt_tree->SetBranchStatus("*",1);
-            djtMB_out->SetBranchStatus("*",1);
-            //copy over everything from djt_tree first
-            djt_tree->CopyAddresses(djtMB_out);
             //choose random MB event in correct bin (akpu3pf)
-            djtMB_out->GetEntry(i*nEventsToMix+j);
-            int nMB3events = MBjets[0][centbin][vzbin][evplaneBin]->GetEntries();
+            int nMB3events = MBjets[0][centbin][vzbin][evplaneBin]->GetEntriesFast();
+            //std::cout << "3entries" << std::endl;
             MBjets[0][centbin][vzbin][evplaneBin]->GetEntry(rand.Integer(nMB3events));
+            //std::cout << "3randentry" << std::endl;
             //replace jet variables with MB jet variables
-            djtMB_out->SetBranchAddress("njet_akpu3pf",&MBnref);
-            std::vector<float> MBjet3ptCorrvec;
-            std::vector<float> MBjet3ptvec;
-            std::vector<float> MBjet3etavec;
-            std::vector<float> MBjet3phivec;
-            std::vector<float> MB3chargedSumvec;
-            std::vector<float> MBjet4ptCorrvec;
-            std::vector<float> MBjet4ptvec;
-            std::vector<float> MBjet4etavec;
-            std::vector<float> MBjet4phivec;
-            std::vector<float> MB4chargedSumvec;
+            djt.njet_akpu3pf = MBnref;
+            djt.jetptCorr_akpu3pf.clear();
+            djt.jetpt_akpu3pf.clear();
+            djt.jeteta_akpu3pf.clear();
+            djt.jetphi_akpu3pf.clear();
+            djt.chargedSum_akpu3pf.clear();
+            //std::cout << "3clear" << std::endl;
             for(int k=0;k<MBnref;k++)
             {
-                MBjet3ptCorrvec.push_back(MBjetptCorr[k]);
-                MBjet3ptvec.push_back(MBjetpt[k]);
-                MBjet3etavec.push_back(MBjeteta[k]);
-                MBjet3phivec.push_back(MBjetphi[k]);
-                MB3chargedSumvec.push_back(MBchargedSum[k]);
+                djt.jetptCorr_akpu3pf.push_back(MBjetptCorr[k]);
+                djt.jetpt_akpu3pf.push_back(MBjetpt[k]);
+                djt.jeteta_akpu3pf.push_back(MBjeteta[k]);
+                djt.jetphi_akpu3pf.push_back(MBjetphi[k]);
+                djt.chargedSum_akpu3pf.push_back(MBchargedSum[k]);
+                //std::cout << "3push" << k << std::endl;
             }
-            std::vector<float>* MB3jetptCorrptr = &MBjet3ptCorrvec;
-            std::vector<float>* MB3jetptptr = &MBjet3ptvec;
-            std::vector<float>* MB3jetetaptr = &MBjet3etavec;
-            std::vector<float>* MB3jetphiptr = &MBjet3phivec;
-            std::vector<float>* MB3chargedSumptr = &MB3chargedSumvec;
-            djtMB_out->SetBranchAddress("jetptCorr_akpu3pf",&MB3jetptCorrptr);
-            djtMB_out->SetBranchAddress("jetpt_akpu3pf",&MB3jetptptr);
-            djtMB_out->SetBranchAddress("jeteta_akpu3pf",&MB3jetetaptr);
-            djtMB_out->SetBranchAddress("jetphi_akpu3pf",&MB3jetphiptr);
-            djtMB_out->SetBranchAddress("chargedSum_akpu3pf",&MB3chargedSumptr);
             //choose random MB event in correct bin (akpu4pf)
-            int nMB4events = MBjets[1][centbin][vzbin][evplaneBin]->GetEntries();
+            int nMB4events = MBjets[1][centbin][vzbin][evplaneBin]->GetEntriesFast();
+            //std::cout << "4entries" << std::endl;
             MBjets[1][centbin][vzbin][evplaneBin]->GetEntry(rand.Integer(nMB4events));
+            //std::cout << "4randentry" << std::endl;
             //replace jet variables with MB jet variables
-            djtMB_out->SetBranchAddress("njet_akpu4pf",&MBnref);
+            djt.njet_akpu4pf = MBnref;
+            djt.jetptCorr_akpu4pf.clear();
+            djt.jetpt_akpu4pf.clear();
+            djt.jeteta_akpu4pf.clear();
+            djt.jetphi_akpu4pf.clear();
+            djt.chargedSum_akpu4pf.clear();
+            //std::cout << "4clear" << std::endl;
             for(int k=0;k<MBnref;k++)
             {
-                MBjet4ptCorrvec.push_back(MBjetptCorr[k]);
-                MBjet4ptvec.push_back(MBjetpt[k]);
-                MBjet4etavec.push_back(MBjeteta[k]);
-                MBjet4phivec.push_back(MBjetphi[k]);
-                MB4chargedSumvec.push_back(MBchargedSum[k]);
+                djt.jetptCorr_akpu4pf.push_back(MBjetptCorr[k]);
+                djt.jetpt_akpu4pf.push_back(MBjetpt[k]);
+                djt.jeteta_akpu4pf.push_back(MBjeteta[k]);
+                djt.jetphi_akpu4pf.push_back(MBjetphi[k]);
+                djt.chargedSum_akpu4pf.push_back(MBchargedSum[k]);
+                //std::cout << "4push" << k << std::endl;
             }
-            std::vector<float>* MB4jetptCorrptr = &MBjet4ptCorrvec;
-            std::vector<float>* MB4jetptptr = &MBjet4ptvec;
-            std::vector<float>* MB4jetetaptr = &MBjet4etavec;
-            std::vector<float>* MB4jetphiptr = &MBjet4phivec;
-            std::vector<float>* MB4chargedSumptr = &MB4chargedSumvec;
-            djtMB_out->SetBranchAddress("jetptCorr_akpu4pf",&MB4jetptCorrptr);
-            djtMB_out->SetBranchAddress("jetpt_akpu4pf",&MB4jetptptr);
-            djtMB_out->SetBranchAddress("jeteta_akpu4pf",&MB4jetetaptr);
-            djtMB_out->SetBranchAddress("jetphi_akpu4pf",&MB4jetphiptr);
-            djtMB_out->SetBranchAddress("chargedSum_akpu4pf",&MB4chargedSumptr);
             djtMB_out->Fill();
         }
     }
-    
     outfile->cd();
     djtMB_out->Write("",TObject::kOverwrite);
     hlt_tree->Write("",TObject::kOverwrite);
     outfile->Close();
-    Dfile->Close();
     minbiasfile->Close();
-
+    Dfile->Close();
     return 0;
 }
 int main(int argc, char* argv[])
