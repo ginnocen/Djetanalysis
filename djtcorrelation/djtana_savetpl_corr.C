@@ -32,7 +32,7 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
         {
           int djtjetsel = djt.isjetselected(jj, djt.ajetopt[irecogen]);
           if(djtjetsel < 0) return;
-          if(!djtjetsel) continue;
+          //if(!djtjetsel) continue;
           ncountjet++;
           // reco
           
@@ -59,17 +59,17 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
               djt.setDcut(cutval_Dsvpv, cutval_Dalpha, cutval_Dchi2cl, cutval_Dy);                  
               Int_t djtDsel = djt.isDselected(jd, djt.aDopt[irecogen]);
               if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
-              if(!djtDsel) continue;
+              //if(!djtDsel) continue;
 
-              if(irecogen==0 || irecogen==2)
+              if((irecogen==0 || irecogen==2) && jj==0)
               {
                 hDphivsDtrk1hit[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk1PixelHit)[jd]);
                 hDphivsDtrk2hit[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk2PixelHit)[jd]);
                 hDphivsDtrk1algo[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk1Algo)[jd]);
                 hDphivsDtrk2algo[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk2Algo)[jd]);
               }
-              hDPhi[ibinpt]->Fill((**djt.aDphi[irecogen])[jd]);
-              hDEta[ibinpt]->Fill((**djt.aDeta[irecogen])[jd]);
+              if(jj==0) hDPhi[ibinpt]->Fill((**djt.aDphi[irecogen])[jd]);
+              if(jj==0) hDEta[ibinpt]->Fill((**djt.aDeta[irecogen])[jd]);
               hDdelPhi[ibinpt]->Fill(deltaphi);
               hDdelEta[ibinpt]->Fill(deltaeta);
               hCorr[ibinpt]->Fill(deltaeta,deltaphi);
