@@ -204,6 +204,7 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
         djt.jetptCorr_akpu3pf.push_back(jetpt_corr);
         djt.jetnpfpart_akpu3pf.push_back(npfpart);
         djt.jetpt_akpu3pf.push_back(jt_akpu3pf.jtpt[ij]);
+        djt.jetrawpt_akpu3pf.push_back(jt_akpu3pf.rawpt[ij]);
         djt.jeteta_akpu3pf.push_back(jt_akpu3pf.jteta[ij]);
         djt.jetphi_akpu3pf.push_back(jt_akpu3pf.jtphi[ij]);
         djt.gjetpt_akpu3pf.push_back(jt_akpu3pf.refpt[ij]);
@@ -211,7 +212,21 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
         djt.gjetphi_akpu3pf.push_back(jt_akpu3pf.refphi[ij]);
         djt.gjetflavor_akpu3pf.push_back(jt_akpu3pf.refparton_flavor[ij]);
         djt.subid_akpu3pf.push_back(jt_akpu3pf.subid[ij]);
+        djt.chargedMax_akpu3pf.push_back(jt_akpu3pf.chargedMax[ij]);
         djt.chargedSum_akpu3pf.push_back(jt_akpu3pf.chargedSum[ij]);
+        djt.chargedN_akpu3pf.push_back(jt_akpu3pf.chargedN[ij]);
+        djt.photonMax_akpu3pf.push_back(jt_akpu3pf.photonMax[ij]);
+        djt.photonSum_akpu3pf.push_back(jt_akpu3pf.photonSum[ij]);
+        djt.photonN_akpu3pf.push_back(jt_akpu3pf.photonN[ij]);
+        djt.neutralMax_akpu3pf.push_back(jt_akpu3pf.neutralMax[ij]);
+        djt.neutralSum_akpu3pf.push_back(jt_akpu3pf.neutralSum[ij]);
+        djt.neutralN_akpu3pf.push_back(jt_akpu3pf.neutralN[ij]);
+        djt.eMax_akpu3pf.push_back(jt_akpu3pf.eMax[ij]);
+        djt.eSum_akpu3pf.push_back(jt_akpu3pf.eSum[ij]);
+        djt.eN_akpu3pf.push_back(jt_akpu3pf.eN[ij]);
+        djt.muMax_akpu3pf.push_back(jt_akpu3pf.muMax[ij]);
+        djt.muSum_akpu3pf.push_back(jt_akpu3pf.muSum[ij]);
+        djt.muN_akpu3pf.push_back(jt_akpu3pf.muN[ij]);
         njet_akpu3pf++;
       }
     }
@@ -225,6 +240,8 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
       djt.genphi_akpu3pf.push_back(jt_akpu3pf.genphi[igen]);
       djt.gensubid_akpu3pf.push_back(jt_akpu3pf.gensubid[igen]);
     }
+
+    jet_tree_akpu4pf->GetEntry(j);
 
     int njet_akpu4pf = 0;
     for (int ij = 0; ij < jt_akpu4pf.nref; ij++) {
