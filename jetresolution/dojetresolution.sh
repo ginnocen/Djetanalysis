@@ -105,6 +105,7 @@ rm jetreso_usehist.exe
 # jetreso_plothist.C #
 
 g++ jetreso_plothist.C $(root-config --cflags --libs) -g -o jetreso_plothist.exe || return 1;
+g++ jetreso_plotpar.C $(root-config --cflags --libs) -g -o jetreso_plotpar.exe || return 1;
 if [[ $DO_PLOTHIST -eq 1 ]]
 then
     for i in ${iCOL[@]}
@@ -115,5 +116,7 @@ then
         ./jetreso_plothist.exe "rootfiles/reso_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}"
         echo
     done
+    ./jetreso_plotpar.exe
 fi
+rm jetreso_plotpar.exe
 rm jetreso_plothist.exe
