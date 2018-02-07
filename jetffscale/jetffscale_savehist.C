@@ -11,8 +11,10 @@ void jetffscale_savehist(TString inputname, TString outputname, TString collisio
   if(createhists("savehist")) return;
   djet djt(inputname, ispp, 1);
 
-  std::vector<std::vector<Float_t>>* paramfP0 = ispp?&paramfP0_pp:&paramfP0_PbPb;
-  std::vector<std::vector<Float_t>>* paramfP1 = ispp?&paramfP1_pp:&paramfP1_PbPb;
+  // std::vector<std::vector<Float_t>>* paramfP0 = ispp?&paramfP0_pp:&paramfP0_PbPb;
+  // std::vector<std::vector<Float_t>>* paramfP1 = ispp?&paramfP1_pp:&paramfP1_PbPb;
+  std::vector<std::vector<Float_t>>* paramRealfP0 = ispp?&paramRealfP0_pp:&paramRealfP0_PbPb;
+  std::vector<std::vector<Float_t>>* paramRealfP1 = ispp?&paramRealfP1_pp:&paramRealfP1_PbPb;
 
   int64_t nentries = djt.fChain->GetEntriesFast();
   int rnentries = (maxevt>0&&maxevt<=nentries)?maxevt:nentries;
@@ -23,12 +25,14 @@ void jetffscale_savehist(TString inputname, TString outputname, TString collisio
       //
       djt.fChain->GetEntry(i);
       //
+      if(djt.pthat < 15) continue; // to be discussed ...
 
       Int_t ibincent = ispp?0:xjjc::findibin(&centBins, (float)(djt.hiBin/2.));
       if(ibincent<0) {std::cout<<"wrong ibincent"<<std::endl; return;}
 
-      Float_t weight = djt.pthatweight;
-      // Float_t weight = 1;
+      Float_t cweight = ispp?1.:centweight[djt.hiBin];
+      // Float_t evtweight = 1;
+      Float_t evtweight = (djt.pthatweight*cweight);
 
       // loop jets
       for(int jj=0;jj<djt.njet_akpu3pf;jj++)
@@ -40,14 +44,21 @@ void jetffscale_savehist(TString inputname, TString outputname, TString collisio
 
           Int_t ibinpt = xjjc::findibin(&jtptBins, (*djt.jetpt_akpu3pf)[jj]);
           if(ibinpt<0) continue;
-          ahHistoResoNpfPt[ibincent][ibinpt][(*djt.jetnpfpart_akpu3pf)[jj]]->Fill((*djt.jetpt_akpu3pf)[jj]/(*djt.gjetpt_akpu3pf)[jj], weight);
-          // Float_t pfP0 = paramfP0->at(ibincent).at(0)-TMath::Exp(paramfP0->at(ibincent).at(1)+paramfP0->at(ibincent).at(2)*(*djt.jetpt_akpu3pf)[jj]);
-          Float_t pfP0 = paramfP0->at(ibincent).at(0)+paramfP0->at(ibincent).at(3)*(*djt.jetpt_akpu3pf)[jj]-TMath::Exp(paramfP0->at(ibincent).at(1)+paramfP0->at(ibincent).at(2)*(*djt.jetpt_akpu3pf)[jj]);
-          // Float_t pfP1 = paramfP1->at(ibincent).at(0)-TMath::Exp(paramfP1->at(ibincent).at(1)+paramfP1->at(ibincent).at(2)*(*djt.jetpt_akpu3pf)[jj]);
-          Float_t pfP1 = paramfP1->at(ibincent).at(0)+paramfP1->at(ibincent).at(3)*(*djt.jetpt_akpu3pf)[jj]-TMath::Exp(paramfP1->at(ibincent).at(1)+paramfP1->at(ibincent).at(2)*(*djt.jetpt_akpu3pf)[jj]);
+          ahHistoResoNpfPt[ibincent][ibinpt][(*djt.jetnpfpart_akpu3pf)[jj]]->Fill((*djt.jetpt_akpu3pf)[jj]/(*djt.gjetpt_akpu3pf)[jj], evtweight);
+          ahHistoResoPt[ibincent][ibinpt]->Fill((*djt.jetpt_akpu3pf)[jj]/(*djt.gjetpt_akpu3pf)[jj], evtweight);
+
+          Float_t pfP0=1, pfP1=1;
+          if(ifCorr)
+            {
+              // Float_t pfP0 = paramfP0->at(ibincent).at(0)+paramfP0->at(ibincent).at(3)*(*djt.jetpt_akpu3pf)[jj]-TMath::Exp(paramfP0->at(ibincent).at(1)+paramfP0->at(ibincent).at(2)*(*djt.jetpt_akpu3pf)[jj]);
+              // Float_t pfP1 = paramfP1->at(ibincent).at(0)+paramfP1->at(ibincent).at(3)*(*djt.jetpt_akpu3pf)[jj]-TMath::Exp(paramfP1->at(ibincent).at(1)+paramfP1->at(ibincent).at(2)*(*djt.jetpt_akpu3pf)[jj]);
+              pfP0 = paramRealfP0->at(ibincent).at(ibinpt);
+              pfP1 = paramRealfP1->at(ibincent).at(ibinpt);
+            }
           Float_t vScalePt = ifCorr?(pfP1*((*djt.jetnpfpart_akpu3pf)[jj]-pfP0)):1;
-          hvScalePt[ibincent][ibinpt]->Fill((*djt.jetnpfpart_akpu3pf)[jj], vScalePt, weight);
-          ahHistoResoNpfPtCorr[ibincent][ibinpt][(*djt.jetnpfpart_akpu3pf)[jj]]->Fill(((*djt.jetpt_akpu3pf)[jj]/vScalePt)/(*djt.gjetpt_akpu3pf)[jj], weight);
+          hvScalePt[ibincent][ibinpt]->Fill((*djt.jetnpfpart_akpu3pf)[jj], vScalePt, evtweight);
+          ahHistoResoNpfPtCorr[ibincent][ibinpt][(*djt.jetnpfpart_akpu3pf)[jj]]->Fill(((*djt.jetpt_akpu3pf)[jj]/vScalePt)/(*djt.gjetpt_akpu3pf)[jj], evtweight);
+          ahHistoResoPtCorr[ibincent][ibinpt]->Fill(((*djt.jetpt_akpu3pf)[jj]/vScalePt)/(*djt.gjetpt_akpu3pf)[jj], evtweight);
         }
     }
   std::cout<<std::setiosflags(std::ios::left)<<"  Processed "<<"\033[1;31m"<<rnentries<<"\033[0m out of\033[1;31m "<<nentries<<"\033[0m event(s)."<<"   >>   jetffscale_savehist("<<std::setw(30)<<Form("%s)",collisionsyst.Data())<<std::endl;

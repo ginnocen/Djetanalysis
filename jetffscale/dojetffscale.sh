@@ -115,6 +115,7 @@ then
         [[ ! -f "rootfiles/reso_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/reso_${tPOSTFIX}.root doesn't exist. Process jetffscale_usehist.C first."; continue; }
         [[ ! -f "rootfiles/hist_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/hist_${tPOSTFIX}.root doesn't exist. Process jetffscale_savehist.C first."; continue; }
         ./jetffscale_plothist.exe "rootfiles/reso_${tPOSTFIX}" "rootfiles/hist_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}" $ifCorr
+        [[ $ifCorr -eq 1 ]] && { ./jetffscale_plothist.exe "rootfiles/reso_${tPOSTFIX}" "rootfiles/hist_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}" 0; }
         echo
     done
 fi
@@ -130,7 +131,8 @@ then
         tPOSTFIX=Djet_reso_$(produce_postfix $i)
         echo -e "-- Processing ${FUNCOLOR}jetffscale_plotpar.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
         [[ ! -f "rootfiles/scalepar_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/scalepar_${tPOSTFIX}.root doesn't exist. Process jetffscale_usehist.C first."; continue; }
-        ./jetffscale_plotpar.exe "rootfiles/scalepar_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}"
+        [[ ! -f "rootfiles/reso_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/reso_${tPOSTFIX}.root doesn't exist. Process jetffscale_usehist.C first."; continue; }
+        ./jetffscale_plotpar.exe "rootfiles/scalepar_${tPOSTFIX}" "rootfiles/reso_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}"
         echo
     done
 fi
