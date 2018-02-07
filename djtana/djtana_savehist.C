@@ -3,7 +3,7 @@
 void djtana_savehist(TString inputname, TString outputname, 
                      TString collisionsyst, Int_t isMC, Int_t irecogen,
                      Float_t jetptmin, Float_t jetetamin, Float_t jetetamax, 
-                     TString hltsel="noHLT", Int_t jescale=0, Int_t gensmear=0, Int_t maxevt=-1)
+                     TString hltsel="noHLT", Int_t jescale=0, Int_t gensmearpt=0, Int_t gensmearphi=0, Int_t maxevt=-1)
 {
   int arguerr(TString collisionsyst, Int_t irecogen, Int_t isMC);
   if(arguerr(collisionsyst, irecogen, isMC)) return;
@@ -18,7 +18,19 @@ void djtana_savehist(TString inputname, TString outputname,
   djt.setGcut(cutval_Dy);
   initcutval(collisionsyst);
 
-  TRandom2* pRandom2 = new TRandom2();
+  TRandom3* pRandom3 = new TRandom3();
+
+  std::vector<std::vector<Float_t>>* paramfScalePt = ispp?&paramfScalePt_pp:&paramfScalePt_PbPb;
+  std::vector<std::vector<Float_t>>* paramfResoPt = ispp?&paramfResoPtCorr_pp:&paramfResoPtCorr_PbPb;
+  std::vector<std::vector<Float_t>>* paramfScaleRecoPt = ispp?&paramfScaleRecoPt_pp:&paramfScaleRecoPt_PbPb;
+  std::vector<std::vector<Float_t>>* paramfScalePtFfCorr = ispp?&paramfScalePtFfCorr_pp:&paramfScalePtFfCorr_PbPb;
+  std::vector<std::vector<Float_t>>* paramRealfP0 = ispp?&paramRealfP0_pp:&paramRealfP0_PbPb;
+  std::vector<std::vector<Float_t>>* paramRealfP1 = ispp?&paramRealfP1_pp:&paramRealfP1_PbPb;
+
+  std::vector<std::vector<Float_t>>* paramfResoPhi = ispp?&paramfResoPhi_pp:&paramfResoPhi_PbPb;
+  std::vector<std::vector<Float_t>>* paramfResoEta = ispp?&paramfResoEta_pp:&paramfResoEta_PbPb;
+  std::vector<std::vector<Float_t>>* paramfResoDeltaPhi = ispp?&paramfResoDeltaPhi_pp:&paramfResoDeltaPhi_PbPb;
+  std::vector<std::vector<Float_t>>* paramfResoDeltaEta = ispp?&paramfResoDeltaEta_pp:&paramfResoDeltaEta_PbPb;
 
   int64_t nentries = djt.fChain->GetEntriesFast();
   int rnentries = (maxevt>0&&maxevt<=nentries)?maxevt:nentries;
@@ -31,6 +43,8 @@ void djtana_savehist(TString inputname, TString outputname,
       djt.fHlt->GetEntry(i);
       //
 
+      if(djt.pthat < 15) continue;
+
       // to add event selection ...
       if(djt.ishltselected(hltsel) < 0) return;
       if(!djt.ishltselected(hltsel)) continue;
@@ -38,47 +52,97 @@ void djtana_savehist(TString inputname, TString outputname,
       Int_t ibincent = ispp?0:xjjc::findibin(&centBins, (float)(djt.hiBin/2.));
       if(ibincent<0) {std::cout<<"wrong ibincent"<<std::endl; return;}
 
-      Float_t evtweight = 1;
-      // Float_t evtweight = isMC?djt.pthatweight:1.;
+      // Float_t cweight = 1.;
+      Float_t cweight = ispp?1.:centweight[djt.hiBin];
+      // Float_t evtweight = 1;
+      Float_t evtweight = isMC?(djt.pthatweight*cweight):1.;
 
       // loop jets
       for(int jj=0;jj<*(djt.anjet[irecogen]);jj++)
         {
           if(isMC && (**djt.asubid[irecogen])[jj]!=0) continue;
 
+          /*********************************/
+
           Float_t jetpt = (**djt.ajetpt[irecogen])[jj];
           Float_t jetphi = (**djt.ajetphi[irecogen])[jj];
           Float_t jeteta = (**djt.ajeteta[irecogen])[jj];
 
+          // JEC
           if(djt.ajetopt[irecogen]=="reco" && jescale)
             {
-              std::vector<std::vector<Float_t>>* paramfScalePt = ispp?&paramfScalePt_pp:&paramfScalePt_PbPb;
-              Float_t vScalePt = paramfScalePt->at(ibincent).at(0) + paramfScalePt->at(ibincent).at(1)/TMath::Sqrt((**djt.ajetpt[irecogen])[jj]) + paramfScalePt->at(ibincent).at(2)/(**djt.ajetpt[irecogen])[jj] + paramfScalePt->at(ibincent).at(3)/((**djt.ajetpt[irecogen])[jj]*(**djt.ajetpt[irecogen])[jj]);
-              jetpt = (**djt.ajetpt[irecogen])[jj]/vScalePt;
+              if(jescale==1)
+                {
+                  Float_t jetrecomatgenpt = jetpt / (paramfScaleRecoPt->at(ibincent).at(0) + paramfScaleRecoPt->at(ibincent).at(1)/TMath::Sqrt(jetpt) + paramfScaleRecoPt->at(ibincent).at(2)/jetpt + paramfScaleRecoPt->at(ibincent).at(3)/(jetpt*jetpt));
+                  Float_t vScalePt = paramfScalePt->at(ibincent).at(0) + paramfScalePt->at(ibincent).at(1)/TMath::Sqrt(jetrecomatgenpt) + paramfScalePt->at(ibincent).at(2)/jetrecomatgenpt + paramfScalePt->at(ibincent).at(3)/(jetrecomatgenpt*jetrecomatgenpt);
+                  jetpt = jetpt/vScalePt;
+                }
+              else if(jescale==2)
+                {
+                  Float_t vScaleFfPt = 1;
+                  Int_t ibinjtpt = xjjc::findibin(&jtptBins, jetpt);
+                  if(ibinjtpt >= 0)
+                    {
+                      vScaleFfPt = paramRealfP1->at(ibincent).at(ibinjtpt)*((*djt.jetnpfpart_akpu3pf)[jj]-paramRealfP0->at(ibincent).at(ibinjtpt));
+                    }
+                  jetpt = jetpt/vScaleFfPt;
+                  Float_t vScalePtFfCorr = paramfScalePtFfCorr->at(ibincent).at(0) + paramfScalePtFfCorr->at(ibincent).at(1)/TMath::Sqrt(jetpt) + paramfScalePtFfCorr->at(ibincent).at(2)/jetpt + paramfScalePtFfCorr->at(ibincent).at(3)/(jetpt*jetpt);
+                  jetpt = jetpt/vScalePtFfCorr;
+                }
+              else { std::cout<<"invalid jescale"<<std::endl; return; }
             }
-
-          if(djt.ajetopt[irecogen]=="gen" && gensmear)
+          // smear pt
+          if(djt.ajetopt[irecogen]=="gen" && gensmearpt)
             {
-              std::vector<std::vector<Float_t>>* paramfResoPt = ispp?&paramfResoPtCorr_pp:&paramfResoPtCorr_PbPb;
-              Float_t sigmaPt = paramfResoPt->at(ibincent).at(0)*paramfResoPt->at(ibincent).at(0) + paramfResoPt->at(ibincent).at(1)*paramfResoPt->at(ibincent).at(1)/jetpt + paramfResoPt->at(ibincent).at(2)*paramfResoPt->at(ibincent).at(2)/(jetpt*jetpt);
-              jetpt = (**djt.ajetpt[irecogen])[jj] * pRandom2->Gaus(1, sigmaPt);
-
-              std::vector<std::vector<Float_t>>* paramfResoPhi = ispp?&paramfResoPhi_pp:&paramfResoPhi_PbPb;
-              Float_t sigmaPhi = paramfResoPhi->at(ibincent).at(0)*paramfResoPhi->at(ibincent).at(0) + paramfResoPhi->at(ibincent).at(1)*paramfResoPhi->at(ibincent).at(1)/jetpt + paramfResoPhi->at(ibincent).at(2)*paramfResoPhi->at(ibincent).at(2)/(jetpt*jetpt);
-              jetphi = (**djt.ajetphi[irecogen])[jj] + pRandom2->Gaus(0, sigmaPhi);
-
-              std::vector<std::vector<Float_t>>* paramfResoEta = ispp?&paramfResoEta_pp:&paramfResoEta_PbPb;
-              Float_t sigmaEta = paramfResoEta->at(ibincent).at(0)*paramfResoEta->at(ibincent).at(0) + paramfResoEta->at(ibincent).at(1)*paramfResoEta->at(ibincent).at(1)/jetpt + paramfResoEta->at(ibincent).at(2)*paramfResoEta->at(ibincent).at(2)/(jetpt*jetpt);
-              jeteta = (**djt.ajeteta[irecogen])[jj] + pRandom2->Gaus(0, sigmaEta);
+              Float_t sigmaPt = TMath::Sqrt(paramfResoPt->at(ibincent).at(0)*paramfResoPt->at(ibincent).at(0) + paramfResoPt->at(ibincent).at(1)*paramfResoPt->at(ibincent).at(1)/jetpt + paramfResoPt->at(ibincent).at(2)*paramfResoPt->at(ibincent).at(2)/(jetpt*jetpt));
+              jetpt = jetpt * pRandom3->Gaus(1, sigmaPt);
             }
 
-          if(!(jetpt > djt.cut_jetpt_min &&
-               TMath::Abs(jeteta) > djt.cut_jeteta_min && TMath::Abs(jeteta) < djt.cut_jeteta_max)) continue;
+          /*********************************/
+          if(jetpt < djt.cut_jetpt_min) continue;
+          /*********************************/
 
-          // int djtjetsel = djt.isjetselected(jj, djt.ajetopt[irecogen]);
-          // if(djtjetsel < 0) return;
-          // if(!djtjetsel) continue;
-          ncountjet++;
+          // smear angle
+          if(djt.ajetopt[irecogen]=="gen" && gensmearphi)
+            {
+              if(gensmearphi==1)
+                {
+                  Float_t sigmaPhi = TMath::Sqrt(paramfResoPhi->at(ibincent).at(0)*paramfResoPhi->at(ibincent).at(0) + 
+                                                 paramfResoPhi->at(ibincent).at(1)*paramfResoPhi->at(ibincent).at(1)/jetpt + 
+                                                 paramfResoPhi->at(ibincent).at(2)*paramfResoPhi->at(ibincent).at(2)/(jetpt*jetpt));
+                  jetphi = jetphi + pRandom3->Gaus(0, sigmaPhi);
+
+                  Float_t sigmaEta = TMath::Sqrt(paramfResoEta->at(ibincent).at(0)*paramfResoEta->at(ibincent).at(0) + 
+                                                 paramfResoEta->at(ibincent).at(1)*paramfResoEta->at(ibincent).at(1)/jetpt + 
+                                                 paramfResoEta->at(ibincent).at(2)*paramfResoEta->at(ibincent).at(2)/(jetpt*jetpt));
+                  jeteta = jeteta + pRandom3->Gaus(0, sigmaEta);
+                }
+              else if(gensmearphi==2)
+                {
+                  Float_t sigmaPhi = TMath::Sqrt(paramfResoDeltaPhi->at(ibincent).at(0)*paramfResoDeltaPhi->at(ibincent).at(0) +
+                                                 paramfResoDeltaPhi->at(ibincent).at(1)*paramfResoDeltaPhi->at(ibincent).at(1)/jetpt +
+                                                 paramfResoDeltaPhi->at(ibincent).at(2)*paramfResoDeltaPhi->at(ibincent).at(2)/(jetpt*jetpt)
+                                                 - (paramfResoDeltaPhi->at(ibincent).at(3)*paramfResoDeltaPhi->at(ibincent).at(3) +
+                                                    paramfResoDeltaPhi->at(ibincent).at(4)*paramfResoDeltaPhi->at(ibincent).at(4)/jetpt +
+                                                    paramfResoDeltaPhi->at(ibincent).at(5)*paramfResoDeltaPhi->at(ibincent).at(5)/(jetpt*jetpt)));
+                  jetphi = jetphi + pRandom3->Gaus(0, sigmaPhi);
+
+                  Float_t sigmaEta = TMath::Sqrt(paramfResoDeltaEta->at(ibincent).at(0)*paramfResoDeltaEta->at(ibincent).at(0) +
+                                                 paramfResoDeltaEta->at(ibincent).at(1)*paramfResoDeltaEta->at(ibincent).at(1)/jetpt +
+                                                 paramfResoDeltaEta->at(ibincent).at(2)*paramfResoDeltaEta->at(ibincent).at(2)/(jetpt*jetpt)
+                                                 - (paramfResoDeltaEta->at(ibincent).at(3)*paramfResoDeltaEta->at(ibincent).at(3) +
+                                                    paramfResoDeltaEta->at(ibincent).at(4)*paramfResoDeltaEta->at(ibincent).at(4)/jetpt +
+                                                    paramfResoDeltaEta->at(ibincent).at(5)*paramfResoDeltaEta->at(ibincent).at(5)/(jetpt*jetpt)));
+                  jeteta = jeteta + pRandom3->Gaus(0, sigmaEta);
+                }
+              else { std::cout<<"invalid gensmearphi"<<std::endl; return; }
+            }
+
+          /*********************************/
+          if(!(TMath::Abs(jeteta) > djt.cut_jeteta_min && TMath::Abs(jeteta) < djt.cut_jeteta_max)) continue;
+          /*********************************/
+
+          ncountjet += evtweight;
 
           // loop D
           for(int jd=0;jd<*(djt.anD[irecogen]);jd++)
@@ -132,14 +196,14 @@ void djtana_savehist(TString inputname, TString outputname,
 
 int main(int argc, char* argv[])
 {
+  if(argc==14)
+    {
+      djtana_savehist(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), atof(argv[6]), atof(argv[7]), atof(argv[8]), argv[9], atoi(argv[10]), atoi(argv[11]), atoi(argv[12]), atoi(argv[13]));
+      return 0;
+    }
   if(argc==13)
     {
       djtana_savehist(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), atof(argv[6]), atof(argv[7]), atof(argv[8]), argv[9], atoi(argv[10]), atoi(argv[11]), atoi(argv[12]));
-      return 0;
-    }
-  if(argc==12)
-    {
-      djtana_savehist(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), atof(argv[6]), atof(argv[7]), atof(argv[8]), argv[9], atoi(argv[10]), atoi(argv[11]));
       return 0;
     }
   if(argc==10)

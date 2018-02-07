@@ -14,18 +14,20 @@ DO_SAVEHIST=${2:-0}
 DO_USEHIST=${3:-0}
 DO_PLOTHIST=${4:-0}
 
-ifScale=0
-ifSmear=0
+ifScale=${5:-0}
+ifSmearPt=${6:-0}
+ifSmearPhi=${7:-0}
 
 # Select the systems the macros run on 
 iCOL=(0 2)
-jJET=(0 3)
+jJET=(0)
 kRECOGEN=(0 1 2 3)
 
 ##
 # scaleNsmear
-tScale=("woScale" "wScale")
-tSmear=("woSmear" "wSmear")
+tScale=("woScale" "wScaleRMG" "wScaleFF")
+tSmearPt=("woSmearPt" "wSmearPt")
+tSmearPhi=("woSmearAng" "wSmearAngJet" "wSmearAngJetD")
 
 # nCOL loop
 COLSYST=('pp' 'pp' 'PbPb' 'PbPb')
@@ -94,7 +96,7 @@ function produce_postfix()
         echo -e "\033[1;31merror:${NC} invalid argument number - produce_postfix()"
         return 1
     fi
-    echo ${COLSYST[$1]}_${tMC[${ISMC[$1]}]}_${RECOGEN[$3]}_jetpt_$(float_to_string ${JETPTMIN[$2]})_jeteta_$(float_to_string ${JETETAMIN[$2]})_$(float_to_string ${JETETAMAX[$2]})_${HLTOPT[$2]}_${tScale[$ifScale]}_${tSmear[$ifSmear]}
+    echo ${COLSYST[$1]}_${tMC[${ISMC[$1]}]}_${RECOGEN[$3]}_jetpt_$(float_to_string ${JETPTMIN[$2]})_jeteta_$(float_to_string ${JETETAMIN[$2]})_$(float_to_string ${JETETAMAX[$2]})_${HLTOPT[$2]}_${tScale[$ifScale]}_${tSmearPt[$ifSmearPt]}_${tSmearPhi[$ifSmearPhi]}
 }
 
 #
@@ -125,13 +127,13 @@ do
                 if [[ $DO_SAVETPL -eq 1 ]]
                 then
                     echo -e "-- Processing ${FUNCOLOR}djtana_savetpl.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
-                    ./djtana_savetpl.exe "${INPUTMCNAME[i]}" "rootfiles/masstpl_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} &
+                    ./djtana_savetpl.exe "${INPUTMCNAME[i]}" "rootfiles/masstpl_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} ${ifScale} ${ifSmearPt} ${ifSmearPhi} &
                     echo
                 fi
                 if [[ $DO_SAVEHIST -eq 1 ]]
                 then
                     echo -e "-- Processing ${FUNCOLOR}djtana_savehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
-                    ./djtana_savehist.exe "${INPUTDANAME[i]}" "rootfiles/hist_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} "${HLTOPT[j]}" ${ifScale} ${ifSmear} &
+                    ./djtana_savehist.exe "${INPUTDANAME[i]}" "rootfiles/hist_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} "${HLTOPT[j]}" ${ifScale} ${ifSmearPt} ${ifSmearPhi} &
                     echo
                 fi
             fi
