@@ -43,7 +43,7 @@ void djtana_savehist(TString inputname, TString outputname,
       djt.fHlt->GetEntry(i);
       //
 
-      if(djt.pthat < 15) continue;
+      if(isMC && djt.pthat < 15) continue;
 
       // to add event selection ...
       if(djt.ishltselected(hltsel) < 0) return;
@@ -94,8 +94,13 @@ void djtana_savehist(TString inputname, TString outputname,
           // smear pt
           if(djt.ajetopt[irecogen]=="gen" && gensmearpt)
             {
-              Float_t sigmaPt = TMath::Sqrt(paramfResoPt->at(ibincent).at(0)*paramfResoPt->at(ibincent).at(0) + paramfResoPt->at(ibincent).at(1)*paramfResoPt->at(ibincent).at(1)/jetpt + paramfResoPt->at(ibincent).at(2)*paramfResoPt->at(ibincent).at(2)/(jetpt*jetpt));
-              jetpt = jetpt * pRandom3->Gaus(1, sigmaPt);
+              if(jetpt > 10)
+                {
+                  Float_t sigmaPt = TMath::Sqrt(paramfResoPt->at(ibincent).at(0)*paramfResoPt->at(ibincent).at(0) + 
+                                                paramfResoPt->at(ibincent).at(1)*paramfResoPt->at(ibincent).at(1)/jetpt + 
+                                                paramfResoPt->at(ibincent).at(2)*paramfResoPt->at(ibincent).at(2)/(jetpt*jetpt));
+                  jetpt = jetpt * pRandom3->Gaus(1, sigmaPt);
+                }
             }
 
           /*********************************/
@@ -213,11 +218,11 @@ int main(int argc, char* argv[])
     }
   else if(argc==1)
     {
-      djtana_savehist("/export/d00/scratch/jwang/Djets/MC/DjetFiles_20170506_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20170404_pthatweight.root",
+      djtana_savehist("/export/d00/scratch/jwang/Djets/data/DjetFiles_20171120_pp_5TeV_HighPtLowerJets_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614.root",
                       "test",
-                      "pp", 1, 0,
+                      "pp", 0, 0,
                       40, 0.3, 1.6, 
-                      "noHLT", 0, 0, 100000);
+                      "HLTJet40Jet60", 1, 0, 0, 10000);
       return 0;
     }
   else

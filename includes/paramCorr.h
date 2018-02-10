@@ -5,22 +5,24 @@
 
 Float_t param0fResoPt_pp_param = 0.0757855;
 Float_t param0fResoPt_pp_err = 0.000351793;
-Float_t param0fResoPtCorr_pp_param = 0.0720245;
-Float_t param0fResoPtCorr_pp_err = 0.000453406;
+
+// Float_t param0fResoPtCorr_pp_param = 0.0720245;
+// Float_t param0fResoPtCorr_pp_err = 0.000453406;
+Float_t param0fResoPtCorr_pp_param = 0.0776852;
+Float_t param0fResoPtCorr_pp_err = 0.000245307;
 Float_t param0fResoPtFfJecCorr_pp_param = 0.0720245;
 Float_t param0fResoPtFfJecCorr_pp_err = 0.000453406;
 
 Float_t param1fResoPt_peri_param = 1.24604;
 Float_t param1fResoPt_peri_err = 0.00527129;
-Float_t param1fResoPtCorr_peri_param = 1.06791;
-Float_t param1fResoPtCorr_peri_err = 0.0139354;
+
+// Float_t param1fResoPtCorr_peri_param = 1.06791;
+// Float_t param1fResoPtCorr_peri_err = 0.0139354;
+Float_t param1fResoPtCorr_peri_param = 1.1766;
+Float_t param1fResoPtCorr_peri_err = 0.00583449;
 Float_t param1fResoPtFfJecCorr_peri_param = 1.06791;
 Float_t param1fResoPtFfJecCorr_peri_err = 0.0139354;
 
-// Float_t param1fResoPt_peri_param = 1.20136;
-// Float_t param1fResoPt_peri_err = 0.00375337;
-// Float_t param1fResoPtCorr_peri_param = 1.22911;
-// Float_t param1fResoPtCorr_peri_err = 0.00394684;
 
 // fScalePt
 // [0]+[1]/TMath::Sqrt(x)+[2]/x+[3]/(x*x)
@@ -30,7 +32,8 @@ Float_t param1fResoPtFfJecCorr_peri_err = 0.0139354;
 // pp
 std::vector<std::vector<Float_t>> paramfScalePt_pp = {{1.00033, -0.229415, 1.90715, 0}};
 std::vector<std::vector<Float_t>> paramfResoPt_pp = {{0.0757855, 0.826599, 0}};
-std::vector<std::vector<Float_t>> paramfResoPtCorr_pp = {{0.0721575, 0.886562, 0}};
+// std::vector<std::vector<Float_t>> paramfResoPtCorr_pp = {{0.0721575, 0.886562, 0}}; // fit from 20 GeV
+std::vector<std::vector<Float_t>> paramfResoPtCorr_pp = {{0.0776852, 0.824616, 0}}; // fit from 10 GeV (release peripheral limits)
 std::vector<std::vector<Float_t>> paramfResoPhi_pp = {{0.00357654, 0.0517934, 0}};
 std::vector<std::vector<Float_t>> paramfResoEta_pp = {{-0.00269668, -0.0379895, -1.60484e-05}};
 std::vector<std::vector<Float_t>> paramfScalePtFfCorr_pp = {{0.96538, 0.311907, -6.13166, 90.6198}}; // fit from 20 GeV
@@ -49,8 +52,10 @@ std::vector<std::vector<Float_t>> paramfScalePt_PbPb = {{0.967656, 0.843614, -12
                                                         {0.977684, 0.552352, -7.7374, 159.635}};
 std::vector<std::vector<Float_t>> paramfResoPt_PbPb = {{0.0761373, 1.25131, 4.26688},
                                                        {0.0754337, 1.22438, 0}};
-std::vector<std::vector<Float_t>> paramfResoPtCorr_PbPb = {{0.0724779, 1.08185, 9.59997},
-                                                           {0.0715711, 1.14754, 5.56808}};
+// std::vector<std::vector<Float_t>> paramfResoPtCorr_PbPb = {{0.0724779, 1.08185, 9.59997}, // fit from 20 GeV
+//                                                            {0.0715711, 1.14754, 5.56808}}; 
+std::vector<std::vector<Float_t>> paramfResoPtCorr_PbPb = {{0.0774399, 1.37541, 6.14581}, // fit from 10 GeV (release peripheral limits)
+                                                           {0.0774399, 1.1766, 4.40253}};
 std::vector<std::vector<Float_t>> paramfResoPhi_PbPb = {{0.0166083, 2.27444e-05, 1.24067},
                                                         {0.0161091, -2.22311e-06, 0.945415}};
 std::vector<std::vector<Float_t>> paramfResoEta_PbPb = {{0.0161334, 3.14141e-08, 1.07716},
