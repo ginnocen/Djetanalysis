@@ -9,6 +9,14 @@ else
     echo "warning: input samples are saved at submit(-hi2).mit.edu"
 fi
 
+mv ../includes/prefilters.h ../includes/prefilters_temp.h
+cp ../includes/prefilters_data.h ../includes/prefilters.h
+
+if [ ! -f ../includes/prefilters.h ]
+then
+    exit 1
+fi
+
 DO_SAVETPL=${1:-0}
 DO_SAVEHIST=${2:-0}
 DO_USEHIST=${3:-0}
@@ -19,8 +27,8 @@ ifSmearPt=${6:-0}
 ifSmearPhi=${7:-0}
 
 # Select the systems the macros run on 
-iCOL=(0 2)
-jJET=(0)
+iCOL=(3)
+jJET=(1)
 kRECOGEN=(0 1 2 3)
 
 ##
@@ -37,8 +45,10 @@ ISMC=(1 0 1 0)
 JETPTMIN=(40 40 60 60)
 JETETAMIN=(0.3 0.3 0.3 0.3)
 JETETAMAX=(1.6 1.6 1.6 1.6)
-HLTOPT=("noHLT" "HLTJet40Jet60" "HLTJet60" "noHLT")
-# HLTOPT=("noHLT" "HLTJet40Jet60Jet80" "HLTJet60Jet80" "noHLT")
+# HLTOPT=("noHLT" "HLTJet40Jet60" "HLTJet60" "noHLT")
+HLTOPT=("noHLT" "HLTJet40Jet60Jet80" "HLTJet60Jet80" "noHLT")
+
+MAXEVT=-1
 
 # nRECOGEN loop
 RECOGEN=('RecoD_RecoJet' 'GenD_RecoJet' 'RecoD_GenJet' 'GenD_GenJet')
@@ -133,7 +143,7 @@ do
                 if [[ $DO_SAVEHIST -eq 1 ]]
                 then
                     echo -e "-- Processing ${FUNCOLOR}djtana_savehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
-                    ./djtana_savehist.exe "${INPUTDANAME[i]}" "rootfiles/hist_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} "${HLTOPT[j]}" ${ifScale} ${ifSmearPt} ${ifSmearPhi} &
+                    ./djtana_savehist.exe "${INPUTDANAME[i]}" "rootfiles/hist_${tPOSTFIX}" "${COLSYST[i]}" ${ISMC[i]} $k ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} "${HLTOPT[j]}" ${ifScale} ${ifSmearPt} ${ifSmearPhi} $MAXEVT &
                     echo
                 fi
             fi
@@ -198,3 +208,5 @@ then
 fi
 
 rm djtana_plothist.exe
+
+mv ../includes/prefilters_temp.h ../includes/prefilters.h
