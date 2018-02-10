@@ -245,7 +245,7 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
 
     int njet_akpu4pf = 0;
     for (int ij = 0; ij < jt_akpu4pf.nref; ij++) {
-      if (jt_akpu4pf.jtpt[ij] > 30 && fabs(jt_akpu4pf.jteta[ij]) < 1.6) {
+      if (jt_akpu4pf.jtpt[ij] > jetptmin && fabs(jt_akpu4pf.jteta[ij]) < 2.0) {
         float jetpt_corr = jt_akpu4pf.jtpt[ij];
         djt.jetptCorr_akpu4pf.push_back(jetpt_corr);
         djt.jetpt_akpu4pf.push_back(jt_akpu4pf.jtpt[ij]);
