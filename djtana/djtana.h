@@ -14,6 +14,7 @@
 #include <TH2F.h>
 #include <TLegend.h>
 #include <TRandom2.h>
+#include <TRandom3.h>
 
 const Float_t DZERO_MASS = 1.8649;
 
