@@ -11,10 +11,17 @@ else
     echo "warning: input samples are saved at submit(-hi2).mit.edu"
 fi
 
-DO_SAVETPL=${1:-0}
-DO_SAVEHIST=${2:-0}
-DO_USEHIST=${3:-0}
-DO_PLOTHIST=${4:-0}
+#DO_SAVETPL=${1:-0}
+#DO_SAVEHIST=${2:-0}
+#DO_USEHIST=${3:-0}
+#DO_PLOTHIST=${4:-0}
+
+DO_SAVETPL=0
+DO_SAVEHIST=0
+DO_USEHIST=0
+DO_PLOTHIST=0
+DO_SHOW=0
+
 
 ifScale=0
 ifSmear=0
@@ -198,3 +205,5 @@ then
 fi
 
 rm djtana_plothist.exe
+
+
