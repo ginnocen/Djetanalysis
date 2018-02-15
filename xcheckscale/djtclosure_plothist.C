@@ -3,7 +3,7 @@
 void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
                          TString collisionsyst,
                          Float_t jetptmin, Float_t jetetamin, Float_t jetetamax,
-                         Int_t plotref = 1)
+                         Int_t plotref = 0)
 {
   int arguerr(std::vector<TString>inputhistname, TString collisionsyst, Int_t plotref);
   if(arguerr(inputhistname, collisionsyst, plotref)) return;
@@ -39,7 +39,7 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
   std::vector<float>              yPullaxismin     = {0.2,                       0.2};
   std::vector<float>              yPullaxismax     = {2.2,                       2.2};
 
-  Float_t yaxismin = 1.1e-5, yaxismax = 1.e+3;
+  Float_t yaxismin = 1.1e-3, yaxismax = 1.e+3;
   Float_t ypaddiv = 2./3, yPullpaddiv = 1-ypaddiv;
 
   // calculate pull
@@ -52,11 +52,11 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
               for(int l=0;l<nRefBins;l++)
                 {
                   if(l && !plotref) continue;
-                  (hSignalXnormPull.at(k))[(m*nRefBins+l)*nPtBins+i]->Divide((hSignalXnorm.at(k))[(m*nRefBins+l)*nPtBins+i], 
-                                                                             (hSignalXnorm.at(k))[((nCases-1)*nRefBins+l)*nPtBins+i]); // hSignalXnorm[nCases-1][l][i] is truth
+                  (hSignalXnormPull.at(k))[(m*nRefBins+l)*nPtBins+i]->Divide((hSignalXnorm.at(k))[(0*nRefBins+l)*nPtBins+i], 
+                                                                             (hSignalXnorm.at(k))[(1*nRefBins+l)*nPtBins+i]); // hSignalXnorm[nCases-1][l][i] is truth
                 }
-              (hSignalXsubPull.at(k))[m*nPtBins+i]->Divide((hSignalXsub.at(k))[m*nPtBins+i], 
-                                                           (hSignalXsub.at(k))[(nCases-1)*nPtBins+i]); // hSignalXsub[nCases-1][i] is truth
+              (hSignalXsubPull.at(k))[m*nPtBins+i]->Divide((hSignalXsub.at(k))[0*nPtBins+i], 
+                                                           (hSignalXsub.at(k))[1*nPtBins+i]); // hSignalXsub[nCases-1][i] is truth
             }
         }
     }
@@ -67,7 +67,6 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
       for(int i=0;i<nPtBins;i++)
         {
           TCanvas* c = new TCanvas("c", "", 600, 800);
-          // TCanvas* c = new TCanvas("c", "", 600, 600 / ypaddiv);
           TPad* pXsec = new TPad("pXsec", "", 0, 1-ypaddiv, 1, 1);
           pXsec->SetMargin(xjjroot::margin_pad_left, xjjroot::margin_pad_right, 0, xjjroot::margin_pad_top);
           pXsec->Draw();
@@ -85,11 +84,8 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
           for(int l=0;l<nRefBins;l++)
             {
               if(l && !plotref) continue;
-              for(int m=0;m<nCases;m++)
+              for(int m=nCases-1;m>=0;m--)
                 {
-                  //
-                  if(m==0 || m==2) continue;
-                  //
                   xjjroot::setthgrstyle((hSignalXnorm.at(k))[(m*nRefBins+l)*nPtBins+i], amcolor[m], amstyle[l], 1.2, amcolor[m], 1, 1, -1, -1, -1);
                   (hSignalXnorm.at(k))[(m*nRefBins+l)*nPtBins+i]->Draw("pe same");
                   if(!l) leg->AddEntry((hSignalXnorm.at(k))[(m*nRefBins+l)*nPtBins+i], legCases[m].Data(), "p");
@@ -112,7 +108,7 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
           pPull->SetMargin(xjjroot::margin_pad_left, xjjroot::margin_pad_right, 0.07*1/yPullpaddiv, 0);
           pPull->Draw();
           pPull->cd();
-          TH2F* hemptyPull = new TH2F("hemptyPull", Form(";%s;%s",xtitle[k].Data(),"X / truth"), 5, vxBins[k].front(), vxBins[k].back(), 10, yPullaxismin[k], yPullaxismax[k]);
+          TH2F* hemptyPull = new TH2F("hemptyPull", Form(";%s;%s",xtitle[k].Data(),"Ratio"), 5, vxBins[k].front(), vxBins[k].back(), 10, yPullaxismin[k], yPullaxismax[k]);
           hemptyPull->GetXaxis()->SetNdivisions(505);
           hemptyPull->GetYaxis()->SetNdivisions(504);
           xjjroot::sethempty(hemptyPull, -0.5, -0);
@@ -129,13 +125,9 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
           xjjroot::drawline(vxBins[k].front(), 1.00, vxBins[k].back(), 1.00, kGray+2, 2, 4);
           for(int l=0;l<nRefBins;l++)
             {
-              // if(l && !plotref) continue;
               if(l) continue;
               for(int m=0;m<nCases;m++)
                 {
-                  //
-                  if(m==0 || m==2) continue;
-                  //
                   if(m==nCases-1) continue;
                   xjjroot::setthgrstyle((hSignalXnormPull.at(k))[(m*nRefBins+l)*nPtBins+i], amcolor[m], amstyle[l], 1.2, amcolor[m], 1, 1, -1, -1, -1);
                   (hSignalXnormPull.at(k))[(m*nRefBins+l)*nPtBins+i]->Draw("pe same");
@@ -152,43 +144,6 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
         }
     }
 
-  xjjroot::setgstyle();
-
-  for(int k=0;k<2;k++)
-    {
-      for(int i=0;i<nPtBins;i++)
-        {
-          TCanvas* c = new TCanvas("c", "", 600, 600);
-          TH2F* hempty = new TH2F("hempty", Form(";%s;X / truth",xtitle[k].Data()), 5, vxBins[k].front(), vxBins[k].back(), 10, yPullaxismin[k], yPullaxismax[k]);
-          hempty->GetXaxis()->SetNdivisions(505);
-          xjjroot::sethempty(hempty, 0, 0.5);
-          hempty->Draw();
-          xjjroot::drawbox(vxBins[k].front(), 0.9, vxBins[k].back(), 1.1);
-          xjjroot::drawline(vxBins[k].front(), 1.0, vxBins[k].back(), 1.0, kGray+2, 2, 3);
-          TLegend* leg = new TLegend(0.58, 0.88-(nCases-1)*0.06, 0.90, 0.88);
-          xjjroot::setleg(leg);
-          for(int m=0;m<nCases;m++)
-            {
-              if(m==(nCases-1)) continue;
-              xjjroot::setthgrstyle((hSignalXsubPull.at(k))[m*nPtBins+i], amcolor[m], amstyle[0], 1.2, amcolor[m], 1, 1, -1, -1, -1);
-              (hSignalXsubPull.at(k))[m*nPtBins+i]->Draw("pe same");
-              leg->AddEntry((hSignalXsubPull.at(k))[m*nPtBins+i], legCases[m].Data(), "p");
-            }
-          xjjroot::drawCMS(collisionsyst);
-          Float_t texxpos = 0.22, texypos = 0.85, texdypos = 0.06;
-          texypos += texdypos;
-          for(std::vector<TString>::const_iterator it=vectex.begin(); it!=vectex.end(); it++)
-            xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), *it);
-          TString tpt = ptBins[i+1]>=999?Form("p_{T}^{D} > %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str()):Form("%s < p_{T}^{D} < %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str(),xjjc::number_remove_zero(ptBins[i+1]).c_str());
-          xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), tpt.Data());
-          if(k) xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), "#DeltaR < 0.3");
-          leg->Draw();
-          c->SaveAs(Form("plotclosure/cclosure_subratio_%s_%s_pt_%s_%s.pdf",outputname.Data(),tname[k].Data(),xjjc::number_to_string(ptBins[i]).c_str(),xjjc::number_to_string(ptBins[i+1]).c_str()));
-          delete leg;
-          delete hempty;
-          delete c;
-        }
-    }
 }
 
 int main(int argc, char* argv[])

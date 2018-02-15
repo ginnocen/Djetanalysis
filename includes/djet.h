@@ -272,11 +272,17 @@ public:
   std::vector<float>**   aDeta[ncases]     =   {&Deta,                &Geta,                &Deta,             &Geta};
   std::vector<float>**   aDphi[ncases]     =   {&Dphi,                &Gphi,                &Dphi,             &Gphi};
   TString                ajetopt[ncases]   =   {"reco",               "reco",               "gen",             "gen"};
-  int*                   anjet[ncases]     =   {&njet_akpu3pf,        &njet_akpu3pf,        &ngen_akpu3pf,     &ngen_akpu3pf};
-  std::vector<float>**   ajetpt[ncases]    =   {&jetpt_akpu3pf,       &jetpt_akpu3pf,       &genpt_akpu3pf,    &genpt_akpu3pf};
-  std::vector<float>**   ajeteta[ncases]   =   {&jeteta_akpu3pf,      &jeteta_akpu3pf,      &geneta_akpu3pf,   &geneta_akpu3pf};
-  std::vector<float>**   ajetphi[ncases]   =   {&jetphi_akpu3pf,      &jetphi_akpu3pf,      &genphi_akpu3pf,   &genphi_akpu3pf};
-  std::vector<int>**     asubid[ncases]    =   {&subid_akpu3pf,       &subid_akpu3pf,       &gensubid_akpu3pf, &gensubid_akpu3pf};
+  // int*                   anjet[ncases]     =   {&njet_akpu3pf,        &njet_akpu3pf,        &ngen_akpu3pf,     &ngen_akpu3pf};
+  // std::vector<float>**   ajetpt[ncases]    =   {&jetpt_akpu3pf,       &jetpt_akpu3pf,       &genpt_akpu3pf,    &genpt_akpu3pf};
+  // std::vector<float>**   ajeteta[ncases]   =   {&jeteta_akpu3pf,      &jeteta_akpu3pf,      &geneta_akpu3pf,   &geneta_akpu3pf};
+  // std::vector<float>**   ajetphi[ncases]   =   {&jetphi_akpu3pf,      &jetphi_akpu3pf,      &genphi_akpu3pf,   &genphi_akpu3pf};
+  // std::vector<int>**     asubid[ncases]    =   {&subid_akpu3pf,       &subid_akpu3pf,       &gensubid_akpu3pf, &gensubid_akpu3pf};
+
+  int*                   anjet[ncases]     =   {&njet_akpu3pf,        &njet_akpu3pf,        &njet_akpu3pf,     &njet_akpu3pf};
+  std::vector<float>**   ajetpt[ncases]    =   {&jetpt_akpu3pf,       &jetpt_akpu3pf,       &gjetpt_akpu3pf,    &gjetpt_akpu3pf};
+  std::vector<float>**   ajeteta[ncases]   =   {&jeteta_akpu3pf,      &jeteta_akpu3pf,      &gjeteta_akpu3pf,   &gjeteta_akpu3pf};
+  std::vector<float>**   ajetphi[ncases]   =   {&jetphi_akpu3pf,      &jetphi_akpu3pf,      &gjetphi_akpu3pf,   &gjetphi_akpu3pf};
+  std::vector<int>**     asubid[ncases]    =   {&subid_akpu3pf,       &subid_akpu3pf,       &subid_akpu3pf, &subid_akpu3pf};
 
   Int_t HLT_AK4Jet40;
   Int_t HLT_AK4Jet60;

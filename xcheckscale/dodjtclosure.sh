@@ -7,32 +7,30 @@ DO_PLOTHIST=${1:-0}
 
 # Select the systems the macros run on 
 iCOL=(0 1)
-jJET=(1)
-
-lScale=${2:-0}
-lSmearPt=${3:-0}
-lSmearPhi=${4:-0}
+jJET=(0)
 
 ##
 # nCOL loop
 COLSYST=('pp' 'PbPb')
 
 # nJET loop
-JETPTMIN=(40 40 60 40)
-JETETAMIN=(0 0.3 0.3 0)
-JETETAMAX=(2.0 1.6 1.6 1.0)
+JETPTMIN=(40)
+JETETAMIN=(0.3)
+JETETAMAX=(1.6)
 
 # nScaleSmear
-tScale=("woScale" "wScaleRMG" "wScaleFF")
-tSmearPt=("woSmearPt" "wSmearPt")
-tSmearPhi=("woSmearAng" "wSmearAngJet" "wSmearAngJetD")
+tScale=("wScaleFF" "wScaleRMG")
 
 # Do not touch the macros below if you don't know what they mean #
 #
+
+lSmearPt=1
+lSmearPhi=1
+tSmearPt=("woSmearPt" "wSmearPt")
+tSmearPhi=("woSmearAng" "wSmearAngJet" "wSmearAngJetD")
+
 nCOL=${#COLSYST[@]}
 nJET=${#JETPTMIN[@]}
-
-RECOGEN=('RecoD_RecoJet' 'GenD_RecoJet' 'RecoD_GenJet' 'GenD_GenJet')
 
 #
 NC='\033[0m'
@@ -58,10 +56,10 @@ function produce_postfix()
 {
     if [[ $# -eq 3 ]]
     then
-        echo ${COLSYST[$1]}_MC_${RECOGEN[$3]}_jetpt_$(float_to_string ${JETPTMIN[$2]})_jeteta_$(float_to_string ${JETETAMIN[$2]})_$(float_to_string ${JETETAMAX[$2]})_noHLT_${tScale[$lScale]}_${tSmearPt[$lSmearPt]}_${tSmearPhi[$lSmearPhi]}
+        echo ${COLSYST[$1]}_MC_GenD_RecoJet_jetpt_$(float_to_string ${JETPTMIN[$2]})_jeteta_$(float_to_string ${JETETAMIN[$2]})_$(float_to_string ${JETETAMAX[$2]})_noHLT_${tScale[$3]}_${tSmearPt[$lSmearPt]}_${tSmearPhi[$lSmearPhi]}
     elif [[ $# -eq 2 ]]
     then
-        echo ${COLSYST[$1]}_jetpt_$(float_to_string ${JETPTMIN[$2]})_jeteta_$(float_to_string ${JETETAMIN[$2]})_$(float_to_string ${JETETAMAX[$2]})_noHLT_${tScale[$lScale]}_${tSmearPt[$lSmearPt]}_${tSmearPhi[$lSmearPhi]}
+        echo ${COLSYST[$1]}_GenD_RecoJet_jetpt_$(float_to_string ${JETPTMIN[$2]})_jeteta_$(float_to_string ${JETETAMIN[$2]})_$(float_to_string ${JETETAMAX[$2]})_noHLT
     else
         echo -e "\033[1;31merror:${NC} invalid argument number - produce_postfix()"
         return 1
@@ -91,18 +89,18 @@ then
     do
         for j in ${jJET[@]}
         do
-            echo -e "-- Processing ${FUNCOLOR}djtclosure_plothist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tScale[lScale]}${NC}, ${ARGCOLOR}${tSmearPt[lSmearPt]}${NC}, ${ARGCOLOR}${tSmearPhi[lSmearPhi]}${NC}"
+            echo -e "-- Processing ${FUNCOLOR}djtclosure_plothist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
             tPOSTFIX=Djet_$(produce_postfix $i $j)
             k=0
             filenexist=0
-            for rg in ${RECOGEN[@]}
+            for rg in ${tScale[@]}
             do
                 tPOSTFIX_RG[k]=Djet_$(produce_postfix $i $j $k)
                 [[ ! -f "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[k]}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} ${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[k]}.root doesn't exist. Process ../djtana/djtana_usehist.C first."; filenexist=$(($filenexist+1)); }
                 k=$(($k+1))
             done
             [[ $filenexist -ne 0 ]] && continue
-            ./djtclosure_plothist.exe "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[0]}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[1]}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[2]}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[3]}" "$tPOSTFIX" "${COLSYST[i]}" ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]}
+            ./djtclosure_plothist.exe "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[0]}" "${DIRPREFIX}/rootfiles/xsec_${tPOSTFIX_RG[1]}" "$tPOSTFIX" "${COLSYST[i]}" ${JETPTMIN[j]} ${JETETAMIN[j]} ${JETETAMAX[j]}
             echo
         done
     done
