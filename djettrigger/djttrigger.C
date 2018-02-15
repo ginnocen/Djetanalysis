@@ -67,7 +67,7 @@ void djttrigger(){
 	for (int indexcases=0;indexcases<nCases;indexcases++){
 
 
-		canvasname[indexcases]=Form("canvasSpectraplot%s.pdf",labelCases[indexcases].Data());
+		canvasname[indexcases]=Form("plottriggers/canvasSpectraplot%s.pdf",labelCases[indexcases].Data());
 		c[indexcases]=new TCanvas(canvasname[indexcases].Data(),canvasname[indexcases].Data(),600,600);
 		c[indexcases]->cd();
 		gPad->SetLogx();

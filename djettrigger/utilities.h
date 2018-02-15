@@ -15,7 +15,7 @@
   double lowerrangex[nCases]={0.,0.};
   double upperrangex[nCases]={1.0,1.0};
   double lowerrangey[nCases]={0.,0.};
-  double upperrangey[nCases]={4,4};
+  double upperrangey[nCases]={1.5,1.5};
 
   TString string_xaxis[nCases]={"#Delta (R)","#Delta (R)"};
   TString string_yaxis[nCases]={"fraction of events/no HLT p_{T}>4","fraction of events/no HLT p_{T}>20"};
