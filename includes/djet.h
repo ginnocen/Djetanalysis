@@ -334,10 +334,10 @@ private:
 
 djet::djet(TString infname, Int_t ispp, Int_t isMC) : fChain(0), fHlt(0), fispp(ispp), fisMC(isMC)
 {
-  TFile* inf = new TFile(infname.Data());
-  if(!inf->IsOpen()) return;
+  TFile* inf = TFile::Open(infname.Data());
+  if(!inf->IsOpen()) {std::cout << "open file failed" << std::endl; return;}
   TTree* tree = (TTree*)inf->Get("djt");
-  if(!tree) return;
+  if(!tree) {std::cout << "tree get failed" << std::endl; return;}
   TTree* hlt = (TTree*)inf->Get("hlt");
   if(!hlt) return;
   Init_member();
@@ -579,9 +579,9 @@ void djet::Init(TTree *tree, TTree *hlt)
   Gtk2phi = 0;
 
   // Set branch addresses and branch pointers
-  if(!tree) return;
+  if(!tree) {std::cout << "init failed" << std::endl; return;}
   fChain = tree;
-  fChain->SetMakeClass(1);
+  //fChain->SetMakeClass(1);
 
   fChain->SetBranchAddress("isPP", &isPP);
   fChain->SetBranchAddress("run", &run);
