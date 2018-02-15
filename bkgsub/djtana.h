@@ -28,6 +28,7 @@ Style_t amstyle[nRefBins][nPtBins] = {{20,     21},   {24,     25}};
 
 TH1F* ahSignalRPH[nRefBins][nPtBins];
 TH1F* ahSignalRPHsub[nPtBins];
+TH1F* ahSignalRPHbkg[nPtBins];
 TH1F* ahSignalRP[nPtBins];
 TH1F* ahSignalRatio[nPtBins];
 
@@ -44,11 +45,12 @@ int createhists(Option_t* option)
       hnjet = new TH1F("hnjet", "", 1, 0, 1);
       for(int i=0;i<nPtBins;i++)
         {
-          ahSignalRP[i] = new TH1F(Form("hSignalRP_%d",i), ";#Delta R;", nDrBins, drBins);
-          ahSignalRPHsub[i] = new TH1F(Form("hSignalRPHsub_%d",i), ";#Delta R;", nDrBins, drBins);
+          ahSignalRP[i] = new TH1F(Form("hSignalRP_%d",i), ";r;", nDrBins, drBins);
+          ahSignalRPHsub[i] = new TH1F(Form("hSignalRPHsub_%d",i), ";r;", nDrBins, drBins);
+          ahSignalRPHbkg[i] = new TH1F(Form("hSignalRPHbkg_%d",i), ";r;", nDrBins, drBins);
           for(int l=0;l<nRefBins;l++)
             {
-              ahSignalRPH[l][i] = new TH1F(Form("hSignalRPH_%s_%d",tRef[l].Data(),i), ";#Delta R;", nDrBins, drBins);
+              ahSignalRPH[l][i] = new TH1F(Form("hSignalRPH_%s_%d",tRef[l].Data(),i), ";r;", nDrBins, drBins);
             }
         }
       return 0;
@@ -58,7 +60,7 @@ int createhists(Option_t* option)
     {
       for(int i=0;i<nPtBins;i++)
         {
-          ahSignalRatio[i] = new TH1F(Form("hSignalRatio_%d",i), ";#Delta R;", nDrBins, drBins);
+          ahSignalRatio[i] = new TH1F(Form("hSignalRatio_%d",i), ";r;", nDrBins, drBins);
         }
       return 0;
     }
@@ -79,6 +81,7 @@ int writehists(Option_t* option)
         {
           ahSignalRP[i]->Write();
           ahSignalRPHsub[i]->Write();
+          ahSignalRPHbkg[i]->Write();
           for(int l=0;l<nRefBins;l++)
             {
               ahSignalRPH[l][i]->Write();
@@ -103,6 +106,7 @@ int gethists(TFile* inf, Option_t* option)
         {
           ahSignalRP[i] = (TH1F*)inf->Get(Form("hSignalRP_%d",i));
           ahSignalRPHsub[i] = (TH1F*)inf->Get(Form("hSignalRPHsub_%d",i));
+          ahSignalRPHbkg[i] = (TH1F*)inf->Get(Form("hSignalRPHbkg_%d",i));
           for(int l=0;l<nRefBins;l++)
             {
               ahSignalRPH[l][i] = (TH1F*)inf->Get(Form("hSignalRPH_%s_%d",tRef[l].Data(),i));

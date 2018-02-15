@@ -1,6 +1,6 @@
 #include "djtana.h"
 
-void djtana_plothist(TString inputhistname, TString outputname,
+void djtana_corrhist(TString inputhistname, TString inputhistnameSignal, TString outputname,
                      TString collisionsyst,
                      Float_t jetptmin, Float_t jetetamin, Float_t jetetamax)
 {
@@ -9,7 +9,18 @@ void djtana_plothist(TString inputhistname, TString outputname,
   TFile* infhist = new TFile(Form("%s.root",inputhistname.Data()));
   if(!infhist->IsOpen()) return;
   if(gethists(infhist, "plothist")) return;
+  TFile* infhistSignal = new TFile(Form("%s.root",inputhistnameSignal.Data()));
+  if(!infhistSignal->IsOpen()) return;
 
+  TH1F* ahSignalRSignalref[nPtBins];
+  TH1F* ahSignalRPHsubCorr[nPtBins];
+  for(int i=0;i<nPtBins;i++)
+    {
+      ahSignalRSignalref[i] = (TH1F*)infhistSignal->Get(Form("hSignalRPH_%s_%d",tRef[1].Data(),i));
+      ahSignalRSignalref[i]->SetName(Form("hSignalRSignalref_%d",i));
+      ahSignalRPHsubCorr[i] = (TH1F*)ahSignalRPHsub[i]->Clone(Form("hSignalRPHsubCorr_%d",i));
+      ahSignalRPHsubCorr[i]->Add(ahSignalRSignalref[i]);
+    }
   // preparation
   for(int i=0;i<nPtBins;i++)
     {
@@ -18,7 +29,8 @@ void djtana_plothist(TString inputhistname, TString outputname,
       ahSignalRP[i]->Scale(1, "width");
       ahSignalRPHsub[i]->Scale(1, "width");
       ahSignalRPHbkg[i]->Scale(1, "width");
-      ahSignalRatio[i]->Divide(ahSignalRPHsub[i], ahSignalRP[i]);
+      ahSignalRPHsubCorr[i]->Scale(1, "width");
+      ahSignalRatio[i]->Divide(ahSignalRPHsubCorr[i], ahSignalRP[i]);
     }
 
   std::vector<TString> vectex =
@@ -41,29 +53,29 @@ void djtana_plothist(TString inputhistname, TString outputname,
       pXsec->Draw();
       pXsec->cd();
       pXsec->SetLogy();
-      TH2F* hempty = new TH2F("hempty", ";r;#frac{1}{N_{JD}} #frac{dN_{JD}}{dr}", 5, drBins[0], drBins[nDrBins], 10, yaxismin, yaxismax);
+      TH2F* hempty = new TH2F("hempty", ";#frac{1}{N_{JD}} #frac{dN_{JD}}{dr}", 5, drBins[0], drBins[nDrBins], 10, yaxismin, yaxismax);
       hempty->GetXaxis()->SetNdivisions(505);
       xjjroot::sethempty(hempty, 0, 0);
       hempty->Draw();
-      TLegend* leg = new TLegend(0.58, 0.88-4*0.055, 0.90, 0.88);
+      TLegend* leg = new TLegend(0.58, 0.88-2*0.055, 0.90, 0.88);
       xjjroot::setleg(leg);
 
-      xjjroot::setthgrstyle(ahSignalRPH[0][i], kRed-9, 24, 1.2, kRed-9, 2, 1, -1, -1, -1);
-      ahSignalRPH[0][i]->Draw("pe same");
-      xjjroot::setthgrstyle(ahSignalRPH[1][i], kRed-9, 25, 1.2, kRed-9, 1, 1, -1, -1, -1);
-      ahSignalRPH[1][i]->Draw("pe same");
+      // xjjroot::setthgrstyle(ahSignalRPH[0][i], kRed-9, 24, 1.2, kRed-9, 2, 1, -1, -1, -1);
+      // ahSignalRPH[0][i]->Draw("pe same");
+      // xjjroot::setthgrstyle(ahSignalRPH[1][i], kRed-9, 25, 1.2, kRed-9, 1, 1, -1, -1, -1);
+      // ahSignalRPH[1][i]->Draw("pe same");
       xjjroot::setthgrstyle(ahSignalRP[i], kBlack, 25, 1.2, kBlack, 1, 1, -1, -1, -1);
       ahSignalRP[i]->Draw("pe same");
-      xjjroot::setthgrstyle(ahSignalRPHsub[i], kRed+3, 20, 1.2, kRed+3, 1, 1, -1, -1, -1);
-      ahSignalRPHsub[i]->Draw("pe same");
+      xjjroot::setthgrstyle(ahSignalRPHsubCorr[i], kRed+3, 20, 1.2, kRed+3, 1, 1, -1, -1, -1);
+      ahSignalRPHsubCorr[i]->Draw("pe same");
       // xjjroot::setthgrstyle(ahSignalRPHbkg[i], kBlack, 20, 1.2, kBlack, 1, 1, -1, -1, -1);
       // ahSignalRPHbkg[i]->Draw("pe same");
 
-      leg->AddEntry(ahSignalRPH[0][i], "regular cone", "p");
+      // leg->AddEntry(ahSignalRPH[0][i], "regular cone", "p");
       leg->AddEntry(ahSignalRP[i], "subid = 0", "p");
-      leg->AddEntry(ahSignalRPHsub[i], "bkg sub", "p");
+      leg->AddEntry(ahSignalRPHsub[i], "bkg sub Corr", "p");
       // leg->AddEntry(ahSignalRPHbkg[i], "real bkg", "p");
-      leg->AddEntry(ahSignalRPH[1][i], "#eta-reflected cone", "p");
+      // leg->AddEntry(ahSignalRPH[1][i], "#eta-reflected cone", "p");
 
       xjjroot::drawCMS(collisionsyst);
       Float_t texxpos = 0.22, texypos = 0.85, texdypos = 0.06;
@@ -97,7 +109,7 @@ void djtana_plothist(TString inputhistname, TString outputname,
       xjjroot::setthgrstyle(ahSignalRatio[i], kRed+3, 20, 1.2, kRed+3, 1, 1, -1, -1, -1);
       ahSignalRatio[i]->Draw("pe same");
 
-      c->SaveAs(Form("plotbkgsub/cbkgclosure_xsec_dr_%s_pt_%s_%s.pdf",outputname.Data(),xjjc::number_to_string(ptBins[i]).c_str(),xjjc::number_to_string(ptBins[i+1]).c_str()));
+      c->SaveAs(Form("plotbkgsub/cbkgclosureCorr_xsec_dr_%s_pt_%s_%s.pdf",outputname.Data(),xjjc::number_to_string(ptBins[i]).c_str(),xjjc::number_to_string(ptBins[i+1]).c_str()));
 
       delete leg;
       delete hemptyPull;
@@ -110,14 +122,14 @@ void djtana_plothist(TString inputhistname, TString outputname,
 
 int main(int argc, char* argv[])
 {
-  if(argc==7)
+  if(argc==8)
     {
-      djtana_plothist(argv[1], argv[2], argv[3], atof(argv[4]), atof(argv[5]), atof(argv[6]));
+      djtana_corrhist(argv[1], argv[2], argv[3], argv[4], atof(argv[5]), atof(argv[6]), atof(argv[7]));
       return 0;
     }
   else
     {
-      std::cout<<"  Error: invalid arguments number - djtana_plothist()"<<std::endl;
+      std::cout<<"  Error: invalid arguments number - djtana_corrhist()"<<std::endl;
       return 1;
     }
 }
