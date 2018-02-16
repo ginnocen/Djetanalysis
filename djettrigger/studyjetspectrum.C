@@ -17,31 +17,19 @@
 
 void studyjetspectrum(){
 
-	gStyle->SetTextSize(0.05);
-	gStyle->SetTextFont(42);
-	gStyle->SetPadRightMargin(0.043);
-	gStyle->SetPadLeftMargin(0.18);
-	gStyle->SetPadTopMargin(0.1);
-	gStyle->SetPadBottomMargin(0.145);
-	gStyle->SetTitleX(.0f);
-	gStyle->SetTitleY(.0f);
-	gStyle->SetOptStat(0);
-	gStyle->SetMarkerStyle(20);
-	gStyle->SetMarkerSize(0.8);
-
     initialise();
 
 	TFile *finput[samples];
     TH1F *hjetptspectrum[samples][nCases];  
     TH1F *hjetleadingptspectrum[samples][nCases];  
     
-    TH1F *hL1efficiencyden[samples][nCases];  
-    TH1F *hL1efficiencynum[samples][nCases];  
-    TH1F *hHLTefficiencyden[samples][nCases];  
-    TH1F *hHLTefficiencynum[samples][nCases];  
+    TH1F *hL1efficiencyden[samples][ntriggers];  
+    TH1F *hL1efficiencynum[samples][ntriggers];  
+    TH1F *hHLTefficiencyden[samples][ntriggers];  
+    TH1F *hHLTefficiencynum[samples][ntriggers];  
 
-    TGraphAsymmErrors *gL1efficiency[samples][nCases];  
-    TGraphAsymmErrors *gHLTefficiency[samples][nCases];  
+    TGraphAsymmErrors *gL1efficiency[samples][ntriggers];  
+    TGraphAsymmErrors *gHLTefficiency[samples][ntriggers];  
 
 	for (int index=0;index<samples;index++){
 		finput[index]=new TFile(namefiles[index].Data(),"read"); 
@@ -110,18 +98,6 @@ void studyjetspectrum(){
 }
 
 void plot(){
-
-	gStyle->SetTextSize(0.05);
-	gStyle->SetTextFont(42);
-	gStyle->SetPadRightMargin(0.043);
-	gStyle->SetPadLeftMargin(0.18);
-	gStyle->SetPadTopMargin(0.1);
-	gStyle->SetPadBottomMargin(0.145);
-	gStyle->SetTitleX(.0f);
-	gStyle->SetTitleY(.0f);
-	gStyle->SetOptStat(0);
-	gStyle->SetMarkerStyle(20);
-	gStyle->SetMarkerSize(0.8);
 
     initialise();
     
