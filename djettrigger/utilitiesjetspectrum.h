@@ -18,6 +18,10 @@
   TString namehjetptspectrum[samples][nCases];  
   TString namehjetleadingptspectrum[samples][nCases];  
   
+  int colours[nCases]={1,2,3,4,7};
+  int markerstyle[nCases]={21,22,23,24,24};
+  int widthline[nCases]={2,2,2,2,2};
+  
   //nTriggers  
   TString nametrigger[samples][ntriggers]={{"HLT_AK4PFJet40_Eta5p1_v1","HLT_AK4PFJet60_Eta5p1_v1"},{"HLT_HIPuAK4CaloJet40_Eta5p1_v1","HLT_HIPuAK4CaloJet60_Eta5p1_v1"}};
   TString nameL1trigger[samples][ntriggers]={{"L1_SingleJet28_BptxAND","L1_SingleJet40_BptxAND"},{"L1_MinimumBiasHF2_AND","L1_SingleS1Jet28_BptxAND"}};
@@ -31,11 +35,12 @@
   
   TString namegL1efficiency[samples][ntriggers];  
   TString namegHLTefficiency[samples][ntriggers];  
+  TString namegTotefficiency[samples][ntriggers];  
 
-  int colours[nCases]={1,2,3,4,7};
-  int markerstyle[nCases]={21,22,23,24,24};
-  int widthline[nCases]={2,2,2,2,2};
-    
+  int coloursTurnOn[ntriggers]={1,2};
+  int markerstyleTurnOn[ntriggers]={21,22};
+  int widthlineTurnOn[ntriggers]={2,2};
+
   double nbins[samples]={2000,2000};
   double lowerrangex[samples]={20.,20.};
   double upperrangex[samples]={1000.,1000.};
@@ -44,6 +49,12 @@
 
   TString string_xaxis[samples]={"jet offline p_{T}","jet offline p_{T}"};
   TString string_yaxis[samples]={"entries","entries"};
+  
+  double lowerrangeyTurnOn[samples]={0.,0.};
+  double upperrangeyTurnOn[samples]={2,2};
+  TString string_yaxisTurnOnL1[samples]={"L1 efficiency","L1 efficiency"};
+  TString string_yaxisTurnOnHLT[samples]={"HLT efficiency","HLT efficiency"};
+  TString string_yaxisTurnOnTot[samples]={"Total efficiency","Total efficiency"};
 
 void initialise(){
 
@@ -72,6 +83,7 @@ void initialise(){
 		   namehHLTefficiencynum[index][indextriggers]="hHLTefficiencynum"+nametriggerselectiontag[index][indextriggers]+labelsamples[index];
 		   namegL1efficiency[index][indextriggers]="gL1efficiency"+nametriggerselectiontag[index][indextriggers]+labelsamples[index];
 		   namegHLTefficiency[index][indextriggers]="gHLTefficiency"+nametriggerselectiontag[index][indextriggers]+labelsamples[index];
+		   namegTotefficiency[index][indextriggers]="gTotefficiency"+nametriggerselectiontag[index][indextriggers]+labelsamples[index];
     }
   }
 }

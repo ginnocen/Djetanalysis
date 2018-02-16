@@ -30,6 +30,7 @@ void studyjetspectrum(){
 
     TGraphAsymmErrors *gL1efficiency[samples][ntriggers];  
     TGraphAsymmErrors *gHLTefficiency[samples][ntriggers];  
+    TGraphAsymmErrors *gTotefficiency[samples][ntriggers];  
 
 	for (int index=0;index<samples;index++){
 		finput[index]=new TFile(namefiles[index].Data(),"read"); 
@@ -75,6 +76,10 @@ void studyjetspectrum(){
           gHLTefficiency[index][indextriggers] = new TGraphAsymmErrors;
           gHLTefficiency[index][indextriggers]->BayesDivide(hHLTefficiencynum[index][indextriggers],hHLTefficiencyden[index][indextriggers]);
           gHLTefficiency[index][indextriggers]->SetName(namegHLTefficiency[index][indextriggers].Data());
+          
+          gTotefficiency[index][indextriggers] = new TGraphAsymmErrors;
+          gTotefficiency[index][indextriggers]->BayesDivide(hHLTefficiencynum[index][indextriggers],hL1efficiencyden[index][indextriggers]);
+          gTotefficiency[index][indextriggers]->SetName(namegTotefficiency[index][indextriggers].Data());
 		}
 	}
 	
@@ -93,6 +98,7 @@ void studyjetspectrum(){
 		  hHLTefficiencynum[index][indextriggers]->Write();
 		  gL1efficiency[index][indextriggers]->Write();
 		  gHLTefficiency[index][indextriggers]->Write();
+		  gTotefficiency[index][indextriggers]->Write();
         }
     }
 }
@@ -169,7 +175,10 @@ void plot(){
 		leg[index]->Draw();
 		cleading[index]->SaveAs(canvasnameleading[index].Data());
 	}
-
 }
+
+
+
+
 
 
