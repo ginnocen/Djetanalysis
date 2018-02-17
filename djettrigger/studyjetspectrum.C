@@ -49,38 +49,6 @@ void studyjetspectrum(){
 		  hjetleadingptspectrum[index][indexcases]=(TH1F*)htemp->Clone();
 		  hjetleadingptspectrum[index][indexcases]->SetName(namehjetleadingptspectrum[index][indexcases].Data());
 	    }
-	    
-		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
-		
-		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariable[index].Data()),MBselection[index].Data());
-		  hL1efficiencyden[index][indextriggers]=(TH1F*)htemp->Clone();
-		  hL1efficiencyden[index][indextriggers]->SetName(namehL1efficiencyden[index][indextriggers].Data());
-	  
-	      cout<<"index="<<index<<endl;
-		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariable[index].Data()),Form("%s&&%s",MBselection[index].Data(),nameL1trigger[index][indextriggers].Data()));
-		  hL1efficiencynum[index][indextriggers]=(TH1F*)htemp->Clone();
-		  hL1efficiencynum[index][indextriggers]->SetName(namehL1efficiencynum[index][indextriggers].Data());
-
-          gL1efficiency[index][indextriggers] = new TGraphAsymmErrors;
-          gL1efficiency[index][indextriggers]->BayesDivide(hL1efficiencynum[index][indextriggers],hL1efficiencyden[index][indextriggers]);
-          gL1efficiency[index][indextriggers]->SetName(namegL1efficiency[index][indextriggers].Data());
-
-		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariable[index].Data()),MBselection[index].Data());
-		  hHLTefficiencyden[index][indextriggers]=(TH1F*)htemp->Clone();
-		  hHLTefficiencyden[index][indextriggers]->SetName(namehHLTefficiencyden[index][indextriggers].Data());
-
-		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariable[index].Data()),Form("%s&&%s",MBselection[index].Data(),nametrigger[index][indextriggers].Data()));
-		  hHLTefficiencynum[index][indextriggers]=(TH1F*)htemp->Clone();
-		  hHLTefficiencynum[index][indextriggers]->SetName(namehHLTefficiencynum[index][indextriggers].Data());
-
-          gHLTefficiency[index][indextriggers] = new TGraphAsymmErrors;
-          gHLTefficiency[index][indextriggers]->BayesDivide(hHLTefficiencynum[index][indextriggers],hHLTefficiencyden[index][indextriggers]);
-          gHLTefficiency[index][indextriggers]->SetName(namegHLTefficiency[index][indextriggers].Data());
-          
-          gTotefficiency[index][indextriggers] = new TGraphAsymmErrors;
-          gTotefficiency[index][indextriggers]->BayesDivide(hHLTefficiencynum[index][indextriggers],hL1efficiencyden[index][indextriggers]);
-          gTotefficiency[index][indextriggers]->SetName(namegTotefficiency[index][indextriggers].Data());
-		}
 	}
 	
 	TFile*foutput=new TFile("foutput.root","recreate");
@@ -91,15 +59,6 @@ void studyjetspectrum(){
 		  hjetptspectrum[index][indexcases]->Write();
 		  hjetleadingptspectrum[index][indexcases]->Write();
 		}
-		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
-		  hL1efficiencyden[index][indextriggers]->Write();
-		  hL1efficiencynum[index][indextriggers]->Write();
-		  hHLTefficiencyden[index][indextriggers]->Write();
-		  hHLTefficiencynum[index][indextriggers]->Write();
-		  gL1efficiency[index][indextriggers]->Write();
-		  gHLTefficiency[index][indextriggers]->Write();
-		  gTotefficiency[index][indextriggers]->Write();
-        }
     }
 }
 

@@ -15,7 +15,79 @@
 #include <TCanvas.h>
 #include <TGraphAsymmErrors.h>
 
+
+
 void triggerTurnOn(){
+
+    initialise();
+	TFile *finput[samples];
+    TH1F *hL1efficiencyden[samples][ntriggers];  
+    TH1F *hL1efficiencynum[samples][ntriggers];  
+    TH1F *hHLTefficiencyden[samples][ntriggers];  
+    TH1F *hHLTefficiencynum[samples][ntriggers];  
+
+    TGraphAsymmErrors *gL1efficiency[samples][ntriggers];  
+    TGraphAsymmErrors *gHLTefficiency[samples][ntriggers];  
+    TGraphAsymmErrors *gTotefficiency[samples][ntriggers];  
+
+	for (int index=0;index<samples;index++){
+		finput[index]=new TFile(namefilesMB[index].Data(),"read"); 
+		TH1F*htemp=new TH1F("htemp","htemp",2000,0,1000);
+		TTree*ttemp=(TTree*)finput[index]->Get(nametreeMB[index].Data());
+		TTree*ttempHLT=(TTree*)finput[index]->Get(nametreeHLTMB[index].Data());
+		ttemp->AddFriend(ttempHLT);
+			    
+		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
+		
+		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),MBselection[index].Data());
+		  hL1efficiencyden[index][indextriggers]=(TH1F*)htemp->Clone();
+		  hL1efficiencyden[index][indextriggers]->SetName(namehL1efficiencyden[index][indextriggers].Data());
+	  
+	      cout<<"index="<<index<<endl;
+		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),Form("%s&&%s",MBselection[index].Data(),nameL1trigger[index][indextriggers].Data()));
+		  hL1efficiencynum[index][indextriggers]=(TH1F*)htemp->Clone();
+		  hL1efficiencynum[index][indextriggers]->SetName(namehL1efficiencynum[index][indextriggers].Data());
+
+          gL1efficiency[index][indextriggers] = new TGraphAsymmErrors;
+          gL1efficiency[index][indextriggers]->BayesDivide(hL1efficiencynum[index][indextriggers],hL1efficiencyden[index][indextriggers]);
+          gL1efficiency[index][indextriggers]->SetName(namegL1efficiency[index][indextriggers].Data());
+
+		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),Form("%s&&%s",MBselection[index].Data(),nameL1trigger[index][indextriggers].Data()));
+		  hHLTefficiencyden[index][indextriggers]=(TH1F*)htemp->Clone();
+		  hHLTefficiencyden[index][indextriggers]->SetName(namehHLTefficiencyden[index][indextriggers].Data());
+
+		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),Form("%s&&%s&&%s",MBselection[index].Data(),nameL1trigger[index][indextriggers].Data(),nametriggerMB[index][indextriggers].Data()));
+		  hHLTefficiencynum[index][indextriggers]=(TH1F*)htemp->Clone();
+		  hHLTefficiencynum[index][indextriggers]->SetName(namehHLTefficiencynum[index][indextriggers].Data());
+
+          gHLTefficiency[index][indextriggers] = new TGraphAsymmErrors;
+          gHLTefficiency[index][indextriggers]->BayesDivide(hHLTefficiencynum[index][indextriggers],hHLTefficiencyden[index][indextriggers]);
+          gHLTefficiency[index][indextriggers]->SetName(namegHLTefficiency[index][indextriggers].Data());
+          
+          gTotefficiency[index][indextriggers] = new TGraphAsymmErrors;
+          gTotefficiency[index][indextriggers]->BayesDivide(hHLTefficiencynum[index][indextriggers],hL1efficiencyden[index][indextriggers]);
+          gTotefficiency[index][indextriggers]->SetName(namegTotefficiency[index][indextriggers].Data());
+		}
+	}
+	
+	TFile*foutput=new TFile("foutputTurnOn.root","recreate");
+	foutput->cd();
+	
+	for (int index=0;index<samples;index++){
+		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
+		  hL1efficiencyden[index][indextriggers]->Write();
+		  hL1efficiencynum[index][indextriggers]->Write();
+		  hHLTefficiencyden[index][indextriggers]->Write();
+		  hHLTefficiencynum[index][indextriggers]->Write();
+		  gL1efficiency[index][indextriggers]->Write();
+		  gHLTefficiency[index][indextriggers]->Write();
+		  gTotefficiency[index][indextriggers]->Write();
+        }
+    }
+}
+
+
+void plot(){
 
     initialise();
     
@@ -23,7 +95,7 @@ void triggerTurnOn(){
     TGraphAsymmErrors *gHLTefficiency[samples][ntriggers];  
     TGraphAsymmErrors *gTotefficiency[samples][ntriggers];  
     
-	TFile*finput=new TFile("foutput.root","read");
+	TFile*finput=new TFile("foutputTurnOn.root","read");
 	finput->cd();
 	for (int index=0;index<samples;index++){
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
@@ -65,14 +137,14 @@ void triggerTurnOn(){
 			gL1efficiency[index][indextriggers]->SetMarkerStyle(markerstyleTurnOn[indextriggers]);
 			gL1efficiency[index][indextriggers]->SetLineWidth(widthlineTurnOn[indextriggers]);
 
-			legentryHLT[index][indextriggers]=legHLT[index]->AddEntry(gHLTefficiency[index][indextriggers],nametrigger[index][indextriggers].Data(),"pl");
+			legentryHLT[index][indextriggers]=legHLT[index]->AddEntry(gHLTefficiency[index][indextriggers],nametriggerMB[index][indextriggers].Data(),"pl");
 			legentryHLT[index][indextriggers]->SetLineColor(coloursTurnOn[indextriggers]);
 			gHLTefficiency[index][indextriggers]->SetLineColor(coloursTurnOn[indextriggers]);
 			gHLTefficiency[index][indextriggers]->SetMarkerColor(coloursTurnOn[indextriggers]);
 			gHLTefficiency[index][indextriggers]->SetMarkerStyle(markerstyleTurnOn[indextriggers]);
 			gHLTefficiency[index][indextriggers]->SetLineWidth(widthlineTurnOn[indextriggers]);
 
-			legentryTot[index][indextriggers]=legTot[index]->AddEntry(gTotefficiency[index][indextriggers],nametrigger[index][indextriggers].Data(),"pl");
+			legentryTot[index][indextriggers]=legTot[index]->AddEntry(gTotefficiency[index][indextriggers],nametriggerMB[index][indextriggers].Data(),"pl");
 			legentryTot[index][indextriggers]->SetLineColor(coloursTurnOn[indextriggers]);
 			gTotefficiency[index][indextriggers]->SetLineColor(coloursTurnOn[indextriggers]);
 			gTotefficiency[index][indextriggers]->SetMarkerColor(coloursTurnOn[indextriggers]);
