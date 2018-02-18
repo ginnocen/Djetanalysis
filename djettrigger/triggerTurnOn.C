@@ -17,7 +17,7 @@
 
 
 
-void triggerTurnOn(int doPP=0, int doPbPb=1, int do40=1,int do60=1){
+void triggerTurnOn(int doPP=1, int doPbPb=1, int do40=1,int do60=1){
 
     initialise();
 	TFile *finput[samples];
@@ -54,7 +54,6 @@ void triggerTurnOn(int doPP=0, int doPbPb=1, int do40=1,int do60=1){
 	   	  if (indextriggers==0 && do40==0) continue;
 		  if (indextriggers==1 && do60==0) continue;
 
-	      cout<<"index="<<index<<endl;
 		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),L1selection[index][indextriggers]);
 		  hL1efficiencynum[index][indextriggers]=(TH1F*)htemp->Clone();
 		  hL1efficiencynum[index][indextriggers]->SetName(namehL1efficiencynum[index][indextriggers].Data());
