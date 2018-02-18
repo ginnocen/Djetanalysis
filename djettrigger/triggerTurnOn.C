@@ -44,7 +44,7 @@ void triggerTurnOn(){
 		  hL1efficiencyden[index][indextriggers]->SetName(namehL1efficiencyden[index][indextriggers].Data());
 	  
 	      cout<<"index="<<index<<endl;
-		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),Form("%s&&%s",MBselection[index].Data(),nameL1trigger[index][indextriggers].Data()));
+		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),Form("%s&&%s",MBselection[index].Data(),nameL1triggerMB[index][indextriggers].Data()));
 		  hL1efficiencynum[index][indextriggers]=(TH1F*)htemp->Clone();
 		  hL1efficiencynum[index][indextriggers]->SetName(namehL1efficiencynum[index][indextriggers].Data());
 
@@ -52,11 +52,11 @@ void triggerTurnOn(){
           gL1efficiency[index][indextriggers]->BayesDivide(hL1efficiencynum[index][indextriggers],hL1efficiencyden[index][indextriggers]);
           gL1efficiency[index][indextriggers]->SetName(namegL1efficiency[index][indextriggers].Data());
 
-		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),Form("%s&&%s",MBselection[index].Data(),nameL1trigger[index][indextriggers].Data()));
+		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),Form("%s&&%s",MBselection[index].Data(),nameL1triggerMB[index][indextriggers].Data()));
 		  hHLTefficiencyden[index][indextriggers]=(TH1F*)htemp->Clone();
 		  hHLTefficiencyden[index][indextriggers]->SetName(namehHLTefficiencyden[index][indextriggers].Data());
 
-		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),Form("%s&&%s&&%s",MBselection[index].Data(),nameL1trigger[index][indextriggers].Data(),nametriggerMB[index][indextriggers].Data()));
+		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),Form("%s&&%s&&%s",MBselection[index].Data(),nameL1triggerMB[index][indextriggers].Data(),nametriggerMB[index][indextriggers].Data()));
 		  hHLTefficiencynum[index][indextriggers]=(TH1F*)htemp->Clone();
 		  hHLTefficiencynum[index][indextriggers]->SetName(namehHLTefficiencynum[index][indextriggers].Data());
 
