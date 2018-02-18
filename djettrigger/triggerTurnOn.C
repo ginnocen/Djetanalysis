@@ -17,7 +17,7 @@
 
 
 
-void triggerTurnOn(){
+void triggerTurnOn(int doPP=1, int doPbPb=1){
 
     initialise();
 	TFile *finput[samples];
@@ -32,11 +32,14 @@ void triggerTurnOn(){
 
 	for (int index=0;index<samples;index++){
 		finput[index]=new TFile(namefilesMB[index].Data(),"read"); 
-		TH1F*htemp=new TH1F("htemp","htemp",2000,0,1000);
+		TH1F*htemp=new TH1F("htemp","htemp",nbinsTurnOn,bondaries_nbinsTurnOn);
 		TTree*ttemp=(TTree*)finput[index]->Get(nametreeMB[index].Data());
 		TTree*ttempHLT=(TTree*)finput[index]->Get(nametreeHLTMB[index].Data());
 		ttemp->AddFriend(ttempHLT);
-			    
+		
+		if (index==0 && doPP==0) continue;
+		if (index==1 && doPbPb==0) continue;
+		
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
 		
 		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),MBselection[index].Data());
@@ -74,6 +77,10 @@ void triggerTurnOn(){
 	foutput->cd();
 	
 	for (int index=0;index<samples;index++){
+	
+		if (index==0 && doPP==0) continue;
+		if (index==1 && doPbPb==0) continue;
+	
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
 		  hL1efficiencyden[index][indextriggers]->Write();
 		  hL1efficiencynum[index][indextriggers]->Write();

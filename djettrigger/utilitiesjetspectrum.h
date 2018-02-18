@@ -5,6 +5,9 @@
   const int nCases=5;
   const int ntriggers=2;
   
+  const int nbinsTurnOn=60;
+  float bondaries_nbinsTurnOn[nbinsTurnOn];
+  
   TString labelsamples[samples]={"pp","PbPb"};  
 
     //Triggered samples
@@ -15,7 +18,7 @@
   
   //MB samples
   TString MBselection[samples]={"(HLT_L1MinimumBiasHF1OR_part0_v1||HLT_L1MinimumBiasHF1OR_part1_v1||HLT_L1MinimumBiasHF1OR_part2_v1||HLT_L1MinimumBiasHF1OR_part3_v1||HLT_L1MinimumBiasHF1OR_part4_v1||HLT_L1MinimumBiasHF1OR_part5_v1||HLT_L1MinimumBiasHF1OR_part6_v1||HLT_L1MinimumBiasHF1OR_part7_v1||HLT_L1MinimumBiasHF1OR_part8_v1||HLT_L1MinimumBiasHF1OR_part9_v1||HLT_L1MinimumBiasHF1OR_part10_v1||HLT_L1MinimumBiasHF1OR_part11_v1||HLT_L1MinimumBiasHF1OR_part12_v1||HLT_L1MinimumBiasHF1OR_part13_v1||HLT_L1MinimumBiasHF1OR_part14_v1||HLT_L1MinimumBiasHF1OR_part15_v1||HLT_L1MinimumBiasHF1OR_part16_v1||HLT_L1MinimumBiasHF1OR_part17_v1||HLT_L1MinimumBiasHF1OR_part18_v1||HLT_L1MinimumBiasHF1OR_part19_v1)","(HLT_HIL1MinimumBiasHF2AND_v1)"};  
-  TString namefilesMB[samples]={"/mnt/hadoop/cms/store/user/tatar/MinimumBias6/Run2015E_PromptReco_v1_Run261553_262328_FOREST/3.root","/mnt/hadoop/cms/store/user/rbi/merged/Hydjet_Quenched_MinBias_5020GeV_750-HINPbPbWinter16DR-NoPU_75X_mcRun2_HeavyIon_forest_v2/0.root"}; 
+  TString namefilesMB[samples]={"/mnt/hadoop/cms/store/user/tatar/MinimumBias6/Run2015E_PromptReco_v1_Run261553_262328_FOREST/0_20170805.root","/mnt/hadoop/cms/store/user/rbi/merged/Hydjet_Quenched_MinBias_5020GeV_750-HINPbPbWinter16DR-NoPU_75X_mcRun2_HeavyIon_forest_v2/0.root"}; 
   TString nametreeMB[samples]={"ak3PFJetAnalyzer/t","akPu3CaloJetAnalyzer/t"};
   TString nametreeHLTMB[samples]={"hltanalysis/HltTree","hltanalysis/HltTree"};
   TString namevariableMB[samples]={"jtpt","jtpt"};
@@ -80,7 +83,14 @@ void initialise(){
 	gStyle->SetOptStat(0);
 	gStyle->SetMarkerStyle(20);
 	gStyle->SetMarkerSize(0.8);
-
+    
+    
+    bondaries_nbinsTurnOn[0]=0.;
+    for (int i=1;i<=25;i++) bondaries_nbinsTurnOn[i]=bondaries_nbinsTurnOn[i-1]+2.;
+    for (int i=26;i<=50;i++) bondaries_nbinsTurnOn[i]=bondaries_nbinsTurnOn[i-1]+4.;
+    for (int i=51;i<=60;i++) bondaries_nbinsTurnOn[i]=bondaries_nbinsTurnOn[i-1]+10.;
+    
+    
 	for (int index=0;index<samples;index++){
 		for (int indexcases=0;indexcases<nCases;indexcases++){ 
 		   namehjetptspectrum[index][indexcases]="hjetptspectrum"+nametriggerselectiontag[index][indexcases]+labelsamples[index];
