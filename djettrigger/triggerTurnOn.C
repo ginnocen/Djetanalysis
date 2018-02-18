@@ -21,7 +21,7 @@ void triggerTurnOn(int doPP=1, int doPbPb=1){
 
     initialise();
 	TFile *finput[samples];
-    TH1F *hL1efficiencyden[samples][ntriggers];  
+    TH1F *hL1efficiencyden[samples];  
     TH1F *hL1efficiencynum[samples][ntriggers];  
     TH1F *hHLTefficiencyden[samples][ntriggers];  
     TH1F *hHLTefficiencynum[samples][ntriggers];  
@@ -35,31 +35,36 @@ void triggerTurnOn(int doPP=1, int doPbPb=1){
 		TH1F*htemp=new TH1F("htemp","htemp",nbinsTurnOn,bondaries_nbinsTurnOn);
 		TTree*ttemp=(TTree*)finput[index]->Get(nametreeMB[index].Data());
 		TTree*ttempHLT=(TTree*)finput[index]->Get(nametreeHLTMB[index].Data());
+		TTree*ttempSkim=(TTree*)finput[index]->Get(nametreeSkimMB[index].Data());
+		TTree*ttempEvt=(TTree*)finput[index]->Get(nametreeEvtMB[index].Data());
+		
 		ttemp->AddFriend(ttempHLT);
+		ttemp->AddFriend(ttempSkim);
+		ttemp->AddFriend(ttempEvt);
 		
 		if (index==0 && doPP==0) continue;
 		if (index==1 && doPbPb==0) continue;
-		
+
+		ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),preselection[index].Data());
+		hL1efficiencyden[index]=(TH1F*)htemp->Clone();
+		hL1efficiencyden[index]->SetName(namehL1efficiencyden[index].Data());
+
+
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
-		
-		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),MBselection[index].Data());
-		  hL1efficiencyden[index][indextriggers]=(TH1F*)htemp->Clone();
-		  hL1efficiencyden[index][indextriggers]->SetName(namehL1efficiencyden[index][indextriggers].Data());
-	  
+			  
 	      cout<<"index="<<index<<endl;
-		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),Form("%s&&%s",MBselection[index].Data(),nameL1triggerMB[index][indextriggers].Data()));
+		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),L1selection[index][indextriggers]);
 		  hL1efficiencynum[index][indextriggers]=(TH1F*)htemp->Clone();
 		  hL1efficiencynum[index][indextriggers]->SetName(namehL1efficiencynum[index][indextriggers].Data());
 
           gL1efficiency[index][indextriggers] = new TGraphAsymmErrors;
-          gL1efficiency[index][indextriggers]->BayesDivide(hL1efficiencynum[index][indextriggers],hL1efficiencyden[index][indextriggers]);
+          gL1efficiency[index][indextriggers]->BayesDivide(hL1efficiencynum[index][indextriggers],hL1efficiencyden[index]);
           gL1efficiency[index][indextriggers]->SetName(namegL1efficiency[index][indextriggers].Data());
 
-		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),Form("%s&&%s",MBselection[index].Data(),nameL1triggerMB[index][indextriggers].Data()));
-		  hHLTefficiencyden[index][indextriggers]=(TH1F*)htemp->Clone();
+		  hHLTefficiencyden[index][indextriggers]=(TH1F*)hL1efficiencynum[index][indextriggers]->Clone();
 		  hHLTefficiencyden[index][indextriggers]->SetName(namehHLTefficiencyden[index][indextriggers].Data());
 
-		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),Form("%s&&%s&&%s",MBselection[index].Data(),nameL1triggerMB[index][indextriggers].Data(),nametriggerMB[index][indextriggers].Data()));
+		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),HLTselection[index][indextriggers]);
 		  hHLTefficiencynum[index][indextriggers]=(TH1F*)htemp->Clone();
 		  hHLTefficiencynum[index][indextriggers]->SetName(namehHLTefficiencynum[index][indextriggers].Data());
 
@@ -68,7 +73,7 @@ void triggerTurnOn(int doPP=1, int doPbPb=1){
           gHLTefficiency[index][indextriggers]->SetName(namegHLTefficiency[index][indextriggers].Data());
           
           gTotefficiency[index][indextriggers] = new TGraphAsymmErrors;
-          gTotefficiency[index][indextriggers]->BayesDivide(hHLTefficiencynum[index][indextriggers],hL1efficiencyden[index][indextriggers]);
+          gTotefficiency[index][indextriggers]->BayesDivide(hHLTefficiencynum[index][indextriggers],hL1efficiencyden[index]);
           gTotefficiency[index][indextriggers]->SetName(namegTotefficiency[index][indextriggers].Data());
 		}
 	}
@@ -80,9 +85,10 @@ void triggerTurnOn(int doPP=1, int doPbPb=1){
 	
 		if (index==0 && doPP==0) continue;
 		if (index==1 && doPbPb==0) continue;
+
+		hL1efficiencyden[index]->Write();
 	
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
-		  hL1efficiencyden[index][indextriggers]->Write();
 		  hL1efficiencynum[index][indextriggers]->Write();
 		  hHLTefficiencyden[index][indextriggers]->Write();
 		  hHLTefficiencynum[index][indextriggers]->Write();
