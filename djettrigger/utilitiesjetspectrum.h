@@ -1,5 +1,6 @@
-  #include <TStyle.h>
-
+#include <TStyle.h>
+#include <iostream>
+#include <iostream>
   
   const int samples=2; 
   const int nCases=5;
@@ -33,6 +34,9 @@
   TString nametrigger[samples][ntriggers]={{"HLT_AK4PFJet40_Eta5p1_v1","HLT_AK4PFJet60_Eta5p1_v1"},{"HLT_HIPuAK4CaloJet40_Eta5p1_v1","HLT_HIPuAK4CaloJet60_Eta5p1_v1"}};
   TString nameL1trigger[samples][ntriggers]={{"L1_SingleJet28_BptxAND","L1_SingleJet40_BptxAND"},{"L1_MinimumBiasHF2_AND","L1_SingleS1Jet28_BptxAND"}};
   
+  
+  TString namehtempMuF[samples];  
+
   TString namehL1efficiencyden[samples];  
   TString namehL1efficiencynum[samples][ntriggers];  
   TString namehHLTefficiencyden[samples][ntriggers];  
@@ -78,7 +82,7 @@
   int widthline[nCases]={2,2,2,2,2};
 
 
-void initialise(){
+void initialise(float jtPfMUFcut=-1){
 
 
 	gStyle->SetTextSize(0.05);
@@ -103,6 +107,7 @@ void initialise(){
     
 	for (int index=0;index<samples;index++){
 		namehL1efficiencyden[index]="hL1efficiencyden"+labelsamples[index];
+		namehtempMuF[index]="hMuonFraction"+labelsamples[index];
 
 		for (int indexcases=0;indexcases<nCases;indexcases++){ 
 		   namehjetptspectrum[index][indexcases]="hjetptspectrum"+nametriggerselectiontag[index][indexcases]+labelsamples[index];
@@ -120,6 +125,7 @@ void initialise(){
   
 	for (int index=0;index<samples;index++){
 		preselection[index]=Form("%s&&%s",eventjetselection[index].Data(),MBselection[index].Data());
+		preselection[index]=preselection[index]+Form("&&jtPfMUF<%f",jtPfMUFcut);
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
 		  L1selection[index][indextriggers]=Form("%s&&%s",preselection[index].Data(),nameL1triggerMB[index][indextriggers].Data());
 		  HLTselection[index][indextriggers]=Form("%s&&%s",L1selection[index][indextriggers].Data(),nametriggerMB[index][indextriggers].Data());

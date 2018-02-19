@@ -17,10 +17,11 @@
 
 
 
-void triggerTurnOn(int doPP=1, int doPbPb=1, int do40=1,int do60=1){
-
-    initialise();
+void triggerTurnOn(int doPP=1, int doPbPb=0, int do40=1,int do60=0,float myjtPfMUFcut=1.0){
+     
+    initialise(myjtPfMUFcut);
 	TFile *finput[samples];
+    TH1F *hPFMF[samples];  
     TH1F *hL1efficiencyden[samples];  
     TH1F *hL1efficiencynum[samples][ntriggers];  
     TH1F *hHLTefficiencyden[samples][ntriggers];  
@@ -33,6 +34,7 @@ void triggerTurnOn(int doPP=1, int doPbPb=1, int do40=1,int do60=1){
 	for (int index=0;index<samples;index++){
 		finput[index]=new TFile(namefilesMB[index].Data(),"read"); 
 		TH1F*htemp=new TH1F("htemp","htemp",nbinsTurnOn,bondaries_nbinsTurnOn);
+		TH1F*htempMuF=new TH1F("htempMuF","htempMuF",500,-2,2);
 		TTree*ttemp=(TTree*)finput[index]->Get(nametreeMB[index].Data());
 		TTree*ttempHLT=(TTree*)finput[index]->Get(nametreeHLTMB[index].Data());
 		TTree*ttempSkim=(TTree*)finput[index]->Get(nametreeSkimMB[index].Data());
@@ -48,7 +50,11 @@ void triggerTurnOn(int doPP=1, int doPbPb=1, int do40=1,int do60=1){
 		ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),preselection[index].Data());
 		hL1efficiencyden[index]=(TH1F*)htemp->Clone();
 		hL1efficiencyden[index]->SetName(namehL1efficiencyden[index].Data());
-
+		
+		  ttemp->Draw("jtPfMUF>>htempMuF",preselection[index].Data());
+		  hPFMF[index]=(TH1F*)htempMuF->Clone();
+		  hPFMF[index]->SetName(namehtempMuF[index].Data());
+            
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
 			  
 	   	  if (indextriggers==0 && do40==0) continue;
@@ -79,7 +85,9 @@ void triggerTurnOn(int doPP=1, int doPbPb=1, int do40=1,int do60=1){
 		}
 	}
 	
-	TFile*foutput=new TFile("foutputTurnOn.root","recreate");
+	
+	TString filenameouptut=Form("foutputTurnOnjtPfMUF%d.root",(int)(myjtPfMUFcut*10));
+	TFile*foutput=new TFile(filenameouptut.Data(),"recreate");
 	foutput->cd();
 	
 	for (int index=0;index<samples;index++){
@@ -88,7 +96,7 @@ void triggerTurnOn(int doPP=1, int doPbPb=1, int do40=1,int do60=1){
 		if (index==1 && doPbPb==0) continue;
 
 		hL1efficiencyden[index]->Write();
-	
+	    hPFMF[index]->Write();
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
 
 	   	  if (indextriggers==0 && do40==0) continue;
