@@ -85,7 +85,7 @@
   int widthline[nCases]={2,2,2,2,2};
 
 
-void initialise(float jtPfMUFcut=-1){
+void initialise(){
 
 
 	gStyle->SetTextSize(0.05);
@@ -129,7 +129,6 @@ void initialise(float jtPfMUFcut=-1){
 	for (int index=0;index<samples;index++){		
 	  for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
 	      preselection[index][indextriggers]=Form("%s&&%s",eventjetselection[index].Data(),MBselection[index].Data());
-          preselection[index][indextriggers]=preselection[index][indextriggers]+Form("&&jtPfMUF<%f",jtPfMUFcut);
 	  	  preselection[index][indextriggers]=preselection[index][indextriggers]+"&&"+prescaleL1MB[index][indextriggers]+"&&"+prescaleHLTMB[index][indextriggers];
 		  L1selection[index][indextriggers]=Form("%s&&%s",preselection[index][indextriggers].Data(),nameL1triggerMB[index][indextriggers].Data());
 		  HLTselection[index][indextriggers]=Form("%s&&%s",L1selection[index][indextriggers].Data(),nametriggerMB[index][indextriggers].Data());

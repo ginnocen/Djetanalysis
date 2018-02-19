@@ -16,9 +16,9 @@
 #include <TGraphAsymmErrors.h>
 
 
-void triggerTurnOn(TString suffixfile="SelectionOnL1HLTprescale",int doPP=1, int doPbPb=0, int do40=1,int do60=0,float myjtPfMUFcut=1.0){
+void triggerTurnOn(TString suffixfile="SelectionOnL1HLTprescale",int doPP=0, int doPbPb=1, int do40=1,int do60=0){
      
-    initialise(myjtPfMUFcut);
+    initialise();
 	TFile *finput[samples];
     TH1F *hPFMF[samples][ntriggers];  
     TH1F *hL1efficiencyden[samples][ntriggers];  
@@ -54,11 +54,7 @@ void triggerTurnOn(TString suffixfile="SelectionOnL1HLTprescale",int doPP=1, int
 		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),preselection[index][indextriggers].Data());
 		  hL1efficiencyden[index][indextriggers]=(TH1F*)htemp->Clone();
 		  hL1efficiencyden[index][indextriggers]->SetName(namehL1efficiencyden[index][indextriggers].Data());
-		
-		  ttemp->Draw("jtPfMUF>>htempMuF",preselection[index][indextriggers].Data());
-		  hPFMF[index][indextriggers]=(TH1F*)htempMuF->Clone();
-		  hPFMF[index][indextriggers]->SetName(namehtempMuF[index][indextriggers].Data());
-
+	
 		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),L1selection[index][indextriggers]);
 		  hL1efficiencynum[index][indextriggers]=(TH1F*)htemp->Clone();
 		  hL1efficiencynum[index][indextriggers]->SetName(namehL1efficiencynum[index][indextriggers].Data());
@@ -85,7 +81,7 @@ void triggerTurnOn(TString suffixfile="SelectionOnL1HLTprescale",int doPP=1, int
 	}
 	
 	
-	TString filenameouptut=Form("foutputTurnOnjtPfMUF%d%s.root",(int)(myjtPfMUFcut*10),suffixfile.Data());
+	TString filenameouptut=Form("foutputTurn%s.root",suffixfile.Data());
 	TFile*foutput=new TFile(filenameouptut.Data(),"recreate");
 	foutput->cd();
 	
