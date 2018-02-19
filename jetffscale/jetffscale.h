@@ -42,13 +42,20 @@ TH1F* ahHistoResoPtCorr[NCentBins][nJtptBins];
 TH1F* ahHistoResoNpfPtCorr[NCentBins][nJtptBins][nJtnpfBins];
 
 TH1F* hScalePt[NCentBins];
-TH1F* hScaleNpfPt[NCentBins][nJtptBins];
 TH1F* hScalePtCorr[NCentBins];
+TH1F* hScaleNpfPt[NCentBins][nJtptBins];
 TH1F* hScaleNpfPtCorr[NCentBins][nJtptBins];
 
 TH1F* hScaleP0NpfPt[NCentBins];
 TH1F* hScaleP1NpfPt[NCentBins];
 TH2F* hvScalePt[NCentBins][nJtptBins];
+
+TH1F* hScaleNpfPtPP[NCentBins][nJtptBins];
+TH1F* hScaleNpfPtCorrPP[NCentBins][nJtptBins];
+TH1F* hScaleNpfPtPbPb[NCentBins][nJtptBins];
+TH1F* hScaleNpfPtCorrPbPb[NCentBins][nJtptBins];
+TH2F* hvScalePtPP[NCentBins][nJtptBins];
+TH2F* hvScalePtPbPb[NCentBins][nJtptBins];
 
 //
 int createhists(Option_t* option)
@@ -139,6 +146,34 @@ int gethists(TFile* inf, Option_t* option)
         }
       return 0;
     }
+  if(opt=="plothistpp")
+    {
+      for(int k=0;k<nCentBins;k++)
+        {
+          for(int i=0;i<nJtptBins;i++)
+            {
+              hScaleNpfPtPP[k][i] = (TH1F*)inf->Get(Form("hScaleNpfPt_%d_%d",k,i));
+              hScaleNpfPtPP[k][i]->SetName(Form("hScaleNpfPt_%d_%d_pp",k,i));
+              hScaleNpfPtCorrPP[k][i] = (TH1F*)inf->Get(Form("hScaleNpfPtCorr_%d_%d",k,i));
+              hScaleNpfPtCorrPP[k][i]->SetName(Form("hScaleNpfPtCorr_%d_%d_pp",k,i));
+            }
+        }
+      return 0;
+    }
+  if(opt=="plothistpbpb")
+    {
+      for(int k=0;k<nCentBins;k++)
+        {
+          for(int i=0;i<nJtptBins;i++)
+            {
+              hScaleNpfPtPbPb[k][i] = (TH1F*)inf->Get(Form("hScaleNpfPt_%d_%d",k,i));
+              hScaleNpfPtPbPb[k][i]->SetName(Form("hScaleNpfPt_%d_%d_pbpb",k,i));
+              hScaleNpfPtCorrPbPb[k][i] = (TH1F*)inf->Get(Form("hScaleNpfPtCorr_%d_%d",k,i));
+              hScaleNpfPtCorrPbPb[k][i]->SetName(Form("hScaleNpfPtCorr_%d_%d_pbpb",k,i));
+            }
+        }
+      return 0;
+    }
   if(opt=="plothistscale")
     {
       for(int k=0;k<nCentBins;k++)
@@ -150,6 +185,31 @@ int gethists(TFile* inf, Option_t* option)
         }
       return 0;
     }
+  if(opt=="plothistscalepp")
+    {
+      for(int k=0;k<nCentBins;k++)
+        {
+          for(int i=0;i<nJtptBins;i++)
+            {
+              hvScalePtPP[k][i] = (TH2F*)inf->Get(Form("hvScalePt_%d_%d",k,i));
+              hvScalePtPP[k][i]->SetName(Form("hvScalePt_%d_%d_pp",k,i));
+            }
+        }
+      return 0;
+    }
+  if(opt=="plothistscalepbpb")
+    {
+      for(int k=0;k<nCentBins;k++)
+        {
+          for(int i=0;i<nJtptBins;i++)
+            {
+              hvScalePtPbPb[k][i] = (TH2F*)inf->Get(Form("hvScalePt_%d_%d",k,i));
+              hvScalePtPbPb[k][i]->SetName(Form("hvScalePt_%d_%d_pbpb",k,i));
+            }
+        }
+      return 0;
+    }
+
   if(opt=="plotpar")
     {
       for(int k=0;k<nCentBins;k++)
