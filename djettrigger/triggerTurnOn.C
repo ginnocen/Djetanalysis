@@ -179,6 +179,7 @@ void plot(){
 		cL1[index]=new TCanvas(canvasnameL1[index].Data(),canvasnameL1[index].Data(),600,600);
 		cL1[index]->cd();
 		gPad->SetLogx();
+		gPad->SetLogy();
 		hemptyL1[index]->Draw();    
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
 			gL1efficiency[index][indextriggers]->Draw("EPsame");
@@ -195,6 +196,7 @@ void plot(){
 		cHLT[index]=new TCanvas(canvasnameHLT[index].Data(),canvasnameHLT[index].Data(),600,600);
 		cHLT[index]->cd();
 		gPad->SetLogx();
+		gPad->SetLogy();
 		hemptyHLT[index]->Draw();    
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
 			gHLTefficiency[index][indextriggers]->Draw("EPsame");
@@ -211,6 +213,7 @@ void plot(){
 		cTot[index]=new TCanvas(canvasnameTot[index].Data(),canvasnameTot[index].Data(),600,600);
 		cTot[index]->cd();
 		gPad->SetLogx();
+		gPad->SetLogy();
 		hemptyTot[index]->Draw();    
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
 			gTotefficiency[index][indextriggers]->Draw("EPsame");

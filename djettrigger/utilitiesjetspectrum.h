@@ -55,7 +55,7 @@
   TString string_xaxis[samples]={"jet offline p_{T}","jet offline p_{T}"};
   TString string_yaxis[samples]={"entries","entries"};
   
-  double lowerrangeyTurnOn[samples]={0.,0.};
+  double lowerrangeyTurnOn[samples]={0.0001,0.0001};
   double upperrangeyTurnOn[samples]={2,2};
   TString string_yaxisTurnOnL1[samples]={"L1 efficiency","L1 efficiency"};
   TString string_yaxisTurnOnHLT[samples]={"HLT efficiency","HLT efficiency"};
