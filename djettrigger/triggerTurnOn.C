@@ -16,13 +16,12 @@
 #include <TGraphAsymmErrors.h>
 
 
-
-void triggerTurnOn(int doPP=1, int doPbPb=0, int do40=1,int do60=0,float myjtPfMUFcut=1.0){
+void triggerTurnOn(TString suffixfile="SelectionOnL1HLTprescale",int doPP=1, int doPbPb=0, int do40=1,int do60=0,float myjtPfMUFcut=1.0){
      
     initialise(myjtPfMUFcut);
 	TFile *finput[samples];
-    TH1F *hPFMF[samples];  
-    TH1F *hL1efficiencyden[samples];  
+    TH1F *hPFMF[samples][ntriggers];  
+    TH1F *hL1efficiencyden[samples][ntriggers];  
     TH1F *hL1efficiencynum[samples][ntriggers];  
     TH1F *hHLTefficiencyden[samples][ntriggers];  
     TH1F *hHLTefficiencynum[samples][ntriggers];  
@@ -47,25 +46,25 @@ void triggerTurnOn(int doPP=1, int doPbPb=0, int do40=1,int do60=0,float myjtPfM
 		if (index==0 && doPP==0) continue;
 		if (index==1 && doPbPb==0) continue;
 
-		ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),preselection[index].Data());
-		hL1efficiencyden[index]=(TH1F*)htemp->Clone();
-		hL1efficiencyden[index]->SetName(namehL1efficiencyden[index].Data());
-		
-		  ttemp->Draw("jtPfMUF>>htempMuF",preselection[index].Data());
-		  hPFMF[index]=(TH1F*)htempMuF->Clone();
-		  hPFMF[index]->SetName(namehtempMuF[index].Data());
-            
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
 			  
 	   	  if (indextriggers==0 && do40==0) continue;
 		  if (indextriggers==1 && do60==0) continue;
+
+		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),preselection[index][indextriggers].Data());
+		  hL1efficiencyden[index][indextriggers]=(TH1F*)htemp->Clone();
+		  hL1efficiencyden[index][indextriggers]->SetName(namehL1efficiencyden[index][indextriggers].Data());
+		
+		  ttemp->Draw("jtPfMUF>>htempMuF",preselection[index][indextriggers].Data());
+		  hPFMF[index][indextriggers]=(TH1F*)htempMuF->Clone();
+		  hPFMF[index][indextriggers]->SetName(namehtempMuF[index][indextriggers].Data());
 
 		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),L1selection[index][indextriggers]);
 		  hL1efficiencynum[index][indextriggers]=(TH1F*)htemp->Clone();
 		  hL1efficiencynum[index][indextriggers]->SetName(namehL1efficiencynum[index][indextriggers].Data());
 
           gL1efficiency[index][indextriggers] = new TGraphAsymmErrors;
-          gL1efficiency[index][indextriggers]->BayesDivide(hL1efficiencynum[index][indextriggers],hL1efficiencyden[index]);
+          gL1efficiency[index][indextriggers]->BayesDivide(hL1efficiencynum[index][indextriggers],hL1efficiencyden[index][indextriggers]);
           gL1efficiency[index][indextriggers]->SetName(namegL1efficiency[index][indextriggers].Data());
 
 		  hHLTefficiencyden[index][indextriggers]=(TH1F*)hL1efficiencynum[index][indextriggers]->Clone();
@@ -80,13 +79,13 @@ void triggerTurnOn(int doPP=1, int doPbPb=0, int do40=1,int do60=0,float myjtPfM
           gHLTefficiency[index][indextriggers]->SetName(namegHLTefficiency[index][indextriggers].Data());
           
           gTotefficiency[index][indextriggers] = new TGraphAsymmErrors;
-          gTotefficiency[index][indextriggers]->BayesDivide(hHLTefficiencynum[index][indextriggers],hL1efficiencyden[index]);
+          gTotefficiency[index][indextriggers]->BayesDivide(hHLTefficiencynum[index][indextriggers],hL1efficiencyden[index][indextriggers]);
           gTotefficiency[index][indextriggers]->SetName(namegTotefficiency[index][indextriggers].Data());
 		}
 	}
 	
 	
-	TString filenameouptut=Form("foutputTurnOnjtPfMUF%d.root",(int)(myjtPfMUFcut*10));
+	TString filenameouptut=Form("foutputTurnOnjtPfMUF%d%s.root",(int)(myjtPfMUFcut*10),suffixfile.Data());
 	TFile*foutput=new TFile(filenameouptut.Data(),"recreate");
 	foutput->cd();
 	
@@ -95,13 +94,13 @@ void triggerTurnOn(int doPP=1, int doPbPb=0, int do40=1,int do60=0,float myjtPfM
 		if (index==0 && doPP==0) continue;
 		if (index==1 && doPbPb==0) continue;
 
-		hL1efficiencyden[index]->Write();
-	    hPFMF[index]->Write();
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
 
 	   	  if (indextriggers==0 && do40==0) continue;
 		  if (indextriggers==1 && do60==0) continue;
 
+    	  hL1efficiencyden[index][indextriggers]->Write();
+	      hPFMF[index][indextriggers]->Write();
 		  hL1efficiencynum[index][indextriggers]->Write();
 		  hHLTefficiencyden[index][indextriggers]->Write();
 		  hHLTefficiencynum[index][indextriggers]->Write();
@@ -183,7 +182,7 @@ void plot(){
 	TString canvasnameL1[samples];
 
 	for (int index=0;index<samples;index++){
-		canvasnameL1[index]=Form("plottriggers/canvasL1Jetptplot%s.pdf",labelsamples[index].Data());
+		canvasnameL1[index]=Form("plottriggers/canvasL1Jetptplot%s.png",labelsamples[index].Data());
 		cL1[index]=new TCanvas(canvasnameL1[index].Data(),canvasnameL1[index].Data(),600,600);
 		cL1[index]->cd();
 		gPad->SetLogx();
@@ -200,7 +199,7 @@ void plot(){
 	TString canvasnameHLT[samples];
 
 	for (int index=0;index<samples;index++){
-		canvasnameHLT[index]=Form("plottriggers/canvasHLTJetptplot%s.pdf",labelsamples[index].Data());
+		canvasnameHLT[index]=Form("plottriggers/canvasHLTJetptplot%s.png",labelsamples[index].Data());
 		cHLT[index]=new TCanvas(canvasnameHLT[index].Data(),canvasnameHLT[index].Data(),600,600);
 		cHLT[index]->cd();
 		gPad->SetLogx();
@@ -217,7 +216,7 @@ void plot(){
 	TString canvasnameTot[samples];
 
 	for (int index=0;index<samples;index++){
-		canvasnameTot[index]=Form("plottriggers/canvasTotJetptplot%s.pdf",labelsamples[index].Data());
+		canvasnameTot[index]=Form("plottriggers/canvasTotJetptplot%s.png",labelsamples[index].Data());
 		cTot[index]=new TCanvas(canvasnameTot[index].Data(),canvasnameTot[index].Data(),600,600);
 		cTot[index]->cd();
 		gPad->SetLogx();

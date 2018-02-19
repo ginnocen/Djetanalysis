@@ -21,13 +21,17 @@
   TString namefilesMB[samples]={"/mnt/hadoop/cms/store/user/tatar/MinimumBias6/Run2015E_PromptReco_v1_Run261553_262328_FOREST/0_20170805.root","/mnt/hadoop/cms/store/user/rbi/merged/HIMinimumBias2-HIRun2015-PromptReco-v1_forest_csjet_v1/0.root"}; 
   TString eventjetselection[samples]={"(pPAprimaryVertexFilter&&pBeamScrapingFilter&&fabs(vz)<15&&abs(jteta)<2.0)","(pcollisionEventSelection&&HBHENoiseFilterResultRun2Loose&&fabs(vz)<15&&abs(jteta)<2.0)"};
   TString MBselection[samples]={"(HLT_L1MinimumBiasHF1OR_part0_v1||HLT_L1MinimumBiasHF1OR_part1_v1||HLT_L1MinimumBiasHF1OR_part2_v1||HLT_L1MinimumBiasHF1OR_part3_v1||HLT_L1MinimumBiasHF1OR_part4_v1||HLT_L1MinimumBiasHF1OR_part5_v1||HLT_L1MinimumBiasHF1OR_part6_v1||HLT_L1MinimumBiasHF1OR_part7_v1||HLT_L1MinimumBiasHF1OR_part8_v1||HLT_L1MinimumBiasHF1OR_part9_v1||HLT_L1MinimumBiasHF1OR_part10_v1||HLT_L1MinimumBiasHF1OR_part11_v1||HLT_L1MinimumBiasHF1OR_part12_v1||HLT_L1MinimumBiasHF1OR_part13_v1||HLT_L1MinimumBiasHF1OR_part14_v1||HLT_L1MinimumBiasHF1OR_part15_v1||HLT_L1MinimumBiasHF1OR_part16_v1||HLT_L1MinimumBiasHF1OR_part17_v1||HLT_L1MinimumBiasHF1OR_part18_v1||HLT_L1MinimumBiasHF1OR_part19_v1)","(HLT_HIL1MinimumBiasHF2AND_part1_v1||HLT_HIL1MinimumBiasHF2AND_part2_v1||HLT_HIL1MinimumBiasHF2AND_part3_v1)"};  
-  TString nametriggerMB[samples][ntriggers]={{"HLT_AK4PFJet40_Eta5p1_v1","HLT_AK4PFJet60_Eta5p1_v1"},{"(HLT_HIPuAK4CaloJet40_Eta5p1_v1||HLT_HIPuAK4CaloJet40_Eta5p1_v2)","HLT_HIPuAK4CaloJet60_Eta5p1_v1"}};
-  TString nameL1triggerMB[samples][ntriggers]={{"L1_SingleJet28_BptxAND","L1_SingleJet40_BptxAND"},{"L1_MinimumBiasHF2_AND","L1_SingleS1Jet28_BptxAND"}};
   TString nametreeMB[samples]={"ak3PFJetAnalyzer/t","akPu3PFJetAnalyzer/t"};
   TString nametreeHLTMB[samples]={"hltanalysis/HltTree","hltanalysis/HltTree"};
   TString nametreeSkimMB[samples]={"skimanalysis/HltTree","skimanalysis/HltTree"};
   TString nametreeEvtMB[samples]={"hiEvtAnalyzer/HiTree","hiEvtAnalyzer/HiTree"};
   TString namevariableMB[samples]={"jtpt","jtpt"};
+
+  TString nametriggerMB[samples][ntriggers]={{"HLT_AK4PFJet40_Eta5p1_v1","HLT_AK4PFJet60_Eta5p1_v1"},{"HLT_HIPuAK4CaloJet40_Eta5p1_v2","HLT_HIPuAK4CaloJet60_Eta5p1_v1"}};
+  TString nameL1triggerMB[samples][ntriggers]={{"L1_SingleJet28_BptxAND","L1_SingleJet40_BptxAND"},{"L1_MinimumBiasHF2_AND","L1_SingleS1Jet28_BptxAND"}};
+  TString prescaleL1MB[samples][ntriggers]={{"L1_SingleJet28_BptxAND_Prescl==1","L1_SingleJet40_BptxAND_Prescl==1"},{"L1_MinimumBiasHF2_AND_Prescl==1","L1_SingleS1Jet28_BptxAND_Prescl==1"}};
+  TString prescaleHLTMB[samples][ntriggers]={{"HLT_AK4PFJet40_Eta5p1_v1_Prescl==1","HLT_AK4PFJet60_Eta5p1_v1_Prescl==1"},{"HLT_HIPuAK4CaloJet40_Eta5p1_v2_Prescl==1","HLT_HIPuAK4CaloJet60_Eta5p1_v1_Prescl==1"}};
+
   
   //nTriggers  
 
@@ -35,9 +39,8 @@
   TString nameL1trigger[samples][ntriggers]={{"L1_SingleJet28_BptxAND","L1_SingleJet40_BptxAND"},{"L1_MinimumBiasHF2_AND","L1_SingleS1Jet28_BptxAND"}};
   
   
-  TString namehtempMuF[samples];  
-
-  TString namehL1efficiencyden[samples];  
+  TString namehtempMuF[samples][ntriggers];  
+  TString namehL1efficiencyden[samples][ntriggers];  
   TString namehL1efficiencynum[samples][ntriggers];  
   TString namehHLTefficiencyden[samples][ntriggers];  
   TString namehHLTefficiencynum[samples][ntriggers];  
@@ -66,7 +69,7 @@
   TString string_yaxisTurnOnTot[samples]={"Total efficiency","Total efficiency"};
   
   
-  TString preselection[samples];
+  TString preselection[samples][ntriggers];
   TString L1selection[samples][ntriggers];
   TString HLTselection[samples][ntriggers];
 
@@ -106,28 +109,29 @@ void initialise(float jtPfMUFcut=-1){
     
     
 	for (int index=0;index<samples;index++){
-		namehL1efficiencyden[index]="hL1efficiencyden"+labelsamples[index];
-		namehtempMuF[index]="hMuonFraction"+labelsamples[index];
-
 		for (int indexcases=0;indexcases<nCases;indexcases++){ 
 		   namehjetptspectrum[index][indexcases]="hjetptspectrum"+nametriggerselectiontag[index][indexcases]+labelsamples[index];
 		   namehjetleadingptspectrum[index][indexcases]="hjetleadingptspectrum"+nametriggerselectiontag[index][indexcases]+labelsamples[index];
         }
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
+		   namehL1efficiencyden[index][indextriggers]="hL1efficiencyden"+nametriggerselectiontag[index][indextriggers]+labelsamples[index];
+		   namehtempMuF[index][indextriggers]="hMuonFraction"+nametriggerselectiontag[index][indextriggers]+ labelsamples[index];
 		   namehL1efficiencynum[index][indextriggers]="hL1efficiencynum"+nametriggerselectiontag[index][indextriggers]+labelsamples[index];
 		   namehHLTefficiencyden[index][indextriggers]="hHLTefficiencyden"+nametriggerselectiontag[index][indextriggers]+labelsamples[index];
 		   namehHLTefficiencynum[index][indextriggers]="hHLTefficiencynum"+nametriggerselectiontag[index][indextriggers]+labelsamples[index];
 		   namegL1efficiency[index][indextriggers]="gL1efficiency"+nametriggerselectiontag[index][indextriggers]+labelsamples[index];
 		   namegHLTefficiency[index][indextriggers]="gHLTefficiency"+nametriggerselectiontag[index][indextriggers]+labelsamples[index];
 		   namegTotefficiency[index][indextriggers]="gTotefficiency"+nametriggerselectiontag[index][indextriggers]+labelsamples[index];
+	
     }
   }
   
-	for (int index=0;index<samples;index++){
-		preselection[index]=Form("%s&&%s",eventjetselection[index].Data(),MBselection[index].Data());
-		preselection[index]=preselection[index]+Form("&&jtPfMUF<%f",jtPfMUFcut);
-		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
-		  L1selection[index][indextriggers]=Form("%s&&%s",preselection[index].Data(),nameL1triggerMB[index][indextriggers].Data());
+	for (int index=0;index<samples;index++){		
+	  for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
+	      preselection[index][indextriggers]=Form("%s&&%s",eventjetselection[index].Data(),MBselection[index].Data());
+          preselection[index][indextriggers]=preselection[index][indextriggers]+Form("&&jtPfMUF<%f",jtPfMUFcut);
+	  	  preselection[index][indextriggers]=preselection[index][indextriggers]+"&&"+prescaleL1MB[index][indextriggers]+"&&"+prescaleHLTMB[index][indextriggers];
+		  L1selection[index][indextriggers]=Form("%s&&%s",preselection[index][indextriggers].Data(),nameL1triggerMB[index][indextriggers].Data());
 		  HLTselection[index][indextriggers]=Form("%s&&%s",L1selection[index][indextriggers].Data(),nametriggerMB[index][indextriggers].Data());
         }
     }
