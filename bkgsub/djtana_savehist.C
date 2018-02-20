@@ -1,14 +1,15 @@
 #include "djtana.h"
 
-void djtana_savehist(TString inputname, TString outputname, 
+void djtana_savehist(TString inputname, TString outputname, TString collisionsyst,
                      Float_t jetptmin, Float_t jetetamin, Float_t jetetamax, 
+                     Int_t signalMC,
                      Int_t maxevt=-1)
 {
   if(createhists("savehist")) return;
   
-  TString collisionsyst = "PbPb";
-  Int_t ispp = 0, isMC = 1;
+  Int_t ispp = collisionsyst=="pp";
   setnCentBins(ispp);
+  Int_t isMC = 1;
  
   djet djt(inputname, ispp, isMC);
   initcutval(collisionsyst);
@@ -43,7 +44,7 @@ void djtana_savehist(TString inputname, TString outputname,
       // loop jets
       for(int jj=0;jj<djt.njet_akpu3pf;jj++)
         {
-          // if(isMC && (**djt.asubid[irecogen])[jj]!=0) continue;
+          if(signalMC && (*djt.subid_akpu3pf)[jj]!=0) continue;
 
           /*********************************/
 
@@ -55,15 +56,7 @@ void djtana_savehist(TString inputname, TString outputname,
           Float_t jetrecomatgenpt = jetpt / (paramfScaleRecoPt->at(ibincent).at(0) + paramfScaleRecoPt->at(ibincent).at(1)/TMath::Sqrt(jetpt) + paramfScaleRecoPt->at(ibincent).at(2)/jetpt + paramfScaleRecoPt->at(ibincent).at(3)/(jetpt*jetpt));
           Float_t vScalePt = paramfScalePt->at(ibincent).at(0) + paramfScalePt->at(ibincent).at(1)/TMath::Sqrt(jetrecomatgenpt) + paramfScalePt->at(ibincent).at(2)/jetrecomatgenpt + paramfScalePt->at(ibincent).at(3)/(jetrecomatgenpt*jetrecomatgenpt);
 
-          // Float_t vScaleFfPt = 1;
-          // Int_t ibinjtpt = xjjc::findibin(&jtptBins, jetpt);
-          // if(ibinjtpt >= 0)
-          //   {
-          //     vScaleFfPt = paramRealfP1->at(ibincent).at(ibinjtpt)*((*djt.jetnpfpart_akpu3pf)[jj]-paramRealfP0->at(ibincent).at(ibinjtpt));
-          //   }
-          // jetpt = jetpt/vScaleFfPt;
-          // Float_t vScalePtFfCorr = paramfScalePtFfCorr->at(ibincent).at(0) + paramfScalePtFfCorr->at(ibincent).at(1)/TMath::Sqrt(jetpt) + paramfScalePtFfCorr->at(ibincent).at(2)/jetpt + paramfScalePtFfCorr->at(ibincent).at(3)/(jetpt*jetpt);
-          // jetpt = jetpt/vScalePtFfCorr;
+          jetpt = jetpt/vScalePt;
 
           /*********************************/
           if(jetpt < jetptmin) continue;
@@ -79,6 +72,8 @@ void djtana_savehist(TString inputname, TString outputname,
               Int_t ibinpt = xjjc::findibin(&ptBins, (*djt.Gpt)[jd]);
               if(ibinpt<0) continue;
 
+              if(signalMC && (*djt.GcollisionId)[jd]!=0) continue;
+
               // to add pt-dependent event selection ...
 
               Float_t deltaphi = TMath::ACos(TMath::Cos((*djt.Gphi)[jd] - jetphi));
@@ -88,7 +83,9 @@ void djtana_savehist(TString inputname, TString outputname,
                                           (float)TMath::Sqrt(pow(deltaphi, 2) + pow(deltaetaref, 2))};
               ahSignalRPH[0][ibinpt]->Fill(deltaR[0], evtweight);
               ahSignalRPH[1][ibinpt]->Fill(deltaR[1], evtweight);
-              if((*djt.subid_akpu3pf)[jj]==0) ahSignalRP[ibinpt]->Fill(deltaR[0], evtweight);
+              if((*djt.subid_akpu3pf)[jj]==0 && (*djt.GcollisionId)[jd]==0) ahSignalRP[ibinpt]->Fill(deltaR[0], evtweight);
+              // if((*djt.subid_akpu3pf)[jj]==0) ahSignalRP[ibinpt]->Fill(deltaR[0], evtweight);
+              else ahSignalRPHbkg[ibinpt]->Fill(deltaR[0], evtweight);
             }
         }
     }
@@ -110,14 +107,14 @@ void djtana_savehist(TString inputname, TString outputname,
 
 int main(int argc, char* argv[])
 {
-  if(argc==7)
+  if(argc==9)
     {
-      djtana_savehist(argv[1], argv[2], atof(argv[3]), atof(argv[4]), atof(argv[5]), atoi(argv[6]));
+      djtana_savehist(argv[1], argv[2], argv[3], atof(argv[4]), atof(argv[5]), atof(argv[6]), atoi(argv[7]), atoi(argv[8]));
       return 0;
     }
-  if(argc==6)
+  if(argc==8)
     {
-      djtana_savehist(argv[1], argv[2], atof(argv[3]), atof(argv[4]), atof(argv[5]));
+      djtana_savehist(argv[1], argv[2], argv[3], atof(argv[4]), atof(argv[5]), atof(argv[6]), atoi(argv[7]));
       return 0;
     }
   else
