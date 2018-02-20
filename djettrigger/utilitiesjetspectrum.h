@@ -29,10 +29,10 @@
 
   TString nametriggerMB[samples][ntriggers]={{"HLT_AK4PFJet40_Eta5p1_v1","HLT_AK4PFJet60_Eta5p1_v1"},{"HLT_HIPuAK4CaloJet40_Eta5p1_v2","HLT_HIPuAK4CaloJet60_Eta5p1_v1"}};
   TString nameL1triggerMB[samples][ntriggers]={{"L1_SingleJet28_BptxAND","L1_SingleJet40_BptxAND"},{"L1_MinimumBiasHF2_AND","L1_SingleS1Jet28_BptxAND"}};
-  TString prescaleL1MB[samples][ntriggers]={{"&&(L1_SingleJet28_BptxAND_Prescl==1)","&&(L1_SingleJet40_BptxAND_Prescl==1)"},{"&&(L1_MinimumBiasHF2_AND_Prescl==1)","&&(L1_SingleS1Jet28_BptxAND_Prescl==1)"}};
-  TString prescaleHLTMB[samples][ntriggers]={{"&&(HLT_AK4PFJet40_Eta5p1_v1_Prescl==1)","&&(HLT_AK4PFJet60_Eta5p1_v1_Prescl==1)"},{"&&(HLT_HIPuAK4CaloJet40_Eta5p1_v2_Prescl==1)","&&(HLT_HIPuAK4CaloJet60_Eta5p1_v1_Prescl==1)"}};
+  TString prescaleL1MB[samples][ntriggers]={{"(L1_SingleJet28_BptxAND_Prescl==1)","(L1_SingleJet40_BptxAND_Prescl==1)"},{"1","(L1_SingleS1Jet28_BptxAND_Prescl==1)"}};
+  TString prescaleselHLTMB[samples][ntriggers]={{"(HLT_AK4PFJet40_Eta5p1_v1_Prescl==1)","(HLT_AK4PFJet60_Eta5p1_v1_Prescl==1)"},{"1","1"}};
+  TString prescalecorrHLTMB[samples][ntriggers]={{"(1)","(1)"},{"(1)","(1)"}};
 
-  
   //nTriggers  
 
   TString nametrigger[samples][ntriggers]={{"HLT_AK4PFJet40_Eta5p1_v1","HLT_AK4PFJet60_Eta5p1_v1"},{"HLT_HIPuAK4CaloJet40_Eta5p1_v1","HLT_HIPuAK4CaloJet60_Eta5p1_v1"}};
@@ -47,7 +47,7 @@
   
   TString namegL1efficiency[samples][ntriggers];  
   TString namegHLTefficiency[samples][ntriggers];  
-  TString namegTotefficiency[samples][ntriggers];  
+  TString namehHLTefficiency[samples][ntriggers];  
 
   int coloursTurnOn[ntriggers]={1,2};
   int markerstyleTurnOn[ntriggers]={21,22};
@@ -66,12 +66,12 @@
   double upperrangeyTurnOn[samples]={2,2};
   TString string_yaxisTurnOnL1[samples]={"L1 efficiency","L1 efficiency"};
   TString string_yaxisTurnOnHLT[samples]={"HLT efficiency","HLT efficiency"};
-  TString string_yaxisTurnOnTot[samples]={"Total efficiency","Total efficiency"};
   
   
-  TString preselection[samples][ntriggers];
-  TString L1selection[samples][ntriggers];
-  TString HLTselection[samples][ntriggers];
+  TString preselectionL1[samples][ntriggers];
+  TString preselectionHLT[samples][ntriggers];
+  TString selectionL1[samples][ntriggers];
+  TString selectionHLT[samples][ntriggers];
 
 
   //nCases
@@ -121,17 +121,16 @@ void initialise(){
 		   namehHLTefficiencynum[index][indextriggers]="hHLTefficiencynum"+nametriggerselectiontag[index][indextriggers]+labelsamples[index];
 		   namegL1efficiency[index][indextriggers]="gL1efficiency"+nametriggerselectiontag[index][indextriggers]+labelsamples[index];
 		   namegHLTefficiency[index][indextriggers]="gHLTefficiency"+nametriggerselectiontag[index][indextriggers]+labelsamples[index];
-		   namegTotefficiency[index][indextriggers]="gTotefficiency"+nametriggerselectiontag[index][indextriggers]+labelsamples[index];
 	
     }
   }
-  
+
 	for (int index=0;index<samples;index++){		
 	  for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
-	      preselection[index][indextriggers]=Form("%s&&%s",eventjetselection[index].Data(),MBselection[index].Data());
-	  	  preselection[index][indextriggers]=preselection[index][indextriggers]+prescaleL1MB[index][indextriggers]+prescaleHLTMB[index][indextriggers];
-		  L1selection[index][indextriggers]=Form("%s&&%s",preselection[index][indextriggers].Data(),nameL1triggerMB[index][indextriggers].Data());
-		  HLTselection[index][indextriggers]=Form("%s&&%s",L1selection[index][indextriggers].Data(),nametriggerMB[index][indextriggers].Data());
+	      preselectionL1[index][indextriggers]=eventjetselection[index]+"&&"+MBselection[index]+"&&"+prescaleL1MB[index][indextriggers];
+		  selectionL1[index][indextriggers]=preselectionL1[index][indextriggers]+"&&"+nameL1triggerMB[index][indextriggers];
+	      preselectionHLT[index][indextriggers]=eventjetselection[index]+"&&"+MBselection[index]+"&&"+prescaleL1MB[index][indextriggers]+"&&"+prescaleselHLTMB[index][indextriggers]+"&&"+nameL1triggerMB[index][indextriggers];
+		  selectionHLT[index][indextriggers]=preselectionHLT[index][indextriggers]+"&&"+nametriggerMB[index][indextriggers];
         }
     }
 }
