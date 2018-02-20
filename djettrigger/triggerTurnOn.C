@@ -17,7 +17,7 @@
 #include <TGraphAsymmErrors.h>
 
 
-void triggerTurnOn(TString suffixfile="SelectionOnL1HLTprescale",int doPP=1, int doPbPb=1, int do40=1,int do60=1){
+void triggerTurnOn(TString suffixfile="SelectionOnL1HLTprescale",int doPP=1, int doPbPb=1, int do40=1,int do60=1,int do80=1){
      
     initialise();
 	TFile *finput[samples];
@@ -51,6 +51,8 @@ void triggerTurnOn(TString suffixfile="SelectionOnL1HLTprescale",int doPP=1, int
 					  
 	   	  if (indextriggers==0 && do40==0) continue;
 		  if (indextriggers==1 && do60==0) continue;
+		  if (indextriggers==2 && do80==0) continue;
+		  
 		  std::cout<<"sample="<<index<<std::endl;
 		  std::cout<<"indextriggers="<<indextriggers<<std::endl;
 
@@ -108,6 +110,7 @@ void triggerTurnOn(TString suffixfile="SelectionOnL1HLTprescale",int doPP=1, int
 
 	   	  if (indextriggers==0 && do40==0) continue;
 		  if (indextriggers==1 && do60==0) continue;
+		  if (indextriggers==2 && do80==0) continue;
 
     	  hL1efficiencyden[index][indextriggers]->Write();
 		  hL1efficiencynum[index][indextriggers]->Write();
