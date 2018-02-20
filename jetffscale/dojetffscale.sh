@@ -5,6 +5,7 @@ DO_SAVEHIST=${1:-0}
 DO_USEHIST=${2:-0}
 DO_PLOTHIST=${3:-0}
 DO_PLOTPAR=${4:-0}
+DO_PLOTHIST_COMB=${5:-0}
 
 ifCorr=1
 # Select the systems the macros run on 
@@ -23,7 +24,7 @@ INPUTDANAME=(
 
 # Do not touch the macros below if you don't know what they mean #
 
-[[ $DO_SAVEHIST -eq 0 && $DO_USEHIST -eq 0 && $DO_PLOTHIST -eq 0 && $DO_PLOTPAR -eq 0 ]] && echo "./dojetresolution.sh [DO_SAVEHIST] [DO_USEHIST] [DO_PLOTHIST] [DO_PLOTPAR]"
+[[ $DO_SAVEHIST -eq 0 && $DO_USEHIST -eq 0 && $DO_PLOTHIST -eq 0 && $DO_PLOTPAR -eq 0 && $DO_PLOTHIST_COMB -eq 0 ]] && echo "./dojetresolution.sh [DO_SAVEHIST] [DO_USEHIST] [DO_PLOTHIST] [DO_PLOTPAR] [DO_PLOTHIST_COMB]"
 
 #
 nCOL=${#COLSYST[@]}
@@ -59,7 +60,7 @@ function produce_postfix()
 }
 
 #
-FOLDERS=("rootfiles" "plotresos" "plotfits")
+FOLDERS=("rootfiles" "plotresos" "plotfits" "plotresopts")
 for i in ${FOLDERS[@]}
 do
     if [[ ! -d $i ]]
@@ -115,10 +116,31 @@ then
         [[ ! -f "rootfiles/reso_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/reso_${tPOSTFIX}.root doesn't exist. Process jetffscale_usehist.C first."; continue; }
         [[ ! -f "rootfiles/hist_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/hist_${tPOSTFIX}.root doesn't exist. Process jetffscale_savehist.C first."; continue; }
         ./jetffscale_plothist.exe "rootfiles/reso_${tPOSTFIX}" "rootfiles/hist_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}" $ifCorr
+        [[ $ifCorr -eq 1 ]] && { ./jetffscale_plothist.exe "rootfiles/reso_${tPOSTFIX}" "rootfiles/hist_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}" 0; }
         echo
     done
 fi
 rm jetffscale_plothist.exe
+
+# jetffscale_plothist_comb.C #
+
+g++ jetffscale_plothist_comb.C $(root-config --cflags --libs) -Werror -Wall -o jetffscale_plothist_comb.exe || return 1;
+if [[ $DO_PLOTHIST_COMB -eq 1 ]]
+then
+    tPOSTFIX=Djet_reso
+    files[0]="rootfiles/reso_Djet_reso_$(produce_postfix 0)"
+    files[1]="rootfiles/reso_Djet_reso_$(produce_postfix 1)"
+    files[2]="rootfiles/hist_Djet_reso_$(produce_postfix 0)"
+    files[3]="rootfiles/hist_Djet_reso_$(produce_postfix 1)"
+    echo -e "-- Processing ${FUNCOLOR}jetffscale_plothist_comb.C${NC}"
+    for inf in ${files[@]}
+    do
+        [[ ! -f "${inf}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} ${inf}.root doesn't exist."; exit 1; }
+    done
+    ./jetffscale_plothist_comb.exe "${files[0]}" "${files[1]}" "${files[2]}" "${files[3]}" "$tPOSTFIX" $ifCorr
+    echo
+fi
+rm jetffscale_plothist_comb.exe
 
 # jetffscale_plotpar.C #
 
@@ -130,7 +152,8 @@ then
         tPOSTFIX=Djet_reso_$(produce_postfix $i)
         echo -e "-- Processing ${FUNCOLOR}jetffscale_plotpar.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
         [[ ! -f "rootfiles/scalepar_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/scalepar_${tPOSTFIX}.root doesn't exist. Process jetffscale_usehist.C first."; continue; }
-        ./jetffscale_plotpar.exe "rootfiles/scalepar_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}"
+        [[ ! -f "rootfiles/reso_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/reso_${tPOSTFIX}.root doesn't exist. Process jetffscale_usehist.C first."; continue; }
+        ./jetffscale_plotpar.exe "rootfiles/scalepar_${tPOSTFIX}" "rootfiles/reso_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}"
         echo
     done
 fi

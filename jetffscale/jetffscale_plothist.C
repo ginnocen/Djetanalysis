@@ -18,10 +18,10 @@ void jetffscale_plothist(TString inputhistname, TString inputscale, TString outp
   if(!infscale->IsOpen()) return;
   if(gethists(infscale, "plothistscale")) return;
 
-  TH2F* hemptyScaleNpfPt = new TH2F("hemptyScaleNpfPt", Form(";%s;#mu(p_{T}^{reco} / p_{T}^{gen})", ispp?"nPF":"nCS"), 10, minJtnpfBins, maxJtnpfBins, 10, ispp?0.8:0.8, ispp?1.2:1.2);
+  TH2F* hemptyScaleNpfPt = new TH2F("hemptyScaleNpfPt", Form(";%s;#mu(p_{T}^{reco} / p_{T}^{gen})", ispp?"nPF":"nCS"), 10, minJtnpfBins, maxJtnpfBins, 10, ispp?0.8:0.8, ispp?1.2:1.4);
   xjjroot::sethempty(hemptyScaleNpfPt, 0, 0.4);
-  Float_t vfitmin[nJtptBins] = {2., 4., 4., 4.,     4., 4.,   4., 4.,   4., 4., 4., 4.,     4., 4., 4., 4.,     2., 2., 2., 2., 2., 2., 2., 2.,         5., 5., 5.};
-  Float_t vfitmax[nJtptBins] = {15., 15., 15., 15., 18., 18., 20., 20., 20., 20., 25., 25., 28., 28., 28., 28., 30., 30., 30., 30., 30., 30., 30., 30., 30., 30., 30.};
+  Float_t vfitmin[nJtptBins] = {0., 0., 2., 4., 4., 4.,     4., 4.,   4., 4.,   4., 4., 4., 4.,     4., 4., 4., 4.,     2., 2., 2., 2., 2., 2., 2., 2.,         5., 5., 5.};
+  Float_t vfitmax[nJtptBins] = {6., 8., 10., 15., 15., 15., 18., 18., 20., 20., 20., 20., 25., 25., 28., 27., 28., 28., 30., 30., 30., 30., 30., 30., 30., 30., 30., 30., 30.};
   for(int k=0;k<nCentBins;k++)
     {
       TString texcent = Form("Cent. %.0f - %.0f%s", centBins[k], centBins[k+1], "%");
@@ -34,18 +34,22 @@ void jetffscale_plothist(TString inputhistname, TString inputscale, TString outp
           Float_t fitmin = vfitmin[i], fitmax = vfitmax[i];
           c32->cd(i+1);
           hemptyScaleNpfPt->Draw();
-          xjjroot::setthgrstyle(hScaleNpfPt[k][i], kBlack, 24, 1.2, kBlack, 1, 1, -1, -1, -1);
-          xjjroot::setthgrstyle(hScaleNpfPtCorr[k][i], kRed+2, 24, 1.2, kRed+2, 1, 1, -1, -1, -1);
+          xjjroot::setthgrstyle(hScaleNpfPt[k][i], kBlack, 24, 1., kBlack, 1, 1, -1, -1, -1);
+          xjjroot::setthgrstyle(hScaleNpfPtCorr[k][i], kRed+2, 24, 1., kRed+2, 1, 1, -1, -1, -1);
           xjjroot::setthgrstyle(hvScalePt[k][i], kOrange-9, -1, -1, -1, -1, -1, -1, -1, -1);
+          if(plotCorr) xjjroot::drawbox(minJtnpfBins, 0.95, maxJtnpfBins, 1.05, kGray, 0.4, 1001);
+          xjjroot::drawline(minJtnpfBins, 1.0, maxJtnpfBins, 1.0, kGray+3, 2, 3);
+          if(!plotCorr) xjjroot::drawbox(minJtnpfBins, hScalePt[k]->GetBinContent(i+1)-hScalePt[k]->GetBinError(i+1), maxJtnpfBins, hScalePt[k]->GetBinContent(i+1)+hScalePt[k]->GetBinError(i+1), kGreen-2, 0.4, 1001);
+          if(!plotCorr) xjjroot::drawline(minJtnpfBins, hScalePt[k]->GetBinContent(i+1), maxJtnpfBins, hScalePt[k]->GetBinContent(i+1), kGreen+3, 6, 2);
+          else xjjroot::drawline(minJtnpfBins, hScalePtCorr[k]->GetBinContent(i+1), maxJtnpfBins, hScalePtCorr[k]->GetBinContent(i+1), kGreen+3, 6, 2);
           if(plotCorr)
             hvScalePt[k][i]->Draw("same");
-          xjjroot::drawline(minJtnpfBins, 1.0, maxJtnpfBins, 1.0, kGray+3, 2, 3);
 
           hScaleNpfPt[k][i]->Draw("same pe");
           afScaleNpfPt->at(i) = new TF1(Form("fScaleNpfPt%d",i), "[1]*(x-[0])", minJtnpfBins, maxJtnpfBins);
           afScaleNpfPt->at(i)->SetParameter(0, 20);
           afScaleNpfPt->at(i)->SetParameter(1, -0.12);
-          afScaleNpfPt->at(i)->SetLineWidth(3);
+          afScaleNpfPt->at(i)->SetLineWidth(2);
           afScaleNpfPt->at(i)->SetLineColor(kAzure-6);
           afScaleNpfPt->at(i)->SetLineStyle(1);
           hScaleNpfPt[k][i]->Fit(Form("fScaleNpfPt%d",i), "L q", "", fitmin, fitmax/*maxJtnpfBins*/);
@@ -63,10 +67,10 @@ void jetffscale_plothist(TString inputhistname, TString inputscale, TString outp
           xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), texpt.Data());
           if(!ispp) xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), texcent);
         }
-      TLegend* leg;
+      TLegend* leg = new TLegend();
       TH1F* thleg = new TH1F("thleg", "", 10, 0, 10);
       xjjroot::setthgrstyle(thleg, -1, -1, -1, kOrange-9, -1, -1, kOrange-9, -1, 1001);
-      if(nJtptBins < 32)
+      if(nJtptBins < 40)
         {
           c32->cd(nJtptBins+1);
           Float_t texxpos = 0.03, texypos = 0.90, texdypos = 0.13; texypos += texdypos;

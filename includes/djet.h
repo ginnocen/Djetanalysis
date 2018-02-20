@@ -272,11 +272,17 @@ public:
   std::vector<float>**   aDeta[ncases]     =   {&Deta,                &Geta,                &Deta,             &Geta};
   std::vector<float>**   aDphi[ncases]     =   {&Dphi,                &Gphi,                &Dphi,             &Gphi};
   TString                ajetopt[ncases]   =   {"reco",               "reco",               "gen",             "gen"};
-  int*                   anjet[ncases]     =   {&njet_akpu3pf,        &njet_akpu3pf,        &ngen_akpu3pf,     &ngen_akpu3pf};
-  std::vector<float>**   ajetpt[ncases]    =   {&jetpt_akpu3pf,       &jetpt_akpu3pf,       &genpt_akpu3pf,    &genpt_akpu3pf};
-  std::vector<float>**   ajeteta[ncases]   =   {&jeteta_akpu3pf,      &jeteta_akpu3pf,      &geneta_akpu3pf,   &geneta_akpu3pf};
-  std::vector<float>**   ajetphi[ncases]   =   {&jetphi_akpu3pf,      &jetphi_akpu3pf,      &genphi_akpu3pf,   &genphi_akpu3pf};
-  std::vector<int>**     asubid[ncases]    =   {&subid_akpu3pf,       &subid_akpu3pf,       &gensubid_akpu3pf, &gensubid_akpu3pf};
+  // int*                   anjet[ncases]     =   {&njet_akpu3pf,        &njet_akpu3pf,        &ngen_akpu3pf,     &ngen_akpu3pf};
+  // std::vector<float>**   ajetpt[ncases]    =   {&jetpt_akpu3pf,       &jetpt_akpu3pf,       &genpt_akpu3pf,    &genpt_akpu3pf};
+  // std::vector<float>**   ajeteta[ncases]   =   {&jeteta_akpu3pf,      &jeteta_akpu3pf,      &geneta_akpu3pf,   &geneta_akpu3pf};
+  // std::vector<float>**   ajetphi[ncases]   =   {&jetphi_akpu3pf,      &jetphi_akpu3pf,      &genphi_akpu3pf,   &genphi_akpu3pf};
+  // std::vector<int>**     asubid[ncases]    =   {&subid_akpu3pf,       &subid_akpu3pf,       &gensubid_akpu3pf, &gensubid_akpu3pf};
+
+  int*                   anjet[ncases]     =   {&njet_akpu3pf,        &njet_akpu3pf,        &njet_akpu3pf,     &njet_akpu3pf};
+  std::vector<float>**   ajetpt[ncases]    =   {&jetpt_akpu3pf,       &jetpt_akpu3pf,       &gjetpt_akpu3pf,    &gjetpt_akpu3pf};
+  std::vector<float>**   ajeteta[ncases]   =   {&jeteta_akpu3pf,      &jeteta_akpu3pf,      &gjeteta_akpu3pf,   &gjeteta_akpu3pf};
+  std::vector<float>**   ajetphi[ncases]   =   {&jetphi_akpu3pf,      &jetphi_akpu3pf,      &gjetphi_akpu3pf,   &gjetphi_akpu3pf};
+  std::vector<int>**     asubid[ncases]    =   {&subid_akpu3pf,       &subid_akpu3pf,       &subid_akpu3pf, &subid_akpu3pf};
 
   Int_t HLT_AK4Jet40;
   Int_t HLT_AK4Jet60;
@@ -334,10 +340,10 @@ private:
 
 djet::djet(TString infname, Int_t ispp, Int_t isMC) : fChain(0), fHlt(0), fispp(ispp), fisMC(isMC)
 {
-  TFile* inf = new TFile(infname.Data());
-  if(!inf->IsOpen()) return;
+  TFile* inf = TFile::Open(infname.Data());
+  if(!inf->IsOpen()) {std::cout << "open file failed" << std::endl; return;}
   TTree* tree = (TTree*)inf->Get("djt");
-  if(!tree) return;
+  if(!tree) {std::cout << "tree get failed" << std::endl; return;}
   TTree* hlt = (TTree*)inf->Get("hlt");
   if(!hlt) return;
   Init_member();
@@ -579,9 +585,9 @@ void djet::Init(TTree *tree, TTree *hlt)
   Gtk2phi = 0;
 
   // Set branch addresses and branch pointers
-  if(!tree) return;
+  if(!tree) {std::cout << "init failed" << std::endl; return;}
   fChain = tree;
-  fChain->SetMakeClass(1);
+  //fChain->SetMakeClass(1);
 
   fChain->SetBranchAddress("isPP", &isPP);
   fChain->SetBranchAddress("run", &run);
