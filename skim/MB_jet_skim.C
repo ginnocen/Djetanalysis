@@ -14,6 +14,7 @@
 #include <iomanip>
 
 #include "EventMatcher.h"
+#include "MBsubtract_config.h"
 
 const long MAXTREESIZE = 200000000000; // set maximum tree size from 10 GB to 100 GB, so that the code does not switch to a new file after 10 GB7
 
@@ -21,16 +22,6 @@ void minBiasJetSkim(const TString inputFile, const TString outputFile = "minBias
 
 void minBiasJetSkim(const TString inputFile, const TString outputFile)
 {
-       //cut configuration
-       float cut_vz = 15;
-       int cut_pcollisionEventSelection = 1;
-
-       std::vector<std::string> jetCollections = {"akPu3PFJetAnalyzer", "akCs3PFJetAnalyzer", "akPu4PFJetAnalyzer", "akCs4PFJetAnalyzer"};
-       int nMaxEvents_minBiasMixing = 25000;
-       int nCentralityBins = 5;
-       int nVertexBins = 3;
-       int nEventPlaneBins = 3;
-       int nJetCollections = jetCollections.size();
 
        // verbose about cut configuration
        std::cout<<"Cut Configuration :"<<std::endl;

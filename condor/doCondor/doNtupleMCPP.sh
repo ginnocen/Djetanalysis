@@ -19,8 +19,10 @@ then
   cmsenv
   cd ../skim
   g++ D_jet_skim.C $(root-config --cflags --libs) -Werror -Wall -O2 -o D_jet_skim.exe
+  g++ MB_jet_skim.C $(root-config --cflags --libs) -Werror -Wall -O2 -o MB_jet_skim.exe
   cd ../condor
   cp ../skim/D_jet_skim.exe .
+  cp ../skim/MB_jet_skim.exe .
   ./skim-condor.sh $filelist $output residuals.tgz 1 1 
 fi
 

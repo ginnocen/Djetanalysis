@@ -7,17 +7,10 @@
 #include "TMath.h"
 
 #include "D_jet_tree.h"
+#include "MBsubtract_config.h"
 
 int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::string output)
 {
-    //mixing parameters
-    std::vector<std::string> jetCollections = {"akPu3PFJetAnalyzer", "akPu4PFJetAnalyzer"};
-    const int nJetCollections = jetCollections.size();
-    const int nCentralityBins = 5;
-    const int nVertexBins = 3;
-    const int nEventPlaneBins = 3;
-    const int nEventsToMix = 1;
-
     //input tree variables
     int hiBin;
     float vz;
@@ -25,13 +18,11 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::string output)
 
     //MB tree variables
     int MBnref;
-    int maxjets = 200;
     Float_t MBjetptCorr[maxjets];
     Float_t MBjetpt[maxjets];
     Float_t MBjeteta[maxjets];
     Float_t MBjetphi[maxjets];
     Float_t MBchargedSum[maxjets];
-
     /*
     //int outngen_akpu4pf;
     std::vector<float> *outgenpt_akpu4pf;
@@ -84,11 +75,11 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::string output)
                     }
                     //set MB jet branch addresses
                     MBjets[i][j][k][l]->SetBranchAddress("nref",&MBnref);
-                    MBjets[i][j][k][l]->SetBranchAddress("jtpt",&MBjetptCorr);
-                    MBjets[i][j][k][l]->SetBranchAddress("rawpt",&MBjetpt);
-                    MBjets[i][j][k][l]->SetBranchAddress("jteta",&MBjeteta);
-                    MBjets[i][j][k][l]->SetBranchAddress("jtphi",&MBjetphi);
-                    MBjets[i][j][k][l]->SetBranchAddress("chargedSum",&MBchargedSum);
+                    MBjets[i][j][k][l]->SetBranchAddress("jtpt",MBjetptCorr);
+                    MBjets[i][j][k][l]->SetBranchAddress("rawpt",MBjetpt);
+                    MBjets[i][j][k][l]->SetBranchAddress("jteta",MBjeteta);
+                    MBjets[i][j][k][l]->SetBranchAddress("jtphi",MBjetphi);
+                    MBjets[i][j][k][l]->SetBranchAddress("chargedSum",MBchargedSum);
                 }
             }
         }
@@ -106,16 +97,17 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::string output)
     
     //set Djet branch addresses
 
-    djt_tree->SetBranchAddress("hiBin",&hiBin);
-    djt_tree->SetBranchAddress("vz",&vz);
-    djt_tree->SetBranchAddress("hiEvtPlanes",hiEvtPlanes);
-
     djt_tree->SetBranchStatus("*",1);
     djtMB_out->SetBranchStatus("*",1); 
     hlt_tree->SetBranchStatus("*",1);
 
     int nevents = djt_tree->GetEntries();
+    //int nevents=1000;
     djtMB_out->CopyAddresses(djt_tree);
+
+    djt_tree->SetBranchAddress("hiBin",&hiBin);
+    djt_tree->SetBranchAddress("vz",&vz);
+    djt_tree->SetBranchAddress("hiEvtPlanes",hiEvtPlanes);
 
     //event loop
     for(int i=0;i<nevents;i++)
@@ -125,18 +117,29 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::string output)
         //std::cout << "entry" << std::endl;
         //determine appropriate MB jet tree
         int centbinwidth = 200/nCentralityBins;
+        //std::cout << "nCentralityBins " << nCentralityBins << std::endl;
+        //std::cout << "hiBin " << hiBin << std::endl;
+        //std::cout << "vz" << vz << std::endl;
+        //std::cout << "evtPlanes" << hiEvtPlanes[8] << std::endl;
         int centbin = hiBin/centbinwidth;
+        //std::cout << "centbin " << centbin << std::endl;
         int vzbinwidth = 30/nVertexBins;
         int vzbin = (vz+15)/vzbinwidth;
+        //std::cout << "vzbin " << vzbin << std::endl;
         float evplaneBinWidth = TMath::Pi()/nEventPlaneBins;
         int evplaneBin = (hiEvtPlanes[8]+(TMath::Pi()/2.)) / evplaneBinWidth;
+        //std::cout << "evplaneBin " << evplaneBin << std::endl;
         //std::cout << "bins" << std::endl;
         //MB mixing loop
+        djt.hiBin = hiBin;
+        djt.vz = vz;
+        for(int m=0;m<29;m++) djt.hiEvtPlanes[m] = hiEvtPlanes[m];
         for(int j=0;j<nEventsToMix;j++)
         {
             //std::cout << j << std::endl;
             //choose random MB event in correct bin (akpu3pf)
             int nMB3events = MBjets[0][centbin][vzbin][evplaneBin]->GetEntriesFast();
+            //std::cout << nMB3events << std::endl;
             //std::cout << "3entries" << std::endl;
             MBjets[0][centbin][vzbin][evplaneBin]->GetEntry(rand.Integer(nMB3events));
             //std::cout << "3randentry" << std::endl;
@@ -155,12 +158,13 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::string output)
                 djt.jeteta_akpu3pf.push_back(MBjeteta[k]);
                 djt.jetphi_akpu3pf.push_back(MBjetphi[k]);
                 djt.chargedSum_akpu3pf.push_back(MBchargedSum[k]);
+                //std::cout << k << " " << MBjetpt[k] << std::endl;
                 //std::cout << "3push" << k << std::endl;
             }
             //choose random MB event in correct bin (akpu4pf)
-            int nMB4events = MBjets[1][centbin][vzbin][evplaneBin]->GetEntriesFast();
+            int nMB4events = MBjets[2][centbin][vzbin][evplaneBin]->GetEntriesFast();
             //std::cout << "4entries" << std::endl;
-            MBjets[1][centbin][vzbin][evplaneBin]->GetEntry(rand.Integer(nMB4events));
+            MBjets[2][centbin][vzbin][evplaneBin]->GetEntry(rand.Integer(nMB4events));
             //std::cout << "4randentry" << std::endl;
             //replace jet variables with MB jet variables
             djt.njet_akpu4pf = MBnref;

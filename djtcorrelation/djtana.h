@@ -75,20 +75,20 @@ int createhists(Option_t* option)
   opt.ToLower();
   if(opt=="savetpl")
     { 
-      hJetPhi=new TH1F("hJetPhi", ";#phi;",50,0., TMath::Pi());
-      hJetEta=new TH1F("hJetEta", ";#eta;",50,-2.,2.);
+      hJetPhi=new TH1F("hJetPhi", ";#phi;",100,0., TMath::Pi());
+      hJetEta=new TH1F("hJetEta", ";#eta;",100,-2.,2.);
       hNjets = new TH1F("hNjets", "", 1, 0, 1); // ... is it necessary
       for(int i=0;i<nPtBins;i++)
         {
-          hDPhi[i]=new TH1F(Form("hDPhi_pt_%d",i),";#phi;",50,-TMath::Pi(),TMath::Pi());
-          hDEta[i]=new TH1F(Form("hDEta_pt_%d",i),";#eta;",50,-2.,2.);
-          hDdelPhi[i]=new TH1F(Form("hDdelPhi_pt_%d",i),";#Delta#phi;",50,0.,TMath::Pi());
-          hDdelEta[i]=new TH1F(Form("hDdelEta_pt_%d",i),";#Delta#eta;",50,-4.,4.);
-          hCorr[i]=new TH2F(Form("hCorr_pt_%d",i),";#Delta#eta;#Delta#phi;",50,-4.,4.,50,0.,TMath::Pi());
-          hDphivsDtrk1hit[i]=new TH2F(Form("hDphivsDtrk1hit_pt_%d",i),";#phi;Dtrk1PixelHit",50,-TMath::Pi(),TMath::Pi(),50,0.,50.);
-          hDphivsDtrk2hit[i]=new TH2F(Form("hDphivsDtrk2hit_pt_%d",i),";#phi;Dtrk2PixelHit",50,-TMath::Pi(),TMath::Pi(),50,0.,50.);
-          hDphivsDtrk1algo[i]=new TH2F(Form("hDphivsDtrk1algo_pt_%d",i),";#phi;Dtrk1Algo",50,-TMath::Pi(),TMath::Pi(),50,0.,50.);
-          hDphivsDtrk2algo[i]=new TH2F(Form("hDphivsDtrk2algo_pt_%d",i),";#phi;Dtrk2Algo",50,-TMath::Pi(),TMath::Pi(),50,0.,50.);
+          hDPhi[i]=new TH1F(Form("hDPhi_pt_%d",i),";#phi;",100,-TMath::Pi(),TMath::Pi());
+          hDEta[i]=new TH1F(Form("hDEta_pt_%d",i),";#eta;",100,-2.,2.);
+          hDdelPhi[i]=new TH1F(Form("hDdelPhi_pt_%d",i),";#Delta#phi;",100,0.,TMath::Pi());
+          hDdelEta[i]=new TH1F(Form("hDdelEta_pt_%d",i),";#Delta#eta;",100,-4.,4.);
+          hCorr[i]=new TH2F(Form("hCorr_pt_%d",i),";#Delta#eta;#Delta#phi;",100,-4.,4.,50,0.,TMath::Pi());
+          hDphivsDtrk1hit[i]=new TH2F(Form("hDphivsDtrk1hit_pt_%d",i),";#phi;Dtrk1PixelHit",100,-TMath::Pi(),TMath::Pi(),50,0.,50.);
+          hDphivsDtrk2hit[i]=new TH2F(Form("hDphivsDtrk2hit_pt_%d",i),";#phi;Dtrk2PixelHit",100,-TMath::Pi(),TMath::Pi(),50,0.,50.);
+          hDphivsDtrk1algo[i]=new TH2F(Form("hDphivsDtrk1algo_pt_%d",i),";#phi;Dtrk1Algo",100,-TMath::Pi(),TMath::Pi(),50,0.,50.);
+          hDphivsDtrk2algo[i]=new TH2F(Form("hDphivsDtrk2algo_pt_%d",i),";#phi;Dtrk2Algo",100,-TMath::Pi(),TMath::Pi(),50,0.,50.);
           for(int l=0;l<nRefBins;l++)
             {
               ahREfficiency[l][i] = new TH1F(Form("hREfficiency_%s_pt_%d",tRef[l].Data(),i), ";#DeltaR;", nDrBins, drBins);

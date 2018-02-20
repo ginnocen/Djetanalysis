@@ -70,7 +70,7 @@ std::vector <std::vector <std::vector <std::vector <Int_t> > > > get_sorted_even
         if(i % 10000 == 0) std::cout << i << " / " << nentries << std::endl;
         //determine correct bin
         t->GetEntry(i);
-        if (fabs(vz) > 15) {vzrejected++; continue;}
+        if (fabs(vz) > cut_vz) {vzrejected++; continue;}
         if (!isPP) {  // HI event selection
             if ((pcollisionEventSelection < 1)) {hltrejected++; continue;}
             if (!isMC) {
