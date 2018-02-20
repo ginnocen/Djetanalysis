@@ -29,8 +29,8 @@
 
   TString nametriggerMB[samples][ntriggers]={{"HLT_AK4PFJet40_Eta5p1_v1","HLT_AK4PFJet60_Eta5p1_v1"},{"HLT_HIPuAK4CaloJet40_Eta5p1_v2","HLT_HIPuAK4CaloJet60_Eta5p1_v1"}};
   TString nameL1triggerMB[samples][ntriggers]={{"L1_SingleJet28_BptxAND","L1_SingleJet40_BptxAND"},{"L1_MinimumBiasHF2_AND","L1_SingleS1Jet28_BptxAND"}};
-  TString prescaleL1MB[samples][ntriggers]={{"L1_SingleJet28_BptxAND_Prescl==1","L1_SingleJet40_BptxAND_Prescl==1"},{"L1_MinimumBiasHF2_AND_Prescl==1","L1_SingleS1Jet28_BptxAND_Prescl==1"}};
-  TString prescaleHLTMB[samples][ntriggers]={{"HLT_AK4PFJet40_Eta5p1_v1_Prescl==1","HLT_AK4PFJet60_Eta5p1_v1_Prescl==1"},{"HLT_HIPuAK4CaloJet40_Eta5p1_v2_Prescl==1","HLT_HIPuAK4CaloJet60_Eta5p1_v1_Prescl==1"}};
+  TString prescaleL1MB[samples][ntriggers]={{"&&(L1_SingleJet28_BptxAND_Prescl==1)","&&(L1_SingleJet40_BptxAND_Prescl==1)"},{"&&(L1_MinimumBiasHF2_AND_Prescl==1)","&&(L1_SingleS1Jet28_BptxAND_Prescl==1)"}};
+  TString prescaleHLTMB[samples][ntriggers]={{"&&(HLT_AK4PFJet40_Eta5p1_v1_Prescl==1)","&&(HLT_AK4PFJet60_Eta5p1_v1_Prescl==1)"},{"&&(HLT_HIPuAK4CaloJet40_Eta5p1_v2_Prescl==1)","&&(HLT_HIPuAK4CaloJet60_Eta5p1_v1_Prescl==1)"}};
 
   
   //nTriggers  
@@ -129,7 +129,7 @@ void initialise(){
 	for (int index=0;index<samples;index++){		
 	  for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
 	      preselection[index][indextriggers]=Form("%s&&%s",eventjetselection[index].Data(),MBselection[index].Data());
-	  	  preselection[index][indextriggers]=preselection[index][indextriggers]+"&&"+prescaleL1MB[index][indextriggers]+"&&"+prescaleHLTMB[index][indextriggers];
+	  	  preselection[index][indextriggers]=preselection[index][indextriggers]+prescaleL1MB[index][indextriggers]+prescaleHLTMB[index][indextriggers];
 		  L1selection[index][indextriggers]=Form("%s&&%s",preselection[index][indextriggers].Data(),nameL1triggerMB[index][indextriggers].Data());
 		  HLTselection[index][indextriggers]=Form("%s&&%s",L1selection[index][indextriggers].Data(),nametriggerMB[index][indextriggers].Data());
         }

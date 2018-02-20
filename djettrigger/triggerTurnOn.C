@@ -16,11 +16,10 @@
 #include <TGraphAsymmErrors.h>
 
 
-void triggerTurnOn(TString suffixfile="SelectionOnL1HLTprescale",int doPP=0, int doPbPb=1, int do40=1,int do60=0){
+void triggerTurnOn(TString suffixfile="SelectionOnL1HLTprescale",int doPP=1, int doPbPb=0, int do40=1,int do60=0){
      
     initialise();
 	TFile *finput[samples];
-    TH1F *hPFMF[samples][ntriggers];  
     TH1F *hL1efficiencyden[samples][ntriggers];  
     TH1F *hL1efficiencynum[samples][ntriggers];  
     TH1F *hHLTefficiencyden[samples][ntriggers];  
@@ -33,7 +32,6 @@ void triggerTurnOn(TString suffixfile="SelectionOnL1HLTprescale",int doPP=0, int
 	for (int index=0;index<samples;index++){
 		finput[index]=new TFile(namefilesMB[index].Data(),"read"); 
 		TH1F*htemp=new TH1F("htemp","htemp",nbinsTurnOn,bondaries_nbinsTurnOn);
-		TH1F*htempMuF=new TH1F("htempMuF","htempMuF",500,-2,2);
 		TTree*ttemp=(TTree*)finput[index]->Get(nametreeMB[index].Data());
 		TTree*ttempHLT=(TTree*)finput[index]->Get(nametreeHLTMB[index].Data());
 		TTree*ttempSkim=(TTree*)finput[index]->Get(nametreeSkimMB[index].Data());
@@ -50,30 +48,44 @@ void triggerTurnOn(TString suffixfile="SelectionOnL1HLTprescale",int doPP=0, int
 			  
 	   	  if (indextriggers==0 && do40==0) continue;
 		  if (indextriggers==1 && do60==0) continue;
+		  std::cout<<"sample="<<index<<std::endl;
+		  std::cout<<"indextriggers="<<indextriggers<<std::endl;
 
 		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),preselection[index][indextriggers].Data());
 		  hL1efficiencyden[index][indextriggers]=(TH1F*)htemp->Clone();
 		  hL1efficiencyden[index][indextriggers]->SetName(namehL1efficiencyden[index][indextriggers].Data());
 	
+		  std::cout<<"step1="<<std::endl;
+
 		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),L1selection[index][indextriggers]);
 		  hL1efficiencynum[index][indextriggers]=(TH1F*)htemp->Clone();
 		  hL1efficiencynum[index][indextriggers]->SetName(namehL1efficiencynum[index][indextriggers].Data());
+
+		  std::cout<<"step2="<<std::endl;
 
           gL1efficiency[index][indextriggers] = new TGraphAsymmErrors;
           gL1efficiency[index][indextriggers]->BayesDivide(hL1efficiencynum[index][indextriggers],hL1efficiencyden[index][indextriggers]);
           gL1efficiency[index][indextriggers]->SetName(namegL1efficiency[index][indextriggers].Data());
 
+		  std::cout<<"step3="<<std::endl;
+
 		  hHLTefficiencyden[index][indextriggers]=(TH1F*)hL1efficiencynum[index][indextriggers]->Clone();
 		  hHLTefficiencyden[index][indextriggers]->SetName(namehHLTefficiencyden[index][indextriggers].Data());
+
+		  std::cout<<"step4="<<std::endl;
 
 		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),HLTselection[index][indextriggers]);
 		  hHLTefficiencynum[index][indextriggers]=(TH1F*)htemp->Clone();
 		  hHLTefficiencynum[index][indextriggers]->SetName(namehHLTefficiencynum[index][indextriggers].Data());
 
+		  std::cout<<"step5="<<std::endl;
+
           gHLTefficiency[index][indextriggers] = new TGraphAsymmErrors;
           gHLTefficiency[index][indextriggers]->BayesDivide(hHLTefficiencynum[index][indextriggers],hHLTefficiencyden[index][indextriggers]);
           gHLTefficiency[index][indextriggers]->SetName(namegHLTefficiency[index][indextriggers].Data());
           
+		  std::cout<<"step6="<<std::endl;
+
           gTotefficiency[index][indextriggers] = new TGraphAsymmErrors;
           gTotefficiency[index][indextriggers]->BayesDivide(hHLTefficiencynum[index][indextriggers],hL1efficiencyden[index][indextriggers]);
           gTotefficiency[index][indextriggers]->SetName(namegTotefficiency[index][indextriggers].Data());
@@ -96,7 +108,6 @@ void triggerTurnOn(TString suffixfile="SelectionOnL1HLTprescale",int doPP=0, int
 		  if (indextriggers==1 && do60==0) continue;
 
     	  hL1efficiencyden[index][indextriggers]->Write();
-	      hPFMF[index][indextriggers]->Write();
 		  hL1efficiencynum[index][indextriggers]->Write();
 		  hHLTefficiencyden[index][indextriggers]->Write();
 		  hHLTefficiencynum[index][indextriggers]->Write();
