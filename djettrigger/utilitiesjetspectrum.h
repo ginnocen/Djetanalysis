@@ -20,7 +20,21 @@
   
   TString nametrigger[samples][ntriggers]={{"HLT_AK4PFJet40_Eta5p1_v1","HLT_AK4PFJet60_Eta5p1_v1","HLT_AK4PFJet80_Eta5p1_v1"},{"HLT_HIPuAK4CaloJet40_Eta5p1_v1","HLT_HIPuAK4CaloJet60_Eta5p1_v1","HLT_HIPuAK4CaloJet80_Eta5p1_v1"}};
   TString nameL1trigger[samples][ntriggers]={{"L1_SingleJet28_BptxAND","L1_SingleJet40_BptxAND","L1_SingleJet48_BptxAND"},{"L1_MinimumBiasHF2_AND","L1_SingleS1Jet28_BptxAND","L1_SingleJet44_BptxAND"}};
+  
+  double dataluminosity[samples][ntriggers]={{587156.030, 2799655.728, 13198535.395},{0.620, 33.965, 145.133}};
 
+/*
+| HLT_AK4PFJet40_Eta5p1_v1  | 5     | 17   | 3921 | 603817.210        | 587156.030       |
+| HLT_AK4PFJet60_Eta5p1_v1  | 5     | 17   | 3921 | 2879218.853       | 2799655.728      |
+| HLT_AK4PFJet80_Eta5p1_v1  | 5     | 17   | 3921 | 13622415.467      | 13198535.395     |
+
+| HLT_HIPuAK4CaloJet40_Eta5p1_v1             | 11    | 39   | 9698  | 0.684             | 0.620            |
+| HLT_HIPuAK4CaloJet60_Eta5p1_v1             | 26    | 64   | 22130 | 35.629            | 33.965           |
+| HLT_HIPuAK4CaloJet80_Eta5p1_v1             | 26    | 64   | 22130 | 152.849           | 145.133          |
+
+
+
+*/
   //MB samples
   TString namefilesMB[samples]={"/mnt/hadoop/cms/store/user/tatar/MinimumBias6/Run2015E_PromptReco_v1_Run261553_262328_FOREST/0_20170805.root","/mnt/hadoop/cms/store/user/cmcginn/HIMinimumBias2/HIMinimumBias2_ForRandomConeTest_20170307_400Lumi/170307_204032/merged/HiForestAOD_HIMinimumBias2_ForRandomConeTest_20170307_400Lumi_MERGED.root"}; 
   TString eventjetselection[samples]={"(pPAprimaryVertexFilter&&pBeamScrapingFilter&&fabs(vz)<15&&abs(jteta)<2.0)","(pcollisionEventSelection&&HBHENoiseFilterResultRun2Loose&&fabs(vz)<15&&abs(jteta)<2.0)"};
@@ -47,18 +61,26 @@
   double a2HLT[samples][ntriggers]={{7.0734*0.01,6.76907*0.01,-2.31850},{7.0734*0.01,6.76907*0.01,-2.31850}};
 
   //nTriggers  
-
-  
   
   TString namehtempMuF[samples][ntriggers];  
   TString namehL1efficiencyden[samples][ntriggers];  
-  TString namehL1efficiencynum[samples][ntriggers];  
+  TString namehL1efficiencynum[samples][ntriggers]; 
   TString namehHLTefficiencyden[samples][ntriggers];  
   TString namehHLTefficiencynum[samples][ntriggers];  
   
   TString namegL1efficiency[samples][ntriggers];  
   TString namegHLTefficiency[samples][ntriggers];  
   TString namehHLTefficiency[samples][ntriggers];  
+  
+  TString namehjetptspectrumpertrigger[samples][ntriggers];  
+  TString namehjetleadingptspectrumpertrigger[samples][ntriggers];  
+  TString namehjetptspectrumpertriggerPresclCorr[samples][ntriggers];  
+  TString namehjetleadingptspectrumpertriggerPresclCorr[samples][ntriggers];  
+  
+  TString namehjetptspectrumTotPresclCorr[samples];  
+  TString namehjetleadingptspectrumTotPresclCorr[samples];  
+
+
 
   int coloursTurnOn[ntriggers]={1,2,4};
   int markerstyleTurnOn[ntriggers]={21,22,22};
@@ -91,9 +113,6 @@
   TString nametriggerselectiontagcases[samples][nCases]={{"HLT40only","HLT60only","HLT40_AND_HLT60","HLT40_OR_HLT60","All"},{"HLT40only","HLT60only","HLT40_AND_HLT60","HLT40_OR_HLT60","All"}};
   TString namehjetptspectrum[samples][nCases];  
   TString namehjetleadingptspectrum[samples][nCases];  
-  TString namehjetptspectrumpertrigger[samples][ntriggers];  
-  TString namehjetleadingptspectrumpertrigger[samples][ntriggers];  
-
 
   int colours[nCases]={1,2,3,4,7};
   int markerstyle[nCases]={21,22,23,24,24};
@@ -124,12 +143,18 @@ void initialise(){
     
     
 	for (int index=0;index<samples;index++){
+	
+		   namehjetptspectrumTotPresclCorr[index]="hjetptspectrumTotPresclCorr"+labelsamples[index];
+		   namehjetleadingptspectrumTotPresclCorr[index]="hjetleadingptspectrumTotPresclCorr"+labelsamples[index];
+
 		for (int indexcases=0;indexcases<nCases;indexcases++){ 
 		   namehjetptspectrum[index][indexcases]="hjetptspectrum"+nametriggerselectiontagcases[index][indexcases]+labelsamples[index];
 		   namehjetleadingptspectrum[index][indexcases]="hjetleadingptspectrum"+nametriggerselectiontagcases[index][indexcases]+labelsamples[index];
         }
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
 		
+		   namehjetptspectrumpertriggerPresclCorr[index][indextriggers]="hjetptspectrumpertriggerPresclCorr"+nametriggerselectiontagtriggers[index][indextriggers]+labelsamples[index];
+		   namehjetleadingptspectrumpertriggerPresclCorr[index][indextriggers]="hjetleadingptspectrumpertriggerPresclCorr"+nametriggerselectiontagtriggers[index][indextriggers]+labelsamples[index];
 		   namehjetptspectrumpertrigger[index][indextriggers]="hjetptspectrumpertrigger"+nametriggerselectiontagtriggers[index][indextriggers]+labelsamples[index];
 		   namehjetleadingptspectrumpertrigger[index][indextriggers]="hjetleadingptspectrumpertrigger"+nametriggerselectiontagtriggers[index][indextriggers]+labelsamples[index];
 		   namehL1efficiencyden[index][indextriggers]="hL1efficiencyden"+nametriggerselectiontagtriggers[index][indextriggers]+labelsamples[index];
