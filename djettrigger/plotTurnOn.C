@@ -16,14 +16,20 @@
 #include <TCanvas.h>
 #include <TGraphAsymmErrors.h>
 
-void plotTurnOn(){
+void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 
     initialise();
+    
+    TF1*fitfunctionErfL1(TGraphAsymmErrors*,int,int);
+    TF1*fitfunctionErfHLT(TGraphAsymmErrors*,int,int);
     
     TGraphAsymmErrors *gL1efficiency[samples][ntriggers];  
     TGraphAsymmErrors *gHLTefficiency[samples][ntriggers];  
     
-	TFile*finput=new TFile("foutputTurnSelectionOnL1HLTprescale.root","read");
+    TF1*fitErfL1[samples][ntriggers];  
+    TF1*fitErfHLT[samples][ntriggers];  
+    
+	TFile*finput=new TFile(suffixfile.Data(),"read");
 	finput->cd();
 	for (int index=0;index<samples;index++){
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
@@ -49,7 +55,7 @@ void plotTurnOn(){
 	  hemptyHLT[index]=(TH2F*)myplot->GetEmpty(namehistoempty.Data(),string_xaxis[index].Data(),string_yaxisTurnOnHLT[index].Data(),lowerrangex[index],upperrangex[index],lowerrangeyTurnOn[index],upperrangeyTurnOn[index]);
       legL1[index]=(TLegend*)myplot->GetLegend(0.4597315,0.6328671,0.909396,0.8496503);
       legHLT[index]=(TLegend*)myplot->GetLegend(0.4597315,0.6328671,0.909396,0.8496503);
-
+    
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
 		
 			legentryL1[index][indextriggers]=legL1[index]->AddEntry(gL1efficiency[index][indextriggers],nameL1trigger[index][indextriggers].Data(),"pl");
@@ -65,7 +71,7 @@ void plotTurnOn(){
 			gHLTefficiency[index][indextriggers]->SetMarkerColor(coloursTurnOn[indextriggers]);
 			gHLTefficiency[index][indextriggers]->SetMarkerStyle(markerstyleTurnOn[indextriggers]);
 			gHLTefficiency[index][indextriggers]->SetLineWidth(widthlineTurnOn[indextriggers]);
-		}  
+					}  
 	}
 
 	TCanvas*cL1[samples];
@@ -79,6 +85,9 @@ void plotTurnOn(){
 		hemptyL1[index]->Draw();    
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
 			gL1efficiency[index][indextriggers]->Draw("EPsame");
+		    fitErfL1[index][indextriggers]=(TF1*)fitfunctionErfL1(gL1efficiency[index][indextriggers],index,indextriggers);
+		    fitErfL1[index][indextriggers]->Draw("same");
+
 		}
 		legL1[index]->Draw();
 		cL1[index]->SaveAs(canvasnameL1[index].Data());
@@ -95,9 +104,28 @@ void plotTurnOn(){
 		hemptyHLT[index]->Draw();    
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
 			gHLTefficiency[index][indextriggers]->Draw("EPsame");
+		    fitErfHLT[index][indextriggers]=(TF1*)fitfunctionErfHLT(gHLTefficiency[index][indextriggers],index,indextriggers);
+		    fitErfHLT[index][indextriggers]->Draw("same");
+
 		}
 		legHLT[index]->Draw();
 		cHLT[index]->SaveAs(canvasnameHLT[index].Data());
 	}
+}
 
+
+TF1*fitfunctionErfL1(TGraphAsymmErrors *gEff, int indexsample, int indextrigger){
+
+  TF1 *fL1= new TF1("fL1","TMath::Erf(x*[1]+[2])*0.5*(1-[0])+0.5*(1+[0])");
+  fL1->SetParameters(a0L1[indexsample][indextrigger],a1L1[indexsample][indextrigger],a2L1[indexsample][indextrigger]); 
+  gEff->Fit("fL1"); 
+  return fL1;
+}
+
+TF1*fitfunctionErfHLT(TGraphAsymmErrors *gEff, int indexsample, int indextrigger){
+
+  TF1 *fHLT= new TF1("fHLT","TMath::Erf(x*[1]+[2])*0.5*(1-[0])+0.5*(1+[0])");
+  fHLT->SetParameters(a0HLT[indexsample][indextrigger],a1HLT[indexsample][indextrigger],a2HLT[indexsample][indextrigger]); 
+  gEff->Fit("fHLT"); 
+  return fHLT;
 }

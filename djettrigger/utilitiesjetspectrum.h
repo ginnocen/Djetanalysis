@@ -34,7 +34,13 @@
   TString prescalecorrHLTMB[samples][ntriggers]={{"(1)","(1)","(1)"},{"(1)","(1)","(1)"}};
   TString nametriggerselectiontagtriggers[samples][ntriggers]={{"ppHLT40","ppHLT60","ppHLT80"},{"PbPbHLT40","PbPbHLT60","PbPbHLT80"}};
 
+  double a0L1[samples][ntriggers]={{-4.5400*1000, 3.09974*0.1,2.31049},{-4.5400*1000,3.09974*0.1,2.31049}};
+  double a1L1[samples][ntriggers]={{-4.05647*1000,8.77473*0.001,3.1443},{-4.05647*1000,8.77473*0.001,3.1443}};
+  double a2L1[samples][ntriggers]={{7.0734*0.01,6.76907*0.01,-2.31850},{7.0734*0.01,6.76907*0.01,-2.31850}};
 
+  double a0HLT[samples][ntriggers]={{-4.5400*1000, 3.09974*0.1,2.31049},{-4.5400*1000,3.09974*0.1,2.31049}};
+  double a1HLT[samples][ntriggers]={{-4.05647*1000,8.77473*0.001,3.1443},{-4.05647*1000,8.77473*0.001,3.1443}};
+  double a2HLT[samples][ntriggers]={{7.0734*0.01,6.76907*0.01,-2.31850},{7.0734*0.01,6.76907*0.01,-2.31850}};
 
   //nTriggers  
 
