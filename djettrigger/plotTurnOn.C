@@ -89,7 +89,7 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 			gL1efficiency[index][indextriggers]->Draw("EPsame");
 		    fitErfL1[index][indextriggers]=(TF1*)fitfunctionErfL1(gL1efficiency[index][indextriggers],index,indextriggers);
 		    fitErfL1[index][indextriggers]->Draw("same");
-		    fitErfL1[index][indextriggers]->Write(Form("fitErfL1[%d][%d]",index,indextriggers));
+		    fitErfL1[index][indextriggers]->Write(Form("fitErfL1_%s]",nametriggerselectiontagtriggers[index][indextriggers].Data()));
 		}
 		legL1[index]->Draw();
 		cL1[index]->SaveAs(canvasnameL1[index].Data());
@@ -108,7 +108,7 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 			gHLTefficiency[index][indextriggers]->Draw("EPsame");
 		    fitErfHLT[index][indextriggers]=(TF1*)fitfunctionErfHLT(gHLTefficiency[index][indextriggers],index,indextriggers);
 		    fitErfHLT[index][indextriggers]->Draw("same");
-		    fitErfHLT[index][indextriggers]->Write(Form("fitErfHLT[%d][%d]",index,indextriggers));
+		    fitErfHLT[index][indextriggers]->Write(Form("fitErfHLT_%s]",nametriggerselectiontagtriggers[index][indextriggers].Data()));
 		}
 		legHLT[index]->Draw();
 		cHLT[index]->SaveAs(canvasnameHLT[index].Data());
