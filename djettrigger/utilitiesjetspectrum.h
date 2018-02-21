@@ -34,13 +34,16 @@
   TString prescalecorrHLTMB[samples][ntriggers]={{"(1)","(1)","(1)"},{"(1)","(1)","(1)"}};
   TString nametriggerselectiontagtriggers[samples][ntriggers]={{"ppHLT40","ppHLT60","ppHLT80"},{"PbPbHLT40","PbPbHLT60","PbPbHLT80"}};
 
-  double a0L1[samples][ntriggers]={{-4.5400*1000, 3.09974*0.1,2.31049},{-4.5400*1000,3.09974*0.1,2.31049}};
-  double a1L1[samples][ntriggers]={{-4.05647*1000,8.77473*0.001,3.1443},{-4.05647*1000,8.77473*0.001,3.1443}};
-  double a2L1[samples][ntriggers]={{7.0734*0.01,6.76907*0.01,-2.31850},{7.0734*0.01,6.76907*0.01,-2.31850}};
+  double a0L1[samples][ntriggers]={{.0741,.0557,.0474},{-0.921,.0114,.0105}};
+  double a1L1[samples][ntriggers]={{-2.061,-2.062,-2.022},{-240.52,0.158,-1.349}};
+  double a2L1[samples][ntriggers]={{-0.840,-1.226,-1.364},{712.37,-3,-1.481}};
+  double a3L1[samples][ntriggers]={{71.12,259.81,542.30},{3.362e+06,1532,1731}};
 
-  double a0HLT[samples][ntriggers]={{-4.5400*1000, 3.09974*0.1,2.31049},{-4.5400*1000,3.09974*0.1,2.31049}};
-  double a1HLT[samples][ntriggers]={{-4.05647*1000,8.77473*0.001,3.1443},{-4.05647*1000,8.77473*0.001,3.1443}};
-  double a2HLT[samples][ntriggers]={{7.0734*0.01,6.76907*0.01,-2.31850},{7.0734*0.01,6.76907*0.01,-2.31850}};
+  double a0HLT[samples][ntriggers]={{.145,.0572,.0714},{.01,.0105,.0157}};
+  double a1HLT[samples][ntriggers]={{-211.,-3.263,-5.767},{1.,-1.678,-2.199}};
+  double a2HLT[samples][ntriggers]={{206.2,-3.472,3.264},{.01,-1.069,-3.125}};
+  double a3HLT[samples][ntriggers]={{3.836e+05,1201,569.2},{100,642.8,725.8}};
+
 
   //nTriggers  
 

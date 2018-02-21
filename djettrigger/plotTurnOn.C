@@ -76,6 +76,8 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 
 	TCanvas*cL1[samples];
 	TString canvasnameL1[samples];
+	TFile* funcfile = new TFile("TurnOnCurves.root","recreate");
+	funcfile->cd();
 
 	for (int index=0;index<samples;index++){
 		canvasnameL1[index]=Form("plottriggers/canvasL1Jetptplot%s.png",labelsamples[index].Data());
@@ -87,7 +89,7 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 			gL1efficiency[index][indextriggers]->Draw("EPsame");
 		    fitErfL1[index][indextriggers]=(TF1*)fitfunctionErfL1(gL1efficiency[index][indextriggers],index,indextriggers);
 		    fitErfL1[index][indextriggers]->Draw("same");
-
+		    fitErfL1[index][indextriggers]->Write(Form("fitErfL1[%d][%d]",index,indextriggers));
 		}
 		legL1[index]->Draw();
 		cL1[index]->SaveAs(canvasnameL1[index].Data());
@@ -106,26 +108,29 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 			gHLTefficiency[index][indextriggers]->Draw("EPsame");
 		    fitErfHLT[index][indextriggers]=(TF1*)fitfunctionErfHLT(gHLTefficiency[index][indextriggers],index,indextriggers);
 		    fitErfHLT[index][indextriggers]->Draw("same");
-
+		    fitErfHLT[index][indextriggers]->Write(Form("fitErfHLT[%d][%d]",index,indextriggers));
 		}
 		legHLT[index]->Draw();
 		cHLT[index]->SaveAs(canvasnameHLT[index].Data());
 	}
+
+	funcfile->Close();
 }
 
-
 TF1*fitfunctionErfL1(TGraphAsymmErrors *gEff, int indexsample, int indextrigger){
-
-  TF1 *fL1= new TF1("fL1","TMath::Erf(x*[1]+[2])*0.5*(1-[0])+0.5*(1+[0])");
-  fL1->SetParameters(a0L1[indexsample][indextrigger],a1L1[indexsample][indextrigger],a2L1[indexsample][indextrigger]); 
-  gEff->Fit("fL1"); 
+  std::cout << "L1" << indexsample << indextrigger << std::endl;
+  TF1 *fL1= new TF1("fL1","0.5*TMath::Erf(x*[0]+[1]+TMath::Exp((-x^2+[1])/[3])*[2])+0.5");
+  //TF1 *fL1=new TF1("fL1","TMath::Erf(x*[1]+[2])+0*[0]");
+  fL1->SetParameters(a0L1[indexsample][indextrigger],a1L1[indexsample][indextrigger],a2L1[indexsample][indextrigger],a3L1[indexsample][indextrigger]); 
+  gEff->Fit("fL1","M"); 
   return fL1;
 }
 
 TF1*fitfunctionErfHLT(TGraphAsymmErrors *gEff, int indexsample, int indextrigger){
-
-  TF1 *fHLT= new TF1("fHLT","TMath::Erf(x*[1]+[2])*0.5*(1-[0])+0.5*(1+[0])");
-  fHLT->SetParameters(a0HLT[indexsample][indextrigger],a1HLT[indexsample][indextrigger],a2HLT[indexsample][indextrigger]); 
-  gEff->Fit("fHLT"); 
+  std::cout << "HLT" << indexsample << indextrigger << std::endl;
+  TF1 *fHLT= new TF1("fHLT","0.5*TMath::Erf(x*[0]+[1]+TMath::Exp((-x^2+[1])/[3])*[2])+0.5");
+  //TF1 *fHLT=new TF1("fHLT","TMath::Erf(x*[1]+[2])+0*[0]");
+  fHLT->SetParameters(a0HLT[indexsample][indextrigger],a1HLT[indexsample][indextrigger],a2HLT[indexsample][indextrigger],a3HLT[indexsample][indextrigger]); 
+  gEff->Fit("fHLT","M"); 
   return fHLT;
 }
