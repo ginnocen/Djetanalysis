@@ -119,7 +119,7 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 
 TF1*fitfunctionErfL1(TGraphAsymmErrors *gEff, int indexsample, int indextrigger){
   std::cout << "L1" << indexsample << indextrigger << std::endl;
-  TF1 *fL1= new TF1("fL1","0.5*TMath::Erf(x*[0]+[1]+TMath::Exp((-x^2+[1])/[3])*[2])+0.5");
+  TF1 *fL1= new TF1("fL1",functionalFormTurnOn.Data());
   //TF1 *fL1=new TF1("fL1","TMath::Erf(x*[1]+[2])+0*[0]");
   fL1->SetParameters(a0L1[indexsample][indextrigger],a1L1[indexsample][indextrigger],a2L1[indexsample][indextrigger],a3L1[indexsample][indextrigger]); 
   gEff->Fit("fL1","M"); 
@@ -128,7 +128,7 @@ TF1*fitfunctionErfL1(TGraphAsymmErrors *gEff, int indexsample, int indextrigger)
 
 TF1*fitfunctionErfHLT(TGraphAsymmErrors *gEff, int indexsample, int indextrigger){
   std::cout << "HLT" << indexsample << indextrigger << std::endl;
-  TF1 *fHLT= new TF1("fHLT","0.5*TMath::Erf(x*[0]+[1]+TMath::Exp((-x^2+[1])/[3])*[2])+0.5");
+  TF1 *fHLT= new TF1("fHLT",functionalFormTurnOn.Data());
   //TF1 *fHLT=new TF1("fHLT","TMath::Erf(x*[1]+[2])+0*[0]");
   fHLT->SetParameters(a0HLT[indexsample][indextrigger],a1HLT[indexsample][indextrigger],a2HLT[indexsample][indextrigger],a3HLT[indexsample][indextrigger]); 
   gEff->Fit("fHLT","M"); 

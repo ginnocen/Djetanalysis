@@ -79,6 +79,8 @@
   TString selectionL1[samples][ntriggers];
   TString selectionHLT[samples][ntriggers];
   TString selectionanalysis[samples][ntriggers];
+  
+  TString functionalFormTurnOn= "0.5*TMath::Erf(x*[0]+[1]+TMath::Exp((-x^2+[1])/[3])*[2])+0.5";
 
 void initialise(){
 
