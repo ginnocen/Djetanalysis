@@ -1,6 +1,7 @@
 #include "Plotting.cpp"
 #include <vector>
-#include "utilitiesjetspectrum.h"
+#include "utilitiescorrectedspectrum.h"
+#include "luminosityprescales.h"
 #include <TROOT.h>
 #include <TStyle.h>
 #include <iostream>
@@ -27,16 +28,16 @@ void jetspectrumCorrected(int doPP=1, int doPbPb=1, int do40=1,int do60=1,int do
     TH1F *hjetleadingptspectrumpertrigger[samples][ntriggers];  
     TH1F *hjetptspectrumpertriggerPresclCorr[samples][ntriggers];  
     TH1F *hjetleadingptspectrumpertriggerPresclCorr[samples][ntriggers];  
+    
+      TH1F*htemptemplate=new TH1F("htemp","htemp",2000,0,1000);
 
-    TH1F*htemp=new TH1F("htemp","htemp",2000,0,1000);
-
+    
 	for (int index=0;index<samples;index++) { 
-
+      TH1F*htemp=(TH1F*)htemptemplate->Clone("htemp"); 
 	  hjetptspectrumTotPresclCorr[index]=(TH1F*)htemp->Clone(); 
 	  hjetptspectrumTotPresclCorr[index]->SetName(namehjetptspectrumTotPresclCorr[index].Data());
 	  hjetleadingptspectrumTotPresclCorr[index]=(TH1F*)htemp->Clone(); 
 	  hjetleadingptspectrumTotPresclCorr[index]->SetName(namehjetleadingptspectrumTotPresclCorr[index].Data());
-	  
 	}
 
 	for (int index=0;index<samples;index++){
@@ -52,7 +53,7 @@ void jetspectrumCorrected(int doPP=1, int doPbPb=1, int do40=1,int do60=1,int do
 		ttemp->AddFriend(ttempHLT);
 
 	  for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
-	  
+          TH1F*htemp=(TH1F*)htemptemplate->Clone("htemp"); 
 		  if (indextriggers==0 && do40==0) continue;
 		  if (indextriggers==1 && do60==0) continue;
 		  if (indextriggers==2 && do80==0) continue;
@@ -78,11 +79,6 @@ void jetspectrumCorrected(int doPP=1, int doPbPb=1, int do40=1,int do60=1,int do
 		
 		}
 	}
-
-
-
-
-
 
 	TFile*foutput=new TFile("foutputjetspectrumCorrected.root","recreate");
 	foutput->cd();
