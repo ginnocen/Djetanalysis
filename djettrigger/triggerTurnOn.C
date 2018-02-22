@@ -1,6 +1,6 @@
 #include "Plotting.cpp"
 #include <vector>
-#include "utilitiesjetspectrum.h"
+#include "utilitiesturnonstudy.h"
 #include <TROOT.h>
 #include <TStyle.h>
 #include <iostream>
@@ -26,9 +26,7 @@ void triggerTurnOn(TString suffixfile="SelectionOnL1HLTprescale",int doPP=1, int
    TH1F *hL1efficiencynum[samples][ntriggers];  
    TH1F *hHLTefficiencyden[samples][ntriggers];  
    TH1F *hHLTefficiencynum[samples][ntriggers];  
-
-
-    TGraphAsymmErrors *gL1efficiency[samples][ntriggers];  
+   TGraphAsymmErrors *gL1efficiency[samples][ntriggers];  
     TGraphAsymmErrors *gHLTefficiency[samples][ntriggers];  
 
 	for (int index=0;index<samples;index++){
