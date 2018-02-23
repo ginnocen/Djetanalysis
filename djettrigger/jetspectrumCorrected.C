@@ -29,11 +29,11 @@ void jetspectrumCorrected(int doPP=1, int doPbPb=1, int do40=1,int do60=1,int do
     TH1F *hjetptspectrumpertriggerPresclCorr[samples][ntriggers];  
     TH1F *hjetleadingptspectrumpertriggerPresclCorr[samples][ntriggers];  
     
-      TH1F*htemptemplate=new TH1F("htemp","htemp",2000,0,1000);
+      TH1F*htemp=new TH1F("htemp","htemp",2000,0,1000);
 
     
 	for (int index=0;index<samples;index++) { 
-      TH1F*htemp=(TH1F*)htemptemplate->Clone("htemp"); 
+      TH1F*htemp=new TH1F("htemp","htemp",2000,0,1000);
 	  hjetptspectrumTotPresclCorr[index]=(TH1F*)htemp->Clone(); 
 	  hjetptspectrumTotPresclCorr[index]->SetName(namehjetptspectrumTotPresclCorr[index].Data());
 	  hjetleadingptspectrumTotPresclCorr[index]=(TH1F*)htemp->Clone(); 
@@ -53,10 +53,12 @@ void jetspectrumCorrected(int doPP=1, int doPbPb=1, int do40=1,int do60=1,int do
 		ttemp->AddFriend(ttempHLT);
 
 	  for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
-          TH1F*htemp=(TH1F*)htemptemplate->Clone("htemp"); 
+         TH1F*htemp=new TH1F("htemp","htemp",2000,0,1000);
 		  if (indextriggers==0 && do40==0) continue;
 		  if (indextriggers==1 && do60==0) continue;
 		  if (indextriggers==2 && do80==0) continue;
+		  
+		  cout<<"selectionanalysis"<<selectionanalysis[index][indextriggers].Data()<<endl;
 
 		  ttemp->Draw(Form("%s>>htemp",namevariable[index].Data()),selectionanalysis[index][indextriggers].Data());
 		  hjetptspectrumpertrigger[index][indextriggers]=(TH1F*)htemp->Clone();
@@ -103,5 +105,6 @@ void jetspectrumCorrected(int doPP=1, int doPbPb=1, int do40=1,int do60=1,int do
 		  hjetleadingptspectrumpertriggerPresclCorr[index][indextriggers]->Write();
 		}
     }
+    foutput->Close();
 
 }
