@@ -4,6 +4,9 @@
   const int samples=2; 
   const int ntriggers=4;
     
+
+  EColor cols[ntriggers] = {kBlack,kRed,kBlue};
+  int styles[ntriggers] = {20,21,22};
   TString labelsamples[samples]={"pp","PbPb"};  
   TString nametriggerselectiontagtriggers[samples][ntriggers]={{"ppHLT40","ppHLT60","ppHLT80","ppHLT100"},{"PbPbHLT40","PbPbHLT60","PbPbHLT80","PbPbHLT100"}};
 
