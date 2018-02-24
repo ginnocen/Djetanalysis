@@ -16,11 +16,7 @@ void makespectrumplots()
     TH1F *hjetleadingptspectrumpertriggerPresclCorr[samples][ntriggers];
 
     std::string samplenames[samples] = {"pp","PbPb"};
-<<<<<<< HEAD
     std::string triggervalues[ntriggers] = {"HLT40","HLT60","HLT80","HLT100"};
-=======
-    std::string triggervalues[ntriggers] = {"HLT40","HLT60","HLT80"};
->>>>>>> 28423f403ecf5d1bfaf6c38cd454ac3871effec4
 
     //get hists
     for(int i=0;i<samples;i++)
@@ -66,42 +62,7 @@ void makespectrumplots()
     {
     	for(int k=0;k<4;k++)
     	{
-<<<<<<< HEAD
-    		if(k==0 || k==2) hempties[k][i] = new TH2F("",Form("%s;p_{t};#frac{dN}{dp_{t}}",titles[k].c_str()),1000,0,500,1000,miny[k][i],maxy[k][i]*3);
-    		if(k==1 || k==3) hempties[k][i] = new TH2F("",Form("%s;leading p_{t};#frac{dN}{dp_{t}}",titles[k].c_str()),1000,0,500,1000,miny[k][i],maxy[k][i]*3);
-    		c[k][i] = new TCanvas(Form("%d%d",k,i),"",800,800);
-    		xjjroot::sethempty(hempties[k][i],0,0.3);
-    		hempties[k][i]->Draw();
-    		c[k][i]->SetLogy();
-    		leg[k][i] = new TLegend(0.65,0.65,0.9,0.9);
-    	}
-    	for(int j=0;j<ntriggers;j++)
-    	{
 
-    		c[0][i]->cd();
-    		xjjroot::setthgrstyle(hjetptspectrumpertrigger[i][j],cols[j],styles[j],0.8,cols[j],-1,1,-1,0.1,-1);
-    		hjetptspectrumpertrigger[i][j]->SetLineColorAlpha(cols[j],0.5);
-    		hjetptspectrumpertrigger[i][j]->Draw("pe same");
-    		leg[0][i]->AddEntry(hjetptspectrumpertrigger[i][j],triggervalues[j].c_str(),"lp");
-
-    		c[1][i]->cd();
-    		xjjroot::setthgrstyle(hjetleadingptspectrumpertrigger[i][j],cols[j],styles[j],0.8,cols[j],-1,1,-1,0.1,-1);
-    		hjetleadingptspectrumpertrigger[i][j]->SetLineColorAlpha(cols[j],0.5);
-    		hjetleadingptspectrumpertrigger[i][j]->Draw("pe same");
-    		leg[1][i]->AddEntry(hjetleadingptspectrumpertrigger[i][j],triggervalues[j].c_str(),"lp");
-
-    		c[2][i]->cd();
-    		xjjroot::setthgrstyle(hjetptspectrumpertriggerPresclCorr[i][j],cols[j],styles[j],0.8,cols[j],-1,1,-1,0.1,-1);
-    		hjetptspectrumpertriggerPresclCorr[i][j]->SetLineColorAlpha(cols[j],0.5);
-    		hjetptspectrumpertriggerPresclCorr[i][j]->Draw("pe same");
-    		leg[2][i]->AddEntry(hjetptspectrumpertriggerPresclCorr[i][j],triggervalues[j].c_str(),"lp");
-
-    		c[3][i]->cd();
-    		xjjroot::setthgrstyle(hjetleadingptspectrumpertriggerPresclCorr[i][j],cols[j],styles[j],0.8,cols[j],-1,1,-1,0.1,-1);
-    		hjetleadingptspectrumpertriggerPresclCorr[i][j]->SetLineColorAlpha(cols[j],0.5);
-    		hjetleadingptspectrumpertriggerPresclCorr[i][j]->Draw("pe same");
-			leg[3][i]->AddEntry(hjetleadingptspectrumpertriggerPresclCorr[i][j],triggervalues[j].c_str(),"lp");
-=======
     		if(i==0 || i==2) hempties[k][i] = new TH2F("",Form("%s;p_{t};#frac{dN}{dp_{t}}",titles[k].c_str()),1000,0,500,1000,miny[k][i],maxy[k][i]*3);
     		if(i==1 || i==3) hempties[k][i] = new TH2F("",Form("%s;leading p_{t};#frac{dN}{dp_{t}}",titles[k].c_str()),1000,0,500,1000,miny[k][i],maxy[k][i]*3);
     		c[k][i] = new TCanvas(Form("%d%d",k,i),"",800,800);
@@ -117,45 +78,33 @@ void makespectrumplots()
 
 	    		c[0][i]->cd();
 	    		xjjroot::setthgrstyle(hjetptspectrumpertrigger[i][j],cols[j],styles[j],1.2,styles[j],-1,1,-1,0.1,-1);
-	    		//hjetptspectrumpertrigger[i][j]->SetLineColorAlpha(cols[j],0.5);
 	    		hjetptspectrumpertrigger[i][j]->Draw("PE same");
 	    		leg[0][i]->AddEntry(hjetptspectrumpertrigger[i][j],triggervalues[j].c_str(),"lp");
 
 	    		c[1][i]->cd();
 	    		xjjroot::setthgrstyle(hjetleadingptspectrumpertrigger[i][j],cols[j],styles[j],1.2,styles[j],-1,1,-1,0.1,-1);
-	    		//hjetleadingptspectrumpertrigger[i][j]->SetLineColorAlpha(cols[j],0.5);
 	    		hjetleadingptspectrumpertrigger[i][j]->Draw("PE same");
 	    		leg[1][i]->AddEntry(hjetleadingptspectrumpertrigger[i][j],triggervalues[j].c_str(),"lp");
 
 	    		c[2][i]->cd();
 	    		xjjroot::setthgrstyle(hjetptspectrumpertriggerPresclCorr[i][j],cols[j],styles[j],1.2,styles[j],-1,1,-1,0.1,-1);
-	    		//hjetptspectrumpertriggerPresclCorr[i][j]->SetLineColorAlpha(cols[j],0.5);
 	    		hjetptspectrumpertriggerPresclCorr[i][j]->Draw("PE same");
 	    		leg[2][i]->AddEntry(hjetptspectrumpertriggerPresclCorr[i][j],triggervalues[j].c_str(),"lp");
 
 	    		c[3][i]->cd();
 	    		xjjroot::setthgrstyle(hjetleadingptspectrumpertriggerPresclCorr[i][j],cols[j],styles[j],1.2,styles[j],-1,1,-1,0.1,-1);
-	    		//hjetleadingptspectrumpertriggerPresclCorr[i][j]->SetLineColorAlpha(cols[j],0.5);
 	    		hjetleadingptspectrumpertriggerPresclCorr[i][j]->Draw("PE same");
     			leg[3][i]->AddEntry(hjetleadingptspectrumpertriggerPresclCorr[i][j],triggervalues[j].c_str(),"lp");
     		}
->>>>>>> 28423f403ecf5d1bfaf6c38cd454ac3871effec4
     	}
     	for(int k=0;k<4;k++)
     	{
     		c[k][i]->cd();
-<<<<<<< HEAD
             leg[k][i]->SetBorderSize(0);
             leg[k][i]->SetFillStyle(0);
-=======
->>>>>>> 28423f403ecf5d1bfaf6c38cd454ac3871effec4
     		leg[k][i]->Draw();
     		xjjroot::drawCMS(samplenames[i].c_str());
     		c[k][i]->SaveAs(Form("%s%s.pdf",titles[k].c_str(),samplenames[i].c_str()));
     	}
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 28423f403ecf5d1bfaf6c38cd454ac3871effec4
