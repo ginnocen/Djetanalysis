@@ -1,4 +1,5 @@
 #include "Plotting.cpp"
+#include "../includes/xjjrootuti.h"
 #include <vector>
 #include "utilitiesturnonstudy.h"
 #include <TROOT.h>
@@ -19,6 +20,7 @@
 void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 
     initialise();
+    xjjroot::setgstyle();
     
     TF1*fitfunctionErfL1(TGraphAsymmErrors*,int,int);
     TF1*fitfunctionErfHLT(TGraphAsymmErrors*,int,int);
@@ -47,6 +49,9 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 	Plotting*myplot=new Plotting();
 	TH2F* hemptyL1[samples];
 	TH2F* hemptyHLT[samples];
+
+	EColor cols[ntriggers] = {kBlack,kRed,kBlue,kGreen};
+	int styles[ntriggers] = {20,21,22,20};
 	
 	for (int index=0;index<samples;index++){
 	
@@ -71,7 +76,7 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 			gHLTefficiency[index][indextriggers]->SetMarkerColor(coloursTurnOn[indextriggers]);
 			gHLTefficiency[index][indextriggers]->SetMarkerStyle(markerstyleTurnOn[indextriggers]);
 			gHLTefficiency[index][indextriggers]->SetLineWidth(widthlineTurnOn[indextriggers]);
-					}  
+			}  
 	}
 
 	TCanvas*cL1[samples];
@@ -83,14 +88,16 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 		canvasnameL1[index]=Form("plottriggers/canvasL1Jetptplot%s.png",labelsamples[index].Data());
 		cL1[index]=new TCanvas(canvasnameL1[index].Data(),canvasnameL1[index].Data(),600,600);
 		cL1[index]->cd();
-		gPad->SetLogx();
+		xjjroot::sethempty(hemptyL1[index],0,0);
 		hemptyL1[index]->Draw();    
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
+			xjjroot::setthgrstyle(gL1efficiency[index][indextriggers],cols[indextriggers],styles[indextriggers],1.2,cols[indextriggers],1,1,-1,-1,-1);
 			gL1efficiency[index][indextriggers]->Draw("EPsame");
 		    fitErfL1[index][indextriggers]=(TF1*)fitfunctionErfL1(gL1efficiency[index][indextriggers],index,indextriggers);
 		    fitErfL1[index][indextriggers]->Draw("same");
 		    fitErfL1[index][indextriggers]->Write(Form("fitErfL1_%s",nametriggerselectiontagtriggers[index][indextriggers].Data()));
 		}
+		xjjroot::drawCMS(labelsamples[index]);
 		legL1[index]->Draw();
 		cL1[index]->SaveAs(canvasnameL1[index].Data());
 	}
@@ -102,14 +109,16 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 		canvasnameHLT[index]=Form("plottriggers/canvasHLTJetptplot%s.png",labelsamples[index].Data());
 		cHLT[index]=new TCanvas(canvasnameHLT[index].Data(),canvasnameHLT[index].Data(),600,600);
 		cHLT[index]->cd();
-		gPad->SetLogx();
+		xjjroot::sethempty(hemptyHLT[index],0,0);
 		hemptyHLT[index]->Draw();    
-		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
+		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){
+			xjjroot::setthgrstyle(gHLTefficiency[index][indextriggers],cols[indextriggers],styles[indextriggers],1.2,cols[indextriggers],1,1,-1,-1,-1); 
 			gHLTefficiency[index][indextriggers]->Draw("EPsame");
 		    fitErfHLT[index][indextriggers]=(TF1*)fitfunctionErfHLT(gHLTefficiency[index][indextriggers],index,indextriggers);
 		    fitErfHLT[index][indextriggers]->Draw("same");
 		    fitErfHLT[index][indextriggers]->Write(Form("fitErfHLT_%s",nametriggerselectiontagtriggers[index][indextriggers].Data()));
 		}
+		xjjroot::drawCMS(labelsamples[index]);
 		legHLT[index]->Draw();
 		cHLT[index]->SaveAs(canvasnameHLT[index].Data());
 	}
@@ -123,6 +132,7 @@ TF1*fitfunctionErfL1(TGraphAsymmErrors *gEff, int indexsample, int indextrigger)
   //TF1 *fL1=new TF1("fL1","TMath::Erf(x*[1]+[2])+0*[0]");
   fL1->SetParameters(a0L1[indexsample][indextrigger],a1L1[indexsample][indextrigger],a2L1[indexsample][indextrigger],a3L1[indexsample][indextrigger]); 
   gEff->Fit("fL1","M"); 
+  gEff->GetFunction("fL1")->SetLineColor(coloursTurnOn[indextrigger]);
   return fL1;
 }
 
@@ -131,6 +141,7 @@ TF1*fitfunctionErfHLT(TGraphAsymmErrors *gEff, int indexsample, int indextrigger
   TF1 *fHLT= new TF1("fHLT",functionalFormTurnOn.Data());
   //TF1 *fHLT=new TF1("fHLT","TMath::Erf(x*[1]+[2])+0*[0]");
   fHLT->SetParameters(a0HLT[indexsample][indextrigger],a1HLT[indexsample][indextrigger],a2HLT[indexsample][indextrigger],a3HLT[indexsample][indextrigger]); 
-  gEff->Fit("fHLT","M"); 
+  gEff->Fit("fHLT","M");
+  if(indexsample!=1 || indextrigger!=0) gEff->GetFunction("fHLT")->SetLineColor(coloursTurnOn[indextrigger]); 
   return fHLT;
 }

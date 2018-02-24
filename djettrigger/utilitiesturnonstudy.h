@@ -4,14 +4,14 @@
   
   const int samples=2; 
   const int nCases=5;
-  const int ntriggers=3;
+  const int ntriggers=4;
   
   const int nbinsTurnOn=60;
   double bondaries_nbinsTurnOn[nbinsTurnOn+1];
   
   TString labelsamples[samples]={"pp","PbPb"};  
-  TString nametriggerselectiontagtriggers[samples][ntriggers]={{"ppHLT40","ppHLT60","ppHLT80"},{"PbPbHLT40","PbPbHLT60","PbPbHLT80"}};  
-  TString nameL1trigger[samples][ntriggers]={{"L1_SingleJet28_BptxAND","L1_SingleJet40_BptxAND","L1_SingleJet48_BptxAND"},{"L1_MinimumBiasHF2_AND","L1_SingleS1Jet28_BptxAND","L1_SingleJet44_BptxAND"}};
+  TString nametriggerselectiontagtriggers[samples][ntriggers]={{"ppHLT40","ppHLT60","ppHLT80","ppHLT100"},{"PbPbHLT40","PbPbHLT60","PbPbHLT80","PbPbHLT100"}};  
+  TString nameL1trigger[samples][ntriggers]={{"L1_SingleJet28_BptxAND","L1_SingleJet40_BptxAND","L1_SingleJet48_BptxAND","L1_SingleJet52_BptxAND"},{"L1_MinimumBiasHF2_AND","L1_SingleS1Jet28_BptxAND","L1_SingleJet44_BptxAND","L1_SingleS1Jet56_BptxAND"}};
 
 
   //MB samples
@@ -23,21 +23,22 @@
   TString nametreeSkimMB[samples]={"skimanalysis/HltTree","skimanalysis/HltTree"};
   TString nametreeEvtMB[samples]={"hiEvtAnalyzer/HiTree","hiEvtAnalyzer/HiTree"};
   TString namevariableMB[samples]={"jtpt","jtpt"};
-  TString nametriggerMB[samples][ntriggers]={{"HLT_AK4PFJet40_Eta5p1_v1","HLT_AK4PFJet60_Eta5p1_v1","HLT_AK4PFJet80_Eta5p1_v1"},{"HLT_HIPuAK4CaloJet40_Eta5p1_v2","HLT_HIPuAK4CaloJet60_Eta5p1_v1","HLT_HIPuAK4CaloJet80_Eta5p1_v1"}};
-  TString nameL1triggerMB[samples][ntriggers]={{"L1_SingleJet28_BptxAND==1","L1_SingleJet40_BptxAND==1","L1_SingleJet48_BptxAND==1"},{"L1_MinimumBiasHF1_AND==1","L1_SingleS1Jet28_BptxAND==1","L1_SingleJet44_BptxAND==1"}};
-  TString prescaleL1MB[samples][ntriggers]={{"(L1_SingleJet28_BptxAND_Prescl==1)","(L1_SingleJet40_BptxAND_Prescl==1)","(L1_SingleJet48_BptxAND_Prescl==1)"},{"1","(L1_SingleS1Jet28_BptxAND_Prescl==1)","(L1_SingleJet44_BptxAND_Prescl==1)"}};
-  TString prescaleselHLTMB[samples][ntriggers]={{"(HLT_AK4PFJet40_Eta5p1_v1_Prescl==1)","(HLT_AK4PFJet60_Eta5p1_v1_Prescl==1)","(HLT_AK4PFJet80_Eta5p1_v1_Prescl==1)"},{"HLT_HIPuAK4CaloJet40_Eta5p1_v1_Prescl==1","HLT_HIPuAK4CaloJet60_Eta5p1_v1_Prescl==1","HLT_HIPuAK4CaloJet80_Eta5p1_v1_Prescl==1"}};
-  TString prescalecorrHLTMB[samples][ntriggers]={{"(1)","(1)","(1)"},{"(1)","(1)","(1)"}};
+  TString nametriggerMB[samples][ntriggers]={{"HLT_AK4PFJet40_Eta5p1_v1","HLT_AK4PFJet60_Eta5p1_v1","HLT_AK4PFJet80_Eta5p1_v1","HLT_AK4PFJet100_Eta5p1_v1"},{"HLT_HIPuAK4CaloJet40_Eta5p1_v2","HLT_HIPuAK4CaloJet60_Eta5p1_v1","HLT_HIPuAK4CaloJet80_Eta5p1_v1","HLT_HIPuAK4CaloJet100_Eta5p1_v1"}};
+  TString nameL1triggerMB[samples][ntriggers]={{"L1_SingleJet28_BptxAND==1","L1_SingleJet40_BptxAND==1","L1_SingleJet48_BptxAND==1","L1_SingleJet52_BptxAND==1"},{"L1_MinimumBiasHF1_AND==1","L1_SingleS1Jet28_BptxAND==1","L1_SingleJet44_BptxAND==1","L1_SingleS1Jet56_BptxAND==1"}};
+  TString prescaleL1MB[samples][ntriggers]={{"(L1_SingleJet28_BptxAND_Prescl==1)","(L1_SingleJet40_BptxAND_Prescl==1)","(L1_SingleJet48_BptxAND_Prescl==1)","(L1_SingleJet52_BptxAND_Prescl==1)"},{"1","(L1_SingleS1Jet28_BptxAND_Prescl==1)","(L1_SingleJet44_BptxAND_Prescl==1)","(L1_SingleS1Jet56_BptxAND_Prescl==1)"}};
+  TString prescaleselHLTMB[samples][ntriggers]={{"(HLT_AK4PFJet40_Eta5p1_v1_Prescl==1)","(HLT_AK4PFJet60_Eta5p1_v1_Prescl==1)","(HLT_AK4PFJet80_Eta5p1_v1_Prescl==1)","(HLT_AK4PFJet100_Eta5p1_v1_Prescl==1)"},{"HLT_HIPuAK4CaloJet40_Eta5p1_v1_Prescl==1","HLT_HIPuAK4CaloJet60_Eta5p1_v1_Prescl==1","HLT_HIPuAK4CaloJet80_Eta5p1_v1_Prescl==1","HLT_HIPuAK4CaloJet100_Eta5p1_v1_Prescl==1"}};
+  TString prescalecorrHLTMB[samples][ntriggers]={{"(1)","(1)","(1)","(1)"},{"(1)","(1)","(1)","(1)"}};
 
-  double a0L1[samples][ntriggers]={{.0741,.0557,.0474},{-0.921,.0114,.0105}};
-  double a1L1[samples][ntriggers]={{-2.061,-2.062,-2.022},{-240.52,0.158,-1.349}};
-  double a2L1[samples][ntriggers]={{-0.840,-1.226,-1.364},{712.37,-3,-1.481}};
-  double a3L1[samples][ntriggers]={{71.12,259.81,542.30},{3.362e+06,1532,1731}};
+   double a0L1[samples][ntriggers]={{.0741,.0557,.0474,.05},{-0.921,.0114,.0105,.01}};
+  double a1L1[samples][ntriggers]={{-2.061,-2.062,-2.022,-2.},{-240.52,0.158,-1.349,-2.}};
+  double a2L1[samples][ntriggers]={{-0.840,-1.226,-1.364,-1.},{712.37,-3,-1.481,-1.}};
+  double a3L1[samples][ntriggers]={{71.12,259.81,542.30,300.},{3.362e+06,1532,1731,1600.}};
 
-  double a0HLT[samples][ntriggers]={{.145,.0572,.0714},{.01,.0105,.0157}};
-  double a1HLT[samples][ntriggers]={{-211.,-3.263,-5.767},{1.,-1.678,-2.199}};
-  double a2HLT[samples][ntriggers]={{206.2,-3.472,3.264},{.01,-1.069,-3.125}};
-  double a3HLT[samples][ntriggers]={{3.836e+05,1201,569.2},{100,642.8,725.8}};
+  double a0HLT[samples][ntriggers]={{.145,.0572,.0714,.05},{.01,.0105,.0157,.01}};
+  double a1HLT[samples][ntriggers]={{-211.,-3.263,-5.767,-4.},{1.,-1.678,-2.199,-2.}};
+  double a2HLT[samples][ntriggers]={{206.2,-3.472,3.264,1.},{.01,-1.069,-3.125,-1.}};
+  double a3HLT[samples][ntriggers]={{3.836e+05,1201,569.2,700.},{100,642.8,725.8,700.}};
+
 
   //nTriggers  
   
@@ -56,9 +57,9 @@
   TString namehjetptspectrumpertriggerPresclCorr[samples][ntriggers];  
   TString namehjetleadingptspectrumpertriggerPresclCorr[samples][ntriggers];  
   
-  int coloursTurnOn[ntriggers]={1,2,4};
-  int markerstyleTurnOn[ntriggers]={21,22,22};
-  int widthlineTurnOn[ntriggers]={2,2,2};
+  int coloursTurnOn[ntriggers]={1,2,4,3};
+  int markerstyleTurnOn[ntriggers]={21,22,22,20};
+  int widthlineTurnOn[ntriggers]={2,2,2,2};
 
   double nbins[samples]={2000,2000};
   double lowerrangex[samples]={20.,20.};
