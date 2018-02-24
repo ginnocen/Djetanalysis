@@ -70,10 +70,12 @@ void jetspectrumCorrected(int doPP=1, int doPbPb=1, int do40=1,int do60=1,int do
 		  
 		  hjetptspectrumpertriggerPresclCorr[index][indextriggers]=(TH1F*)hjetptspectrumpertrigger[index][indextriggers]->Clone();
 		  hjetptspectrumpertriggerPresclCorr[index][indextriggers]->SetName(namehjetptspectrumpertriggerPresclCorr[index][indextriggers].Data());
+		  hjetptspectrumpertriggerPresclCorr[index][indextriggers]->Sumw2();
 		  hjetptspectrumpertriggerPresclCorr[index][indextriggers]->Scale(1./dataluminosity[index][indextriggers]);
 		  
 		  hjetleadingptspectrumpertriggerPresclCorr[index][indextriggers]=(TH1F*)hjetleadingptspectrumpertrigger[index][indextriggers]->Clone();
 		  hjetleadingptspectrumpertriggerPresclCorr[index][indextriggers]->SetName(namehjetleadingptspectrumpertriggerPresclCorr[index][indextriggers].Data());
+		  hjetleadingptspectrumpertriggerPresclCorr[index][indextriggers]->Sumw2();
 		  hjetleadingptspectrumpertriggerPresclCorr[index][indextriggers]->Scale(1./dataluminosity[index][indextriggers]);
 		  
 		  hjetptspectrumTotPresclCorr[index]->Add(hjetptspectrumpertriggerPresclCorr[index][indextriggers]);
