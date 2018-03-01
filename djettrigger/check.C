@@ -1,52 +1,4 @@
-
-
-void check(){
-/*
-  const int samples=2; 
-  const int nCases=5;
-  const int ntriggers=2;
-
-  TString namefilesMB="/mnt/hadoop/cms/store/user/tatar/MinimumBias6/Run2015E_PromptReco_v1_Run261553_262328_FOREST/0_20170805.root";
-  TString eventjetselection="(pPAprimaryVertexFilter&&pBeamScrapingFilter&&fabs(vz)<15&&abs(jteta)<2.0)";
-  TString MBselection="(HLT_L1MinimumBiasHF1OR_part0_v1||HLT_L1MinimumBiasHF1OR_part1_v1||HLT_L1MinimumBiasHF1OR_part2_v1||HLT_L1MinimumBiasHF1OR_part3_v1||HLT_L1MinimumBiasHF1OR_part4_v1||HLT_L1MinimumBiasHF1OR_part5_v1||HLT_L1MinimumBiasHF1OR_part6_v1||HLT_L1MinimumBiasHF1OR_part7_v1||HLT_L1MinimumBiasHF1OR_part8_v1||HLT_L1MinimumBiasHF1OR_part9_v1||HLT_L1MinimumBiasHF1OR_part10_v1||HLT_L1MinimumBiasHF1OR_part11_v1||HLT_L1MinimumBiasHF1OR_part12_v1||HLT_L1MinimumBiasHF1OR_part13_v1||HLT_L1MinimumBiasHF1OR_part14_v1||HLT_L1MinimumBiasHF1OR_part15_v1||HLT_L1MinimumBiasHF1OR_part16_v1||HLT_L1MinimumBiasHF1OR_part17_v1||HLT_L1MinimumBiasHF1OR_part18_v1||HLT_L1MinimumBiasHF1OR_part19_v1)";
-  TString nameL1triggerMB="L1_SingleJet28_BptxAND";
-  TString nametreeMB="ak3PFJetAnalyzer/t";
-  TString nametreeHLTMB="hltanalysis/HltTree";
-  TString nametreeSkimMB="skimanalysis/HltTree";
-  TString nametreeEvtMB="hiEvtAnalyzer/HiTree";
-  TString namevariableMB="jtpt";
-  
-  TString total="!L1_SingleJet28_BptxAND&&jtpt>70&&(pPAprimaryVertexFilter&&pBeamScrapingFilter&&fabs(vz)<15&&abs(jteta)<2.0)&&(HLT_L1MinimumBiasHF1OR_part0_v1||HLT_L1MinimumBiasHF1OR_part1_v1||HLT_L1MinimumBiasHF1OR_part2_v1||HLT_L1MinimumBiasHF1OR_part3_v1||HLT_L1MinimumBiasHF1OR_part4_v1||HLT_L1MinimumBiasHF1OR_part5_v1||HLT_L1MinimumBiasHF1OR_part6_v1||HLT_L1MinimumBiasHF1OR_part7_v1||HLT_L1MinimumBiasHF1OR_part8_v1||HLT_L1MinimumBiasHF1OR_part9_v1||HLT_L1MinimumBiasHF1OR_part10_v1||HLT_L1MinimumBiasHF1OR_part11_v1||HLT_L1MinimumBiasHF1OR_part12_v1||HLT_L1MinimumBiasHF1OR_part13_v1||HLT_L1MinimumBiasHF1OR_part14_v1||HLT_L1MinimumBiasHF1OR_part15_v1||HLT_L1MinimumBiasHF1OR_part16_v1||HLT_L1MinimumBiasHF1OR_part17_v1||HLT_L1MinimumBiasHF1OR_part18_v1||HLT_L1MinimumBiasHF1OR_part19_v1)";
-  TString total1="L1_SingleJet28_BptxAND&&(pPAprimaryVertexFilter&&pBeamScrapingFilter&&fabs(vz)<15&&abs(jteta)<2.0)&&(HLT_L1MinimumBiasHF1OR_part0_v1||HLT_L1MinimumBiasHF1OR_part1_v1||HLT_L1MinimumBiasHF1OR_part2_v1||HLT_L1MinimumBiasHF1OR_part3_v1||HLT_L1MinimumBiasHF1OR_part4_v1||HLT_L1MinimumBiasHF1OR_part5_v1||HLT_L1MinimumBiasHF1OR_part6_v1||HLT_L1MinimumBiasHF1OR_part7_v1||HLT_L1MinimumBiasHF1OR_part8_v1||HLT_L1MinimumBiasHF1OR_part9_v1||HLT_L1MinimumBiasHF1OR_part10_v1||HLT_L1MinimumBiasHF1OR_part11_v1||HLT_L1MinimumBiasHF1OR_part12_v1||HLT_L1MinimumBiasHF1OR_part13_v1||HLT_L1MinimumBiasHF1OR_part14_v1||HLT_L1MinimumBiasHF1OR_part15_v1||HLT_L1MinimumBiasHF1OR_part16_v1||HLT_L1MinimumBiasHF1OR_part17_v1||HLT_L1MinimumBiasHF1OR_part18_v1||HLT_L1MinimumBiasHF1OR_part19_v1)";
-  
-
-  TFile *finput=new TFile(namefilesMB,"read"); 
-  TTree*ttemp=(TTree*)finput->Get(nametreeMB.Data());
-  TTree*ttempHLT=(TTree*)finput->Get(nametreeHLTMB.Data());
-  TTree*ttempSkim=(TTree*)finput->Get(nametreeSkimMB.Data());
-  TTree*ttempEvt=(TTree*)finput->Get(nametreeEvtMB.Data());
-		
-  ttemp->AddFriend(ttempHLT);
-  ttemp->AddFriend(ttempSkim);
-  ttemp->AddFriend(ttempEvt);
-   
-  ttemp->Scan("jtpt","!L1_SingleJet28_BptxAND&&jtpt>70&&(pPAprimaryVertexFilter&&pBeamScrapingFilter&&fabs(vz)<15&&abs(jteta)<2.0)&&(HLT_L1MinimumBiasHF1OR_part0_v1||HLT_L1MinimumBiasHF1OR_part1_v1||HLT_L1MinimumBiasHF1OR_part2_v1||HLT_L1MinimumBiasHF1OR_part3_v1||HLT_L1MinimumBiasHF1OR_part4_v1||HLT_L1MinimumBiasHF1OR_part5_v1||HLT_L1MinimumBiasHF1OR_part6_v1||HLT_L1MinimumBiasHF1OR_part7_v1||HLT_L1MinimumBiasHF1OR_part8_v1||HLT_L1MinimumBiasHF1OR_part9_v1||HLT_L1MinimumBiasHF1OR_part10_v1||HLT_L1MinimumBiasHF1OR_part11_v1||HLT_L1MinimumBiasHF1OR_part12_v1||HLT_L1MinimumBiasHF1OR_part13_v1||HLT_L1MinimumBiasHF1OR_part14_v1||HLT_L1MinimumBiasHF1OR_part15_v1||HLT_L1MinimumBiasHF1OR_part16_v1||HLT_L1MinimumBiasHF1OR_part17_v1||HLT_L1MinimumBiasHF1OR_part18_v1||HLT_L1MinimumBiasHF1OR_part19_v1)");
-
-
-
-TFile f("/export/d00/scratch/jwang/Djets/data/DjetFiles_20171120_pp_5TeV_HighPtLowerJets_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614.root"
-djt->AddFriend(hlt)
-TH1F*hyes=new TH1F("hyes","hyes",1000,0,1000);
-TH1F*hno=new TH1F("hno","hno",1000,0,1000);
-djt->Draw("jetptCorr_akpu3pf","HLT_AK4PFJet40_Eta5p1_v1==1"*TCut("0.5*TMath::Erf(Max$(jetptCorr_akpu3pf)*0.074089+-2.061318+TMath::Exp((-Max$(jetptCorr_akpu3pf)^2+-2.061318)/(71.143148))*(-0.839758))+0.5"));
-djt->Draw("jetptCorr_akpu3pf","HLT_AK4PFJet40_Eta5p1_v1==1");
-
-*/
-
-
-  //TString namefilesMB="/mnt/hadoop/cms/store/user/tatar/HIMinimumBias2/HIRun2015-PromptReco-v1-Run263233-263284-FOREST/0.root";
-  //ttemp->Draw("jtpt>>hden","L1_SingleJet44_BptxAND_Prescl==1");
-  //ttemp->Draw("jtpt>>hnum","L1_SingleJet44_BptxAND==1");
+void check(int option){
 
   TString namefilesMB="/mnt/hadoop/cms/store/user/tatar/HIMinimumBias2/HIRun2015-PromptReco-v1-Run263233-263284-FOREST/0.root";
   //TString namefilesMB="/mnt/hadoop/cms/store/user/rbi/merged/Hydjet_Quenched_MinBias_5020GeV_750-HINPbPbWinter16DR-NoPU_75X_mcRun2_HeavyIon_forest_v2/0.root";
@@ -65,18 +17,79 @@ djt->Draw("jetptCorr_akpu3pf","HLT_AK4PFJet40_Eta5p1_v1==1");
   ttemp->AddFriend(ttempHLT);
   ttemp->AddFriend(ttempSkim);
   ttemp->AddFriend(ttempEvt);
-  
+
+  TH1F*hempty=new TH1F("hnum","hnum",300,0,300);
   TH1F*hnum=new TH1F("hnum","hnum",300,0,300);
   TH1F*hden=new TH1F("hden","hden",300,0,300);
+  TH1F*hmeanL1=new TH1F("hmeanL1","hmeanL1",300,0,300);
+  TH1F*hmeanHLT=new TH1F("hmeanHLT","hmeanHLT",300,0,300);
   
-  ttemp->Draw("jtpt[0]>>hden","1");
-  ttemp->Draw("jtpt[0]>>hnum","L1_SingleJet44_BptxAND==1");
+  if(option==0){// simple turn on curve efficiency
+  ttemp->Draw("jtpt[0]>>hden","abs(jteta[0])<1.6");
+  ttemp->Draw("jtpt[0]>>hnum","L1_SingleJet44_BptxAND==1&&abs(jteta[0])<1.6");
+  }
+
+
+  if(option==1){// use weights
+  ttemp->Draw("jtpt[0]>>hden","L1_SingleS1Jet28_BptxAND_Prescl==1&&abs(jteta[0])<1.6");
+  ttemp->Draw("jtpt[0]>>hnum",TCut("L1_SingleS1Jet28_BptxAND_Prescl==1&&abs(jteta[0])<1.6&&HLT_HIPuAK4CaloJet60_Eta5p1_v1==1")*TCut("HLT_HIPuAK4CaloJet60_Eta5p1_v1_Prescl"));
+  }
   
-  //ttemp->Draw("jtpt[0]>>hden","abs(jteta[0])<1.6");
-  //ttemp->Draw("jtpt[0]>>hnum","L1_SingleJet44_BptxAND==1&&abs(jteta[0])<1.6");
   
-  hnum->Divide(hden);
-  hnum->Draw();
+  if(option==2){// use average
+  ttemp->Draw("jtpt[0]>>hden","L1_SingleS1Jet28_BptxAND_Prescl==1&&L1_SingleS1Jet28_BptxAND==1&&abs(jteta[0])<1.6");
+  ttemp->Draw("jtpt[0]>>hnum","L1_SingleS1Jet28_BptxAND_Prescl==1&&L1_SingleS1Jet28_BptxAND==1&&abs(jteta[0])<1.6&&HLT_HIPuAK4CaloJet60_Eta5p1_v1==1");
+  ttemp->Draw("HLT_HIPuAK4CaloJet60_Eta5p1_v1_Prescl>>hmeanHLT");
+  hnum->Scale(hmeanHLT->GetMean());
+
+  TGraphAsymmErrors* gHLTefficiency = new TGraphAsymmErrors;
+  for (int i=1;i<=hnum->GetNbinsX();i++){
+    double numv=hnum->GetBinContent(i);
+    double denv=hden->GetBinContent(i);
+    double enumv=hnum->GetBinError(i);
+    double edenv=hden->GetBinError(i);
+      if(numv>denv) { 
+        hnum->SetBinContent(i,denv);
+        hnum->SetBinError(i,edenv);
+      }
+   }
+  gHLTefficiency->Divide(hnum,hden);
+  hempty->Draw();
+  gHLTefficiency->Draw("same");
+  }
+  
+
+  if(option==3){// use average
+  
+    ttemp->Draw("jtpt[0]>>hden","L1_MinimumBiasHF2_AND==1&&abs(jteta[0])<1.6");
+    ttemp->Draw("jtpt[0]>>hnum",TCut("L1_MinimumBiasHF2_AND==1&&abs(jteta[0])<1.6&&HLT_HIPuAK4CaloJet40_Eta5p1_v2==1"));
+    ttemp->Draw("HLT_HIPuAK4CaloJet40_Eta5p1_v2_Prescl>>hmeanHLT");
+    hnum->Scale(hmeanHLT->GetMean());
+
+    TGraphAsymmErrors* gHLTefficiency = new TGraphAsymmErrors;
+    for (int i=1;i<=hnum->GetNbinsX();i++){
+    double numv=hnum->GetBinContent(i);
+    double denv=hden->GetBinContent(i);
+    double enumv=hnum->GetBinError(i);
+    double edenv=hden->GetBinError(i);
+      if(numv>denv) { 
+        hnum->SetBinContent(i,denv);
+        hnum->SetBinError(i,edenv);
+      }
+   }
+    gHLTefficiency->BayesDivide(hnum,hden);
+    hempty->Draw();
+   gHLTefficiency->Draw("same");
+
+  }
+
+
+  if(option==4){// check
+   //ttemp->Draw("1","HLT_HIPuAK4CaloJet40_Eta5p1_v1&&L1_MinimumBiasHF2_AND==1");
+   ttemp->Draw("1","L1_MinimumBiasHF2_AND==1");
+   ttemp->Draw("1","L1_MinimumBiasHF1_AND==1");
+  }
+
 
 
 }
