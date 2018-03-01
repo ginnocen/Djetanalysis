@@ -25,9 +25,10 @@
   TString namevariableMB[samples]={"jtpt[0]","jtpt[0]"};
   TString nametriggerMB[samples][ntriggers]={{"HLT_AK4PFJet40_Eta5p1_v1","HLT_AK4PFJet60_Eta5p1_v1","HLT_AK4PFJet80_Eta5p1_v1","HLT_AK4PFJet100_Eta5p1_v1"},{"HLT_HIPuAK4CaloJet40_Eta5p1_v2","HLT_HIPuAK4CaloJet60_Eta5p1_v1","HLT_HIPuAK4CaloJet80_Eta5p1_v1","HLT_HIPuAK4CaloJet100_Eta5p1_v1"}};
   TString nameL1triggerMB[samples][ntriggers]={{"L1_SingleJet28_BptxAND==1","L1_SingleJet40_BptxAND==1","L1_SingleJet48_BptxAND==1","L1_SingleJet52_BptxAND==1"},{"1","L1_SingleS1Jet28_BptxAND==1","L1_SingleJet44_BptxAND==1","L1_SingleS1Jet56_BptxAND==1"}};
+  TString nameL1triggerForHLTMB[samples][ntriggers]={{"L1_SingleJet28_BptxAND==1","L1_SingleJet40_BptxAND==1","L1_SingleJet48_BptxAND==1","L1_SingleJet52_BptxAND==1"},{"L1_MinimumBiasHF2_AND==1","L1_SingleS1Jet28_BptxAND==1","L1_SingleJet44_BptxAND==1","L1_SingleS1Jet56_BptxAND==1"}};
   TString prescaleL1MB[samples][ntriggers]={{"(L1_SingleJet28_BptxAND_Prescl==1)","(L1_SingleJet40_BptxAND_Prescl==1)","(L1_SingleJet48_BptxAND_Prescl==1)","(L1_SingleJet52_BptxAND_Prescl==1)"},{"1","(L1_SingleS1Jet28_BptxAND_Prescl==1)","(L1_SingleJet44_BptxAND_Prescl==1)","(L1_SingleS1Jet56_BptxAND_Prescl==1)"}};
-  TString prescaleselHLTMB[samples][ntriggers]={{"(HLT_AK4PFJet40_Eta5p1_v1_Prescl==1)","(HLT_AK4PFJet60_Eta5p1_v1_Prescl==1)","(HLT_AK4PFJet80_Eta5p1_v1_Prescl==1)","(HLT_AK4PFJet100_Eta5p1_v1_Prescl==1)"},{"HLT_HIPuAK4CaloJet40_Eta5p1_v1_Prescl==1","HLT_HIPuAK4CaloJet60_Eta5p1_v1_Prescl==1","HLT_HIPuAK4CaloJet80_Eta5p1_v1_Prescl==1","HLT_HIPuAK4CaloJet100_Eta5p1_v1_Prescl==1"}};
-  TString prescalecorrHLTMB[samples][ntriggers]={{"(1)","(1)","(1)","(1)"},{"(1)","(1)","(1)","(1)"}};
+  TString prescaleselHLTMB[samples][ntriggers]={{"(HLT_AK4PFJet40_Eta5p1_v1_Prescl==1)","(HLT_AK4PFJet60_Eta5p1_v1_Prescl==1)","(HLT_AK4PFJet80_Eta5p1_v1_Prescl==1)","(HLT_AK4PFJet100_Eta5p1_v1_Prescl==1)"},{"1","1","HLT_HIPuAK4CaloJet80_Eta5p1_v1_Prescl==1","HLT_HIPuAK4CaloJet100_Eta5p1_v1_Prescl==1"}};
+  TString prescalecorrHLTMB[samples][ntriggers]={{"(1)","(1)","(1)","(1)"},{"(HLT_HIPuAK4CaloJet40_Eta5p1_v2_Prescl)","(HLT_HIPuAK4CaloJet60_Eta5p1_v1_Prescl)","(1)","(1)"}};
 
    double a0L1[samples][ntriggers]={{.0741,.0557,.0474,.05},{-0.921,.0114,.0105,.01}};
   double a1L1[samples][ntriggers]={{-2.061,-2.062,-2.022,-2.},{-240.52,0.158,-1.349,-2.}};
@@ -122,7 +123,7 @@ void initialise(){
 	  for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
 	      preselectionL1[index][indextriggers]=eventjetselection[index]+"&&"+MBselection[index]+"&&"+prescaleL1MB[index][indextriggers];
 		  selectionL1[index][indextriggers]=preselectionL1[index][indextriggers]+"&&"+nameL1triggerMB[index][indextriggers];
-	      preselectionHLT[index][indextriggers]=eventjetselection[index]+"&&"+MBselection[index]+"&&"+prescaleL1MB[index][indextriggers]+"&&"+prescaleselHLTMB[index][indextriggers]+"&&"+nameL1triggerMB[index][indextriggers];
+	      preselectionHLT[index][indextriggers]=eventjetselection[index]+"&&"+MBselection[index]+"&&"+prescaleselHLTMB[index][indextriggers]+"&&"+nameL1triggerForHLTMB[index][indextriggers];
 		  selectionHLT[index][indextriggers]=preselectionHLT[index][indextriggers]+"&&"+nametriggerMB[index][indextriggers];
         }
     }

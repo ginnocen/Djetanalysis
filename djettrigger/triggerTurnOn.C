@@ -17,7 +17,7 @@
 #include <TGraphAsymmErrors.h>
 
 
-void triggerTurnOn(TString suffixfile="SelectionOnL1HLTprescale",int doPP=0, int doPbPb=1, int do40=1,int do60=1,int do80=1,int do100=1){
+void triggerTurnOn(TString suffixfile="SelectionOnL1HLTprescale",int doPP=1, int doPbPb=1, int do40=1,int do60=1,int do80=1,int do100=1){
      
     initialise();
 	TFile *finput[samples];
@@ -32,6 +32,7 @@ void triggerTurnOn(TString suffixfile="SelectionOnL1HLTprescale",int doPP=0, int
 	for (int index=0;index<samples;index++){
 		finput[index]=new TFile(namefilesMB[index].Data(),"read"); 
 		TH1F*htemp=new TH1F("htemp","htemp",nbinsTurnOn,bondaries_nbinsTurnOn);
+		TH1F*hprescaleHLT=new TH1F("hprescaleHLT","hprescaleHLT",100,0,1000);
 		htemp->Sumw2();
 		TTree*ttemp=(TTree*)finput[index]->Get(nametreeMB[index].Data());
 		TTree*ttempHLT=(TTree*)finput[index]->Get(nametreeHLTMB[index].Data());
@@ -83,11 +84,26 @@ void triggerTurnOn(TString suffixfile="SelectionOnL1HLTprescale",int doPP=0, int
 
 		  std::cout<<"step4="<<std::endl;
 
-		  ttemp->Draw(Form("(%s)>>htemp",namevariableMB[index].Data()),TCut(prescalecorrHLTMB[index][indextriggers].Data()*TCut(selectionHLT[index][indextriggers].Data())));
+		  ttemp->Draw(Form("(%s)>>htemp",namevariableMB[index].Data()),selectionHLT[index][indextriggers].Data());
 		  hHLTefficiencynum[index][indextriggers]=(TH1F*)htemp->Clone();
 		  hHLTefficiencynum[index][indextriggers]->SetName(namehHLTefficiencynum[index][indextriggers].Data());
 		  hHLTefficiencynum[index][indextriggers]->Sumw2();
 		  
+		  ttemp->Draw(Form("(%s)>>hprescaleHLT",prescalecorrHLTMB[index][indextriggers].Data()),"1");
+		  double averageHLTprescale=hprescaleHLT->GetMean();
+		  hHLTefficiencynum[index][indextriggers]->Scale(averageHLTprescale);
+		  
+          for (int i=1;i<=hHLTefficiencynum[index][indextriggers]->GetNbinsX();i++){
+             double numv=hHLTefficiencynum[index][indextriggers]->GetBinContent(i);
+             double denv=hHLTefficiencyden[index][indextriggers]->GetBinContent(i);
+             double enumv=hHLTefficiencynum[index][indextriggers]->GetBinError(i);
+             double edenv=hHLTefficiencyden[index][indextriggers]->GetBinError(i);
+             if(numv>denv) { 
+               hHLTefficiencynum[index][indextriggers]->SetBinContent(i,denv);
+               hHLTefficiencynum[index][indextriggers]->SetBinError(i,edenv);
+             }
+          }
+          
           gHLTefficiency[index][indextriggers] = new TGraphAsymmErrors;
           gHLTefficiency[index][indextriggers]->BayesDivide(hHLTefficiencynum[index][indextriggers],hHLTefficiencyden[index][indextriggers]);
           gHLTefficiency[index][indextriggers]->SetName(namegHLTefficiency[index][indextriggers].Data());
