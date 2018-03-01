@@ -17,7 +17,7 @@
 #include <TGraphAsymmErrors.h>
 
 
-void triggerTurnOn(TString suffixfile="SelectionOnL1HLTprescale",int doPP=1, int doPbPb=1, int do40=1,int do60=1,int do80=1){
+void triggerTurnOn(TString suffixfile="SelectionOnL1HLTprescale",int doPP=0, int doPbPb=1, int do40=1,int do60=1,int do80=1,int do100=1){
      
     initialise();
 	TFile *finput[samples];
@@ -50,11 +50,12 @@ void triggerTurnOn(TString suffixfile="SelectionOnL1HLTprescale",int doPP=1, int
 	   	  if (indextriggers==0 && do40==0) continue;
 		  if (indextriggers==1 && do60==0) continue;
 		  if (indextriggers==2 && do80==0) continue;
+		  if (indextriggers==3 && do100==0) continue;
 		  
 		  std::cout<<"sample="<<index<<std::endl;
 		  std::cout<<"indextriggers="<<indextriggers<<std::endl;
 
-		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),preselectionL1[index][indextriggers].Data());
+		  ttemp->Draw(Form("(%s)>>htemp",namevariableMB[index].Data()),preselectionL1[index][indextriggers].Data());
 		  hL1efficiencyden[index][indextriggers]=(TH1F*)htemp->Clone();
 		  hL1efficiencyden[index][indextriggers]->SetName(namehL1efficiencyden[index][indextriggers].Data());
 		  hL1efficiencyden[index][indextriggers]->Sumw2();
@@ -62,7 +63,7 @@ void triggerTurnOn(TString suffixfile="SelectionOnL1HLTprescale",int doPP=1, int
 	
 		  std::cout<<"step1="<<std::endl;
 
-		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),selectionL1[index][indextriggers]);
+		  ttemp->Draw(Form("(%s)>>htemp",namevariableMB[index].Data()),selectionL1[index][indextriggers]);
 		  hL1efficiencynum[index][indextriggers]=(TH1F*)htemp->Clone();
 		  hL1efficiencynum[index][indextriggers]->SetName(namehL1efficiencynum[index][indextriggers].Data());
 		  hL1efficiencynum[index][indextriggers]->Sumw2();
@@ -75,14 +76,14 @@ void triggerTurnOn(TString suffixfile="SelectionOnL1HLTprescale",int doPP=1, int
 
 		  std::cout<<"step3="<<std::endl;
 
-		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),preselectionHLT[index][indextriggers].Data());
+		  ttemp->Draw(Form("(%s)>>htemp",namevariableMB[index].Data()),preselectionHLT[index][indextriggers].Data());
 		  hHLTefficiencyden[index][indextriggers]=(TH1F*)htemp->Clone();
 		  hHLTefficiencyden[index][indextriggers]->SetName(namehHLTefficiencyden[index][indextriggers].Data());
 		  hHLTefficiencyden[index][indextriggers]->Sumw2();
 
 		  std::cout<<"step4="<<std::endl;
 
-		  ttemp->Draw(Form("Max$(%s)>>htemp",namevariableMB[index].Data()),TCut(prescalecorrHLTMB[index][indextriggers].Data()*TCut(selectionHLT[index][indextriggers].Data())));
+		  ttemp->Draw(Form("(%s)>>htemp",namevariableMB[index].Data()),TCut(prescalecorrHLTMB[index][indextriggers].Data()*TCut(selectionHLT[index][indextriggers].Data())));
 		  hHLTefficiencynum[index][indextriggers]=(TH1F*)htemp->Clone();
 		  hHLTefficiencynum[index][indextriggers]->SetName(namehHLTefficiencynum[index][indextriggers].Data());
 		  hHLTefficiencynum[index][indextriggers]->Sumw2();
@@ -109,6 +110,7 @@ void triggerTurnOn(TString suffixfile="SelectionOnL1HLTprescale",int doPP=1, int
 	   	  if (indextriggers==0 && do40==0) continue;
 		  if (indextriggers==1 && do60==0) continue;
 		  if (indextriggers==2 && do80==0) continue;
+		  if (indextriggers==3 && do100==0) continue;
 
     	  hL1efficiencyden[index][indextriggers]->Write();
 		  hL1efficiencynum[index][indextriggers]->Write();
