@@ -1,5 +1,7 @@
-void check(){
 
+
+void check(){
+/*
   const int samples=2; 
   const int nCases=5;
   const int ntriggers=2;
@@ -38,5 +40,44 @@ TH1F*hyes=new TH1F("hyes","hyes",1000,0,1000);
 TH1F*hno=new TH1F("hno","hno",1000,0,1000);
 djt->Draw("jetptCorr_akpu3pf","HLT_AK4PFJet40_Eta5p1_v1==1"*TCut("0.5*TMath::Erf(Max$(jetptCorr_akpu3pf)*0.074089+-2.061318+TMath::Exp((-Max$(jetptCorr_akpu3pf)^2+-2.061318)/(71.143148))*(-0.839758))+0.5"));
 djt->Draw("jetptCorr_akpu3pf","HLT_AK4PFJet40_Eta5p1_v1==1");
+
+*/
+
+
+  //TString namefilesMB="/mnt/hadoop/cms/store/user/tatar/HIMinimumBias2/HIRun2015-PromptReco-v1-Run263233-263284-FOREST/0.root";
+  //ttemp->Draw("jtpt>>hden","L1_SingleJet44_BptxAND_Prescl==1");
+  //ttemp->Draw("jtpt>>hnum","L1_SingleJet44_BptxAND==1");
+
+  TString namefilesMB="/mnt/hadoop/cms/store/user/tatar/HIMinimumBias2/HIRun2015-PromptReco-v1-Run263233-263284-FOREST/0.root";
+  //TString namefilesMB="/mnt/hadoop/cms/store/user/rbi/merged/Hydjet_Quenched_MinBias_5020GeV_750-HINPbPbWinter16DR-NoPU_75X_mcRun2_HeavyIon_forest_v2/0.root";
+  TString nametreeMB="akPu3PFJetAnalyzer/t";
+  TString nametreeHLTMB="hltanalysis/HltTree";
+  TString nametreeSkimMB="skimanalysis/HltTree";
+  TString nametreeEvtMB="hiEvtAnalyzer/HiTree";
+  TString namevariableMB="jtpt";
+
+  TFile *finput=new TFile(namefilesMB,"read"); 
+  TTree*ttemp=(TTree*)finput->Get(nametreeMB.Data());
+  TTree*ttempHLT=(TTree*)finput->Get(nametreeHLTMB.Data());
+  TTree*ttempSkim=(TTree*)finput->Get(nametreeSkimMB.Data());
+  TTree*ttempEvt=(TTree*)finput->Get(nametreeEvtMB.Data());
+		
+  ttemp->AddFriend(ttempHLT);
+  ttemp->AddFriend(ttempSkim);
+  ttemp->AddFriend(ttempEvt);
+  
+  TH1F*hnum=new TH1F("hnum","hnum",300,0,300);
+  TH1F*hden=new TH1F("hden","hden",300,0,300);
+  
+  ttemp->Draw("jtpt[0]>>hden","1");
+  ttemp->Draw("jtpt[0]>>hnum","L1_SingleJet44_BptxAND==1");
+  
+  //ttemp->Draw("jtpt[0]>>hden","abs(jteta[0])<1.6");
+  //ttemp->Draw("jtpt[0]>>hnum","L1_SingleJet44_BptxAND==1&&abs(jteta[0])<1.6");
+  
+  hnum->Divide(hden);
+  hnum->Draw();
+
+
 }
 
