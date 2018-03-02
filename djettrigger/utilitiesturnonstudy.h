@@ -9,7 +9,10 @@
   const int nbinsTurnOn=60;
   double bondaries_nbinsTurnOn[nbinsTurnOn+1];
   
-   int plotturnon[samples][ntriggers]={{0,1,1,0},{0,1,1,1}};
+  int plotturnon[samples][ntriggers]={{0,1,1,0},{0,1,1,1}};
+
+  float maxL1fitfuncrange[samples][ntriggers]={{150,150,150,150},{150,140,85,130}};
+  float maxHLTfitfuncrange[samples][ntriggers]={{150,150,150,150},{150,150,120,150}};
 
   
   TString labelsamples[samples]={"pp","PbPb"};  
@@ -64,7 +67,7 @@
   TString namehjetptspectrumpertriggerPresclCorr[samples][ntriggers];  
   TString namehjetleadingptspectrumpertriggerPresclCorr[samples][ntriggers];  
   
-  int coloursTurnOn[ntriggers]={1,2,4,3};
+  EColor coloursTurnOn[ntriggers]={kBlack,kRed,kBlue,kGreen};
   int markerstyleTurnOn[ntriggers]={21,22,22,20};
   int widthlineTurnOn[ntriggers]={2,2,2,2};
 
@@ -88,8 +91,8 @@
   TString selectionHLT[samples][ntriggers];
   TString selectionanalysis[samples][ntriggers];
   
-  TString functionalFormTurnOn= "0.5*TMath::Erf(x*[0]+[1]+TMath::Exp((-x^2+[1])/[3])*[2])+0.5";
-  TString functionalFormTurnOnShifted= "0.5*TMath::Erf((x+%f)*[0]+[1]+TMath::Exp((-(x+%f)^2+[1])/[3])*[2])+0.5";
+  TString functionalFormTurnOn= "0.5*TMath::Erf(x*[0]+[1]+TMath::Exp(-(x+[1])^2/[3])*[2])+0.5";
+  TString functionalFormTurnOnShifted= "0.5*TMath::Erf((x+%f)*[0]+[1]+TMath::Exp(-((x+%f)+[1])^2/[3])*[2])+0.5";
 
 void initialise(){
 

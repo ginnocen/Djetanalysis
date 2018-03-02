@@ -120,7 +120,7 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 		hemptyHLT[index]->Draw();    
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){
 		if 	(plotturnon[index][indextriggers]==0|| useextrapolatedturnonHLT[index][indextriggers]==1) continue;
-			xjjroot::setthgrstyle(gHLTefficiency[index][indextriggers],cols[indextriggers],styles[indextriggers],1.2,cols[indextriggers],1,1,-1,-1,-1); 
+			xjjroot::setthgrstyle(gHLTefficiency[index][indextriggers],coloursTurnOn[indextriggers],markerstyleTurnOn[indextriggers],1.2,coloursTurnOn[indextriggers],1,1,-1,-1,-1); 
 			if (useextrapolatedturnonHLT[index][indextriggers]==0) gHLTefficiency[index][indextriggers]->Draw("EPsame");
 		    fitErfHLT[index][indextriggers]=(TF1*)fitfunctionErfHLT(gHLTefficiency[index][indextriggers],index,indextriggers);
 		    fitErfHLT[index][indextriggers]->Draw("same");
@@ -147,27 +147,27 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 
 TF1*fitfunctionErfL1(TGraphAsymmErrors *gEff, int indexsample, int indextrigger){
   std::cout << "L1" << indexsample << indextrigger << std::endl;
-  TF1 *fL1= new TF1("fL1",functionalFormTurnOn.Data(),0,150);
+  TF1 *fL1= new TF1("fL1",functionalFormTurnOn.Data(),0,140);
   //TF1 *fL1=new TF1("fL1","TMath::Erf(x*[1]+[2])+0*[0]");
   fL1->SetParameters(a0L1[indexsample][indextrigger],a1L1[indexsample][indextrigger],a2L1[indexsample][indextrigger],a3L1[indexsample][indextrigger]); 
-  gEff->Fit("fL1","M"); 
-  gEff->GetFunction("fL1")->SetLineColor(coloursTurnOn[indextrigger]);
+  gEff->Fit("fL1","M0",0,maxL1fitfuncrange[indexsample][indextrigger]); 
+  fL1->SetLineColor(coloursTurnOn[indextrigger]);
   return fL1;
 }
 
 TF1*fitfunctionErfHLT(TGraphAsymmErrors *gEff, int indexsample, int indextrigger){
   std::cout << "HLT" << indexsample << indextrigger << std::endl;
-  TF1 *fHLT= new TF1("fHLT",functionalFormTurnOn.Data(),0,150);
+  TF1 *fHLT= new TF1("fHLT",functionalFormTurnOn.Data(),0,140);
   //TF1 *fHLT=new TF1("fHLT","TMath::Erf(x*[1]+[2])+0*[0]");
   fHLT->SetParameters(a0HLT[indexsample][indextrigger],a1HLT[indexsample][indextrigger],a2HLT[indexsample][indextrigger],a3HLT[indexsample][indextrigger]); 
-  gEff->Fit("fHLT","M");
-  if(indexsample!=1 || indextrigger!=0) gEff->GetFunction("fHLT")->SetLineColor(coloursTurnOn[indextrigger]); 
+  gEff->Fit("fHLT","M0",0,maxHLTfitfuncrange[indexsample][indextrigger]);
+  fHLT->SetLineColor(coloursTurnOn[indextrigger]); 
   return fHLT;
 }
 
 TF1*fitfunctionErfHLTShifted(TF1*fitreference, double shift){
-  TF1 *fHLT= new TF1("fHLT",Form(functionalFormTurnOnShifted.Data(),shift,shift),0,150);
-  std::cout<<"functional form"<<Form(functionalFormTurnOnShifted.Data(),shift,shift)<<std::endl;
+  TF1 *fHLT= new TF1("fHLT",Form(functionalFormTurnOnShifted.Data(),shift,shift),0,fitreference->GetXmax()-shift);
+  std::cout<<"functional form: "<<Form(functionalFormTurnOnShifted.Data(),shift,shift)<<std::endl;
   fHLT->SetParameters(fitreference->GetParameter(0),fitreference->GetParameter(1),fitreference->GetParameter(2),fitreference->GetParameter(3));
   return fHLT;
 }
