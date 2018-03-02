@@ -9,6 +9,9 @@
   const int nbinsTurnOn=60;
   double bondaries_nbinsTurnOn[nbinsTurnOn+1];
   
+   int plotturnon[samples][ntriggers]={{0,1,1,0},{0,1,1,1}};
+
+  
   TString labelsamples[samples]={"pp","PbPb"};  
   TString nametriggerselectiontagtriggers[samples][ntriggers]={{"ppHLT40","ppHLT60","ppHLT80","ppHLT100"},{"PbPbHLT40","PbPbHLT60","PbPbHLT80","PbPbHLT100"}};  
   TString nameL1trigger[samples][ntriggers]={{"L1_SingleJet28_BptxAND","L1_SingleJet40_BptxAND","L1_SingleJet48_BptxAND","L1_SingleJet52_BptxAND"},{"L1_MinimumBiasHF2_AND","L1_SingleS1Jet28_BptxAND","L1_SingleJet44_BptxAND","L1_SingleS1Jet56_BptxAND"}};
@@ -40,7 +43,10 @@
   double a2HLT[samples][ntriggers]={{206.2,-3.472,3.264,1.},{.01,-1.069,-3.125,-1.}};
   double a3HLT[samples][ntriggers]={{3.836e+05,1201,569.2,700.},{100,642.8,725.8,700.}};
 
-
+  int useextrapolatedturnonHLT[samples][ntriggers]={{0,0,0,0},{1,1,0,0}};
+  int indextriggerreferenceHLT[samples][ntriggers]={{-1,-1,-1,-1},{3,3,-1,-1}};
+  double referenceshift[samples][ntriggers]={{0.,0.,0.,0.},{60.,40.,0.,0.}};
+  
   //nTriggers  
   
   TString namehtempMuF[samples][ntriggers];  
@@ -83,6 +89,7 @@
   TString selectionanalysis[samples][ntriggers];
   
   TString functionalFormTurnOn= "0.5*TMath::Erf(x*[0]+[1]+TMath::Exp((-x^2+[1])/[3])*[2])+0.5";
+  TString functionalFormTurnOnShifted= "0.5*TMath::Erf((x+%f)*[0]+[1]+TMath::Exp((-(x+%f)^2+[1])/[3])*[2])+0.5";
 
 void initialise(){
 

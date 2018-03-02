@@ -24,17 +24,20 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
     
     TF1*fitfunctionErfL1(TGraphAsymmErrors*,int,int);
     TF1*fitfunctionErfHLT(TGraphAsymmErrors*,int,int);
+    TF1*fitfunctionErfHLTShifted(TF1*, double);
     
     TGraphAsymmErrors *gL1efficiency[samples][ntriggers];  
     TGraphAsymmErrors *gHLTefficiency[samples][ntriggers];  
     
     TF1*fitErfL1[samples][ntriggers];  
     TF1*fitErfHLT[samples][ntriggers];  
+    TF1*fitErfHLTExtrapolated[samples][ntriggers];  
     
 	TFile*finput=new TFile(suffixfile.Data(),"read");
 	finput->cd();
 	for (int index=0;index<samples;index++){
-		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
+		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){
+		if 	(plotturnon[index][indextriggers]==0) continue;
 		  gL1efficiency[index][indextriggers]=(TGraphAsymmErrors*)finput->Get(namegL1efficiency[index][indextriggers].Data());
 		  gHLTefficiency[index][indextriggers]=(TGraphAsymmErrors*)finput->Get(namegHLTefficiency[index][indextriggers].Data());
 		}
@@ -62,6 +65,8 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
       legHLT[index]=(TLegend*)myplot->GetLegend(0.4597315,0.6328671,0.909396,0.8496503);
     
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
+		if 	(plotturnon[index][indextriggers]==0) continue;
+
 		
 			legentryL1[index][indextriggers]=legL1[index]->AddEntry(gL1efficiency[index][indextriggers],nameL1trigger[index][indextriggers].Data(),"pl");
 			legentryL1[index][indextriggers]->SetLineColor(coloursTurnOn[indextriggers]);
@@ -91,11 +96,13 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 		xjjroot::sethempty(hemptyL1[index],0,0);
 		hemptyL1[index]->Draw();    
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
+		if 	(plotturnon[index][indextriggers]==0) continue;
+
 			xjjroot::setthgrstyle(gL1efficiency[index][indextriggers],cols[indextriggers],styles[indextriggers],1.2,cols[indextriggers],1,1,-1,-1,-1);
 			gL1efficiency[index][indextriggers]->Draw("EPsame");
 		    fitErfL1[index][indextriggers]=(TF1*)fitfunctionErfL1(gL1efficiency[index][indextriggers],index,indextriggers);
 		    fitErfL1[index][indextriggers]->Draw("same");
-		    fitErfL1[index][indextriggers]->Write(Form("fitErfL1_%s",nametriggerselectiontagtriggers[index][indextriggers].Data()));
+		    fitErfL1[index][indextriggers]->Write(Form("fitErfL1_%s",nametriggerselectiontagtriggers[index][indextriggers].Data()));		    
 		}
 		xjjroot::drawCMS(labelsamples[index]);
 		legL1[index]->Draw();
@@ -112,12 +119,24 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 		xjjroot::sethempty(hemptyHLT[index],0,0);
 		hemptyHLT[index]->Draw();    
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){
+		if 	(plotturnon[index][indextriggers]==0|| useextrapolatedturnonHLT[index][indextriggers]==1) continue;
 			xjjroot::setthgrstyle(gHLTefficiency[index][indextriggers],cols[indextriggers],styles[indextriggers],1.2,cols[indextriggers],1,1,-1,-1,-1); 
-			gHLTefficiency[index][indextriggers]->Draw("EPsame");
+			if (useextrapolatedturnonHLT[index][indextriggers]==0) gHLTefficiency[index][indextriggers]->Draw("EPsame");
 		    fitErfHLT[index][indextriggers]=(TF1*)fitfunctionErfHLT(gHLTefficiency[index][indextriggers],index,indextriggers);
 		    fitErfHLT[index][indextriggers]->Draw("same");
 		    fitErfHLT[index][indextriggers]->Write(Form("fitErfHLT_%s",nametriggerselectiontagtriggers[index][indextriggers].Data()));
 		}
+		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){
+		if 	(plotturnon[index][indextriggers]==0) continue;
+		    if (useextrapolatedturnonHLT[index][indextriggers]==1){
+               std::cout<<"BE AWARE THAT YOU ARE USING TRIGGER TURN ON CURVES THAT ARE EXTRAPOLATED FOR SAMPLE="<<index<<", index trigger="<<indextriggers<<std::endl;
+               std::cout<<"THIS IS A TEMPORARY PATCH THAT NEEDS TO BE REMOVED WHEN THE MB SAMPLE WILL BE READY"<<std::endl;
+		       fitErfHLTExtrapolated[index][indextriggers]=(TF1*)fitfunctionErfHLTShifted(fitErfHLT[index][indextriggerreferenceHLT[index][indextriggers]], referenceshift[index][indextriggers]);
+			   fitErfHLTExtrapolated[index][indextriggers]->Draw("same");
+			   fitErfHLTExtrapolated[index][indextriggers]->SetLineStyle(10);
+		       fitErfHLTExtrapolated[index][indextriggers]->Write(Form("fitErfHLTExtrapolated_%s",nametriggerselectiontagtriggers[index][indextriggers].Data()));
+		    }
+        }
 		xjjroot::drawCMS(labelsamples[index]);
 		legHLT[index]->Draw();
 		cHLT[index]->SaveAs(canvasnameHLT[index].Data());
@@ -128,7 +147,7 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 
 TF1*fitfunctionErfL1(TGraphAsymmErrors *gEff, int indexsample, int indextrigger){
   std::cout << "L1" << indexsample << indextrigger << std::endl;
-  TF1 *fL1= new TF1("fL1",functionalFormTurnOn.Data());
+  TF1 *fL1= new TF1("fL1",functionalFormTurnOn.Data(),0,150);
   //TF1 *fL1=new TF1("fL1","TMath::Erf(x*[1]+[2])+0*[0]");
   fL1->SetParameters(a0L1[indexsample][indextrigger],a1L1[indexsample][indextrigger],a2L1[indexsample][indextrigger],a3L1[indexsample][indextrigger]); 
   gEff->Fit("fL1","M"); 
@@ -138,10 +157,17 @@ TF1*fitfunctionErfL1(TGraphAsymmErrors *gEff, int indexsample, int indextrigger)
 
 TF1*fitfunctionErfHLT(TGraphAsymmErrors *gEff, int indexsample, int indextrigger){
   std::cout << "HLT" << indexsample << indextrigger << std::endl;
-  TF1 *fHLT= new TF1("fHLT",functionalFormTurnOn.Data());
+  TF1 *fHLT= new TF1("fHLT",functionalFormTurnOn.Data(),0,150);
   //TF1 *fHLT=new TF1("fHLT","TMath::Erf(x*[1]+[2])+0*[0]");
   fHLT->SetParameters(a0HLT[indexsample][indextrigger],a1HLT[indexsample][indextrigger],a2HLT[indexsample][indextrigger],a3HLT[indexsample][indextrigger]); 
   gEff->Fit("fHLT","M");
   if(indexsample!=1 || indextrigger!=0) gEff->GetFunction("fHLT")->SetLineColor(coloursTurnOn[indextrigger]); 
+  return fHLT;
+}
+
+TF1*fitfunctionErfHLTShifted(TF1*fitreference, double shift){
+  TF1 *fHLT= new TF1("fHLT",Form(functionalFormTurnOnShifted.Data(),shift,shift),0,150);
+  std::cout<<"functional form"<<Form(functionalFormTurnOnShifted.Data(),shift,shift)<<std::endl;
+  fHLT->SetParameters(fitreference->GetParameter(0),fitreference->GetParameter(1),fitreference->GetParameter(2),fitreference->GetParameter(3));
   return fHLT;
 }
