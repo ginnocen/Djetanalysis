@@ -1,11 +1,11 @@
-TString functionalFormTurnOn= "[3]*TMath::Erf(x*[1]+[2])*0.5*(1-[0])+0.5*(1+[0])";
-TString functionalFormTurnOnShifted= "[3]*TMath::Erf((x+%f)*[1]+[2])*0.5*(1-[0])+0.5*(1+[0])";
+TString functionalFormTurnOn= "([3]*TMath::Erf(x*[1]+[2])*0.5*(1-[0])+0.5*(1+[0]))";
+TString functionalFormTurnOnShifted= "([3]*TMath::Erf((x+%f)*[1]+[2])*0.5*(1-[0])+0.5*(1+[0]))";
 
-TString functionalFormTurnOnTest= "%f*TMath::Erf(x*%f+%f)*0.5*(1-%f)+0.5*(1+%f)";
-TString functionalFormTurnOnTestShifted= "%f*TMath::Erf((x+20)*%f+%f)*0.5*(1-%f)+0.5*(1+%f)";
+TString functionalFormTurnOnTest= "(%f*TMath::Erf(x*%f+%f)*0.5*(1-%f)+0.5*(1+%f))";
+TString functionalFormTurnOnTestShifted= "(%f*TMath::Erf((x+20)*%f+%f)*0.5*(1-%f)+0.5*(1+%f))";
 
-TString functionalFormTurnOnFinal= "%f*TMath::Erf(jetpt_akpu3pf[0]*%f+%f)*0.5*(1-%f)+0.5*(1+%f)";
-TString functionalFormTurnOnFinalShifted= "%f*TMath::Erf((jetpt_akpu3pf[0]+20)*%f+%f)*0.5*(1-%f)+0.5*(1+%f)";
+TString functionalFormTurnOnFinal= "(%f*TMath::Erf(jetpt_akpu3pf[0]*%f+%f)*0.5*(1-%f)+0.5*(1+%f))";
+TString functionalFormTurnOnFinalShifted= "(%f*TMath::Erf((jetpt_akpu3pf[0]+20)*%f+%f)*0.5*(1-%f)+0.5*(1+%f))";
 
 const int samples_=2;
 const int ntriggers_=4;
@@ -30,6 +30,11 @@ TString expmyHLTtest[samples_][ntriggers_];
 TString expmyL1final[samples_][ntriggers_];
 TString expmyHLTfinal[samples_][ntriggers_];
 
+TString expmyweightL1final[samples_][ntriggers_];
+TString expmyweightHLTfinal[samples_][ntriggers_];
+
+ float mythresholds[samples_][ntriggers_]={{40,60,80,100},{40,60,80,100}};
+
 
 void initialiseWeights(){
 
@@ -43,4 +48,11 @@ void initialiseWeights(){
     }   
     expmyHLTtest[1][1]=Form(functionalFormTurnOnTestShifted.Data(),a3HLT[1][2],a1HLT[1][2],a2HLT[1][2],a0HLT[1][2],a0HLT[1][2]);
     expmyHLTfinal[1][1]=Form(functionalFormTurnOnFinalShifted.Data(),a3HLT[1][2],a1HLT[1][2],a2HLT[1][2],a0HLT[1][2],a0HLT[1][2]);
+    
+	for (int index=0;index<samples_;index++){
+		for (int indextriggers=0;indextriggers<ntriggers_;indextriggers++){
+		expmyweightL1final[index][indextriggers]=Form("1./%s*(jeteta_akpu3pf[0]<1.6&&jetpt_akpu3pf[0]>%f)",expmyL1final[index][indextriggers].Data(),mythresholds[index][indextriggers]);        
+		expmyweightHLTfinal[index][indextriggers]=Form("1./%s*(jeteta_akpu3pf[0]<1.6&&jetpt_akpu3pf[0]>%f)",expmyHLTfinal[index][indextriggers].Data(),mythresholds[index][indextriggers]);        
+        }
+    }   
 }
