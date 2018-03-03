@@ -11,8 +11,8 @@
   
   int plotturnon[samples][ntriggers]={{0,1,1,0},{0,1,1,1}};
 
-  float maxL1fitfuncrange[samples][ntriggers]={{150,150,150,150},{150,140,85,130}};
-  float maxHLTfitfuncrange[samples][ntriggers]={{150,150,150,150},{150,150,120,150}};
+  float maxL1fitfuncrange[samples][ntriggers]={{150,150,150,150},{150,150,150,150}};
+  float maxHLTfitfuncrange[samples][ntriggers]={{150,150,150,150},{150,150,150,150}};
 
   
   TString labelsamples[samples]={"pp","PbPb"};  
@@ -35,17 +35,7 @@
   TString prescaleL1MB[samples][ntriggers]={{"(L1_SingleJet28_BptxAND_Prescl==1)","(L1_SingleJet40_BptxAND_Prescl==1)","(L1_SingleJet48_BptxAND_Prescl==1)","(L1_SingleJet52_BptxAND_Prescl==1)"},{"1","(L1_SingleS1Jet28_BptxAND_Prescl==1)","(L1_SingleJet44_BptxAND_Prescl==1)","(L1_SingleS1Jet56_BptxAND_Prescl==1)"}};
   TString prescaleselHLTMB[samples][ntriggers]={{"(HLT_AK4PFJet40_Eta5p1_v1_Prescl==1)","(HLT_AK4PFJet60_Eta5p1_v1_Prescl==1)","(HLT_AK4PFJet80_Eta5p1_v1_Prescl==1)","(HLT_AK4PFJet100_Eta5p1_v1_Prescl==1)"},{"1","1","HLT_HIPuAK4CaloJet80_Eta5p1_v1_Prescl==1","HLT_HIPuAK4CaloJet100_Eta5p1_v1_Prescl==1"}};
   TString prescalecorrHLTMB[samples][ntriggers]={{"(1)","(1)","(1)","(1)"},{"(HLT_HIPuAK4CaloJet40_Eta5p1_v2_Prescl)","(HLT_HIPuAK4CaloJet60_Eta5p1_v1_Prescl)","(1)","(1)"}};
-
-   double a0L1[samples][ntriggers]={{.0741,.0557,.0474,.05},{-0.921,.0114,.0105,.01}};
-  double a1L1[samples][ntriggers]={{-2.061,-2.062,-2.022,-2.},{-240.52,0.158,-1.349,-2.}};
-  double a2L1[samples][ntriggers]={{-0.840,-1.226,-1.364,-1.},{712.37,-3,-1.481,-1.}};
-  double a3L1[samples][ntriggers]={{71.12,259.81,542.30,300.},{3.362e+06,1532,1731,1600.}};
-
-  double a0HLT[samples][ntriggers]={{.145,.0572,.0714,.05},{.01,.0105,.0157,.01}};
-  double a1HLT[samples][ntriggers]={{-211.,-3.263,-5.767,-4.},{1.,-1.678,-2.199,-2.}};
-  double a2HLT[samples][ntriggers]={{206.2,-3.472,3.264,1.},{.01,-1.069,-3.125,-1.}};
-  double a3HLT[samples][ntriggers]={{3.836e+05,1201,569.2,700.},{100,642.8,725.8,700.}};
-
+   
   int useextrapolatedturnonHLT[samples][ntriggers]={{0,0,0,0},{1,1,0,0}};
   int indextriggerreferenceHLT[samples][ntriggers]={{-1,-1,-1,-1},{3,3,-1,-1}};
   double referenceshift[samples][ntriggers]={{0.,0.,0.,0.},{60.,40.,0.,0.}};
@@ -91,9 +81,6 @@
   TString selectionHLT[samples][ntriggers];
   TString selectionanalysis[samples][ntriggers];
   
-  TString functionalFormTurnOn= "0.5*TMath::Erf(x*[0]+[1]+TMath::Exp(-(x+[1])^2/[3])*[2])+0.5";
-  TString functionalFormTurnOnShifted= "0.5*TMath::Erf((x+%f)*[0]+[1]+TMath::Exp(-((x+%f)+[1])^2/[3])*[2])+0.5";
-
 void initialise(){
 
 
