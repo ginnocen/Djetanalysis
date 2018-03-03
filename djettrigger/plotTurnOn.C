@@ -121,9 +121,9 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 		xjjroot::sethempty(hemptyHLT[index],0,0);
 		hemptyHLT[index]->Draw();    
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){
-		if 	(plotturnon[index][indextriggers]==0|| useextrapolatedturnonHLT[index][indextriggers]==1) continue;
+		if 	(plotturnon[index][indextriggers]==0) continue;
 			xjjroot::setthgrstyle(gHLTefficiency[index][indextriggers],coloursTurnOn[indextriggers],markerstyleTurnOn[indextriggers],1.2,coloursTurnOn[indextriggers],1,1,-1,-1,-1); 
-			if (useextrapolatedturnonHLT[index][indextriggers]==0) gHLTefficiency[index][indextriggers]->Draw("EPsame");
+			gHLTefficiency[index][indextriggers]->Draw("EPsame");
 		    fitErfHLT[index][indextriggers]=(TF1*)fitfunctionErfHLT(gHLTefficiency[index][indextriggers],index,indextriggers);
 		    fitErfHLT[index][indextriggers]->Draw("same");
 		    fitErfHLT[index][indextriggers]->Write(Form("fitErfHLT_%s",nametriggerselectiontagtriggers[index][indextriggers].Data()));
@@ -143,8 +143,50 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 		legHLT[index]->Draw();
 		cHLT[index]->SaveAs(canvasnameHLT[index].Data());
 	}
+	
+	//print weight values
+	
+	for (int index=0;index<samples;index++){
+		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){
+		  if(plotturnon[index][indextriggers]==0) continue;
+		  cout<<"index="<<index<<", indextriggers="<<indextriggers<<endl;
+		  for (int indexparam=0;indexparam<nparameterfit;indexparam++){
+		    parametersL1fit[index][indextriggers][indexparam]=fitErfL1[index][indextriggers]->GetParameter(indexparam);
+		    parametersHLTfit[index][indextriggers][indexparam]=fitErfHLT[index][indextriggers]->GetParameter(indexparam);
+          }
+	  }
+  }
+  
 
-	funcfile->Close();
+  for (int indexparam=0;indexparam<nparameterfit;indexparam++){
+    cout<<"double a"<<indexparam<<"L1[samples][ntriggers]={";
+	for (int index=0;index<samples;index++){
+      cout<<"{";  		  
+		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){
+		   cout<<parametersL1fit[index][indextriggers][indexparam];
+		    if(!(indextriggers==ntriggers-1))cout<<","; 
+          }
+        cout<<"}"; 
+        if(index==0 ) cout<<","; 
+	  }
+    cout<<"};"<<endl;  		  
+  }
+  for (int indexparam=0;indexparam<nparameterfit;indexparam++){
+    cout<<"double a"<<indexparam<<"HLT[samples][ntriggers]={";
+	for (int index=0;index<samples;index++){
+      cout<<"{";  		  
+		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){
+		   cout<<parametersHLTfit[index][indextriggers][indexparam];
+		    if(!(indextriggers==ntriggers-1))cout<<","; 
+          }
+        cout<<"}"; 
+        if(index==0 ) cout<<","; 
+	  }
+    cout<<"};"<<endl;  		  
+  }
+  
+  funcfile->Close();
+
 }
 
 TF1*fitfunctionErfL1(TGraphAsymmErrors *gEff, int indexsample, int indextrigger){
