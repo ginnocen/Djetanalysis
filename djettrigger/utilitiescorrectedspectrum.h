@@ -10,11 +10,13 @@
   EColor cols[ntriggers] = {kBlack,kBlue,kRed,kGreen};
   int styles[ntriggers] = {20,21,22,20};
   
-    int plotturnon[samples][ntriggers]={{0,1,1,0},{0,0,0,0}};
+    int plotturnon[samples][ntriggers]={{0,1,1,0},{0,1,1,1}};
 
 
     //Triggered samples
-  TString namefiles[samples]={"/mnt/T2_US_MIT/submit-hi2/scratch/jwang/Djets/data/DjetFiles_20180214_pp_5TeV_HighPtLowerJetsHighPtJet80_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614.root","/mnt/T2_US_MIT/submit-hi2/scratch/jwang/Djets/data/DjetFiles_20171120_PbPb_5TeV_HIHardProbes_skimmed_1unit_part1234_26March_20170326_HLTHIPuAK4CaloJet406080.root"}; 
+  //TString namefiles[samples]={"/mnt/T2_US_MIT/submit-hi2/scratch/jwang/Djets/data/DjetFiles_20180214_pp_5TeV_HighPtLowerJetsHighPtJet80_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614.root","/mnt/T2_US_MIT/submit-hi2/scratch/jwang/Djets/data/DjetFiles_20171120_PbPb_5TeV_HIHardProbes_skimmed_1unit_part1234_26March_20170326_HLTHIPuAK4CaloJet406080.root"}; 
+  TString namefiles[samples]={"/mnt/hadoop/cms/store/user/jwang/Djetsgfal/DjetFiles_20180214_pp_5TeV_HighPtLowerJets_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614/skim_djet_HiForestAOD_1325.root","/mnt/hadoop/cms/store/user/jwang/Djetsgfal/DjetFiles_20171120_PbPb_5TeV_HIHardProbes_skimmed_1unit_part1_26March_20170326/skim_djet_HiForestAOD_1000.root"}; 
+
   TString nametree[samples]={"djt","djt"};
   TString nametreeHLT[samples]={"hlt","hlt"};
   TString namevariable[samples]={"jetpt_akpu3pf","jetpt_akpu3pf"};
@@ -23,7 +25,8 @@
   
   TString stringweight="1./(0.5*TMath::Erf((jetpt_akpu3pf[0])*%f+%f+TMath::Exp((-(jetpt_akpu3pf[0])^2+%f)/(%f))*(%f))+0.5)";  //[0],[1],[1],[3],[2]
   TString etaselection="abs(jeteta_akpu3pf)<1.6";
-  TString nametrigger[samples][ntriggers]={{"fileno==0&&HLT_AK4PFJet40_Eta5p1_v1&&jetpt_akpu3pf>40","fileno==0&&HLT_AK4PFJet60_Eta5p1_v1&&jetpt_akpu3pf>60","fileno==1&&HLT_AK4PFJet80_Eta5p1_v1&&jetpt_akpu3pf>80","fileno==1&&HLT_AK4PFJet100_Eta5p1_v1&&jetpt_akpu3pf>100"},{"HLT_HIPuAK4CaloJet40_Eta5p1_v1&&jetpt_akpu3pf>40","HLT_HIPuAK4CaloJet60_Eta5p1_v1&&jetpt_akpu3pf>60","HLT_HIPuAK4CaloJet80_Eta5p1_v1&&jetpt_akpu3pf>80","HLT_HIPuAK4CaloJet100_Eta5p1_v1&&jetpt_akpu3pf>100"}};
+  //TString nametrigger[samples][ntriggers]={{"fileno==0&&HLT_AK4PFJet40_Eta5p1_v1&&jetpt_akpu3pf>40","fileno==0&&HLT_AK4PFJet60_Eta5p1_v1&&jetpt_akpu3pf>60","fileno==1&&HLT_AK4PFJet80_Eta5p1_v1&&jetpt_akpu3pf>80","fileno==1&&HLT_AK4PFJet100_Eta5p1_v1&&jetpt_akpu3pf>100"},{"HLT_HIPuAK4CaloJet40_Eta5p1_v1&&jetpt_akpu3pf>40","HLT_HIPuAK4CaloJet60_Eta5p1_v1&&jetpt_akpu3pf>60","HLT_HIPuAK4CaloJet80_Eta5p1_v1&&jetpt_akpu3pf>80","HLT_HIPuAK4CaloJet100_Eta5p1_v1&&jetpt_akpu3pf>100"}};
+  TString nametrigger[samples][ntriggers]={{"HLT_AK4PFJet40_Eta5p1_v1&&jetpt_akpu3pf>40","HLT_AK4PFJet60_Eta5p1_v1&&jetpt_akpu3pf>60","HLT_AK4PFJet80_Eta5p1_v1&&jetpt_akpu3pf>80","HLT_AK4PFJet100_Eta5p1_v1&&jetpt_akpu3pf>100"},{"HLT_HIPuAK4CaloJet40_Eta5p1_v1&&jetpt_akpu3pf>40","HLT_HIPuAK4CaloJet60_Eta5p1_v1&&jetpt_akpu3pf>60","HLT_HIPuAK4CaloJet80_Eta5p1_v1&&jetpt_akpu3pf>80","HLT_HIPuAK4CaloJet100_Eta5p1_v1&&jetpt_akpu3pf>100"}};
   TString triggerrangecorrectionsel[samples][ntriggers]={{"abs(jeteta_akpu3pf[0])<1.6&&jetpt_akpu3pf[0]>40)","abs(jeteta_akpu3pf[0])<1.6&&jetpt_akpu3pf[0]>60","abs(jeteta_akpu3pf[0])<1.6&&jetpt_akpu3pf[0]>80","abs(jeteta_akpu3pf[0])<1.6&&jetpt_akpu3pf[0]>100"},{"abs(jeteta_akpu3pf[0])<1.6&&jetpt_akpu3pf[0]>40)","abs(jeteta_akpu3pf[0])<1.6&&jetpt_akpu3pf[0]>60","abs(jeteta_akpu3pf[0])<1.6&&jetpt_akpu3pf[0]>80","abs(jeteta_akpu3pf[0])<1.6&&jetpt_akpu3pf[0]>100"}};
   
   TString namehjetptspectrumpertrigger[samples][ntriggers];  

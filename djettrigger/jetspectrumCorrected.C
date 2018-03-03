@@ -33,7 +33,6 @@ void jetspectrumCorrected(){
     TH1F *hjetleadingptspectrumpertriggerPresclCorr[samples][ntriggers];  
     TH1F *hjetleadingptspectrumpertriggerEffWeighted[samples][ntriggers];  
 
-    TH1F*htemp=new TH1F("htemp","htemp",2000,0,1000);
  
 	for (int index=0;index<samples;index++){
 		finput[index]=new TFile(namefiles[index].Data(),"read"); 
@@ -44,7 +43,8 @@ void jetspectrumCorrected(){
 
 	  for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
 	  	 if 	(plotturnon[index][indextriggers]==0) continue;
-	  	 		  
+	  	  TH1F*htemp=new TH1F("htemp","htemp",2000,0,1000);
+
 		  cout<<"selectionanalysis"<<selectionanalysis[index][indextriggers].Data()<<endl;
 		  cout<<"expmyweightL1final"<<expmyweightL1final[index][indextriggers].Data()<<endl;
 		  cout<<"expmyweightL1final"<<expmyweightHLTfinal[index][indextriggers].Data()<<endl;
