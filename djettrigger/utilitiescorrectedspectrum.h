@@ -14,8 +14,8 @@
 
 
     //Triggered samples
-  //TString namefiles[samples]={"/mnt/T2_US_MIT/submit-hi2/scratch/jwang/Djets/data/DjetFiles_20180214_pp_5TeV_HighPtLowerJetsHighPtJet80_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614.root","/mnt/T2_US_MIT/submit-hi2/scratch/jwang/Djets/data/DjetFiles_20171120_PbPb_5TeV_HIHardProbes_skimmed_1unit_part1234_26March_20170326_HLTHIPuAK4CaloJet406080.root"}; 
-  TString namefiles[samples]={"/mnt/hadoop/cms/store/user/jwang/Djetsgfal/DjetFiles_20180214_pp_5TeV_HighPtLowerJets_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614/skim_djet_HiForestAOD_1325.root","/mnt/hadoop/cms/store/user/jwang/Djetsgfal/DjetFiles_20171120_PbPb_5TeV_HIHardProbes_skimmed_1unit_part1_26March_20170326/skim_djet_HiForestAOD_1000.root"}; 
+  TString namefiles[samples]={"/mnt/T2_US_MIT/submit-hi2/scratch/jwang/Djets/data/DjetFiles_20180214_pp_5TeV_HighPtLowerJetsHighPtJet80_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614.root","/mnt/T2_US_MIT/submit-hi2/scratch/jwang/Djets/data/DjetFiles_20171120_PbPb_5TeV_HIHardProbes_skimmed_1unit_part1234_26March_20170326_HLTHIPuAK4CaloJet406080.root"}; 
+  //TString namefiles[samples]={"/mnt/hadoop/cms/store/user/jwang/Djetsgfal/DjetFiles_20180214_pp_5TeV_HighPtLowerJets_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614/skim_djet_HiForestAOD_1325.root","/mnt/hadoop/cms/store/user/jwang/Djetsgfal/DjetFiles_20171120_PbPb_5TeV_HIHardProbes_skimmed_1unit_part1_26March_20170326/skim_djet_HiForestAOD_1000.root"}; 
 
   TString nametree[samples]={"djt","djt"};
   TString nametreeHLT[samples]={"hlt","hlt"};
