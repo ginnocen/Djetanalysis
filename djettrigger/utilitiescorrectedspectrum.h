@@ -9,12 +9,17 @@
 
   EColor cols[ntriggers] = {kBlack,kBlue,kRed,kGreen};
   int styles[ntriggers] = {20,21,22,20};
+  
+    int plotturnon[samples][ntriggers]={{0,1,1,0},{0,0,0,0}};
+
 
     //Triggered samples
   TString namefiles[samples]={"/mnt/T2_US_MIT/submit-hi2/scratch/jwang/Djets/data/DjetFiles_20180214_pp_5TeV_HighPtLowerJetsHighPtJet80_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614.root","/mnt/T2_US_MIT/submit-hi2/scratch/jwang/Djets/data/DjetFiles_20171120_PbPb_5TeV_HIHardProbes_skimmed_1unit_part1234_26March_20170326_HLTHIPuAK4CaloJet406080.root"}; 
   TString nametree[samples]={"djt","djt"};
   TString nametreeHLT[samples]={"hlt","hlt"};
   TString namevariable[samples]={"jetpt_akpu3pf","jetpt_akpu3pf"};
+  TString namevariableMB[samples]={"jetpt_akpu3pf[0]","jetpt_akpu3pf[0]"};
+
   
   TString stringweight="1./(0.5*TMath::Erf((jetpt_akpu3pf[0])*%f+%f+TMath::Exp((-(jetpt_akpu3pf[0])^2+%f)/(%f))*(%f))+0.5)";  //[0],[1],[1],[3],[2]
   TString etaselection="abs(jeteta_akpu3pf)<1.6";
