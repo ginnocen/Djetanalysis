@@ -1,3 +1,5 @@
+#include "TMath.h"
+
 TString functionalFormTurnOn= "([3]*TMath::Erf(x*[1]+[2])*0.5*(1-[0])+0.5*(1+[0]))";
 TString functionalFormTurnOnShifted= "([3]*TMath::Erf((x+%f)*[1]+[2])*0.5*(1-[0])+0.5*(1+[0]))";
 
@@ -55,4 +57,32 @@ void initialiseWeights(){
 		expmyweightHLTfinal[index][indextriggers]=Form("1./%s*(jeteta_akpu3pf[0]<1.6&&jetpt_akpu3pf[0]>%f)",expmyHLTfinal[index][indextriggers].Data(),mythresholds[index][indextriggers]);        
         }
     }   
+}
+
+double efficiencyweight(int indexsample, int indextrigger, double jetptmin, double ptleadingjet, double etaleadingjet, int applyptweight){
+  
+  double totaleff=1;
+  double weight=0;
+  double l1eff=1;
+  double hlteff=1;
+  double etaptselection=0.;
+  
+  if (applyptweight==1){l1eff=0.; hlteff=0.;}
+  
+  if (ptleadingjet>=jetptmin && TMath::Abs(etaleadingjet)<=1.6) etaptselection=1.;
+  
+  totaleff=totaleff*etaptselection;
+  
+  if (applyptweight==1){
+
+    l1eff=a3L1[indexsample][indextrigger]*TMath::Erf(ptleadingjet*a1L1[indexsample][indextrigger]+a2L1[indexsample][indextrigger])*0.5*(1-a0L1[indexsample][indextrigger])+0.5*(1+a0L1[indexsample][indextrigger]);
+    hlteff=a3HLT[indexsample][indextrigger]*TMath::Erf(ptleadingjet*a1HLT[indexsample][indextrigger]+a2HLT[indexsample][indextrigger])*0.5*(1-a0HLT[indexsample][indextrigger])+0.5*(1+a0HLT[indexsample][indextrigger]);
+    if (indexsample==1 && indextrigger==1){
+      hlteff=a3HLT[indexsample][3]*TMath::Erf((ptleadingjet+40)*a1HLT[indexsample][3]+a2HLT[indexsample][3])*0.5*(1-a0HLT[indexsample][3])+0.5*(1+a0HLT[indexsample][3]);    
+    }
+  }
+  totaleff=totaleff*l1eff*hlteff;
+  weight=1./totaleff;
+  return weight;
+  
 }

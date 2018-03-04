@@ -1,6 +1,7 @@
 #include "TFile.h"
 #include "TF1.h"
 #include "../utilitiesturnonstudy.h"
+#include "../triggertables.h"
 
 void compare()
 {
@@ -55,6 +56,10 @@ void compare()
 			cHLT[i][j]->SaveAs(Form("HLT%s_crosscheck.pdf",nametriggerselectiontagtriggers[i][j].Data()));
 		}
 	}
+	
+	std::cout<<1./(originalL1[1][1]->Eval(60)*originalHLT[1][1]->Eval(60))<<endl;
+	std::cout<<efficiencyweight(1,1,60,60,-1.0,1)<<endl;
+	
 	fc->Close();
 	fo->Close();
 }
