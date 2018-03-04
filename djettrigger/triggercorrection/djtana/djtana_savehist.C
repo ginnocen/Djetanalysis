@@ -31,6 +31,12 @@ void djtana_savehist(TString inputname, TString outputname,
   int rnentries = (maxevt>0&&maxevt<=nentries)?maxevt:nentries;
   int ncountjet = 0;
   int debug=0;
+  int doeffweight=0;
+  
+  TH1F*hturnon=new TH1F("hturnon","hturnon",1000,0,1000);
+  TH1F*hleadingptspectrum=new TH1F("hleadingptspectrum","hleadingptspectrum",1000,0,1000);
+  TH1F*hleadingptspectrumTriggered=new TH1F("hleadingptspectrumTriggered","hleadingptspectrumTriggered",1000,0,1000);
+  TH1F*hleadingptspectrumCorrected=new TH1F("hleadingptspectrumCorrected","hleadingptspectrumCorrected",1000,0,1000);
 
   int NSMEAR=15;
   for(int i=0;i<rnentries;i++)
@@ -51,27 +57,29 @@ void djtana_savehist(TString inputname, TString outputname,
              leadingjeteta = (**djt.ajeteta[irecogen])[jj];
              }
          }
-      if (debug==1){
-        std::cout<<"**********************"<<std::endl;
-        std::cout<<"leading jet pt"<<leadingjetpt<<std::endl;
-        std::cout<<"leading jet pt original"<<(**djt.ajetpt[irecogen])[0]<<std::endl;
-        std::cout<<"leading jet eta"<<leadingjeteta<<std::endl;
-        std::cout<<"leading jet pt original"<<(**djt.ajeteta[irecogen])[0]<<std::endl;
+     if (doeffweight==1){
+      for (int i=1;i<=1000;i++){
+        double bincenter=hturnon->GetBinCenter(i);
+        double efficiencyweight_=efficiencyweight(1-ispp, 1,bincenter);
+        hturnon->SetBinContent(i,1./efficiencyweight_);
       }
-      
-      int isseelcted=0;
-      if((djt.HLT_AK4Jet60) && leadingjetpt>jetptmin && abs(leadingjeteta)<jetetamax && (djt.HLT_AK4Jet60)) isseelcted=1;
-      if (isseelcted==0) continue;
-      //std::cout<<"event selected"<<std::endl;
-            
+     }
       Int_t ibincent = ispp?0:xjjc::findibin(&centBins, (float)(djt.hiBin/2.));
       if(ibincent<0) {std::cout<<"error: wrong ibincent"<<std::endl; return;}
       Float_t cweight = ispp?1.:centweight[djt.hiBin];
       Float_t evtweight = isMC?(djt.pthatweight*cweight):1.;
-      Float_t effweight = efficiencyweight(ispp-0, 1,jetptmin,leadingjetpt);
+
+      int isseelcted=0;
+      if(!(leadingjetpt>jetptmin && abs(leadingjeteta)<jetetamax)) continue;
+      hleadingptspectrum->Fill(leadingjetpt,evtweight);
+      if(!djt.HLT_AK4Jet60) continue;          
+      hleadingptspectrumTriggered->Fill(leadingjetpt,evtweight);
+      
+      Float_t effweight =1.;
+      if (doeffweight==1) effweight=efficiencyweight(1-ispp, 1,leadingjetpt);  
       std::cout<<"efficiency factor"<<effweight<<std::endl;
       evtweight=evtweight*effweight;
-    
+      hleadingptspectrumCorrected->Fill(leadingjetpt,evtweight);
 
       // loop jets
       for(int jj=0;jj<*(djt.anjet[irecogen]);jj++)
@@ -176,6 +184,10 @@ void djtana_savehist(TString inputname, TString outputname,
   TFile* outf = new TFile(Form("%s.root",outputname.Data()), "recreate");
   outf->cd();
   if(writehists("savehist")) return;
+  hleadingptspectrum->Write();
+  hleadingptspectrumTriggered->Write();
+  hleadingptspectrumCorrected->Write();
+  hturnon->Write();
   outf->Write();
   outf->Close();
 
