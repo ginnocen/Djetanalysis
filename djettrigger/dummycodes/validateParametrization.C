@@ -22,4 +22,5 @@ TF1 *myfL1[samples_][ntriggers_];
           myfHLT[index][indextriggers]->Write(Form("myfHLT_%s",nametriggerselectiontagtriggers[index][indextriggers].Data()));		    		
         }
     }
+fcross->Close();
 }
