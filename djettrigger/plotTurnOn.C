@@ -159,7 +159,7 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
   
 
   for (int indexparam=0;indexparam<nparameterfit;indexparam++){
-    cout<<"double a"<<indexparam<<"L1[samples][ntriggers]={";
+    cout<<"double a"<<indexparam<<"L1[samples_][ntriggers_]={";
 	for (int index=0;index<samples;index++){
       cout<<"{";  		  
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){
@@ -172,7 +172,7 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
     cout<<"};"<<endl;  		  
   }
   for (int indexparam=0;indexparam<nparameterfit;indexparam++){
-    cout<<"double a"<<indexparam<<"HLT[samples][ntriggers]={";
+    cout<<"double a"<<indexparam<<"HLT[samples_][ntriggers_]={";
 	for (int index=0;index<samples;index++){
       cout<<"{";  		  
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){

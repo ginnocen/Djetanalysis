@@ -11,14 +11,14 @@ const int samples_=2;
 const int ntriggers_=4;
 
  
-double a0L1[samples_][ntriggers_]={{0,-0.00363715,-0.0150987,0},{0,-0.0121254,-0.0482677,-0.0644453}};
-double a1L1[samples_][ntriggers_]={{0,0.0798612,0.0849803,0},{0,0.0828111,0.071791,0.0609877}};
-double a2L1[samples_][ntriggers_]={{0,-2.60536,-3.26179,0},{0,-3.4634,-4.24326,-4.43417}};
+double a0L1[samples_][ntriggers_]={{0,-0.00363709,-0.0150987,0},{0,-0.0121254,-0.0482678,-0.0644453}};
+double a1L1[samples_][ntriggers_]={{0,0.0798612,0.0849795,0},{0,0.0828111,0.071791,0.0609876}};
+double a2L1[samples_][ntriggers_]={{0,-2.60536,-3.26177,0},{0,-3.4634,-4.24326,-4.43417}};
 double a3L1[samples_][ntriggers_]={{0,0.995534,0.970328,0},{0,0.979284,0.907791,0.878779}};
-double a0HLT[samples_][ntriggers_]={{0,-0.0138927,-0.0215686,0},{0,0.0191054,-0.0202712,0.00341066}};
-double a1HLT[samples_][ntriggers_]={{0,0.113385,0.101078,0},{0,0.0529121,0.059322,0.0490259}};
-double a2HLT[samples_][ntriggers_]={{0,-6.44714,-7.81461,0},{0,-2.81107,-4.33809,-4.66902}};
-double a3HLT[samples_][ntriggers_]={{0,0.972536,0.956368,0},{0,0.999976,0.942631,0.999858}};
+double a0HLT[samples_][ntriggers_]={{0,-0.0138927,-0.0215687,0},{0,0.0272289,-0.0202727,-0.02348}};
+double a1HLT[samples_][ntriggers_]={{0,0.113385,0.101078,0},{0,0.111628,0.0593221,0.0528735}};
+double a2HLT[samples_][ntriggers_]={{0,-6.44713,-7.81463,0},{0,-5.48996,-4.33808,-4.98271}};
+double a3HLT[samples_][ntriggers_]={{0,0.972536,0.956368,0},{0,0.999846,0.942634,0.942673}};
 
 const int nparameterfit=4;
 double parametersL1fit[samples_][ntriggers_][nparameterfit];
