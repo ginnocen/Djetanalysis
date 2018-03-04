@@ -28,12 +28,15 @@ double parametersHLTfit[samples_][ntriggers_][nparameterfit];
 
 TString expmyL1test[samples_][ntriggers_];
 TString expmyHLTtest[samples_][ntriggers_];
+TString expmyL1HLTtest[samples_][ntriggers_];
 
 TString expmyL1final[samples_][ntriggers_];
 TString expmyHLTfinal[samples_][ntriggers_];
+TString expmyL1HLTfinal[samples_][ntriggers_];
 
 TString expmyweightL1final[samples_][ntriggers_];
 TString expmyweightHLTfinal[samples_][ntriggers_];
+TString expmyweightL1HLTfinal[samples_][ntriggers_];
 
  float mythresholds[samples_][ntriggers_]={{40,60,80,100},{40,60,80,100}};
 
@@ -44,23 +47,28 @@ void initialiseWeights(){
 		for (int indextriggers=0;indextriggers<ntriggers_;indextriggers++){
 		  expmyL1test[index][indextriggers]=Form(functionalFormTurnOnTest.Data(),a3L1[index][indextriggers],a1L1[index][indextriggers],a2L1[index][indextriggers],a0L1[index][indextriggers],a0L1[index][indextriggers]);
 		  expmyHLTtest[index][indextriggers]=Form(functionalFormTurnOnTest.Data(),a3HLT[index][indextriggers],a1HLT[index][indextriggers],a2HLT[index][indextriggers],a0HLT[index][indextriggers],a0HLT[index][indextriggers]);
+		  expmyL1HLTtest[index][indextriggers]=expmyL1test[index][indextriggers]+"*"+expmyHLTtest[index][indextriggers];
 		  expmyL1final[index][indextriggers]=Form(functionalFormTurnOnFinal.Data(),a3L1[index][indextriggers],a1L1[index][indextriggers],a2L1[index][indextriggers],a0L1[index][indextriggers],a0L1[index][indextriggers]);
 		  expmyHLTfinal[index][indextriggers]=Form(functionalFormTurnOnFinal.Data(),a3HLT[index][indextriggers],a1HLT[index][indextriggers],a2HLT[index][indextriggers],a0HLT[index][indextriggers],a0HLT[index][indextriggers]);
+		  expmyL1HLTfinal[index][indextriggers]=expmyL1final[index][indextriggers]+"*"+expmyHLTfinal[index][indextriggers];
+
         }
     }   
     expmyHLTtest[1][1]=Form(functionalFormTurnOnTestShifted.Data(),a3HLT[1][3],a1HLT[1][3],a2HLT[1][3],a0HLT[1][3],a0HLT[1][3]);
+    expmyL1HLTtest[1][1]= expmyL1test[1][1]+"*"+expmyHLTtest[1][1];
     expmyHLTfinal[1][1]=Form(functionalFormTurnOnFinalShifted.Data(),a3HLT[1][3],a1HLT[1][3],a2HLT[1][3],a0HLT[1][3],a0HLT[1][3]);
+    expmyL1HLTfinal[1][1]= expmyL1final[1][1]+"*"+expmyHLTfinal[1][1];
     
 	for (int index=0;index<samples_;index++){
 		for (int indextriggers=0;indextriggers<ntriggers_;indextriggers++){
-		expmyweightL1final[index][indextriggers]=Form("1./%s*(jeteta_akpu3pf[0]<1.6&&jetpt_akpu3pf[0]>%f)",expmyL1final[index][indextriggers].Data(),mythresholds[index][indextriggers]);        
-		expmyweightHLTfinal[index][indextriggers]=Form("1./%s*(jeteta_akpu3pf[0]<1.6&&jetpt_akpu3pf[0]>%f)",expmyHLTfinal[index][indextriggers].Data(),mythresholds[index][indextriggers]);        
+		expmyweightL1final[index][indextriggers]=Form("(1./%s*(jeteta_akpu3pf[0]<1.6&&jetpt_akpu3pf[0]>%f))",expmyL1final[index][indextriggers].Data(),mythresholds[index][indextriggers]);        
+		expmyweightHLTfinal[index][indextriggers]=Form("(1./%s*(jeteta_akpu3pf[0]<1.6&&jetpt_akpu3pf[0]>%f))",expmyHLTfinal[index][indextriggers].Data(),mythresholds[index][indextriggers]);        
+		expmyweightL1HLTfinal[index][indextriggers]=expmyweightL1final[index][indextriggers]+"*"+expmyweightHLTfinal[index][indextriggers];
         }
     }   
 }
 
-double efficiencyweight(int indexsample, int indextrigger, double jetptmin, double ptleadingjet){
-  std::cout<<"I AM USING EFF WEIGTHS"<<std::endl;
+double efficiencyweight(int indexsample, int indextrigger, double ptleadingjet){
   double totaleff=1;
   double weight=0;
   double l1eff=0;

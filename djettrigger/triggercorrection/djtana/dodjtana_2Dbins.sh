@@ -58,7 +58,7 @@ JETPTMAX=(999)
 JETETAMIN=(0.3)
 JETETAMAX=(1.6)
 
-MAXEVT=5000000
+MAXEVT=-1
 
 # nRECOGEN loop
 RECOGEN=('RecoD_RecoJet' 'GenD_RecoJet' 'RecoD_GenJet' 'GenD_GenJet')
