@@ -1,4 +1,5 @@
 #include "djtana.h"
+#include "../../triggertables.h"
 
 void djtana_savehist(TString inputname, TString outputname, 
                      TString collisionsyst, Int_t isMC, Int_t irecogen,
@@ -29,6 +30,7 @@ void djtana_savehist(TString inputname, TString outputname,
   int64_t nentries = djt.fChain->GetEntriesFast();
   int rnentries = (maxevt>0&&maxevt<=nentries)?maxevt:nentries;
   int ncountjet = 0;
+  int debug=0;
 
   int NSMEAR=15;
   for(int i=0;i<rnentries;i++)
@@ -40,18 +42,36 @@ void djtana_savehist(TString inputname, TString outputname,
       //
 
       if(isMC && djt.pthat < 15) continue;
-      // float leadingjetpt = 0;
-      // for(int jj=0;jj<*(djt.anjet[irecogen]);jj++)
-      //   {
-      //     if((**djt.ajetpt[irecogen])[jj]>leadingjetpt)
-      //       leadingjetpt = (**djt.ajetpt[irecogen])[jj];
-      //   }
-      if(!isMC && !djthlt::checkHlt(djt, jetptmin, ispp, fileno)) continue;
-
+       float leadingjetpt = 0;
+       float leadingjeteta = 0;
+       for(int jj=0;jj<*(djt.anjet[irecogen]);jj++)
+         {
+           if((**djt.ajetpt[irecogen])[jj]>leadingjetpt){
+             leadingjetpt = (**djt.ajetpt[irecogen])[jj];
+             leadingjeteta = (**djt.ajeteta[irecogen])[jj];
+             }
+         }
+      if (debug==1){
+        std::cout<<"**********************"<<std::endl;
+        std::cout<<"leading jet pt"<<leadingjetpt<<std::endl;
+        std::cout<<"leading jet pt original"<<(**djt.ajetpt[irecogen])[0]<<std::endl;
+        std::cout<<"leading jet eta"<<leadingjeteta<<std::endl;
+        std::cout<<"leading jet pt original"<<(**djt.ajeteta[irecogen])[0]<<std::endl;
+      }
+      
+      int isseelcted=0;
+      if((djt.HLT_AK4Jet60) && leadingjetpt>jetptmin && abs(leadingjeteta)<jetetamax && (djt.HLT_AK4Jet60)) isseelcted=1;
+      if (isseelcted==0) continue;
+      //std::cout<<"event selected"<<std::endl;
+            
       Int_t ibincent = ispp?0:xjjc::findibin(&centBins, (float)(djt.hiBin/2.));
       if(ibincent<0) {std::cout<<"error: wrong ibincent"<<std::endl; return;}
       Float_t cweight = ispp?1.:centweight[djt.hiBin];
       Float_t evtweight = isMC?(djt.pthatweight*cweight):1.;
+      Float_t effweight = efficiencyweight(ispp-0, 1,jetptmin,leadingjetpt);
+      std::cout<<"efficiency factor"<<effweight<<std::endl;
+      evtweight=evtweight*effweight;
+    
 
       // loop jets
       for(int jj=0;jj<*(djt.anjet[irecogen]);jj++)
