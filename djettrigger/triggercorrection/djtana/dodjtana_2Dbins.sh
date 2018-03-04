@@ -22,18 +22,18 @@ DO_SAVEHIST=${2:-0}
 DO_USEHIST=${3:-0}
 DO_PLOTHIST=${4:-0}
 
-ifScale=1
+ifScale=0
 ifSmearPt=0
 ifSmearPhi=0
 
-CORRSMEAR=1
-CORRFACTOR=1
-SIGNALMC=0
+CORRSMEAR=0
+CORRFACTOR=0
+SIGNALMC=1
 
 # Select the systems the macros run on 
 iCOL=(0 2)
 jJET=(0)
-kRECOGEN=(1)
+kRECOGEN=(3)
 
 ##
 # corrSmear
@@ -50,7 +50,7 @@ tSmearPhi=("woSmearAng" "wSmearAngJet" "wSmearAngJetD")
 # nCOL loop
 COLSYST=('pp' 'pp' 'PbPb' 'PbPb')
 ISMC=(1 0 1 0)
-HLTOPT=("noHLT" "" "noHLT" "")
+HLTOPT=("HLT60test" "" "HLT60test" "")
 
 # nJET loop
 JETPTMIN=(60)
@@ -58,7 +58,7 @@ JETPTMAX=(999)
 JETETAMIN=(0.3)
 JETETAMAX=(1.6)
 
-MAXEVT=-1
+MAXEVT=5000000
 
 # nRECOGEN loop
 RECOGEN=('RecoD_RecoJet' 'GenD_RecoJet' 'RecoD_GenJet' 'GenD_GenJet')
