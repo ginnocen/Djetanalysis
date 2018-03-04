@@ -92,7 +92,7 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 	funcfile->cd();
 
 	for (int index=0;index<samples;index++){
-		canvasnameL1[index]=Form("plottriggers/canvasL1Jetptplot%s.png",labelsamples[index].Data());
+		canvasnameL1[index]=Form("plottriggers/canvasL1Jetptplot%s.pdf",labelsamples[index].Data());
 		cL1[index]=new TCanvas(canvasnameL1[index].Data(),canvasnameL1[index].Data(),600,600);
 		cL1[index]->cd();
 		xjjroot::sethempty(hemptyL1[index],0,0);
@@ -115,7 +115,7 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 	TString canvasnameHLT[samples];
 
 	for (int index=0;index<samples;index++){
-		canvasnameHLT[index]=Form("plottriggers/canvasHLTJetptplot%s.png",labelsamples[index].Data());
+		canvasnameHLT[index]=Form("plottriggers/canvasHLTJetptplot%s.pdf",labelsamples[index].Data());
 		cHLT[index]=new TCanvas(canvasnameHLT[index].Data(),canvasnameHLT[index].Data(),600,600);
 		cHLT[index]->cd();
 		xjjroot::sethempty(hemptyHLT[index],0,0);
@@ -123,9 +123,9 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){
 		if 	(plotturnon[index][indextriggers]==0) continue;
 			xjjroot::setthgrstyle(gHLTefficiency[index][indextriggers],coloursTurnOn[indextriggers],markerstyleTurnOn[indextriggers],1.2,coloursTurnOn[indextriggers],1,1,-1,-1,-1); 
-			gHLTefficiency[index][indextriggers]->Draw("EPsame");
+			if(useextrapolatedturnonHLT[index][indextriggers]==0) gHLTefficiency[index][indextriggers]->Draw("EPsame");
 		    fitErfHLT[index][indextriggers]=(TF1*)fitfunctionErfHLT(gHLTefficiency[index][indextriggers],index,indextriggers);
-		    fitErfHLT[index][indextriggers]->Draw("same");
+		    if(useextrapolatedturnonHLT[index][indextriggers]==0) fitErfHLT[index][indextriggers]->Draw("same");
 		    fitErfHLT[index][indextriggers]->Write(Form("fitErfHLT_%s",nametriggerselectiontagtriggers[index][indextriggers].Data()));
 		}
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){
