@@ -31,7 +31,7 @@ void djtana_savehist(TString inputname, TString outputname,
   int rnentries = (maxevt>0&&maxevt<=nentries)?maxevt:nentries;
   int ncountjet = 0;
   int debug=0;
-  int doeffweight=0;
+  int doeffweight=1;
   
   TH1F*hturnon=new TH1F("hturnon","hturnon",1000,0,1000);
   TH1F*hleadingptspectrum=new TH1F("hleadingptspectrum","hleadingptspectrum",1000,0,1000);
@@ -77,7 +77,6 @@ void djtana_savehist(TString inputname, TString outputname,
       
       Float_t effweight =1.;
       if (doeffweight==1) effweight=efficiencyweight(1-ispp, 1,leadingjetpt);  
-      std::cout<<"efficiency factor"<<effweight<<std::endl;
       evtweight=evtweight*effweight;
       hleadingptspectrumCorrected->Fill(leadingjetpt,evtweight);
 

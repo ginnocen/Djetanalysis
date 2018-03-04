@@ -31,7 +31,7 @@ CORRFACTOR=0
 SIGNALMC=1
 
 # Select the systems the macros run on 
-iCOL=(2)
+iCOL=(0 2)
 jJET=(0)
 kRECOGEN=(3)
 
@@ -58,7 +58,7 @@ JETPTMAX=(999)
 JETETAMIN=(0.3)
 JETETAMAX=(1.6)
 
-MAXEVT=1000000
+MAXEVT=-1
 
 # nRECOGEN loop
 RECOGEN=('RecoD_RecoJet' 'GenD_RecoJet' 'RecoD_GenJet' 'GenD_GenJet')
