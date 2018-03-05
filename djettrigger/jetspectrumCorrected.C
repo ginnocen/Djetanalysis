@@ -107,7 +107,7 @@ void jetspectrumCorrected(){
 		  hjetptspectrumpertriggerEffWeighted[index][indextriggers]->Write();
 		  hjetleadingptspectrumpertriggerEffWeighted[index][indextriggers]->Write();
 		  hjetptspectrumpertriggerPresclCorrEffWeighted[index][indextriggers]->Write();
-		  hjetleadingptspectrumpertriggerPresclCorrEffWeighted[index][indextriggers]->Write()
+		  hjetleadingptspectrumpertriggerPresclCorrEffWeighted[index][indextriggers]->Write();
 
 		}
     }
