@@ -8,9 +8,10 @@
   TString nametriggerselectiontagtriggers[samples][ntriggers]={{"ppHLT40","ppHLT60","ppHLT80","ppHLT100"},{"PbPbHLT40","PbPbHLT60","PbPbHLT80","PbPbHLT100"}};
 
   EColor cols[ntriggers] = {kBlack,kBlue,kRed,kGreen};
+  int effcols[ntriggers] = {920,432,807,845};
   int styles[ntriggers] = {20,21,22,20};
   
-    int plotturnon[samples][ntriggers]={{0,1,1,0},{0,1,1,1}};
+  int plotturnon[samples][ntriggers]={{0,1,1,0},{0,1,1,1}};
 
 
     //Triggered samples
@@ -31,10 +32,14 @@
   
   TString namehjetptspectrumpertrigger[samples][ntriggers];  
   TString namehjetptspectrumpertriggerPresclCorr[samples][ntriggers];  
-  TString namehjetptspectrumpertriggerEffWeighted[samples][ntriggers];  
+  TString namehjetptspectrumpertriggerEffWeighted[samples][ntriggers]; 
+  TString namehjetptspectrumpertriggerPresclCorrEffWeighted[samples][ntriggers];  
+   
   TString namehjetleadingptspectrumpertrigger[samples][ntriggers];  
   TString namehjetleadingptspectrumpertriggerPresclCorr[samples][ntriggers];  
   TString namehjetleadingptspectrumpertriggerEffWeighted[samples][ntriggers];  
+  TString namehjetleadingptspectrumpertriggerPresclCorrEffWeighted[samples][ntriggers];  
+  
 
   double nbins[samples]={2000,2000};
   double lowerrangex[samples]={20.,20.};
@@ -71,9 +76,13 @@ void initialise(){
 		   namehjetptspectrumpertrigger[index][indextriggers]="hjetptspectrumpertrigger"+nametriggerselectiontagtriggers[index][indextriggers]+labelsamples[index];
 		   namehjetptspectrumpertriggerPresclCorr[index][indextriggers]="hjetptspectrumpertriggerPresclCorr"+nametriggerselectiontagtriggers[index][indextriggers]+labelsamples[index];
 		   namehjetptspectrumpertriggerEffWeighted[index][indextriggers]="hjetptspectrumpertriggerEffWeighted"+nametriggerselectiontagtriggers[index][indextriggers]+labelsamples[index];
+       namehjetptspectrumpertriggerPresclCorrEffWeighted[index][indextriggers]="hjetptspectrumpertriggerPresclCorrEffWeighted"+nametriggerselectiontagtriggers[index][indextriggers]+labelsamples[index];
+
 		   namehjetleadingptspectrumpertrigger[index][indextriggers]="hjetleadingptspectrumpertrigger"+nametriggerselectiontagtriggers[index][indextriggers]+labelsamples[index];	
 		   namehjetleadingptspectrumpertriggerPresclCorr[index][indextriggers]="hjetleadingptspectrumpertriggerPresclCorr"+nametriggerselectiontagtriggers[index][indextriggers]+labelsamples[index];
-		   namehjetleadingptspectrumpertriggerEffWeighted[index][indextriggers]="hjetleadingptspectrumpertriggerEffWeighted"+nametriggerselectiontagtriggers[index][indextriggers]+labelsamples[index];	
+		   namehjetleadingptspectrumpertriggerEffWeighted[index][indextriggers]="hjetleadingptspectrumpertriggerEffWeighted"+nametriggerselectiontagtriggers[index][indextriggers]+labelsamples[index];
+       namehjetleadingptspectrumpertriggerPresclCorrEffWeighted[index][indextriggers]="hjetleadingptspectrumpertriggerPresclCorrEffWeighted"+nametriggerselectiontagtriggers[index][indextriggers]+labelsamples[index]; 
+	
 		   selectionanalysis[index][indextriggers]=nametrigger[index][indextriggers]+"&&"+etaselection;
 		   selectionanalysisweightrange[index][indextriggers]=nametrigger[index][indextriggers]+"&&"+etaselection+"&&"+triggerrangecorrectionsel[index][indextriggers];
     }
