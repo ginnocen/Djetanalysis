@@ -27,11 +27,14 @@ void jetspectrumCorrected(){
 
     TH1F *hjetptspectrumpertrigger[samples][ntriggers];  
     TH1F *hjetptspectrumpertriggerPresclCorr[samples][ntriggers];  
-    TH1F *hjetptspectrumpertriggerEffWeighted[samples][ntriggers];  
+    TH1F *hjetptspectrumpertriggerEffWeighted[samples][ntriggers];
+    TH1F *hjetptspectrumpertriggerPresclCorrEffWeighted[samples][ntriggers];
 
     TH1F *hjetleadingptspectrumpertrigger[samples][ntriggers];  
     TH1F *hjetleadingptspectrumpertriggerPresclCorr[samples][ntriggers];  
-    TH1F *hjetleadingptspectrumpertriggerEffWeighted[samples][ntriggers];  
+    TH1F *hjetleadingptspectrumpertriggerEffWeighted[samples][ntriggers];
+    TH1F *hjetleadingptspectrumpertriggerPresclCorrEffWeighted[samples][ntriggers];
+
 
  
 	for (int index=0;index<samples;index++){
@@ -75,6 +78,16 @@ void jetspectrumCorrected(){
 		  hjetleadingptspectrumpertriggerPresclCorr[index][indextriggers]->SetName(namehjetleadingptspectrumpertriggerPresclCorr[index][indextriggers].Data());
 		  hjetleadingptspectrumpertriggerPresclCorr[index][indextriggers]->Sumw2();
 		  hjetleadingptspectrumpertriggerPresclCorr[index][indextriggers]->Scale(1./dataluminosity[index][indextriggers]);
+
+		  hjetptspectrumpertriggerPresclCorrEffWeighted[index][indextriggers]=(TH1F*)hjetptspectrumpertriggerEffWeighted[index][indextriggers]->Clone();
+		  hjetptspectrumpertriggerPresclCorrEffWeighted[index][indextriggers]->SetName(namehjetptspectrumpertriggerPresclCorrEffWeighted[index][indextriggers].Data());
+		  hjetptspectrumpertriggerPresclCorrEffWeighted[index][indextriggers]->Sumw2();
+		  hjetptspectrumpertriggerPresclCorrEffWeighted[index][indextriggers]->Scale(1./dataluminosity[index][indextriggers]);
+		  
+		  hjetleadingptspectrumpertriggerPresclCorrEffWeighted[index][indextriggers]=(TH1F*)hjetleadingptspectrumpertriggerEffWeighted[index][indextriggers]->Clone();
+		  hjetleadingptspectrumpertriggerPresclCorrEffWeighted[index][indextriggers]->SetName(namehjetleadingptspectrumpertriggerPresclCorrEffWeighted[index][indextriggers].Data());
+		  hjetleadingptspectrumpertriggerPresclCorrEffWeighted[index][indextriggers]->Sumw2();
+		  hjetleadingptspectrumpertriggerPresclCorrEffWeighted[index][indextriggers]->Scale(1./dataluminosity[index][indextriggers]);
 		  		
 		}
 	}
@@ -93,6 +106,8 @@ void jetspectrumCorrected(){
 		  hjetleadingptspectrumpertriggerPresclCorr[index][indextriggers]->Write();
 		  hjetptspectrumpertriggerEffWeighted[index][indextriggers]->Write();
 		  hjetleadingptspectrumpertriggerEffWeighted[index][indextriggers]->Write();
+		  hjetptspectrumpertriggerPresclCorrEffWeighted[index][indextriggers]->Write();
+		  hjetleadingptspectrumpertriggerPresclCorrEffWeighted[index][indextriggers]->Write();
 
 		}
     }

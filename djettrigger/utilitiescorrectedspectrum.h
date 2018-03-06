@@ -8,9 +8,10 @@
   TString nametriggerselectiontagtriggers[samples][ntriggers]={{"ppHLT40","ppHLT60","ppHLT80","ppHLT100"},{"PbPbHLT40","PbPbHLT60","PbPbHLT80","PbPbHLT100"}};
 
   EColor cols[ntriggers] = {kBlack,kBlue,kRed,kGreen};
+  int effcols[ntriggers] = {920,432,807,845};
   int styles[ntriggers] = {20,21,22,20};
   
-    int plotturnon[samples][ntriggers]={{0,1,1,0},{0,1,1,1}};
+  int plotturnon[samples][ntriggers]={{0,1,1,0},{0,1,1,0}};
 
 
     //Triggered samples
@@ -26,15 +27,19 @@
   TString stringweight="1./(0.5*TMath::Erf((jetpt_akpu3pf[0])*%f+%f+TMath::Exp((-(jetpt_akpu3pf[0])^2+%f)/(%f))*(%f))+0.5)";  //[0],[1],[1],[3],[2]
   TString etaselection="abs(jeteta_akpu3pf)<1.6";
   //TString nametrigger[samples][ntriggers]={{"fileno==0&&HLT_AK4PFJet40_Eta5p1_v1&&jetpt_akpu3pf>40","fileno==0&&HLT_AK4PFJet60_Eta5p1_v1&&jetpt_akpu3pf>60","fileno==1&&HLT_AK4PFJet80_Eta5p1_v1&&jetpt_akpu3pf>80","fileno==1&&HLT_AK4PFJet100_Eta5p1_v1&&jetpt_akpu3pf>100"},{"HLT_HIPuAK4CaloJet40_Eta5p1_v1&&jetpt_akpu3pf>40","HLT_HIPuAK4CaloJet60_Eta5p1_v1&&jetpt_akpu3pf>60","HLT_HIPuAK4CaloJet80_Eta5p1_v1&&jetpt_akpu3pf>80","HLT_HIPuAK4CaloJet100_Eta5p1_v1&&jetpt_akpu3pf>100"}};
-  TString nametrigger[samples][ntriggers]={{"HLT_AK4PFJet40_Eta5p1_v1&&jetpt_akpu3pf>40","HLT_AK4PFJet60_Eta5p1_v1&&jetpt_akpu3pf>60","HLT_AK4PFJet80_Eta5p1_v1&&jetpt_akpu3pf>80","HLT_AK4PFJet100_Eta5p1_v1&&jetpt_akpu3pf>100"},{"HLT_HIPuAK4CaloJet40_Eta5p1_v1&&jetpt_akpu3pf>40","HLT_HIPuAK4CaloJet60_Eta5p1_v1&&jetpt_akpu3pf>60","HLT_HIPuAK4CaloJet80_Eta5p1_v1&&jetpt_akpu3pf>80","HLT_HIPuAK4CaloJet100_Eta5p1_v1&&jetpt_akpu3pf>100"}};
+  TString nametrigger[samples][ntriggers]={{"fileno==0&&HLT_AK4PFJet40_Eta5p1_v1&&jetpt_akpu3pf>40","fileno==0&&HLT_AK4PFJet60_Eta5p1_v1&&jetpt_akpu3pf>60","fileno==1&&HLT_AK4PFJet80_Eta5p1_v1&&jetpt_akpu3pf>80","fileno==1&&HLT_AK4PFJet100_Eta5p1_v1&&jetpt_akpu3pf>100"},{"HLT_HIPuAK4CaloJet40_Eta5p1_v1&&jetpt_akpu3pf>40","HLT_HIPuAK4CaloJet60_Eta5p1_v1&&jetpt_akpu3pf>60","HLT_HIPuAK4CaloJet80_Eta5p1_v1&&jetpt_akpu3pf>80","HLT_HIPuAK4CaloJet100_Eta5p1_v1&&jetpt_akpu3pf>100"}};
   TString triggerrangecorrectionsel[samples][ntriggers]={{"abs(jeteta_akpu3pf[0])<1.6&&jetpt_akpu3pf[0]>40)","abs(jeteta_akpu3pf[0])<1.6&&jetpt_akpu3pf[0]>60","abs(jeteta_akpu3pf[0])<1.6&&jetpt_akpu3pf[0]>80","abs(jeteta_akpu3pf[0])<1.6&&jetpt_akpu3pf[0]>100"},{"abs(jeteta_akpu3pf[0])<1.6&&jetpt_akpu3pf[0]>40)","abs(jeteta_akpu3pf[0])<1.6&&jetpt_akpu3pf[0]>60","abs(jeteta_akpu3pf[0])<1.6&&jetpt_akpu3pf[0]>80","abs(jeteta_akpu3pf[0])<1.6&&jetpt_akpu3pf[0]>100"}};
   
   TString namehjetptspectrumpertrigger[samples][ntriggers];  
   TString namehjetptspectrumpertriggerPresclCorr[samples][ntriggers];  
-  TString namehjetptspectrumpertriggerEffWeighted[samples][ntriggers];  
+  TString namehjetptspectrumpertriggerEffWeighted[samples][ntriggers]; 
+  TString namehjetptspectrumpertriggerPresclCorrEffWeighted[samples][ntriggers];  
+   
   TString namehjetleadingptspectrumpertrigger[samples][ntriggers];  
   TString namehjetleadingptspectrumpertriggerPresclCorr[samples][ntriggers];  
   TString namehjetleadingptspectrumpertriggerEffWeighted[samples][ntriggers];  
+  TString namehjetleadingptspectrumpertriggerPresclCorrEffWeighted[samples][ntriggers];  
+  
 
   double nbins[samples]={2000,2000};
   double lowerrangex[samples]={20.,20.};
@@ -71,9 +76,13 @@ void initialise(){
 		   namehjetptspectrumpertrigger[index][indextriggers]="hjetptspectrumpertrigger"+nametriggerselectiontagtriggers[index][indextriggers]+labelsamples[index];
 		   namehjetptspectrumpertriggerPresclCorr[index][indextriggers]="hjetptspectrumpertriggerPresclCorr"+nametriggerselectiontagtriggers[index][indextriggers]+labelsamples[index];
 		   namehjetptspectrumpertriggerEffWeighted[index][indextriggers]="hjetptspectrumpertriggerEffWeighted"+nametriggerselectiontagtriggers[index][indextriggers]+labelsamples[index];
+       namehjetptspectrumpertriggerPresclCorrEffWeighted[index][indextriggers]="hjetptspectrumpertriggerPresclCorrEffWeighted"+nametriggerselectiontagtriggers[index][indextriggers]+labelsamples[index];
+
 		   namehjetleadingptspectrumpertrigger[index][indextriggers]="hjetleadingptspectrumpertrigger"+nametriggerselectiontagtriggers[index][indextriggers]+labelsamples[index];	
 		   namehjetleadingptspectrumpertriggerPresclCorr[index][indextriggers]="hjetleadingptspectrumpertriggerPresclCorr"+nametriggerselectiontagtriggers[index][indextriggers]+labelsamples[index];
-		   namehjetleadingptspectrumpertriggerEffWeighted[index][indextriggers]="hjetleadingptspectrumpertriggerEffWeighted"+nametriggerselectiontagtriggers[index][indextriggers]+labelsamples[index];	
+		   namehjetleadingptspectrumpertriggerEffWeighted[index][indextriggers]="hjetleadingptspectrumpertriggerEffWeighted"+nametriggerselectiontagtriggers[index][indextriggers]+labelsamples[index];
+       namehjetleadingptspectrumpertriggerPresclCorrEffWeighted[index][indextriggers]="hjetleadingptspectrumpertriggerPresclCorrEffWeighted"+nametriggerselectiontagtriggers[index][indextriggers]+labelsamples[index]; 
+	
 		   selectionanalysis[index][indextriggers]=nametrigger[index][indextriggers]+"&&"+etaselection;
 		   selectionanalysisweightrange[index][indextriggers]=nametrigger[index][indextriggers]+"&&"+etaselection+"&&"+triggerrangecorrectionsel[index][indextriggers];
     }
