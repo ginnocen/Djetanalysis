@@ -12,17 +12,26 @@ void mcleadingpt()
 	xjjroot::setgstyle();
 
 	TH1F* hleadingptspectrum[samples];
+	TH1F* hleadingptspectrumTriggered[samples];
 	TH1F* hleadingptspectrumCorrected[samples];
 	TH1F* hleadingptspectrumratio[samples];
+	TH1F* hleadingptspectrumTratio[samples];
 
 	hleadingptspectrum[0] = (TH1F*)ppin->Get("hleadingptspectrum");
 	hleadingptspectrum[1] = (TH1F*)PbPbin->Get("hleadingptspectrum");
+	hleadingptspectrumTriggered[0] = (TH1F*)ppin->Get("hleadingptspectrumTriggered");
+	hleadingptspectrumTriggered[1] = (TH1F*)PbPbin->Get("hleadingptspectrumTriggered");
 	hleadingptspectrumCorrected[0] = (TH1F*)ppin->Get("hleadingptspectrumCorrected");
 	hleadingptspectrumCorrected[1] = (TH1F*)PbPbin->Get("hleadingptspectrumCorrected");
 	hleadingptspectrumratio[0]=(TH1F*)hleadingptspectrumCorrected[0]->Clone();
 	hleadingptspectrumratio[1]=(TH1F*)hleadingptspectrumCorrected[0]->Clone();
 	hleadingptspectrumratio[0]->Divide(hleadingptspectrumCorrected[0],hleadingptspectrum[0]);
 	hleadingptspectrumratio[1]->Divide(hleadingptspectrumCorrected[1],hleadingptspectrum[1]);
+	hleadingptspectrumTratio[0]=(TH1F*)hleadingptspectrumCorrected[0]->Clone();
+	hleadingptspectrumTratio[1]=(TH1F*)hleadingptspectrumCorrected[0]->Clone();
+	hleadingptspectrumTratio[0]->Divide(hleadingptspectrumTriggered[0],hleadingptspectrum[0]);
+	hleadingptspectrumTratio[1]->Divide(hleadingptspectrumTriggered[1],hleadingptspectrum[1]);
+
 
 	TCanvas *cppratio = new TCanvas("cppratio","pp",800,800);
 	TCanvas *cPbPbratio = new TCanvas("cPbPbratio","PbPb",800,800);
@@ -60,12 +69,16 @@ void mcleadingpt()
 	xjjroot::sethempty(hempties[0],0,0);
 	hempties[0]->Draw();
 	xjjroot::setthgrstyle(hleadingptspectrum[0],kRed,20,1,kRed,-1,1,-1,0.1,-1);
+	xjjroot::setthgrstyle(hleadingptspectrumTriggered[0],kGreen,20,1,kGreen,-1,1,0.1,-1);
 	xjjroot::setthgrstyle(hleadingptspectrumCorrected[0],kBlue,20,0.8,kBlue,-1,1,-1,0.1,-1);
-	TLegend* legpp = new TLegend(0.75,0.75,0.9,0.9);
+	TLegend* legpp = new TLegend(0.33,0.75,0.9,0.9);
 	hleadingptspectrum[0]->Draw("PE same");
+	hleadingptspectrumTriggered[0]->Draw("PE same");
 	hleadingptspectrumCorrected[0]->Draw("PE same");
 	legpp->AddEntry(hleadingptspectrum[0],"original","lp");
-	legpp->AddEntry(hleadingptspectrumCorrected[0],"corrected","lp");
+	legpp->AddEntry(hleadingptspectrumTriggered[0],"trigger-selected","lp");
+	legpp->AddEntry(hleadingptspectrumCorrected[0],"trigger-selected and corrected","lp");
+	xjjroot::setleg(legpp);
 	legpp->Draw("same");
 	xjjroot::drawCMS("pp");
 	cpp->SaveAs("ppMC.pdf");
@@ -75,12 +88,16 @@ void mcleadingpt()
 	xjjroot::sethempty(hempties[1],0,0);
 	hempties[1]->Draw();
 	xjjroot::setthgrstyle(hleadingptspectrum[1],kRed,20,1,kRed,-1,1,-1,0.1,-1);
+	xjjroot::setthgrstyle(hleadingptspectrumTriggered[1],kGreen,20,1,kGreen,-1,1,0.1,-1);
 	xjjroot::setthgrstyle(hleadingptspectrumCorrected[1],kBlue,20,0.8,kBlue,-1,1,-1,0.1,-1);
-	TLegend* legpbpb = new TLegend(0.75,0.75,0.9,0.9);
-	hleadingptspectrum[0]->Draw("PE same");
-	hleadingptspectrumCorrected[0]->Draw("PE same");
-	legpbpb->AddEntry(hleadingptspectrum[0],"original","lp");
-	legpbpb->AddEntry(hleadingptspectrumCorrected[0],"corrected","lp");
+	TLegend* legpbpb = new TLegend(0.33,0.75,0.9,0.9);
+	hleadingptspectrum[1]->Draw("PE same");
+	hleadingptspectrumTriggered[1]->Draw("PE same");
+	hleadingptspectrumCorrected[1]->Draw("PE same");
+	legpbpb->AddEntry(hleadingptspectrum[1],"original","lp");
+	legpbpb->AddEntry(hleadingptspectrumTriggered[1],"trigger-selected","lp");
+	legpbpb->AddEntry(hleadingptspectrumCorrected[1],"trigger-selected and corrected","lp");
+	xjjroot::setleg(legpbpb);
 	legpbpb->Draw("same");
 	xjjroot::drawCMS("PbPb");
 	cPbPb->SaveAs("PbPbMC.pdf");
