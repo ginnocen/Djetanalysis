@@ -6,7 +6,7 @@
 #include "TRandom3.h"
 #include "TMath.h"
 
-#include "../skim/D_jet_tree.h"
+#include "D_jet_tree_MB.h"
 #include "MBsubtract_config.h"
 
 std::vector <std::vector <std::vector <std::vector <Int_t> > > > get_sorted_events(std::string MBfile, int isMC, int isPP)
@@ -120,7 +120,7 @@ std::vector <std::vector <std::vector <std::vector <Int_t> > > > get_sorted_even
                 if(list[i][j][k].size()<100)
                 {
                     nlowbins++;
-                    lowbinslist.push_back(Form("centbin: %d vzbin: %d evplanebin: %d numevents: %d",i,j,k,list[i][j][k].size()));
+                    lowbinslist.push_back(Form("centbin: %d vzbin: %d evplanebin: %d numevents: %d",i,j,k,(int)list[i][j][k].size()));
                 }
             }
         }
@@ -148,6 +148,10 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::vector <std::vec
     int hiBin;
     float vz;
     float hiEvtPlanes[29];
+
+    int MBhiBin;
+    float MBvz;
+    float MBhiEvtPlanes[29];
 
     //MB tree variables
     int MBnref;
@@ -197,12 +201,21 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::vector <std::vec
         std::cout << "Could not get MB tree. Check MB input file." << std::endl;
         return -2;
     }
+    TTree* MBevt = (TTree*)minbiasfile->Get("hiEvtAnalyzer/HiTree");
+    if(!MBevt)
+    {
+        std::cout << "Could not get MB event tree. Check MB input file." << std::endl;
+    }
     MBjets->SetBranchAddress("nref",&MBnref);
     MBjets->SetBranchAddress("jtpt",MBjetpt);
     //MBjets->SetBranchAddress("rawpt",MBjetpt);
     MBjets->SetBranchAddress("jteta",MBjeteta);
     MBjets->SetBranchAddress("jtphi",MBjetphi);
     MBjets->SetBranchAddress("chargedSum",MBchargedSum);
+
+    MBevt->SetBranchAddress("hiBin",&MBhiBin);
+    MBevt->SetBranchAddress("vz",&MBvz);
+    MBevt->SetBranchAddress("hiEvtPlanes",MBhiEvtPlanes);
 
     TFile* outfile = new TFile(output.c_str(),"recreate");
     //initialize output tree
@@ -216,8 +229,8 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::vector <std::vec
     djtMB_out->SetBranchStatus("*",1); 
     hlt_tree->SetBranchStatus("*",1);
 
-    //int nevents = djt_tree->GetEntries();
-    int nevents=5000;
+    int nevents = djt_tree->GetEntries();
+    //int nevents=5000;
     djtMB_out->CopyAddresses(djt_tree);
     hlt_out->CopyAddresses(hlt_tree);
 
@@ -248,7 +261,7 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::vector <std::vec
         int vzbin = (vz+15)/vzbinwidth;
         //std::cout << "vzbin " << vzbin << std::endl;
         float evplaneBinWidth = TMath::Pi()/nEventPlaneBins;
-        int evplaneBin = (hiEvtPlanes[8]+(TMath::Pi()/2.)) / evplaneBinWidth;
+        int evplaneBin = floor((hiEvtPlanes[8]+(TMath::Pi()/2.)) / evplaneBinWidth);
         //std::cout << "evplaneBin " << evplaneBin << std::endl;
         //std::cout << "bins" << std::endl;
         //MB mixing loop
@@ -266,17 +279,20 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::vector <std::vec
             //MBjets->GetEntry(randindex);
             int entry = listposition[centbin][vzbin][evplaneBin];
             MBjets->GetEntry(list[centbin][vzbin][evplaneBin][entry]);
+            MBevt->GetEntry(list[centbin][vzbin][evplaneBin][entry]);
+            djt.MBhiBin = MBhiBin;
+            djt.MBvz = MBvz;
+            for(int m=0;m<29;m++) djt.MBhiEvtPlanes[m] = MBhiEvtPlanes[m];
             listposition[centbin][vzbin][evplaneBin]++;
             if(entry >= (int)list[centbin][vzbin][evplaneBin].size()) listposition[centbin][vzbin][evplaneBin] = 0;
             //std::cout << "3randentry" << std::endl;
             //replace jet variables with MB jet variables
-            djt.njet_akpu3pf = MBnref;
+            djt.MBnjet_akpu3pf = MBnref;
             //std::cout << MBnref << std::endl;
             //djt.jetptCorr_akpu3pf.clear();
-            djt.jetpt_akpu3pf.clear();
-            djt.jeteta_akpu3pf.clear();
-            djt.jetphi_akpu3pf.clear();
-            djt.chargedSum_akpu3pf.clear();
+            djt.MBjetpt_akpu3pf.clear();
+            djt.MBjeteta_akpu3pf.clear();
+            djt.MBjetphi_akpu3pf.clear();
             //std::cout << "3clear" << std::endl;
             int cutnref = 0;
             for(int k=0;k<MBnref;k++)
@@ -284,10 +300,9 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::vector <std::vec
                 if (MBjetpt[k] > jetptmin && fabs(MBjeteta[k]) < 2.0)
                 {
                     //djt.jetptCorr_akpu3pf.push_back(MBjetptCorr[k]);
-                    djt.jetpt_akpu3pf.push_back(MBjetpt[k]);
-                    djt.jeteta_akpu3pf.push_back(MBjeteta[k]);
-                    djt.jetphi_akpu3pf.push_back(MBjetphi[k]);
-                    djt.chargedSum_akpu3pf.push_back(MBchargedSum[k]);
+                    djt.MBjetpt_akpu3pf.push_back(MBjetpt[k]);
+                    djt.MBjeteta_akpu3pf.push_back(MBjeteta[k]);
+                    djt.MBjetphi_akpu3pf.push_back(MBjetphi[k]);
                     //std::cout << k << " " << MBjetpt[k] << std::endl;
                     //std::cout << "3push" << k << std::endl;
                     cutnref++;
@@ -297,7 +312,7 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::vector <std::vec
                     mixptreject++;
                 }
             }
-            djt.njet_akpu3pf = cutnref; 
+            djt.MBnjet_akpu3pf = cutnref; 
             djtMB_out->Fill();
             hlt_out->Fill();
         }
