@@ -318,8 +318,8 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::vector <std::vec
         }
     }
     outfile->cd();
-    djtMB_out->Write("",TObject::kOverwrite);
-    hlt_out->Write("",TObject::kOverwrite);
+    djtMB_out->Write("");
+    hlt_out->Write("");
     outfile->Close();
     minbiasfile->Close();
     Dfile->Close();

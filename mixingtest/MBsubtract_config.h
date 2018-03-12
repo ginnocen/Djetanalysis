@@ -11,7 +11,7 @@ const int nVertexBins = 5;
 const int nEventPlaneBins = 2;
 int nJetCollections = jetCollections.size();
 const int nEventsToMix = 1;
-float jetptmin=15;
+float jetptmin=20;
 const int maxjets=200;
 
 #endif
