@@ -9,13 +9,13 @@ DOMIX=${1:-0}
 MAKEHISTS=${2:-0}
 DOMBSUB=${3:-0}
 
-DJETPATH="~"
-WORKPATH="~"
+DJETPATH="/mnt/T2_US_MIT/submit-hi2/scratch/jwang/Djets/MC"
+WORKPATH="/mnt/T2_US_MIT/submit-hi2/scratch/mjpeters/Djet/MC"
 #WORKPATH="~/scratchmc"
-MBPATH="~/mbfile/T2_US_MIT/hadoop/cms/store/user/rbi/merged/Hydjet_Quenched_MinBias_5020GeV_750-HINPbPbWinter16DR-NoPU_75X_mcRun2_HeavyIon_forest_v2"
-DJETFILE="djetskim231fix"
+MBPATH="/mnt/hadoop/cms/store/user/rbi/merged/Hydjet_Quenched_MinBias_5020GeV_750-HINPbPbWinter16DR-NoPU_75X_mcRun2_HeavyIon_forest_v2"
+DJETFILE="DjetFiles_20171215_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_Pthat30_20171214"
 MBJETFILE="0"
-MBMIXFILE="djetmix231"
+MBMIXFILE="djetmixfull"
 ISPP=0
 ISMC=1
 

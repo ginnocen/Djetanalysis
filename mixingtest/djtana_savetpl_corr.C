@@ -30,14 +30,14 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
       int njets;
       if(!useMB) njets = *(djt.anjet[irecogen]);
       else njets = *(djt.MBanjet[irecogen]);
-      std::cout << i << " " << njets << std::endl;
       for(int jj=0;jj<njets;jj++)
         {
-          int djtjetsel = djt.isjetselected(jj, djt.ajetopt[irecogen]);
-          if(djtjetsel < 0) return;
-          if(!djtjetsel) continue;
-          //if(!useMB && ((**djt.ajetpt[irecogen])[jj]<jetptmin || fabs((**djt.ajeteta[irecogen])[jj])>2.0)) {ptreject++; continue;}
-          //if(useMB && ((**djt.MBajetpt[irecogen])[jj]<jetptmin || fabs((**djt.MBajeteta[irecogen])[jj])>2.0)) {ptreject++; continue;}
+          //int djtjetsel = djt.isjetselected(jj, djt.ajetopt[irecogen]);
+          //if(djtjetsel < 0) return;
+          //if(!djtjetsel) continue;
+          if((**djt.asubid[irecogen])[jj]!=0) continue;
+          if(!useMB && ((**djt.ajetpt[irecogen])[jj]<jetptmin || fabs((**djt.ajeteta[irecogen])[jj])>1.6)) {ptreject++; continue;}
+          if(useMB && ((**djt.MBajetpt[irecogen])[jj]<jetptmin || fabs((**djt.MBajeteta[irecogen])[jj])>1.6)) {ptreject++; continue;}
           ncountjet++;
           // reco
           if(!useMB)
@@ -50,7 +50,6 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
             hJetPhi->Fill((**djt.MBajetphi[irecogen])[jj]);
             hJetEta->Fill((**djt.MBajeteta[irecogen])[jj]);
           }
-          std::cout << "jetetaphi" << std::endl;
           for(int jd=0;jd<*(djt.anD[irecogen]);jd++)
             {
               Int_t ibinpt = xjjc::findibin(&ptBins, (**djt.aDpt[irecogen])[jd]);
@@ -83,14 +82,14 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
                 hDphivsDtrk1algo[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk1Algo)[jd]);
                 hDphivsDtrk2algo[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk2Algo)[jd]);
               }
-              if((**djt.aDpt[irecogen])[jd]>4.0 && fabs((**djt.aDeta[irecogen])[jd])<2.0)
+              if((**djt.aDpt[irecogen])[jd]>4.0 && fabs((**djt.aDeta[irecogen])[jd])<1.6)
               {
                 if(jj==0) 
                 {
                   hDPhi[ibinpt]->Fill((**djt.aDphi[irecogen])[jd]);
                   hDEta[ibinpt]->Fill((**djt.aDeta[irecogen])[jd]);
                 }
-                if(fabs((**djt.ajeteta[irecogen])[jj]) < 2.0)
+                if((!useMB && fabs((**djt.ajeteta[irecogen])[jj]) < 1.6) || (useMB && fabs((**djt.MBajeteta[irecogen])[jj])<1.6))
                 {
                   hDdelPhi[ibinpt]->Fill(deltaphi);
                   hDdelEta[ibinpt]->Fill(deltaeta);
