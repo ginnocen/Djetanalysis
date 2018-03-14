@@ -11,8 +11,8 @@
   int effcols[ntriggers] = {920,432,807,845};
   int styles[ntriggers] = {20,21,22,20};
   
-  int dospectrum[samples][ntriggers]={{1,1,1,0},{1,1,1,0}};
-  int plotturnon[samples][ntriggers]={{0,1,1,0},{0,1,1,0}};
+  int dospectrum[samples][ntriggers]={{1,1,1,0},{1,1,1,1}};
+  int plotturnon[samples][ntriggers]={{0,1,1,0},{0,1,1,1}};
   int plotratio[samples][ntriggers]={{1,1,1,0},{1,1,1,0}};
 
 
