@@ -9,7 +9,7 @@
   const int nbinsTurnOn=60;
   double bondaries_nbinsTurnOn[nbinsTurnOn+1];
   
-  int plotturnon[samples][ntriggers]={{1,1,1,0},{1,1,1,0}};
+  int plotturnon[samples][ntriggers]={{0,1,1,0},{0,1,1,1}};
 
   float maxL1fitfuncrange[samples][ntriggers]={{150,150,150,150},{150,150,150,150}};
   float maxHLTfitfuncrange[samples][ntriggers]={{150,150,150,150},{150,150,150,150}};
@@ -36,9 +36,9 @@
   TString prescaleselHLTMB[samples][ntriggers]={{"(HLT_AK4PFJet40_Eta5p1_v1_Prescl==1)","(HLT_AK4PFJet60_Eta5p1_v1_Prescl==1)","(HLT_AK4PFJet80_Eta5p1_v1_Prescl==1)","(HLT_AK4PFJet100_Eta5p1_v1_Prescl==1)"},{"1","1","HLT_HIPuAK4CaloJet80_Eta5p1_v1_Prescl==1","HLT_HIPuAK4CaloJet100_Eta5p1_v1_Prescl==1"}};
   TString prescalecorrHLTMB[samples][ntriggers]={{"(1)","(1)","(1)","(1)"},{"(HLT_HIPuAK4CaloJet40_Eta5p1_v2_Prescl)","(HLT_HIPuAK4CaloJet60_Eta5p1_v1_Prescl)","(1)","(1)"}};
    
-  int useextrapolatedturnonHLT[samples][ntriggers]={{0,0,0,0},{1,0,0,0}};
-  int indextriggerreferenceHLT[samples][ntriggers]={{2,-1,-1,-1},{2,2,-1,-1}};
-  double referenceshift[samples][ntriggers]={{40.,0.,0.,0.},{40.,20.,0.,0.}};
+  int useextrapolatedturnonHLT[samples][ntriggers]={{0,0,0,0},{1,1,0,0}};
+  int indextriggerreferenceHLT[samples][ntriggers]={{2,-1,-1,-1},{3,3,-1,-1}};
+  double referenceshift[samples][ntriggers]={{40.,0.,0.,0.},{60.,40.,0.,0.}};
   
   //nTriggers  
   
