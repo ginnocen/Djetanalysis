@@ -1,5 +1,6 @@
 #include "../triggertables.h"
 #include "../utilitiescorrectedspectrum.h"
+#include "../../includes/xjjrootuti.h"
 
 void checktrigger(){
 
@@ -9,9 +10,17 @@ void checktrigger(){
   TString HLTnames[samples][ntriggers] = {{"fileno==0&&HLT_AK4PFJet","fileno==0&&HLT_AK4PFJet","fileno==1&&HLT_AK4PFJet","fileno==1&&HLT_AK4PFJet"},{"HLT_HIPuAK4CaloJet","HLT_HIPuAK4CaloJet","HLT_HIPuAK4CaloJet","HLT_HIPuAK4CaloJet"}};
   TString L1addl[samples][ntriggers] = {{"SingleJet","SingleJet","SingleJet","SingleJet"},{"","SingleS1Jet","SingleJet","SingleS1Jet"}};
   Int_t HLTthresholds[samples][ntriggers] = {{40,60,80,100},{40,60,80,100}};
-
+  TH2F* hempty = new TH2F("hempty",";leading p_{t};Ratio",150,0,150,150,0,2);
+  xjjroot::setgstyle();
+  xjjroot::sethempty(hempty,0,0);
+  initialiseWeights();
+  TCanvas* c[samples];
+  TLegend* l[samples];
   for(int i=0;i<samples;i++)
   {
+    c[i] = new TCanvas(labelsamples[i].Data(),labelsamples[i].Data(),800,800); 
+    hempty->Draw();
+    l[i] = new TLegend(0.75,0.75,0.9,0.9);
     for(int j=1;j<ntriggers;j++) // starting at 1 on purpose: 60/40, 80/60, 100/80, etc.
     {
       if(plotratio[i][j]==0 || plotratio[i][j-1]==0) continue;
@@ -25,8 +34,6 @@ void checktrigger(){
       TH1F*hnum=new TH1F("hnum","hnum",300,0,300);
       TH1F*hden=new TH1F("hden","hden",300,0,300);
       
-      initialiseWeights();
-      
       TString presel1= Form(presel.Data(),HLTthresholds[i][j],HLTnames[i][j-1].Data(),HLTthresholds[i][j-1],HLTnames[i][j].Data(),HLTthresholds[i][j],L1addl[i][j].Data(),L1thresholds[i][j]);
       //std::cout << presel1 << std::endl;
       TString addl = Form(sel.Data(),HLTnames[i][j].Data(),HLTthresholds[i][j]);
@@ -34,16 +41,20 @@ void checktrigger(){
       std::cout << "strings" << std::endl;
       cout<<expmyweightL1final[i][j]<<endl;
       cout<<expmyweightHLTfinal[i][j]<<endl;
-      ttemp->Draw("jetpt_akpu3pf[0]>>hden",TCut(presel1.Data()));
-      ttemp->Draw("jetpt_akpu3pf[0]>>hnum",TCut(sel1.Data())*TCut(expmyweightL1final[i][j])*TCut(expmyweightHLTfinal[i][j]));
+      ttemp->Draw("jetpt_akpu3pf[0]>>hden",TCut(presel1.Data()),"goff");
+      ttemp->Draw("jetpt_akpu3pf[0]>>hnum",TCut(sel1.Data())*TCut(expmyweightL1final[i][j])*TCut(expmyweightHLTfinal[i][j]),"goff");
 
-      TCanvas* c = new TCanvas("c","c",800,800);
+      c[i]->cd();
       TH1F*hRatio=(TH1F*)hnum->Clone("hRatio");
       hRatio->SetName("hRatio");
+      hnum->Sumw2();
+      hden->Sumw2();
       hRatio->Divide(hden);
-      hRatio->Draw();
-      c->SaveAs(Form("HLTRatio%s%d%d.pdf",labelsamples[i].Data(),HLTthresholds[i][j],HLTthresholds[i][j-1]));
+      xjjroot::setthgrstyle(hRatio,cols[j],styles[j],1.2,cols[j],styles[j],1,-1,-1,-1);
+      hRatio->Draw("EP same");
+      l[i]->AddEntry(hRatio,Form("HLT%d/HLT%d",HLTthresholds[i][j],HLTthresholds[i][j-1]),"lp");
     }
+    l[i]->Draw();
+    c[i]->SaveAs(Form("HLTRatio%s.pdf",labelsamples[i].Data()));
   }
 }
-
