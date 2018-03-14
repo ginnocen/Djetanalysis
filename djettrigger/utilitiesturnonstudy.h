@@ -17,7 +17,6 @@
   
   TString labelsamples[samples]={"pp","PbPb"};  
   TString nametriggerselectiontagtriggers[samples][ntriggers]={{"ppHLT40","ppHLT60","ppHLT80","ppHLT100"},{"PbPbHLT40","PbPbHLT60","PbPbHLT80","PbPbHLT100"}};  
-  TString nameL1trigger[samples][ntriggers]={{"L1_SingleJet28_BptxAND","L1_SingleJet40_BptxAND","L1_SingleJet48_BptxAND","L1_SingleJet52_BptxAND"},{"L1_MinimumBiasHF2_AND","L1_SingleS1Jet28_BptxAND","L1_SingleJet44_BptxAND","L1_SingleS1Jet56_BptxAND"}};
 
 
   //MB samples
