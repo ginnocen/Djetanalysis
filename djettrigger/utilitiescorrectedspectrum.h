@@ -12,6 +12,7 @@
   int styles[ntriggers] = {20,21,22,20};
   
   int plotturnon[samples][ntriggers]={{0,1,1,0},{0,1,1,0}};
+  int plotratio[samples][ntriggers]={{1,1,1,0},{1,1,1,0}};
 
 
     //Triggered samples
