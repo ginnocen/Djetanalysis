@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 #include "TFile.h"
 #include "TTree.h"
@@ -46,7 +47,8 @@ std::vector <std::vector <std::vector <std::vector <Int_t> > > > get_sorted_even
     int hiBin;
     float vz;
     float hiEvtPlanes[29];
-
+    ULong64_t event;
+    
     int pcollisionEventSelection;
     int HBHENoiseFilterResultRun2Loose;
     int pPAprimaryVertexFilter;
@@ -55,6 +57,7 @@ std::vector <std::vector <std::vector <std::vector <Int_t> > > > get_sorted_even
     t->SetBranchAddress("hiBin",&hiBin);
     t->SetBranchAddress("vz",&vz);
     t->SetBranchAddress("hiEvtPlanes",hiEvtPlanes);
+    t->SetBranchAddress("evt",&event);
 
     hlt->SetBranchAddress("pcollisionEventSelection",&pcollisionEventSelection);
     hlt->SetBranchAddress("HBHENoiseFilterResultRun2Loose", &HBHENoiseFilterResultRun2Loose);
@@ -106,7 +109,11 @@ std::vector <std::vector <std::vector <std::vector <Int_t> > > > get_sorted_even
             std::cout << i << ": bad evplanebin " << evplaneBin << std::endl;
             continue;
         }
-        list[centbin][vzbin][evplaneBin].push_back(i);
+        if(std::find(event_check.begin(),event_check.end(),event) == event_check.end())
+        {
+            event_check.push_back(event);
+            list[centbin][vzbin][evplaneBin].push_back(i);
+        }
     }
     std::cout << "Event list formed." << std::endl;
     int nlowbins = 0;
@@ -160,6 +167,7 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::vector <std::vec
     Float_t MBjeteta[maxjets];
     Float_t MBjetphi[maxjets];
     Float_t MBchargedSum[maxjets];
+    Int_t MBsubid[maxjets];
 
     /*
     //int outngen_akpu4pf;
@@ -212,6 +220,7 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::vector <std::vec
     MBjets->SetBranchAddress("jteta",MBjeteta);
     MBjets->SetBranchAddress("jtphi",MBjetphi);
     MBjets->SetBranchAddress("chargedSum",MBchargedSum);
+    MBjets->SetBranchAddress("subid",MBsubid);
 
     MBevt->SetBranchAddress("hiBin",&MBhiBin);
     MBevt->SetBranchAddress("vz",&MBvz);
@@ -287,12 +296,12 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::vector <std::vec
             if(entry >= (int)list[centbin][vzbin][evplaneBin].size()) listposition[centbin][vzbin][evplaneBin] = 0;
             //std::cout << "3randentry" << std::endl;
             //replace jet variables with MB jet variables
-            djt.MBnjet_akpu3pf = MBnref;
             //std::cout << MBnref << std::endl;
             //djt.jetptCorr_akpu3pf.clear();
             djt.MBjetpt_akpu3pf.clear();
             djt.MBjeteta_akpu3pf.clear();
             djt.MBjetphi_akpu3pf.clear();
+            djt.MBsubid_akpu3pf.clear();
             //std::cout << "3clear" << std::endl;
             int cutnref = 0;
             for(int k=0;k<MBnref;k++)
@@ -303,6 +312,7 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::vector <std::vec
                     djt.MBjetpt_akpu3pf.push_back(MBjetpt[k]);
                     djt.MBjeteta_akpu3pf.push_back(MBjeteta[k]);
                     djt.MBjetphi_akpu3pf.push_back(MBjetphi[k]);
+                    djt.MBsubid_akpu3pf.push_back(MBsubid[k]);
                     //std::cout << k << " " << MBjetpt[k] << std::endl;
                     //std::cout << "3push" << k << std::endl;
                     cutnref++;
@@ -318,8 +328,8 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::vector <std::vec
         }
     }
     outfile->cd();
-    djtMB_out->Write("");
-    hlt_out->Write("");
+    djtMB_out->Write("", TObject::kOverwrite);
+    hlt_out->Write("", TObject::kOverwrite);
     outfile->Close();
     minbiasfile->Close();
     Dfile->Close();

@@ -108,7 +108,7 @@ void xjjroot::setthgrstyle(T* h, Color_t mcolor/*=-1*/, Style_t mstyle/*=-1*/, S
 
 void xjjroot::drawCMS(TString collision/*=""*/, Float_t xoffset/*=0*/, Float_t yoffset/*=0*/, TString snn/*="5.02"*/, Bool_t drawenergy/*=true*/)
 {
-  TLatex* texCms = new TLatex(0.18+xoffset,0.93+yoffset, "#scale[1.25]{CMS} Preliminary");
+  TLatex* texCms = new TLatex(0.18+xoffset,0.93+yoffset, "#scale[1.25]{CMS} Performance");
   texCms->SetNDC();
   texCms->SetTextAlign(12);
   texCms->SetTextSize(0.04);

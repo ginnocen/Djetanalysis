@@ -94,6 +94,7 @@ class DJetTree {
     std::vector<float> MBjetpt_akpu3pf;
     std::vector<float> MBjeteta_akpu3pf;
     std::vector<float> MBjetphi_akpu3pf;
+    std::vector<int> MBsubid_akpu3pf;
 
     std::vector<int> jetnpfpart_akpu3pf;
     std::vector<float> gjetpt_akpu3pf;
@@ -293,6 +294,7 @@ void DJetTree::create_tree(TTree* t) {
     t->Branch("MBjetpt_akpu3pf", &MBjetpt_akpu3pf);
     t->Branch("MBjeteta_akpu3pf", &MBjeteta_akpu3pf);
     t->Branch("MBjetphi_akpu3pf", &MBjetphi_akpu3pf);
+    t->Branch("MBsubid_akpu3pf", &MBsubid_akpu3pf);
 
     t->Branch("gjetpt_akpu3pf", &gjetpt_akpu3pf);
     t->Branch("gjeteta_akpu3pf", &gjeteta_akpu3pf);
@@ -625,6 +627,11 @@ void DJetTree::clear_vectors() {
     muMax_akpu3pf.clear();
     muSum_akpu3pf.clear();
     muN_akpu3pf.clear();
+
+    MBjetpt_akpu3pf.clear();
+    MBjeteta_akpu3pf.clear();
+    MBjetphi_akpu3pf.clear();
+    MBsubid_akpu3pf.clear();
 
     genpt_akpu3pf.clear();
     geneta_akpu3pf.clear();

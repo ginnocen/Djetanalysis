@@ -34,7 +34,7 @@ public:
   Float_t               hiEvtPlanes[29];
   Float_t               MBhiEvtPlanes[29];
   Int_t                 njet_akpu3pf;
-  Int_t                 MBnjet_akpu3pf;
+  Int_t                 MBnjet_akpe3pf;
   std::vector<float>*   jetptCorr_akpu3pf;
   std::vector<float>*   jetpt_akpu3pf;
   std::vector<float>*   MBjetpt_akpu3pf;
@@ -286,14 +286,14 @@ public:
   // std::vector<int>**     asubid[ncases]    =   {&subid_akpu3pf,       &subid_akpu3pf,       &gensubid_akpu3pf, &gensubid_akpu3pf};
 
   int*                   anjet[ncases]     =   {&njet_akpu3pf,        &njet_akpu3pf,        &njet_akpu3pf,      &njet_akpu3pf};
-  int*                   MBanjet[ncases]   =   {&MBnjet_akpu3pf,      &MBnjet_akpu3pf,      &njet_akpu3pf,      &njet_akpu3pf};
+  int*                   MBanjet[ncases]   =   {&MBnjet_akpu3pf,      &MBnjet_akpu3pf,      &MBnjet_akpu3pf,    &MBnjet_akpu3pf};
   std::vector<float>**   ajetpt[ncases]    =   {&jetpt_akpu3pf,       &jetpt_akpu3pf,       &gjetpt_akpu3pf,    &gjetpt_akpu3pf};
   std::vector<float>**   MBajetpt[ncases]  =   {&MBjetpt_akpu3pf,     &MBjetpt_akpu3pf,     &gjetpt_akpu3pf,    &gjetpt_akpu3pf};
   std::vector<float>**   ajeteta[ncases]   =   {&jeteta_akpu3pf,      &jeteta_akpu3pf,      &gjeteta_akpu3pf,   &gjeteta_akpu3pf};
   std::vector<float>**   MBajeteta[ncases] =   {&MBjeteta_akpu3pf,    &MBjeteta_akpu3pf,    &gjeteta_akpu3pf,   &gjeteta_akpu3pf};
   std::vector<float>**   ajetphi[ncases]   =   {&jetphi_akpu3pf,      &jetphi_akpu3pf,      &gjetphi_akpu3pf,   &gjetphi_akpu3pf};
-  std::vector<float>**   MBajetphi[ncases] =   {&MBjetphi_akpu3pf,    &MBjetphi_akpu3pf,    &gjetphi_akpu3pf,   &gjetphi_akpu3pf};
-  std::vector<int>**     asubid[ncases]    =   {&subid_akpu3pf,       &subid_akpu3pf,       &subid_akpu3pf,     &subid_akpu3pf};
+  std::vector<float>**   MBajetphi[ncases] =   {&MBjetphi_akpu3pf,    &MBjetphi_akpu3pf,    &MBjetphi_akpu3pf,  &MBjetphi_akpu3pf};
+  std::vector<int>**     asubid[ncases]    =   {&subid_akpu3pf,       &subid_akpu3pf,       &subid_akpu3pf, &subid_akpu3pf};
 
   Int_t HLT_AK4Jet40;
   Int_t HLT_AK4Jet60;
@@ -394,11 +394,8 @@ void djet::Init(TTree *tree, TTree *hlt)
   // Set object pointer
   jetptCorr_akpu3pf = 0;
   jetpt_akpu3pf = 0;
-  MBjetpt_akpu3pf = 0;
   jeteta_akpu3pf = 0;
-  MBjeteta_akpu3pf = 0;
   jetphi_akpu3pf = 0;
-  MBjetphi_akpu3pf = 0;
   jetnpfpart_akpu3pf = 0;
   gjetpt_akpu3pf = 0;
   gjeteta_akpu3pf = 0;
@@ -969,7 +966,7 @@ int djet::isDselected(int j, Option_t* option)
 
 int djet::isjetselected(int j, Option_t* option)
 {
-    TString opt  = option;
+  TString opt  = option;
   opt.ToLower();
   if((opt.Contains("r") && opt.Contains("g")) ||
     (opt.Contains("r") && opt.Contains("m")) ||
@@ -990,7 +987,7 @@ int djet::isjetselected(int j, Option_t* option)
     }
   if(opt.Contains("m"))
     {
-      if((*MBjetpt_akpu3pf)[j] > cut_jetpt_min &&
+      if((*MBjetpt_akpu3pf)[j]<cut_jetpt_min &&
         TMath::Abs((*MBjeteta_akpu3pf)[j]) > cut_jeteta_min && TMath::Abs((*MBjeteta_akpu3pf)[j]) < cut_jeteta_max) return 1;
       else return 0;
     }

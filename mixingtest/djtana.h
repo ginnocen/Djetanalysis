@@ -6,6 +6,7 @@
 #include "../includes/xjjcuti.h"
 #include "../includes/xjjrootuti.h"
 #include "../includes/dfitter.h"
+#include "../includes/djtcorr.h"
 #include <iostream>
 #include <iomanip>
 #include <TMath.h>
@@ -80,10 +81,10 @@ int createhists(Option_t* option)
       hNjets = new TH1F("hNjets", "", 1, 0, 1); // ... is it necessary
       for(int i=0;i<nPtBins;i++)
         {
-          hDPhi[i]=new TH1F(Form("hDPhi_pt_%d",i),";#phi;",100,-TMath::Pi(),TMath::Pi());
-          hDEta[i]=new TH1F(Form("hDEta_pt_%d",i),";#eta;",100,-2.,2.);
-          hDdelPhi[i]=new TH1F(Form("hDdelPhi_pt_%d",i),";#Delta#phi;",100,0.,TMath::Pi());
-          hDdelEta[i]=new TH1F(Form("hDdelEta_pt_%d",i),";#Delta#eta;",100,-4.,4.);
+          hDPhi[i]=new TH1F(Form("hDPhi_pt_%d",i),";#phi;",20,-TMath::Pi(),TMath::Pi());
+          hDEta[i]=new TH1F(Form("hDEta_pt_%d",i),";#eta;",20,-2.,2.);
+          hDdelPhi[i]=new TH1F(Form("hDdelPhi_pt_%d",i),";#Delta#phi;",20,0.,TMath::Pi());
+          hDdelEta[i]=new TH1F(Form("hDdelEta_pt_%d",i),";#Delta#eta;",20,-4.,4.);
           hCorr[i]=new TH2F(Form("hCorr_pt_%d",i),";#Delta#eta;#Delta#phi;",100,-4.,4.,50,0.,TMath::Pi());
           hDphivsDtrk1hit[i]=new TH2F(Form("hDphivsDtrk1hit_pt_%d",i),";#phi;Dtrk1PixelHit",100,-TMath::Pi(),TMath::Pi(),50,0.,50.);
           hDphivsDtrk2hit[i]=new TH2F(Form("hDphivsDtrk2hit_pt_%d",i),";#phi;Dtrk2PixelHit",100,-TMath::Pi(),TMath::Pi(),50,0.,50.);
@@ -313,6 +314,7 @@ int gethists(TFile* inf, Option_t* option)
           hDphivsDtrk2algo[i] = (TH2F*)inf->Get(Form("hDphivsDtrk2algo_pt_%d",i));
           for(int l=0;l<nRefBins;l++)
             {
+              ahNumREfficiency[l][i] = (TH1F*)inf->Get(Form("hNumREfficiency_%s_pt_%d",tRef[l].Data(),i));
               ahSignalRnorm[l][i] = (TH1F*)inf->Get(Form("hSignalRnorm_%s_pt_%d",tRef[l].Data(),i));
               ahSignalZnorm[l][i] = (TH1F*)inf->Get(Form("hSignalZnorm_%s_pt_%d",tRef[l].Data(),i));
             }
