@@ -18,6 +18,7 @@ MBJETFILE="0"
 MBMIXFILE="djetmixfull"
 ISPP=0
 ISMC=1
+OUTFILE="MBsubtract_out"
 
 if [[ $DOMIX -eq 1 ]]
 then

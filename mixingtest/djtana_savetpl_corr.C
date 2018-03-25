@@ -97,7 +97,6 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
                 hDphivsDtrk1algo[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk1Algo)[jd]);
                 hDphivsDtrk2algo[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk2Algo)[jd]);
               }
-                for(int i=0;i<nPtBins;i++)norm[i]=nentries;
               //if((**djt.aDpt[irecogen])[jd]>2.0 && fabs((**djt.aDeta[irecogen])[jd])<1.6)
               //{
                 //if((!useMB && fabs((**djt.ajeteta[irecogen])[jj]) < 1.6) || (useMB && fabs((**djt.MBajeteta[irecogen])[jj])<1.6))

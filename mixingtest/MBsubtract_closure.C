@@ -1,7 +1,7 @@
 #include "djtana.h"
 #include "TVector.h"
 
-int MBsubtract_closure(std::string Djetfile, std::string mixfile, std::string genfile, std::string bkgdfile, std::string output)
+int MBsubtract_closure(std::string Djetfile, std::string mixfile, std::string genfile, std::string output)
 {
     //grab Djet data
     TFile* djf = TFile::Open(Djetfile.c_str(),"read");
@@ -37,6 +37,7 @@ int MBsubtract_closure(std::string Djetfile, std::string mixfile, std::string ge
         //nD_gen[i] = hdr[i]->GetEntries();
         std::cout << i << " " << nD_gen[i] << " " << hJetPhi->GetEntries() << " " << hDdelPhi[i]->GetEntries() << std::endl;
     }
+/*
     TFile* bkgf = TFile::Open(bkgdfile.c_str(),"read");
     if(gethists(bkgf,"plothist")) return -1;
     TH1F* bkg_dr[nPtBins];
@@ -47,6 +48,7 @@ int MBsubtract_closure(std::string Djetfile, std::string mixfile, std::string ge
         //nD_gen[i] = hdr[i]->GetEntries();
         std::cout << i << " " << nD_gen[i] << " " << hJetPhi->GetEntries() << " " << hDdelPhi[i]->GetEntries() << std::endl;
     }
+*/
     //scale by number of D candidates and make MB-subtracted hists
     TH1F* MBsub_dr[nPtBins];
     TCanvas* c = new TCanvas("c","",600,600);
@@ -83,9 +85,9 @@ int MBsubtract_closure(std::string Djetfile, std::string mixfile, std::string ge
         mix_dr[i]->Draw("pe same");
         xjjroot::setthgrstyle(gen_dr[i],kGreen,20,1.2,kGreen,1,1,-1,-1,-1);
         gen_dr[i]->Draw("pe same");
-        xjjroot::setthgrstyle(bkg_dr[i],kOrange,20,1.2,kOrange,1,1,-1,-1,-1);
+        //xjjroot::setthgrstyle(bkg_dr[i],kOrange,20,1.2,kOrange,1,1,-1,-1,-1);
         //bkg_dr[i]->Draw("pe same");
-        xjjroot::setthgrstyle(closure[i],kGray,20,1.2,kGray,1,1,-1,-1,-1);
+        //xjjroot::setthgrstyle(closure[i],kGray,20,1.2,kGray,1,1,-1,-1,-1);
         //closure[i]->Draw("pe same");
         l[i] = new TLegend(0.75,0.6,0.9,0.7);
         l[i]->AddEntry(Djet_dr[i],"Raw","l");
