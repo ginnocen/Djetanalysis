@@ -125,7 +125,7 @@ void makespectrumplots()
             leg[k][i]->SetFillStyle(0);
     		leg[k][i]->Draw();
     		xjjroot::drawCMS(samplenames[i].c_str());
-    		c[k][i]->SaveAs(Form("%s%s.pdf",titles[k].c_str(),samplenames[i].c_str()));
+    		c[k][i]->SaveAs(Form("plotspectra/%s%s.pdf",titles[k].c_str(),samplenames[i].c_str()));
     	}
     }
 }

@@ -37,8 +37,8 @@
   TString prescalecorrHLTMB[samples][ntriggers]={{"(1)","(1)","(1)","(1)"},{"(HLT_HIPuAK4CaloJet40_Eta5p1_v2_Prescl)","(HLT_HIPuAK4CaloJet60_Eta5p1_v1_Prescl)","(1)","(1)"}};
    
   int useextrapolatedturnonHLT[samples][ntriggers]={{0,0,0,0},{1,1,0,0}};
-  int indextriggerreferenceHLT[samples][ntriggers]={{-1,-1,-1,-1},{3,3,-1,-1}};
-  double referenceshift[samples][ntriggers]={{0.,0.,0.,0.},{60.,40.,0.,0.}};
+  int indextriggerreferenceHLT[samples][ntriggers]={{2,-1,-1,-1},{3,3,-1,-1}};
+  double referenceshift[samples][ntriggers]={{40.,0.,0.,0.},{60.,40.,0.,0.}};
   
   //nTriggers  
   

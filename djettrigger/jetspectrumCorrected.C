@@ -45,7 +45,7 @@ void jetspectrumCorrected(){
 		ttemp->AddFriend(ttempHLT);
 
 	  for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
-	  	 if 	(plotturnon[index][indextriggers]==0) continue;
+	  	 if 	(dospectrum[index][indextriggers]==0) continue;
 	  	  TH1F*htemp=new TH1F("htemp","htemp",2000,0,1000);
 
 		  cout<<"selectionanalysis"<<selectionanalysis[index][indextriggers].Data()<<endl;
@@ -98,7 +98,7 @@ void jetspectrumCorrected(){
 	for (int index=0;index<samples;index++){		
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
 
-	  	 if 	(plotturnon[index][indextriggers]==0) continue;
+	  	 if 	(dospectrum[index][indextriggers]==0) continue;
 
 		  hjetptspectrumpertrigger[index][indextriggers]->Write();
 		  hjetleadingptspectrumpertrigger[index][indextriggers]->Write();
