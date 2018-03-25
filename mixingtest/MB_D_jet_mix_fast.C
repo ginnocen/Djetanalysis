@@ -109,11 +109,7 @@ std::vector <std::vector <std::vector <std::vector <Int_t> > > > get_sorted_even
             std::cout << i << ": bad evplanebin " << evplaneBin << std::endl;
             continue;
         }
-        if(std::find(event_check.begin(),event_check.end(),event) == event_check.end())
-        {
-            event_check.push_back(event);
-            list[centbin][vzbin][evplaneBin].push_back(i);
-        }
+        list[centbin][vzbin][evplaneBin].push_back(i);
     }
     std::cout << "Event list formed." << std::endl;
     int nlowbins = 0;
