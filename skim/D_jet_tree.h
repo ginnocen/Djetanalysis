@@ -24,6 +24,8 @@ class DJetTree {
 
         njet_akpu3pf = 0;
         njet_akpu4pf = 0;
+        
+        nmix = 0;
 
         RunNo = -99;
         EvtNo = -99;
@@ -252,7 +254,15 @@ class DJetTree {
     std::vector<float>     Gtk2eta;
     std::vector<float>     Gtk2y;
     std::vector<float>     Gtk2phi;
-
+    
+    
+    int nmix;
+    float dvz_mix[nEventsToMix];
+    int dhiBin_mix[nEventsToMix];
+    float dhiEvtPlanes_mix[nEventsToMix];
+    UInt_t run_mix[nEventsToMix];
+    ULong64_t evt_mix[nEventsToMix];
+    UInt_t lumi_mix[nEventsToMix];
 };
 
 void DJetTree::create_tree(TTree* t) {
@@ -441,6 +451,14 @@ void DJetTree::create_tree(TTree* t) {
     t->Branch("Gtk2eta",&Gtk2eta);
     t->Branch("Gtk2y",&Gtk2y);
     t->Branch("Gtk2phi",&Gtk2phi);
+    
+    t->Branch("nmix", &nmix, "nmix/I");
+    t->Branch("dvz_mix", dvz_mix, "dvz_mix[nmix]/F");
+    t->Branch("dhiBin_mix", dhiBin_mix, "dhiBin_mix[nmix]/I");
+    t->Branch("dhiEvtPlanes_mix", dhiEvtPlanes_mix, "dhiEvtPlanes_mix[nmix]/F");
+    t->Branch("run_mix", run_mix, "run_mix[nmix]/i");
+    t->Branch("evt_mix", evt_mix, "evt_mix[nmix]/l");
+    t->Branch("lumi_mix", lumi_mix, "lumi_mix[nmix]/i");
 
 }
 
