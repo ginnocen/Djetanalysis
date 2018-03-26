@@ -263,6 +263,41 @@ class DJetTree {
     UInt_t run_mix[nEventsToMix];
     ULong64_t evt_mix[nEventsToMix];
     UInt_t lumi_mix[nEventsToMix];
+
+    int njet_akpu3pf_mix;
+    std::vector<float> jetptCorr_akpu3pf_mix;
+    std::vector<float> jetrawpt_akpu3pf_mix;
+    std::vector<float> jetpt_akpu3pf_mix;
+    std::vector<float> jeteta_akpu3pf_mix;
+    std::vector<float> jetphi_akpu3pf_mix;
+    std::vector<int> jetnpfpart_akpu3pf_mix;
+    std::vector<float> gjetpt_akpu3pf_mix;
+    std::vector<float> gjeteta_akpu3pf_mix;
+    std::vector<float> gjetphi_akpu3pf_mix;
+    std::vector<int> gjetflavor_akpu3pf_mix;
+    std::vector<int> subid_akpu3pf_mix;
+    std::vector<float> chargedMax_akpu3pf_mix;
+    std::vector<float> chargedSum_akpu3pf_mix;
+    std::vector<int> chargedN_akpu3pf_mix;
+    std::vector<float> photonMax_akpu3pf_mix;
+    std::vector<float> photonSum_akpu3pf_mix;
+    std::vector<int> photonN_akpu3pf_mix;
+    std::vector<float> neutralMax_akpu3pf_mix;
+    std::vector<float> neutralSum_akpu3pf_mix;
+    std::vector<int> neutralN_akpu3pf_mix;
+    std::vector<float> eMax_akpu3pf_mix;
+    std::vector<float> eSum_akpu3pf_mix;
+    std::vector<int> eN_akpu3pf_mix;
+    std::vector<float> muMax_akpu3pf_mix;
+    std::vector<float> muSum_akpu3pf_mix;
+    std::vector<int> muN_akpu3pf_mix;
+
+    int ngen_akpu3pf_mix;
+    std::vector<float> genpt_akpu3pf_mix;
+    std::vector<float> geneta_akpu3pf_mix;
+    std::vector<float> genphi_akpu3pf_mix;
+    std::vector<int> gensubid_akpu3pf_mix;
+
 };
 
 void DJetTree::create_tree(TTree* t) {
@@ -459,6 +494,41 @@ void DJetTree::create_tree(TTree* t) {
     t->Branch("run_mix", run_mix, "run_mix[nmix]/i");
     t->Branch("evt_mix", evt_mix, "evt_mix[nmix]/l");
     t->Branch("lumi_mix", lumi_mix, "lumi_mix[nmix]/i");
+
+
+    t->Branch("njet_akpu3pf_mix", &njet_akpu3pf_mix, "njet_akpu3pf_mix/I");
+    t->Branch("jetptCorr_akpu3pf_mix", &jetptCorr_akpu3pf_mix);
+    t->Branch("jetpt_akpu3pf_mix", &jetpt_akpu3pf_mix);
+    t->Branch("jetrawpt_akpu3pf_mix", &jetrawpt_akpu3pf_mix);
+    t->Branch("jeteta_akpu3pf_mix", &jeteta_akpu3pf_mix);
+    t->Branch("jetphi_akpu3pf_mix", &jetphi_akpu3pf_mix);
+    t->Branch("jetnpfpart_akpu3pf_mix", &jetnpfpart_akpu3pf_mix);
+    t->Branch("gjetpt_akpu3pf_mix", &gjetpt_akpu3pf_mix);
+    t->Branch("gjeteta_akpu3pf_mix", &gjeteta_akpu3pf_mix);
+    t->Branch("gjetphi_akpu3pf_mix", &gjetphi_akpu3pf_mix);
+    t->Branch("gjetflavor_akpu3pf_mix", &gjetflavor_akpu3pf_mix);
+    t->Branch("subid_akpu3pf_mix", &subid_akpu3pf_mix);
+    t->Branch("chargedMax_akpu3pf_mix", &chargedMax_akpu3pf_mix);
+    t->Branch("chargedSum_akpu3pf_mix", &chargedSum_akpu3pf_mix);
+    t->Branch("chargedN_akpu3pf_mix", &chargedN_akpu3pf_mix);
+    t->Branch("photonMax_akpu3pf_mix", &photonMax_akpu3pf_mix);
+    t->Branch("photonSum_akpu3pf_mix", &photonSum_akpu3pf_mix);
+    t->Branch("photonN_akpu3pf_mix", &photonN_akpu3pf_mix);
+    t->Branch("neutralMax_akpu3pf_mix", &neutralMax_akpu3pf_mix);
+    t->Branch("neutralSum_akpu3pf_mix", &neutralSum_akpu3pf_mix);
+    t->Branch("neutralN_akpu3pf_mix", &neutralN_akpu3pf_mix);
+    t->Branch("eMax_akpu3pf_mix", &eMax_akpu3pf_mix);
+    t->Branch("eSum_akpu3pf_mix", &eSum_akpu3pf_mix);
+    t->Branch("eN_akpu3pf_mix", &eN_akpu3pf_mix);
+    t->Branch("muMax_akpu3pf_mix", &muMax_akpu3pf_mix);
+    t->Branch("muSum_akpu3pf_mix", &muSum_akpu3pf_mix);
+    t->Branch("muN_akpu3pf_mix", &muN_akpu3pf_mix);
+
+    t->Branch("ngen_akpu3pf_mix", &ngen_akpu3pf_mix, "ngen_akpu3pf_mix/I");
+    t->Branch("genpt_akpu3pf_mix", &genpt_akpu3pf_mix);
+    t->Branch("geneta_akpu3pf_mix", &geneta_akpu3pf_mix);
+    t->Branch("genphi_akpu3pf_mix", &genphi_akpu3pf_mix);
+    t->Branch("gensubid_akpu3pf_mix", &gensubid_akpu3pf_mix);
 
 }
 
@@ -740,6 +810,39 @@ void DJetTree::clear_vectors() {
     Gtk2eta.clear();
     Gtk2y.clear();
     Gtk2phi.clear();
+    
+    jetptCorr_akpu3pf_mix.clear();
+    jetpt_akpu3pf_mix.clear();
+    jetrawpt_akpu3pf_mix.clear();
+    jeteta_akpu3pf_mix.clear();
+    jetphi_akpu3pf_mix.clear();
+    jetnpfpart_akpu3pf_mix.clear();
+    gjetpt_akpu3pf_mix.clear();
+    gjeteta_akpu3pf_mix.clear();
+    gjetphi_akpu3pf_mix.clear();
+    gjetflavor_akpu3pf_mix.clear();
+    subid_akpu3pf_mix.clear();
+    chargedMax_akpu3pf_mix.clear();
+    chargedSum_akpu3pf_mix.clear();
+    chargedN_akpu3pf_mix.clear();
+    photonMax_akpu3pf_mix.clear();
+    photonSum_akpu3pf_mix.clear();
+    photonN_akpu3pf_mix.clear();
+    neutralMax_akpu3pf_mix.clear();
+    neutralSum_akpu3pf_mix.clear();
+    neutralN_akpu3pf_mix.clear();
+    eMax_akpu3pf_mix.clear();
+    eSum_akpu3pf_mix.clear();
+    eN_akpu3pf_mix.clear();
+    muMax_akpu3pf_mix.clear();
+    muSum_akpu3pf_mix.clear();
+    muN_akpu3pf_mix.clear();
+
+    genpt_akpu3pf_mix.clear();
+    geneta_akpu3pf_mix.clear();
+    genphi_akpu3pf_mix.clear();
+    gensubid_akpu3pf_mix.clear();
+    
 }
 
 void DJetTree::set_hlt_tree(TTree* ht, Bool_t isPP)
