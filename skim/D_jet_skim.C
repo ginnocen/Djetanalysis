@@ -18,7 +18,7 @@
 
 static const double pi = 3.141592653589793238462643383279502884;
 
-int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, float jetptmin = 10, int start = 0, int end = -1) {
+int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, float jetptmin = 10, int start = 0, int end = -1, std::string mixing_file = "") {
   bool isHI = !isPP;
 
   /**********************************************************
@@ -290,6 +290,8 @@ int main(int argc, char* argv[]) {
     return D_jet_skim(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), atof(argv[5]), atoi(argv[6]));
   else if (argc == 8)
     return D_jet_skim(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), atof(argv[5]), atoi(argv[6]), atoi(argv[7]));
+  else if (argc == 9)
+    return D_jet_skim(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), atof(argv[5]), atoi(argv[6]), atoi(argv[7]),argv[8]);
   else
     printf("Usage: ./D_jet_skim.exe [input] [output] [isPP] [isMC] [jetptmin] [start] [end]\n");
 
