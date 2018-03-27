@@ -18,10 +18,13 @@
 #include <fstream>
 #include <iostream>
 
+const int nHiBins = 200;
+const int nVzBins = 30;
+const int nEventPlaneBins = 16;
 
 static const double pi = 3.141592653589793238462643383279502884;
 
-int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, float jetptmin = 10, int start = 0, int end = -1, std::string mixing_file = "listmixing.list") {
+int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, float jetptmin = 10, int start = 0, int end = -1, std::string mixing_file = "listmixing.list",int jobIndex = -1) {
   bool isHI = !isPP;
 
   /**********************************************************
@@ -130,6 +133,87 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
 
   int nMixFiles = (int)mixing_list.size();
   std::cout<<"number of files"<<nMixFiles<<std::endl;
+  
+
+  TFile* fmixing[nMixFiles] = {0};
+  TTree* event_tree_mix[nMixFiles] = {0};
+  TTree* skim_tree_mix[nMixFiles] = {0};
+  TTree* jet_tree_akpu3pf_mix[nMixFiles] = {0};
+
+  jetTree jt_akpu3pf_mix[nMixFiles];
+
+  int hiBin_mix;
+  float vz_mix;
+  float hiEvtPlanes_mix[29];
+  UInt_t run_mix;
+  ULong64_t evt_mix;
+  UInt_t lumi_mix;
+
+  int pcollisionEventSelection_mix;
+  int HBHENoiseFilterResultRun2Loose_mix;
+  int pPAprimaryVertexFilter_mix;
+  int pBeamScrapingFilter_mix;
+
+
+  if (!isPP && !mixing_file.empty() && mixing_file != "null") {
+    for (int jmbfile = 0; jmbfile < nMixFiles; ++jmbfile) {
+      fmixing[jmbfile] = TFile::Open(mixing_list[jmbfile].c_str(), "read");
+
+      event_tree_mix[jmbfile] = (TTree*)fmixing[jmbfile]->Get("hiEvtAnalyzer/HiTree");
+      if (!event_tree_mix[jmbfile]) { printf("Could not access event tree!\n"); return 1; }
+      event_tree_mix[jmbfile]->SetBranchStatus("*", 0);
+      _SET_BRANCH_ADDRESS(event_tree_mix[jmbfile], hiBin, hiBin_mix);
+      _SET_BRANCH_ADDRESS(event_tree_mix[jmbfile], vz, vz_mix);
+      _SET_BRANCH_ADDRESS(event_tree_mix[jmbfile], hiEvtPlanes, hiEvtPlanes_mix);
+      _SET_BRANCH_ADDRESS(event_tree_mix[jmbfile], run, run_mix);
+      _SET_BRANCH_ADDRESS(event_tree_mix[jmbfile], evt, evt_mix);
+      _SET_BRANCH_ADDRESS(event_tree_mix[jmbfile], lumi, lumi_mix);
+
+      skim_tree_mix[jmbfile] = (TTree*)fmixing[jmbfile]->Get("skimanalysis/HltTree");
+      if (!skim_tree_mix[jmbfile]) { printf("Could not access skim tree!\n"); return 1; }
+      skim_tree_mix[jmbfile]->SetBranchStatus("*", 0);
+      _SET_BRANCH_ADDRESS(skim_tree_mix[jmbfile], pcollisionEventSelection, pcollisionEventSelection_mix);
+      _SET_BRANCH_ADDRESS(skim_tree_mix[jmbfile], HBHENoiseFilterResultRun2Loose, HBHENoiseFilterResultRun2Loose_mix);
+      _SET_BRANCH_ADDRESS(skim_tree_mix[jmbfile], pPAprimaryVertexFilter, pPAprimaryVertexFilter_mix);
+      _SET_BRANCH_ADDRESS(skim_tree_mix[jmbfile], pBeamScrapingFilter, pBeamScrapingFilter_mix);
+
+
+
+      if (isPP) jet_tree_akpu3pf_mix[jmbfile] = (TTree*)fmixing[jmbfile]->Get("ak3PFJetAnalyzer/t");
+      else jet_tree_akpu3pf_mix[jmbfile] = (TTree*)fmixing[jmbfile]->Get("akPu3PFJetAnalyzer/t");
+      if (!jet_tree_akpu3pf_mix[jmbfile]) { printf("Could not access jet tree!\n"); return 1; }
+      jet_tree_akpu3pf_mix[jmbfile]->SetBranchStatus("*", 0);
+      jt_akpu3pf_mix[jmbfile].read_tree(jet_tree_akpu3pf_mix[jmbfile]);
+    }
+  }
+
+
+  Long64_t initialMixFile = 0;
+  Long64_t initialMixEvent = 0;
+  if (jobIndex >= 0 && event_tree_mix[0] != 0) {
+      TRandom3 rand(jobIndex); // random number seed should be fixed or reproducible
+      initialMixFile = rand.Integer(nMixFiles);
+      Long64_t nEventMixTmp = event_tree_mix[initialMixFile]->GetEntries();
+      initialMixEvent = rand.Integer(nEventMixTmp); // Integer(imax) Returns a random integer on [0, imax-1].
+  }
+
+  int startMixFile[nHiBins][nVzBins][nEventPlaneBins];
+  Long64_t startMixEvent[nHiBins][nVzBins][nEventPlaneBins];
+  bool usedAllMixEvents[nHiBins][nVzBins][nEventPlaneBins];
+  bool rolledBack[nHiBins][nVzBins][nEventPlaneBins];
+  for (int i1 = 0; i1 < nHiBins; ++i1) {
+      for (int i2 = 0; i2 < nVzBins; ++i2) {
+          for (int i3 = 0; i3 < nEventPlaneBins; ++i3) {
+              startMixFile[i1][i2][i3] = initialMixFile;
+              startMixEvent[i1][i2][i3] = initialMixEvent;
+              usedAllMixEvents[i1][i2][i3] = false;
+              rolledBack[i1][i2][i3] = false;
+          }
+      }
+  }
+  
+  int test=startMixEvent[0][0][0]+startMixFile[0][0][0]+usedAllMixEvents[0][0][0]+rolledBack[nHiBins][nVzBins][nEventPlaneBins];
+  test=test+2;
   /**********************************************************
    * OPEN CORRECTION FILES
    **********************************************************/
