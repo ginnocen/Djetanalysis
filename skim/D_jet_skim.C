@@ -432,7 +432,11 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
                     if (fabs(jt_akpu3pf_mix[iMixFile].jteta[ijetmix]) > 2) continue;
 
                     float jetpt_mix = jt_akpu3pf_mix[iMixFile].jtpt[ijetmix];
-/*
+                    float jeteta_mix = jt_akpu3pf_mix[iMixFile].jteta[ijetmix];
+                    float jetphi_mix = jt_akpu3pf_mix[iMixFile].jtphi[ijetmix];
+                    float jetsubid_mix = jt_akpu3pf_mix[iMixFile].subid[ijetmix];
+                    
+                    /*
                     // jet energy correction
                     double xmin, xmax;
                     jetResidualFunction[centBin]->GetRange(xmin, xmax);
@@ -450,6 +454,10 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
                     }
 */
                     djt.jetpt_akpu3pf_mix.push_back(jetpt_mix);
+                    djt.jeteta_akpu3pf_mix.push_back(jeteta_mix);
+                    djt.jetphi_akpu3pf_mix.push_back(jetphi_mix);
+                    djt.subid_akpu3pf_mix.push_back(jetsubid_mix);
+                    
                     njet_mix++;
                 } //end of loop over ijetmix
                 
@@ -460,10 +468,6 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
                 djt.evt_mix[nmix] = evt_mix;
                 djt.lumi_mix[nmix] = lumi_mix;
                 
-                std::cout<<djt.dvz_mix[nmix] <<std::endl;
-                std::cout<<djt.nmix<<std::endl;
-                
-
                 nmix++;
 
                 if (nmix >= nEventsToMix) break; // done mixing
