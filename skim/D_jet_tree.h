@@ -291,12 +291,15 @@ class DJetTree {
     std::vector<float> muMax_akpu3pf_mix;
     std::vector<float> muSum_akpu3pf_mix;
     std::vector<int> muN_akpu3pf_mix;
-
+    std::vector<int> nmixEv_mix;
+    
     int ngen_akpu3pf_mix;
     std::vector<float> genpt_akpu3pf_mix;
     std::vector<float> geneta_akpu3pf_mix;
     std::vector<float> genphi_akpu3pf_mix;
     std::vector<int> gensubid_akpu3pf_mix;
+    std::vector<int> genev_mix;
+
 
 };
 
@@ -339,12 +342,16 @@ void DJetTree::create_tree(TTree* t) {
     t->Branch("muMax_akpu3pf", &muMax_akpu3pf);
     t->Branch("muSum_akpu3pf", &muSum_akpu3pf);
     t->Branch("muN_akpu3pf", &muN_akpu3pf);
+    t->Branch("nmixEv_mix", &nmixEv_mix);
+
 
     t->Branch("ngen_akpu3pf", &ngen_akpu3pf, "ngen_akpu3pf/I");
     t->Branch("genpt_akpu3pf", &genpt_akpu3pf);
     t->Branch("geneta_akpu3pf", &geneta_akpu3pf);
     t->Branch("genphi_akpu3pf", &genphi_akpu3pf);
     t->Branch("gensubid_akpu3pf", &gensubid_akpu3pf);
+    t->Branch("genev_mix", &genev_mix);
+
 
     t->Branch("njet_akpu4pf", &njet_akpu4pf, "njet_akpu4pf/I");
     t->Branch("jetptCorr_akpu4pf", &jetptCorr_akpu4pf);
@@ -693,11 +700,14 @@ void DJetTree::clear_vectors() {
     muMax_akpu3pf.clear();
     muSum_akpu3pf.clear();
     muN_akpu3pf.clear();
+    nmixEv_mix.clear();
+
 
     genpt_akpu3pf.clear();
     geneta_akpu3pf.clear();
     genphi_akpu3pf.clear();
     gensubid_akpu3pf.clear();
+    genev_mix.clear();
 
     jetptCorr_akpu4pf.clear();
     jetpt_akpu4pf.clear();
