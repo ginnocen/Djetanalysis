@@ -26,6 +26,8 @@ class DJetTree {
         njet_akpu4pf = 0;
         
         nmix = 0;
+        njet_akpu3pf_mix = 0;
+        ngen_akpu3pf_mix = 0;
 
         RunNo = -99;
         EvtNo = -99;

@@ -371,7 +371,8 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
     //! End jet selection
     
     int nmix = 0;
-    int njet_mix = 0;
+    int njet_akpu3pf_mix = 0;
+    int ngen_akpu3pf_mix = 0;
 
     //! (2.5) Begin minbias mixing criteria machinery
     if (!isPP && !mixing_file.empty() && mixing_file != "null") {
@@ -444,10 +445,10 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
 
                     jetpt_corr_mix = jet_corr->get_corrected_pt(jetpt_corr_mix, jt_akpu3pf_mix[iMixFile].jteta[ijetmix]);
                     if (isPP) {
-                        if (jetpt_corr_mix < 5) continue; // njet_mix is not incremented
+                        if (jetpt_corr_mix < 5) continue; // njet_akpu3pf_mix is not incremented
                     }
                     else {
-                        if (jetpt_corr_mix < 5) continue; // njet_mix is not incremented
+                        if (jetpt_corr_mix < 5) continue; // njet_akpu3pf_mix is not incremented
                     }
 */
                     djt.jetptCorr_akpu3pf_mix.push_back(jetptCorr_mix);
@@ -459,9 +460,28 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
                     djt.gjetphi_akpu3pf_mix.push_back(jt_akpu3pf_mix[iMixFile].refphi[ijetmix]);          
                     djt.subid_akpu3pf_mix.push_back(jt_akpu3pf_mix[iMixFile].subid[ijetmix]);
                     djt.nmixEv_mix.push_back(nmix);                    
-                    njet_mix++;
+                    njet_akpu3pf_mix++;
                     
                 } //end of loop over ijetmix
+                
+                if (isMC) {
+                    for (int igenj_mix = 0; igenj_mix < jt_akpu3pf_mix[iMixFile].ngen; igenj_mix++) {
+                        if (isPP) {
+                            if (jt_akpu3pf_mix[iMixFile].genpt[igenj_mix] < 5) continue;
+                        }
+                        else {
+                            if (jt_akpu3pf_mix[iMixFile].genpt[igenj_mix] < 5) continue;
+                        }
+
+                        if (fabs(jt_akpu3pf_mix[iMixFile].geneta[igenj_mix]) > 2) continue;
+                        djt.genpt_akpu3pf_mix.push_back(jt_akpu3pf_mix[iMixFile].genpt[igenj_mix]);
+                        djt.geneta_akpu3pf_mix.push_back(jt_akpu3pf_mix[iMixFile].geneta[igenj_mix]);
+                        djt.genphi_akpu3pf_mix.push_back(jt_akpu3pf_mix[iMixFile].genphi[igenj_mix]);
+                        djt.gensubid_akpu3pf_mix.push_back(jt_akpu3pf_mix[iMixFile].gensubid[igenj_mix]);
+                        djt.genev_mix.push_back(nmix);
+                        ngen_akpu3pf_mix++;
+                    }
+                }
                 
                 djt.dvz_mix[nmix] = fabs(vz - vz_mix);
                 djt.dhiBin_mix[nmix] = abs(hiBin - hiBin_mix);
@@ -495,7 +515,8 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
 
 
     djt.nmix = nmix;
-    djt.njet_akpu3pf_mix = njet_mix;
+    djt.njet_akpu3pf_mix = njet_akpu3pf_mix;
+    djt.ngen_akpu3pf_mix = ngen_akpu3pf_mix;
     djt.isPP = isPP;
     djt.hiBin = hiBin;
     djt.vz = vz;
