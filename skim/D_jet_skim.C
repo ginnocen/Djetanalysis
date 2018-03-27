@@ -431,10 +431,7 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
                     if (jt_akpu3pf_mix[iMixFile].jtpt[ijetmix] < jetptmin) continue;
                     if (fabs(jt_akpu3pf_mix[iMixFile].jteta[ijetmix]) > 2) continue;
 
-                    float jetpt_mix = jt_akpu3pf_mix[iMixFile].jtpt[ijetmix];
-                    float jeteta_mix = jt_akpu3pf_mix[iMixFile].jteta[ijetmix];
-                    float jetphi_mix = jt_akpu3pf_mix[iMixFile].jtphi[ijetmix];
-                    float jetsubid_mix = jt_akpu3pf_mix[iMixFile].subid[ijetmix];
+                    float jetptCorr_mix = jt_akpu3pf_mix[iMixFile].jtpt[ijetmix];
                     
                     /*
                     // jet energy correction
@@ -453,12 +450,17 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
                         if (jetpt_corr_mix < 5) continue; // njet_mix is not incremented
                     }
 */
-                    djt.jetpt_akpu3pf_mix.push_back(jetpt_mix);
-                    djt.jeteta_akpu3pf_mix.push_back(jeteta_mix);
-                    djt.jetphi_akpu3pf_mix.push_back(jetphi_mix);
-                    djt.subid_akpu3pf_mix.push_back(jetsubid_mix);
-                    
+                    djt.jetptCorr_akpu3pf_mix.push_back(jetptCorr_mix);
+                    djt.jetpt_akpu3pf_mix.push_back(jt_akpu3pf_mix[iMixFile].jtpt[ijetmix]);
+                    djt.jeteta_akpu3pf_mix.push_back(jt_akpu3pf_mix[iMixFile].jteta[ijetmix]);
+                    djt.jetphi_akpu3pf_mix.push_back(jt_akpu3pf_mix[iMixFile].jtphi[ijetmix]);
+                    djt.gjetpt_akpu3pf_mix.push_back(jt_akpu3pf_mix[iMixFile].refpt[ijetmix]);
+                    djt.gjeteta_akpu3pf_mix.push_back(jt_akpu3pf_mix[iMixFile].refeta[ijetmix]);
+                    djt.gjetphi_akpu3pf_mix.push_back(jt_akpu3pf_mix[iMixFile].refphi[ijetmix]);          
+                    djt.subid_akpu3pf_mix.push_back(jt_akpu3pf_mix[iMixFile].subid[ijetmix]);
+                    djt.nmixEv_mix.push_back(nmix);                    
                     njet_mix++;
+                    
                 } //end of loop over ijetmix
                 
                 djt.dvz_mix[nmix] = fabs(vz - vz_mix);
