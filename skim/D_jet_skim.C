@@ -15,10 +15,13 @@
 #include <stdint.h>
 #include <functional>
 #include <algorithm>
+#include <fstream>
+#include <iostream>
+
 
 static const double pi = 3.141592653589793238462643383279502884;
 
-int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, float jetptmin = 10, int start = 0, int end = -1, std::string mixing_file = "") {
+int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, float jetptmin = 10, int start = 0, int end = -1, std::string mixing_file = "listmixing.list") {
   bool isHI = !isPP;
 
   /**********************************************************
@@ -111,6 +114,22 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
   _SET_BRANCH_ADDRESS(pfcand_tree, pfEta, pfEta);
   _SET_BRANCH_ADDRESS(pfcand_tree, pfPhi, pfPhi);
 
+  /**********************************************************
+  * OPEN MINBIAS MIXING FILE
+  **********************************************************/
+  std::vector<std::string> mixing_list;
+
+  if (!isPP && !mixing_file.empty() && mixing_file != "null") {
+    std::ifstream file_stream(mixing_file);
+     if (!file_stream) return 1;
+
+    std::string line;
+    while (std::getline(file_stream, line))
+      mixing_list.push_back(line);
+  }
+
+  int nMixFiles = (int)mixing_list.size();
+  std::cout<<"number of files"<<nMixFiles<<std::endl;
   /**********************************************************
    * OPEN CORRECTION FILES
    **********************************************************/
