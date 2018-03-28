@@ -15,10 +15,20 @@
 #include <stdint.h>
 #include <functional>
 #include <algorithm>
+#include <fstream>
+#include <iostream>
+
+const int nHiBins = 200;
+const int nVzBins = 30;
+const int nEventPlaneBins = 16;
+
+int getVzBin(float vz);
+int getEventPlaneBin(double eventPlaneAngle);
+
 
 static const double pi = 3.141592653589793238462643383279502884;
 
-int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, float jetptmin = 10, int start = 0, int end = -1) {
+int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, float jetptmin = 10, int start = 0, int end = -1, std::string mixing_file = "listmixing.list",int jobIndex = -1) {
   bool isHI = !isPP;
 
   /**********************************************************
@@ -111,6 +121,119 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
   _SET_BRANCH_ADDRESS(pfcand_tree, pfEta, pfEta);
   _SET_BRANCH_ADDRESS(pfcand_tree, pfPhi, pfPhi);
 
+  /**********************************************************
+  * OPEN MINBIAS MIXING FILE
+  **********************************************************/
+  std::vector<std::string> mixing_list;
+
+  if (!isPP && !mixing_file.empty() && mixing_file != "null") {
+    std::ifstream file_stream(mixing_file);
+     if (!file_stream) return 1;
+
+    std::string line;
+    while (std::getline(file_stream, line))
+      mixing_list.push_back(line);
+  }
+
+  int nMixFiles = (int)mixing_list.size();
+  std::cout<<"number of files"<<nMixFiles<<std::endl;
+  
+
+  TFile* fmixing[nMixFiles] = {0};
+  TTree* event_tree_mix[nMixFiles] = {0};
+  TTree* skim_tree_mix[nMixFiles] = {0};
+  TTree* jet_tree_akpu3pf_mix[nMixFiles] = {0};
+
+  TTree* D_tree_mix[nMixFiles] = {0};
+  TTree* G_tree_mix[nMixFiles] = {0};
+
+  jetTree jt_akpu3pf_mix[nMixFiles];
+  DTree dt_mix[nMixFiles];
+  GTree gt_mix[nMixFiles];
+
+
+  int hiBin_mix;
+  float vz_mix;
+  float hiEvtPlanes_mix[29];
+  UInt_t run_mix;
+  ULong64_t evt_mix;
+  UInt_t lumi_mix;
+
+  int pcollisionEventSelection_mix;
+  int HBHENoiseFilterResultRun2Loose_mix;
+  int pPAprimaryVertexFilter_mix;
+  int pBeamScrapingFilter_mix;
+
+
+  if (!isPP && !mixing_file.empty() && mixing_file != "null") {
+    for (int jmbfile = 0; jmbfile < nMixFiles; ++jmbfile) {
+      fmixing[jmbfile] = TFile::Open(mixing_list[jmbfile].c_str(), "read");
+
+      event_tree_mix[jmbfile] = (TTree*)fmixing[jmbfile]->Get("hiEvtAnalyzer/HiTree");
+      if (!event_tree_mix[jmbfile]) { printf("Could not access event tree!\n"); return 1; }
+      event_tree_mix[jmbfile]->SetBranchStatus("*", 0);
+      _SET_BRANCH_ADDRESS(event_tree_mix[jmbfile], hiBin, hiBin_mix);
+      _SET_BRANCH_ADDRESS(event_tree_mix[jmbfile], vz, vz_mix);
+      _SET_BRANCH_ADDRESS(event_tree_mix[jmbfile], hiEvtPlanes, hiEvtPlanes_mix);
+      _SET_BRANCH_ADDRESS(event_tree_mix[jmbfile], run, run_mix);
+      _SET_BRANCH_ADDRESS(event_tree_mix[jmbfile], evt, evt_mix);
+      _SET_BRANCH_ADDRESS(event_tree_mix[jmbfile], lumi, lumi_mix);
+
+      skim_tree_mix[jmbfile] = (TTree*)fmixing[jmbfile]->Get("skimanalysis/HltTree");
+      if (!skim_tree_mix[jmbfile]) { printf("Could not access skim tree!\n"); return 1; }
+      skim_tree_mix[jmbfile]->SetBranchStatus("*", 0);
+      _SET_BRANCH_ADDRESS(skim_tree_mix[jmbfile], pcollisionEventSelection, pcollisionEventSelection_mix);
+      _SET_BRANCH_ADDRESS(skim_tree_mix[jmbfile], HBHENoiseFilterResultRun2Loose, HBHENoiseFilterResultRun2Loose_mix);
+      _SET_BRANCH_ADDRESS(skim_tree_mix[jmbfile], pPAprimaryVertexFilter, pPAprimaryVertexFilter_mix);
+      _SET_BRANCH_ADDRESS(skim_tree_mix[jmbfile], pBeamScrapingFilter, pBeamScrapingFilter_mix);
+
+
+
+      if (isPP) jet_tree_akpu3pf_mix[jmbfile] = (TTree*)fmixing[jmbfile]->Get("ak3PFJetAnalyzer/t");
+      else jet_tree_akpu3pf_mix[jmbfile] = (TTree*)fmixing[jmbfile]->Get("akPu3PFJetAnalyzer/t");
+      if (!jet_tree_akpu3pf_mix[jmbfile]) { printf("Could not access jet tree!\n"); return 1; }
+      jet_tree_akpu3pf_mix[jmbfile]->SetBranchStatus("*", 0);
+      jt_akpu3pf_mix[jmbfile].read_tree(jet_tree_akpu3pf_mix[jmbfile]);
+
+      D_tree_mix[jmbfile] = (TTree*)fmixing[jmbfile]->Get("Dfinder/ntDkpi");
+      if (!D_tree_mix[jmbfile]) {printf("Could not access D tree!\n"); return 1; }
+      D_tree_mix[jmbfile]->SetBranchStatus("*", 0);
+      dt_mix[jmbfile].read_tree(D_tree_mix[jmbfile]);
+
+      G_tree_mix[jmbfile] = (TTree*)fmixing[jmbfile]->Get("Dfinder/ntGen");
+      if (!G_tree_mix[jmbfile]) {printf("Could not access G tree!\n"); return 1; }
+      G_tree_mix[jmbfile]->SetBranchStatus("*", 0);
+      gt_mix[jmbfile].read_tree(G_tree_mix[jmbfile]);
+    }
+  }
+
+
+  Long64_t initialMixFile = 0;
+  Long64_t initialMixEvent = 0;
+  if (jobIndex >= 0 && event_tree_mix[0] != 0) {
+      TRandom3 rand(jobIndex); // random number seed should be fixed or reproducible
+      initialMixFile = rand.Integer(nMixFiles);
+      Long64_t nEventMixTmp = event_tree_mix[initialMixFile]->GetEntries();
+      initialMixEvent = rand.Integer(nEventMixTmp); // Integer(imax) Returns a random integer on [0, imax-1].
+  }
+
+  int startMixFile[nHiBins][nVzBins][nEventPlaneBins];
+  Long64_t startMixEvent[nHiBins][nVzBins][nEventPlaneBins];
+  bool usedAllMixEvents[nHiBins][nVzBins][nEventPlaneBins];
+  bool rolledBack[nHiBins][nVzBins][nEventPlaneBins];
+  for (int i1 = 0; i1 < nHiBins; ++i1) {
+      for (int i2 = 0; i2 < nVzBins; ++i2) {
+          for (int i3 = 0; i3 < nEventPlaneBins; ++i3) {
+              startMixFile[i1][i2][i3] = initialMixFile;
+              startMixEvent[i1][i2][i3] = initialMixEvent;
+              usedAllMixEvents[i1][i2][i3] = false;
+              rolledBack[i1][i2][i3] = false;
+          }
+      }
+  }
+  
+  int test=startMixEvent[0][0][0]+startMixFile[0][0][0]+usedAllMixEvents[0][0][0]+rolledBack[nHiBins][nVzBins][nEventPlaneBins];
+  test=test+2;
   /**********************************************************
    * OPEN CORRECTION FILES
    **********************************************************/
@@ -262,7 +385,167 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
     }
     djt.njet_akpu4pf = njet_akpu4pf;
     //! End jet selection
+    
+    int nmix = 0;
+    int njet_akpu3pf_mix = 0;
+    int ngen_akpu3pf_mix = 0;
 
+    //! (2.5) Begin minbias mixing criteria machinery
+    if (!isPP && !mixing_file.empty() && mixing_file != "null") {
+
+        // extract the characteristic bins to be used for event mixing
+        int ivz = getVzBin(vz);
+        int iEventPlane = getEventPlaneBin(hiEvtPlanes[8]);
+
+        if (ivz < 0) continue;
+        if (iEventPlane < 0) continue;
+
+        int iMixFile = startMixFile[hiBin][ivz][iEventPlane];
+        Long64_t iMixEvent = startMixEvent[hiBin][ivz][iEventPlane];
+
+        for (; iMixFile < nMixFiles; ++iMixFile) {
+            if (usedAllMixEvents[hiBin][ivz][iEventPlane]) break; // do not reuse the used mix events.
+
+            // Start looping through the mixed event starting where we left off, so we don't always mix same events
+            Long64_t nMixEvents = event_tree_mix[iMixFile]->GetEntries();
+            for (; iMixEvent < nMixEvents; ++iMixEvent) {
+                // The mix events for this bin are exhausted.
+                if (rolledBack[hiBin][ivz][iEventPlane] && iMixFile == initialMixFile && iMixEvent == initialMixEvent) {
+                    usedAllMixEvents[hiBin][ivz][iEventPlane] = true;
+                    break;
+                }
+
+                event_tree_mix[iMixFile]->GetEntry(iMixEvent);
+                if (fabs(vz_mix) > 15) continue;
+                skim_tree_mix[iMixFile]->GetEntry(iMixEvent);
+
+                int ivz = getVzBin(vz);
+                int iEventPlane = getEventPlaneBin(hiEvtPlanes[8]);
+
+                if (hiBin != hiBin_mix) continue;
+                if (ivz != getVzBin(vz_mix)) continue;
+                if (iEventPlane != getEventPlaneBin(hiEvtPlanes_mix[8])) continue;
+
+                //! (2.51) HiBin, vz, eventplane selection
+                //          if (abs(hiBin - hiBin_mix) > 0) continue;
+                //          if (fabs(vz - vz_mix) > 1) continue;
+                //          float dphi_evplane = acos(cos(fabs(hiEvtPlanes[8] - hiEvtPlanes_mix[8])));
+                //          if (dphi_evplane > TMath::Pi() / 16.0) continue;
+                // now we are within 0.5% centrality, 5cm vz and pi/16 angle of the original event
+
+                if (!isPP) { // HI event selection
+                    if ((pcollisionEventSelection_mix < 1))  continue;
+                    if (!isMC) {
+                        if (HBHENoiseFilterResultRun2Loose_mix < 1) continue;
+                    }
+                } else { // pp event selection
+                    if (pPAprimaryVertexFilter_mix < 1 || pBeamScrapingFilter_mix < 1)  continue;
+                }
+
+                //! (2.52) Jets from mixed events
+                jet_tree_akpu3pf_mix[iMixFile]->GetEntry(iMixEvent);
+                for (int ijetmix = 0; ijetmix < jt_akpu3pf_mix[iMixFile].nref; ++ijetmix) {
+                    if (jt_akpu3pf_mix[iMixFile].jtpt[ijetmix] < jetptmin) continue;
+                    if (fabs(jt_akpu3pf_mix[iMixFile].jteta[ijetmix]) > 2) continue;
+
+                    float jetptCorr_mix = jt_akpu3pf_mix[iMixFile].jtpt[ijetmix];
+                    
+                    /*
+                    // jet energy correction
+                    double xmin, xmax;
+                    jetResidualFunction[centBin]->GetRange(xmin, xmax);
+                    if (jetpt_corr_mix > xmin && jetpt_corr_mix < xmax) {
+                        jetpt_corr_mix = jetpt_corr_mix / jetResidualFunction[centBin]->Eval(jetpt_corr_mix);
+                        jetpt_corr_mix *= jec_fix;
+                    }
+
+                    jetpt_corr_mix = jet_corr->get_corrected_pt(jetpt_corr_mix, jt_akpu3pf_mix[iMixFile].jteta[ijetmix]);
+                    if (isPP) {
+                        if (jetpt_corr_mix < 5) continue; // njet_akpu3pf_mix is not incremented
+                    }
+                    else {
+                        if (jetpt_corr_mix < 5) continue; // njet_akpu3pf_mix is not incremented
+                    }
+*/
+                    djt.jetptCorr_akpu3pf_mix.push_back(jetptCorr_mix);
+                    djt.jetpt_akpu3pf_mix.push_back(jt_akpu3pf_mix[iMixFile].jtpt[ijetmix]);
+                    djt.jeteta_akpu3pf_mix.push_back(jt_akpu3pf_mix[iMixFile].jteta[ijetmix]);
+                    djt.jetphi_akpu3pf_mix.push_back(jt_akpu3pf_mix[iMixFile].jtphi[ijetmix]);
+                    djt.gjetpt_akpu3pf_mix.push_back(jt_akpu3pf_mix[iMixFile].refpt[ijetmix]);
+                    djt.gjeteta_akpu3pf_mix.push_back(jt_akpu3pf_mix[iMixFile].refeta[ijetmix]);
+                    djt.gjetphi_akpu3pf_mix.push_back(jt_akpu3pf_mix[iMixFile].refphi[ijetmix]);          
+                    djt.subid_akpu3pf_mix.push_back(jt_akpu3pf_mix[iMixFile].subid[ijetmix]);
+                    djt.nmixEv_mix.push_back(nmix);                    
+                    njet_akpu3pf_mix++;
+                    
+                } //end of loop over ijetmix
+                
+                if (isMC) {
+                    for (int igenj_mix = 0; igenj_mix < jt_akpu3pf_mix[iMixFile].ngen; igenj_mix++) {
+                        if (isPP) {
+                            if (jt_akpu3pf_mix[iMixFile].genpt[igenj_mix] < 5) continue;
+                        }
+                        else {
+                            if (jt_akpu3pf_mix[iMixFile].genpt[igenj_mix] < 5) continue;
+                        }
+
+                        if (fabs(jt_akpu3pf_mix[iMixFile].geneta[igenj_mix]) > 2) continue;
+                        djt.genpt_akpu3pf_mix.push_back(jt_akpu3pf_mix[iMixFile].genpt[igenj_mix]);
+                        djt.geneta_akpu3pf_mix.push_back(jt_akpu3pf_mix[iMixFile].geneta[igenj_mix]);
+                        djt.genphi_akpu3pf_mix.push_back(jt_akpu3pf_mix[iMixFile].genphi[igenj_mix]);
+                        djt.gensubid_akpu3pf_mix.push_back(jt_akpu3pf_mix[iMixFile].gensubid[igenj_mix]);
+                        djt.genev_mix.push_back(nmix);
+                        ngen_akpu3pf_mix++;
+                    }
+                }
+                //! D cuts and selection
+                D_tree_mix[iMixFile]->GetEntry(iMixEvent);
+                for (int id = 0; id < dt_mix[iMixFile].Dsize; ++id) {
+                  djt.copy_index_mix(dt_mix[iMixFile], id);
+                }
+                djt.copy_variables_mix(dt_mix[iMixFile]);
+
+
+                G_tree_mix[iMixFile]->GetEntry(iMixEvent);
+                for (int id = 0; id < gt_mix[iMixFile].Gsize; ++id) {
+                  djt.copy_index_gen_mix(gt_mix[iMixFile], id);
+                }
+                djt.copy_variables_gen_mix(gt_mix[iMixFile]);                 
+                
+                djt.dvz_mix[nmix] = fabs(vz - vz_mix);
+                djt.dhiBin_mix[nmix] = abs(hiBin - hiBin_mix);
+                djt.dhiEvtPlanes_mix[nmix] = acos(cos(fabs(hiEvtPlanes[8] - hiEvtPlanes_mix[8])));
+                djt.run_mix[nmix] = run_mix;
+                djt.evt_mix[nmix] = evt_mix;
+                djt.lumi_mix[nmix] = lumi_mix;
+                
+                nmix++;
+
+                if (nmix >= nEventsToMix) break; // done mixing
+            }// end of  loop over mixed events
+
+            if (nmix >= nEventsToMix) break; // done mixing
+
+            // did not collect enough events after this file, go to next file
+            iMixEvent = 0;
+            if (iMixFile == nMixFiles - 1) {
+                // roll back to the first file
+                iMixFile = -1;
+                rolledBack[hiBin][ivz][iEventPlane] = true;
+            }
+        } //end of the loop over mixing files
+
+        startMixEvent[hiBin][ivz][iEventPlane] = iMixEvent + 1;
+        startMixFile[hiBin][ivz][iEventPlane] = iMixFile;
+
+    } //end of the entire mixing procedure
+    //! End minbias mixing
+
+
+
+    djt.nmix = nmix;
+    djt.njet_akpu3pf_mix = njet_akpu3pf_mix;
+    djt.ngen_akpu3pf_mix = ngen_akpu3pf_mix;
     djt.isPP = isPP;
     djt.hiBin = hiBin;
     djt.vz = vz;
@@ -281,6 +564,26 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
   return 0;
 }
 
+
+int getVzBin(float vz)
+{
+    for (int i = 0; i < 30; ++i){
+        if ((i-15) <= vz && vz < (i-14)) return i;
+    }
+    if (vz == 15) return 29;
+    return -1;
+}
+
+int getEventPlaneBin(double eventPlaneAngle)
+{
+    for (int i = 0; i < 16; ++i){
+        if ((double)i*pi/16 <= eventPlaneAngle + 0.5*pi && eventPlaneAngle + 0.5*pi < (double)(i+1)*pi/16) return i;
+    }
+    if (eventPlaneAngle + 0.5*pi == (double)pi) return 15;
+    return -1;
+}
+
+
 int main(int argc, char* argv[]) {
   if (argc == 5)
     return D_jet_skim(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]));
@@ -290,6 +593,8 @@ int main(int argc, char* argv[]) {
     return D_jet_skim(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), atof(argv[5]), atoi(argv[6]));
   else if (argc == 8)
     return D_jet_skim(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), atof(argv[5]), atoi(argv[6]), atoi(argv[7]));
+  else if (argc == 9)
+    return D_jet_skim(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), atof(argv[5]), atoi(argv[6]), atoi(argv[7]),argv[8]);
   else
     printf("Usage: ./D_jet_skim.exe [input] [output] [isPP] [isMC] [jetptmin] [start] [end]\n");
 
