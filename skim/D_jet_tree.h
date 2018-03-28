@@ -54,6 +54,33 @@ class DJetTree {
         BSWidthXErr = -99;
         BSWidthY = -99;
         BSWidthYErr = -99;
+        
+        RunNo_mix = -99;
+        EvtNo_mix = -99;
+        LumiNo_mix = -99;
+        Dsize_mix = -99;
+        PVx_mix = -99;
+        PVy_mix = -99;
+        PVz_mix = -99;
+        PVnchi2_mix = -99;
+        BSx_mix = -99;
+        BSy_mix = -99;
+        BSz_mix = -99;
+        PVxE_mix = -99;
+        PVyE_mix = -99;
+        PVzE_mix = -99;
+        BSxErr_mix = -99;
+        BSyErr_mix = -99;
+        BSzErr_mix = -99;
+        BSdxdz_mix = -99;
+        BSdydz_mix = -99;
+        BSdxdzErr_mix = -99;
+        BSdydzErr_mix = -99;
+        BSWidthX_mix = -99;
+        BSWidthXErr_mix = -99;
+        BSWidthY_mix = -99;
+        BSWidthYErr_mix = -99;
+
     }
     ~DJetTree() {};
 
@@ -67,9 +94,13 @@ class DJetTree {
 
     void clear_vectors();
     void copy_variables(DTree dt);
+    void copy_variables_mix(DTree dt);
     void copy_variables_gen(GTree gt);
+    void copy_variables_gen_mix(GTree gt);
     void copy_index(DTree dt, int i);
+    void copy_index_mix(DTree dt, int i);
     void copy_index_gen(GTree gt, int i);
+    void copy_index_gen_mix(GTree gt, int i);
 
     int isPP;
     uint32_t run;
@@ -265,6 +296,35 @@ class DJetTree {
     UInt_t run_mix[nEventsToMix];
     ULong64_t evt_mix[nEventsToMix];
     UInt_t lumi_mix[nEventsToMix];
+
+
+    int           RunNo_mix;
+    int           EvtNo_mix;
+    int           LumiNo_mix;
+    int           Dsize_mix;
+    float         PVx_mix;
+    float         PVy_mix;
+    float         PVz_mix;
+    float         PVnchi2_mix;
+    float         BSx_mix;
+    float         BSy_mix;
+    float         BSz_mix;
+    float         PVxE_mix;
+    float         PVyE_mix;
+    float         PVzE_mix;
+    float         BSxErr_mix;
+    float         BSyErr_mix;
+    float         BSzErr_mix;
+    float         BSdxdz_mix;
+    float         BSdydz_mix;
+    float         BSdxdzErr_mix;
+    float         BSdydzErr_mix;
+    float         BSWidthX_mix;
+    float         BSWidthXErr_mix;
+    float         BSWidthY_mix;
+    float         BSWidthYErr_mix;
+
+
 
     int njet_akpu3pf_mix;
     std::vector<float> jetptCorr_akpu3pf_mix;
@@ -735,12 +795,74 @@ void DJetTree::create_tree(TTree* t) {
     t->Branch("Gtk2eta_mix", &Gtk2eta_mix);
     t->Branch("Gtk2y_mix", &Gtk2y_mix);
     t->Branch("Gtk2phi_mix", &Gtk2phi_mix);
+    
+    t->Branch("RunNo_mix", &RunNo_mix, "RunNo_mix/I");
+    t->Branch("EvtNo_mix", &EvtNo_mix, "EvtNo_mix/I");
+    t->Branch("LumiNo_mix", &LumiNo_mix, "LumiNo_mix/I");
+    t->Branch("Dsize_mix", &Dsize_mix, "Dsize_mix/I");
+    t->Branch("PVx_mix", &PVx_mix, "PVx_mix/F");
+    t->Branch("PVy_mix", &PVy_mix, "PVy_mix/F");
+    t->Branch("PVz_mix", &PVz_mix, "PVz_mix/F");
+    t->Branch("PVnchi2_mix", &PVnchi2_mix, "PVnchi2_mix/F");
+    t->Branch("BSx_mix", &BSx_mix, "BSx_mix/F");
+    t->Branch("BSy_mix", &BSy_mix, "BSy_mix/F");
+    t->Branch("BSz_mix", &BSz_mix, "BSz_mix/F");
+    t->Branch("PVxE_mix", &PVxE_mix, "PVxE_mix/F");
+    t->Branch("PVyE_mix", &PVyE_mix, "PVyE_mix/F");
+    t->Branch("PVzE_mix", &PVzE_mix, "PVzE_mix/F");
+    t->Branch("BSxErr_mix", &BSxErr_mix, "BSxErr_mix/F");
+    t->Branch("BSyErr_mix", &BSyErr_mix, "BSyErr_mix/F");
+    t->Branch("BSzErr_mix", &BSzErr_mix, "BSzErr_mix/F");
+    t->Branch("BSdxdz_mix", &BSdxdz_mix, "BSdxdz_mix/F");
+    t->Branch("BSdydz_mix", &BSdydz_mix, "BSdydz_mix/F");
+    t->Branch("BSdxdzErr_mix", &BSdxdzErr_mix, "BSdxdzErr_mix/F");
+    t->Branch("BSdydzErr_mix", &BSdydzErr_mix, "BSdydzErr_mix/F");
+    t->Branch("BSWidthX_mix", &BSWidthX_mix, "BSWidthX_mix/F");
+    t->Branch("BSWidthXErr_mix", &BSWidthXErr_mix, "BSWidthXErr_mix/F");
+    t->Branch("BSWidthY_mix", &BSWidthY_mix, "BSWidthY_mix/F");
+    t->Branch("BSWidthYErr_mix", &BSWidthYErr_mix, "BSWidthYErr_mix/F");
+
 
 }
 
 void DJetTree::copy_variables_gen(GTree gt)
 {
   Gsize = gt.Gsize;
+}
+
+
+void DJetTree::copy_variables_gen_mix(GTree gt)
+{
+  Gsize_mix = gt.Gsize;
+}
+
+
+void DJetTree::copy_variables_mix(DTree dt) {
+    RunNo_mix = dt.RunNo;
+    EvtNo_mix = dt.EvtNo;
+    LumiNo_mix = dt.LumiNo;
+    Dsize_mix = dt.Dsize;
+    PVx_mix = dt.PVx;
+    PVy_mix = dt.PVy;
+    PVz_mix = dt.PVz;
+    PVnchi2_mix = dt.PVnchi2;
+    BSx_mix = dt.BSx;
+    BSy_mix = dt.BSy;
+    BSz_mix = dt.BSz;
+    PVxE_mix = dt.PVxE;
+    PVyE_mix = dt.PVyE;
+    PVzE_mix = dt.PVzE;
+    BSxErr_mix = dt.BSxErr;
+    BSyErr_mix = dt.BSyErr;
+    BSzErr_mix = dt.BSzErr;
+    BSdxdz_mix = dt.BSdxdz;
+    BSdydz_mix = dt.BSdydz;
+    BSdxdzErr_mix = dt.BSdxdzErr;
+    BSdydzErr_mix = dt.BSdydzErr;
+    BSWidthX_mix = dt.BSWidthX;
+    BSWidthXErr_mix = dt.BSWidthXErr;
+    BSWidthY_mix = dt.BSWidthY;
+    BSWidthYErr_mix = dt.BSWidthYErr;
 }
 
 void DJetTree::copy_variables(DTree dt) {
@@ -771,6 +893,8 @@ void DJetTree::copy_variables(DTree dt) {
     BSWidthYErr = dt.BSWidthYErr;
 }
 
+
+
 void DJetTree::copy_index_gen(GTree gt, int i)
 {
   Gy.push_back(gt.Gy[i]);
@@ -791,6 +915,29 @@ void DJetTree::copy_index_gen(GTree gt, int i)
   Gtk2y.push_back(gt.Gtk2y[i]);
   Gtk2phi.push_back(gt.Gtk2phi[i]);
 }
+
+
+void DJetTree::copy_index_gen_mix(GTree gt, int i)
+{
+  Gy_mix.push_back(gt.Gy[i]);
+  Geta_mix.push_back(gt.Geta[i]);
+  Gphi_mix.push_back(gt.Gphi[i]);
+  Gpt_mix.push_back(gt.Gpt[i]);
+  GpdgId_mix.push_back(gt.GpdgId[i]);
+  GcollisionId_mix.push_back(gt.GcollisionId[i]);
+  GisSignal_mix.push_back(gt.GisSignal[i]);
+  GBAncestorpt_mix.push_back(gt.GBAncestorpt[i]);
+  GBAncestorpdgId_mix.push_back(gt.GBAncestorpdgId[i]);
+  Gtk1pt_mix.push_back(gt.Gtk1pt[i]);
+  Gtk1eta_mix.push_back(gt.Gtk1eta[i]);
+  Gtk1y_mix.push_back(gt.Gtk1y[i]);
+  Gtk1phi_mix.push_back(gt.Gtk1phi[i]);
+  Gtk2pt_mix.push_back(gt.Gtk2pt[i]);
+  Gtk2eta_mix.push_back(gt.Gtk2eta[i]);
+  Gtk2y_mix.push_back(gt.Gtk2y[i]);
+  Gtk2phi_mix.push_back(gt.Gtk2phi[i]);
+}
+
 
 void DJetTree::copy_index(DTree dt, int i) {
     Dindex.push_back(dt.Dindex[i]);
@@ -871,6 +1018,88 @@ void DJetTree::copy_index(DTree dt, int i) {
     DgenBAncestorpt.push_back(dt.DgenBAncestorpt[i]);
     DgenBAncestorpdgId.push_back(dt.DgenBAncestorpdgId[i]);
 }
+
+
+void DJetTree::copy_index_mix(DTree dt, int i) {
+    Dindex_mix.push_back(dt.Dindex[i]);
+    Dtype_mix.push_back(dt.Dtype[i]);
+    Dmass_mix.push_back(dt.Dmass[i]);
+    Dpt_mix.push_back(dt.Dpt[i]);
+    Deta_mix.push_back(dt.Deta[i]);
+    Dphi_mix.push_back(dt.Dphi[i]);
+    Dy_mix.push_back(dt.Dy[i]);
+    DvtxX_mix.push_back(dt.DvtxX[i]);
+    DvtxY_mix.push_back(dt.DvtxY[i]);
+    Dd0_mix.push_back(dt.Dd0[i]);
+    Dd0Err_mix.push_back(dt.Dd0Err[i]);
+    Ddxyz_mix.push_back(dt.Ddxyz[i]);
+    DdxyzErr_mix.push_back(dt.DdxyzErr[i]);
+    Dchi2ndf_mix.push_back(dt.Dchi2ndf[i]);
+    Dchi2cl_mix.push_back(dt.Dchi2cl[i]);
+    Ddtheta_mix.push_back(dt.Ddtheta[i]);
+    Dlxy_mix.push_back(dt.Dlxy[i]);
+    Dalpha_mix.push_back(dt.Dalpha[i]);
+    DsvpvDistance_mix.push_back(dt.DsvpvDistance[i]);
+    DsvpvDisErr_mix.push_back(dt.DsvpvDisErr[i]);
+    DsvpvDistance_2D_mix.push_back(dt.DsvpvDistance_2D[i]);
+    DsvpvDisErr_2D_mix.push_back(dt.DsvpvDisErr_2D[i]);
+    DlxyBS_mix.push_back(dt.DlxyBS[i]);
+    DlxyBSErr_mix.push_back(dt.DlxyBSErr[i]);
+    DMaxDoca_mix.push_back(dt.DMaxDoca[i]);
+    Dtrk1Pt_mix.push_back(dt.Dtrk1Pt[i]);
+    Dtrk2Pt_mix.push_back(dt.Dtrk2Pt[i]);
+    Dtrk1Eta_mix.push_back(dt.Dtrk1Eta[i]);
+    Dtrk2Eta_mix.push_back(dt.Dtrk2Eta[i]);
+    Dtrk1Phi_mix.push_back(dt.Dtrk1Phi[i]);
+    Dtrk2Phi_mix.push_back(dt.Dtrk2Phi[i]);
+    Dtrk1PtErr_mix.push_back(dt.Dtrk1PtErr[i]);
+    Dtrk2PtErr_mix.push_back(dt.Dtrk2PtErr[i]);
+    Dtrk1Dxy_mix.push_back(dt.Dtrk1Dxy[i]);
+    Dtrk2Dxy_mix.push_back(dt.Dtrk2Dxy[i]);
+    Dtrk1PixelHit_mix.push_back(dt.Dtrk1PixelHit[i]);
+    Dtrk2PixelHit_mix.push_back(dt.Dtrk2PixelHit[i]);
+    Dtrk1StripHit_mix.push_back(dt.Dtrk1StripHit[i]);
+    Dtrk2StripHit_mix.push_back(dt.Dtrk2StripHit[i]);
+    Dtrk1nStripLayer_mix.push_back(dt.Dtrk1nStripLayer[i]);
+    Dtrk2nStripLayer_mix.push_back(dt.Dtrk2nStripLayer[i]);
+    Dtrk1nPixelLayer_mix.push_back(dt.Dtrk1nPixelLayer[i]);
+    Dtrk2nPixelLayer_mix.push_back(dt.Dtrk2nPixelLayer[i]);
+    Dtrk1Chi2ndf_mix.push_back(dt.Dtrk1Chi2ndf[i]);
+    Dtrk2Chi2ndf_mix.push_back(dt.Dtrk2Chi2ndf[i]);
+    Dtrk1MassHypo_mix.push_back(dt.Dtrk1MassHypo[i]);
+    Dtrk2MassHypo_mix.push_back(dt.Dtrk2MassHypo[i]);
+    Dtrk1Algo_mix.push_back(dt.Dtrk1Algo[i]);
+    Dtrk2Algo_mix.push_back(dt.Dtrk2Algo[i]);
+    Dtrk1originalAlgo_mix.push_back(dt.Dtrk1originalAlgo[i]);
+    Dtrk2originalAlgo_mix.push_back(dt.Dtrk2originalAlgo[i]);
+    Dtrk1highPurity_mix.push_back(dt.Dtrk1highPurity[i]);
+    Dtrk2highPurity_mix.push_back(dt.Dtrk2highPurity[i]);
+    Dtrk1Idx_mix.push_back(dt.Dtrk1Idx[i]);
+    Dtrk2Idx_mix.push_back(dt.Dtrk2Idx[i]);
+    Dtrk1EtaErr_mix.push_back(dt.Dtrk1EtaErr[i]);
+    Dtrk2EtaErr_mix.push_back(dt.Dtrk2EtaErr[i]);
+    Dtrk1PhiErr_mix.push_back(dt.Dtrk1PhiErr[i]);
+    Dtrk2PhiErr_mix.push_back(dt.Dtrk2PhiErr[i]);
+    Dtrk1Y_mix.push_back(dt.Dtrk1Y[i]);
+    Dtrk2Y_mix.push_back(dt.Dtrk2Y[i]);
+    Dtrk1D0Err_mix.push_back(dt.Dtrk1D0Err[i]);
+    Dtrk2D0Err_mix.push_back(dt.Dtrk2D0Err[i]);
+    Dtrk1MVAVal_mix.push_back(dt.Dtrk1MVAVal[i]);
+    Dtrk2MVAVal_mix.push_back(dt.Dtrk2MVAVal[i]);
+    Dtrk1Quality_mix.push_back(dt.Dtrk1Quality[i]);
+    Dtrk2Quality_mix.push_back(dt.Dtrk2Quality[i]);
+    Dgen_mix.push_back(dt.Dgen[i]);
+    DgenIndex_mix.push_back(dt.DgenIndex[i]);
+    DgennDa_mix.push_back(dt.DgennDa[i]);
+    Dgenpt_mix.push_back(dt.Dgenpt[i]);
+    Dgeneta_mix.push_back(dt.Dgeneta[i]);
+    Dgenphi_mix.push_back(dt.Dgenphi[i]);
+    Dgeny_mix.push_back(dt.Dgeny[i]);
+    DgencollisionId_mix.push_back(dt.DgencollisionId[i]);
+    DgenBAncestorpt_mix.push_back(dt.DgenBAncestorpt[i]);
+    DgenBAncestorpdgId_mix.push_back(dt.DgenBAncestorpdgId[i]);
+}
+
 
 void DJetTree::clear_vectors() {
     jetptCorr_akpu3pf.clear();

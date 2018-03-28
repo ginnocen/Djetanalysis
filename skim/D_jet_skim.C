@@ -144,7 +144,13 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
   TTree* skim_tree_mix[nMixFiles] = {0};
   TTree* jet_tree_akpu3pf_mix[nMixFiles] = {0};
 
+  TTree* D_tree_mix[nMixFiles] = {0};
+  TTree* G_tree_mix[nMixFiles] = {0};
+
   jetTree jt_akpu3pf_mix[nMixFiles];
+  DTree dt_mix[nMixFiles];
+  GTree gt_mix[nMixFiles];
+
 
   int hiBin_mix;
   float vz_mix;
@@ -188,6 +194,16 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
       if (!jet_tree_akpu3pf_mix[jmbfile]) { printf("Could not access jet tree!\n"); return 1; }
       jet_tree_akpu3pf_mix[jmbfile]->SetBranchStatus("*", 0);
       jt_akpu3pf_mix[jmbfile].read_tree(jet_tree_akpu3pf_mix[jmbfile]);
+
+      D_tree_mix[jmbfile] = (TTree*)fmixing[jmbfile]->Get("Dfinder/ntDkpi");
+      if (!D_tree_mix[jmbfile]) {printf("Could not access D tree!\n"); return 1; }
+      D_tree_mix[jmbfile]->SetBranchStatus("*", 0);
+      dt_mix[jmbfile].read_tree(D_tree_mix[jmbfile]);
+
+      G_tree_mix[jmbfile] = (TTree*)fmixing[jmbfile]->Get("Dfinder/ntGen");
+      if (!G_tree_mix[jmbfile]) {printf("Could not access G tree!\n"); return 1; }
+      G_tree_mix[jmbfile]->SetBranchStatus("*", 0);
+      gt_mix[jmbfile].read_tree(G_tree_mix[jmbfile]);
     }
   }
 
@@ -482,6 +498,19 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
                         ngen_akpu3pf_mix++;
                     }
                 }
+                //! D cuts and selection
+                D_tree_mix[iMixFile]->GetEntry(iMixEvent);
+                for (int id = 0; id < dt_mix[iMixFile].Dsize; ++id) {
+                  djt.copy_index_mix(dt_mix[iMixFile], id);
+                }
+                djt.copy_variables_mix(dt_mix[iMixFile]);
+
+
+                G_tree_mix[iMixFile]->GetEntry(iMixEvent);
+                for (int id = 0; id < gt_mix[iMixFile].Gsize; ++id) {
+                  djt.copy_index_gen_mix(gt_mix[iMixFile], id);
+                }
+                djt.copy_variables_gen_mix(gt_mix[iMixFile]);                 
                 
                 djt.dvz_mix[nmix] = fabs(vz - vz_mix);
                 djt.dhiBin_mix[nmix] = abs(hiBin - hiBin_mix);
