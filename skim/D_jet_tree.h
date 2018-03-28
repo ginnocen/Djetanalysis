@@ -23,7 +23,6 @@ class DJetTree {
 	pthat = -1;
 
         njet_akpu3pf = 0;
-        njet_akpu4pf = 0;
         
         nmix = 0;
         njet_akpu3pf_mix = 0;
@@ -146,24 +145,6 @@ class DJetTree {
     std::vector<float> geneta_akpu3pf;
     std::vector<float> genphi_akpu3pf;
     std::vector<int> gensubid_akpu3pf;
-
-    int njet_akpu4pf;
-    std::vector<float> jetptCorr_akpu4pf;
-    std::vector<float> jetpt_akpu4pf;
-    std::vector<float> jeteta_akpu4pf;
-    std::vector<float> jetphi_akpu4pf;
-    std::vector<float> gjetpt_akpu4pf;
-    std::vector<float> gjeteta_akpu4pf;
-    std::vector<float> gjetphi_akpu4pf;
-    std::vector<int> gjetflavor_akpu4pf;
-    std::vector<float> chargedSum_akpu4pf;
-    std::vector<int> subid_akpu4pf;
-
-    int ngen_akpu4pf;
-    std::vector<float> genpt_akpu4pf;
-    std::vector<float> geneta_akpu4pf;
-    std::vector<float> genphi_akpu4pf;
-    std::vector<int> gensubid_akpu4pf;
 
     int           RunNo;
     int           EvtNo;
@@ -514,24 +495,6 @@ void DJetTree::create_tree(TTree* t) {
     t->Branch("gensubid_akpu3pf", &gensubid_akpu3pf);
     t->Branch("genev_mix", &genev_mix);
 
-
-    t->Branch("njet_akpu4pf", &njet_akpu4pf, "njet_akpu4pf/I");
-    t->Branch("jetptCorr_akpu4pf", &jetptCorr_akpu4pf);
-    t->Branch("jetpt_akpu4pf", &jetpt_akpu4pf);
-    t->Branch("jeteta_akpu4pf", &jeteta_akpu4pf);
-    t->Branch("jetphi_akpu4pf", &jetphi_akpu4pf);
-    t->Branch("gjetpt_akpu4pf", &gjetpt_akpu4pf);
-    t->Branch("gjeteta_akpu4pf", &gjeteta_akpu4pf);
-    t->Branch("gjetphi_akpu4pf", &gjetphi_akpu4pf);
-    t->Branch("gjetflavor_akpu4pf", &gjetflavor_akpu4pf);
-    t->Branch("chargedSum_akpu4pf", &chargedSum_akpu4pf);
-    t->Branch("subid_akpu4pf", &subid_akpu4pf);
-
-    t->Branch("ngen_akpu4pf", &ngen_akpu4pf, "ngen_akpu4pf/I");
-    t->Branch("genpt_akpu4pf", &genpt_akpu4pf);
-    t->Branch("geneta_akpu4pf", &geneta_akpu4pf);
-    t->Branch("genphi_akpu4pf", &genphi_akpu4pf);
-    t->Branch("gensubid_akpu4pf", &gensubid_akpu4pf);
 
     t->Branch("RunNo", &RunNo, "RunNo/I");
     t->Branch("EvtNo", &EvtNo, "EvtNo/I");
@@ -1136,22 +1099,6 @@ void DJetTree::clear_vectors() {
     genphi_akpu3pf.clear();
     gensubid_akpu3pf.clear();
     genev_mix.clear();
-
-    jetptCorr_akpu4pf.clear();
-    jetpt_akpu4pf.clear();
-    jeteta_akpu4pf.clear();
-    jetphi_akpu4pf.clear();
-    gjetpt_akpu4pf.clear();
-    gjeteta_akpu4pf.clear();
-    gjetphi_akpu4pf.clear();
-    gjetflavor_akpu4pf.clear();
-    chargedSum_akpu4pf.clear();
-    subid_akpu4pf.clear();
-
-    genpt_akpu4pf.clear();
-    geneta_akpu4pf.clear();
-    genphi_akpu4pf.clear();
-    gensubid_akpu4pf.clear();
 
     Dindex.clear();
     Dtype.clear();
