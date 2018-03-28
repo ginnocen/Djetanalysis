@@ -73,6 +73,7 @@ std::vector <std::vector <std::vector <std::vector <Int_t> > > > get_sorted_even
         if(i % 10000 == 0) std::cout << i << " / " << nentries << std::endl;
         //determine correct bin
         t->GetEntry(i);
+        hlt->GetEntry(i);
         if (fabs(vz) > cut_vz) {vzrejected++; continue;}
         if (!isPP) {  // HI event selection
             if ((pcollisionEventSelection < 1)) {hltrejected++; continue;}
@@ -109,7 +110,7 @@ std::vector <std::vector <std::vector <std::vector <Int_t> > > > get_sorted_even
             std::cout << i << ": bad evplanebin " << evplaneBin << std::endl;
             continue;
         }
-        list[centbin][vzbin][evplaneBin].push_back(event);
+        list[centbin][vzbin][evplaneBin].push_back(i);
     }
     std::cout << "Event list formed." << std::endl;
     int nlowbins = 0;
@@ -152,6 +153,9 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::vector <std::vec
     float vz;
     float hiEvtPlanes[29];
 
+    UInt_t MBrun;
+    ULong64_t MBevent;
+    UInt_t MBlumi;
     int MBhiBin;
     float MBvz;
     float MBhiEvtPlanes[29];
@@ -218,6 +222,9 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::vector <std::vec
     MBjets->SetBranchAddress("chargedSum",MBchargedSum);
     MBjets->SetBranchAddress("subid",MBsubid);
 
+    MBevt->SetBranchAddress("run",&MBrun);
+    MBevt->SetBranchAddress("evt",&MBevent);
+    MBevt->SetBranchAddress("lumi",&MBlumi);
     MBevt->SetBranchAddress("hiBin",&MBhiBin);
     MBevt->SetBranchAddress("vz",&MBvz);
     MBevt->SetBranchAddress("hiEvtPlanes",MBhiEvtPlanes);
@@ -243,8 +250,10 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::vector <std::vec
     djt_tree->SetBranchAddress("vz",&vz);
     djt_tree->SetBranchAddress("hiEvtPlanes",hiEvtPlanes);
 
-    int listposition[nCentralityBins][nVertexBins][nEventPlaneBins];
-    for(int i=0;i<nCentralityBins;i++) for(int j=0;j<nVertexBins;j++) for(int k=0;k<nEventPlaneBins;k++) listposition[i][j][k]=0;
+    //int listposition[nCentralityBins][nVertexBins][nEventPlaneBins];
+    //for(int i=0;i<nCentralityBins;i++) for(int j=0;j<nVertexBins;j++) for(int k=0;k<nEventPlaneBins;k++) listposition[i][j][k]=0;
+
+    TRandom3 rand;
 
     Int_t mixptreject = 0;
 
@@ -255,7 +264,7 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::vector <std::vec
         djt_tree->GetEntry(i);
         //std::cout << "entry" << std::endl;
         //determine appropriate MB jet tree
-        int centbinwidth = round(200/nCentralityBins);
+        int centbinwidth = floor(200/nCentralityBins);
         //std::cout << "nCentralityBins " << nCentralityBins << std::endl;
         //std::cout << "hiBin " << hiBin << std::endl;
         //std::cout << "vz" << vz << std::endl;
@@ -277,19 +286,23 @@ int MB_D_jet_mix(std::string Djetfile, std::string MBfile, std::vector <std::vec
         {
             //std::cout << j << std::endl;
             //choose random MB event in correct bin (akpu3pf)
-            //int nMBevents = list[centbin][vzbin][evplaneBin].size();
+            int nMBevents = (int)list[centbin][vzbin][evplaneBin].size();
             //std::cout << nMB3events << std::endl;
             //std::cout << "3entries" << std::endl;
-            //int randindex = rand.Integer(nMBevents);
-            //MBjets->GetEntry(randindex);
-            int entry = listposition[centbin][vzbin][evplaneBin];
-            MBjets->GetEntry(list[centbin][vzbin][evplaneBin][entry]);
-            MBevt->GetEntry(list[centbin][vzbin][evplaneBin][entry]);
+            int randindex = rand.Integer(nMBevents);
+            MBjets->GetEntry(list[centbin][vzbin][evplaneBin][randindex]);
+            MBevt->GetEntry(list[centbin][vzbin][evplaneBin][randindex]);
+            //int entry = listposition[centbin][vzbin][evplaneBin];
+            //MBjets->GetEntry(list[centbin][vzbin][evplaneBin][entry]);
+            //MBevt->GetEntry(list[centbin][vzbin][evplaneBin][entry]);
+            djt.MBrun = MBrun;
+            djt.MBevt = MBevent;
+            djt.MBlumi = MBlumi;
             djt.MBhiBin = MBhiBin;
             djt.MBvz = MBvz;
             for(int m=0;m<29;m++) djt.MBhiEvtPlanes[m] = MBhiEvtPlanes[m];
-            listposition[centbin][vzbin][evplaneBin]++;
-            if(entry >= (int)list[centbin][vzbin][evplaneBin].size()) listposition[centbin][vzbin][evplaneBin] = 0;
+            //listposition[centbin][vzbin][evplaneBin]++;
+            //if(entry >= (int)list[centbin][vzbin][evplaneBin].size()) listposition[centbin][vzbin][evplaneBin] = 0;
             //std::cout << "3randentry" << std::endl;
             //replace jet variables with MB jet variables
             //std::cout << MBnref << std::endl;
