@@ -1,13 +1,13 @@
 #!/bin/bash
 
-INFILE="/export/d00/scratch/jwang/Djets/MC/mixing/crab_HiForestAOD_DfinderMC_PbPb_20180326_Pthat80_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_25.root"
+INFILE="/export/d00/scratch/jwang/Djets/HiForestAOD_DfinderMC_PbPb_20180326_Pythia8_prompt_D0pt0p0_Pthat30_Hydjet_MB_20files.root"
 INFILEmixing="/afs/lns.mit.edu/user/ginnocen/Djetanalysis/CMSSW_9_0_0/src/Djetanalysis/skim/test/listmixing.list"
-OUTFILE="test.root"
+OUTFILE="/export/d00/scratch/ginnocen/test_fullstatistics20files.root"
 isPP=0
 isMC=1
 JETPTMIN=0
 START=0
-END=30
+END=-1
 
 cd ../
 g++ D_jet_skim.C $(root-config --cflags --libs) -Werror -Wall -O2 -o D_jet_skim.exe

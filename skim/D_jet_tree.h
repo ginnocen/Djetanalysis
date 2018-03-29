@@ -23,7 +23,6 @@ class DJetTree {
 	pthat = -1;
 
         njet_akpu3pf = 0;
-        njet_akpu4pf = 0;
         
         nmix = 0;
         njet_akpu3pf_mix = 0;
@@ -146,24 +145,6 @@ class DJetTree {
     std::vector<float> geneta_akpu3pf;
     std::vector<float> genphi_akpu3pf;
     std::vector<int> gensubid_akpu3pf;
-
-    int njet_akpu4pf;
-    std::vector<float> jetptCorr_akpu4pf;
-    std::vector<float> jetpt_akpu4pf;
-    std::vector<float> jeteta_akpu4pf;
-    std::vector<float> jetphi_akpu4pf;
-    std::vector<float> gjetpt_akpu4pf;
-    std::vector<float> gjeteta_akpu4pf;
-    std::vector<float> gjetphi_akpu4pf;
-    std::vector<int> gjetflavor_akpu4pf;
-    std::vector<float> chargedSum_akpu4pf;
-    std::vector<int> subid_akpu4pf;
-
-    int ngen_akpu4pf;
-    std::vector<float> genpt_akpu4pf;
-    std::vector<float> geneta_akpu4pf;
-    std::vector<float> genphi_akpu4pf;
-    std::vector<int> gensubid_akpu4pf;
 
     int           RunNo;
     int           EvtNo;
@@ -514,24 +495,6 @@ void DJetTree::create_tree(TTree* t) {
     t->Branch("gensubid_akpu3pf", &gensubid_akpu3pf);
     t->Branch("genev_mix", &genev_mix);
 
-
-    t->Branch("njet_akpu4pf", &njet_akpu4pf, "njet_akpu4pf/I");
-    t->Branch("jetptCorr_akpu4pf", &jetptCorr_akpu4pf);
-    t->Branch("jetpt_akpu4pf", &jetpt_akpu4pf);
-    t->Branch("jeteta_akpu4pf", &jeteta_akpu4pf);
-    t->Branch("jetphi_akpu4pf", &jetphi_akpu4pf);
-    t->Branch("gjetpt_akpu4pf", &gjetpt_akpu4pf);
-    t->Branch("gjeteta_akpu4pf", &gjeteta_akpu4pf);
-    t->Branch("gjetphi_akpu4pf", &gjetphi_akpu4pf);
-    t->Branch("gjetflavor_akpu4pf", &gjetflavor_akpu4pf);
-    t->Branch("chargedSum_akpu4pf", &chargedSum_akpu4pf);
-    t->Branch("subid_akpu4pf", &subid_akpu4pf);
-
-    t->Branch("ngen_akpu4pf", &ngen_akpu4pf, "ngen_akpu4pf/I");
-    t->Branch("genpt_akpu4pf", &genpt_akpu4pf);
-    t->Branch("geneta_akpu4pf", &geneta_akpu4pf);
-    t->Branch("genphi_akpu4pf", &genphi_akpu4pf);
-    t->Branch("gensubid_akpu4pf", &gensubid_akpu4pf);
 
     t->Branch("RunNo", &RunNo, "RunNo/I");
     t->Branch("EvtNo", &EvtNo, "EvtNo/I");
@@ -1137,22 +1100,6 @@ void DJetTree::clear_vectors() {
     gensubid_akpu3pf.clear();
     genev_mix.clear();
 
-    jetptCorr_akpu4pf.clear();
-    jetpt_akpu4pf.clear();
-    jeteta_akpu4pf.clear();
-    jetphi_akpu4pf.clear();
-    gjetpt_akpu4pf.clear();
-    gjeteta_akpu4pf.clear();
-    gjetphi_akpu4pf.clear();
-    gjetflavor_akpu4pf.clear();
-    chargedSum_akpu4pf.clear();
-    subid_akpu4pf.clear();
-
-    genpt_akpu4pf.clear();
-    geneta_akpu4pf.clear();
-    genphi_akpu4pf.clear();
-    gensubid_akpu4pf.clear();
-
     Dindex.clear();
     Dtype.clear();
     Dmass.clear();
@@ -1280,6 +1227,103 @@ void DJetTree::clear_vectors() {
     geneta_akpu3pf_mix.clear();
     genphi_akpu3pf_mix.clear();
     gensubid_akpu3pf_mix.clear();
+
+    Dindex_mix.clear();
+    Dtype_mix.clear();
+    Dmass_mix.clear();
+    Dpt_mix.clear();
+    Deta_mix.clear();
+    Dphi_mix.clear();
+    Dy_mix.clear();
+    DvtxX_mix.clear();
+    DvtxY_mix.clear();
+    Dd0_mix.clear();
+    Dd0Err_mix.clear();
+    Ddxyz_mix.clear();
+    DdxyzErr_mix.clear();
+    Dchi2ndf_mix.clear();
+    Dchi2cl_mix.clear();
+    Ddtheta_mix.clear();
+    Dlxy_mix.clear();
+    Dalpha_mix.clear();
+    DsvpvDistance_mix.clear();
+    DsvpvDisErr_mix.clear();
+    DsvpvDistance_2D_mix.clear();
+    DsvpvDisErr_2D_mix.clear();
+    DlxyBS_mix.clear();
+    DlxyBSErr_mix.clear();
+    DMaxDoca_mix.clear();
+    Dtrk1Pt_mix.clear();
+    Dtrk2Pt_mix.clear();
+    Dtrk1Eta_mix.clear();
+    Dtrk2Eta_mix.clear();
+    Dtrk1Phi_mix.clear();
+    Dtrk2Phi_mix.clear();
+    Dtrk1PtErr_mix.clear();
+    Dtrk2PtErr_mix.clear();
+    Dtrk1Dxy_mix.clear();
+    Dtrk2Dxy_mix.clear();
+    Dtrk1PixelHit_mix.clear();
+    Dtrk2PixelHit_mix.clear();
+    Dtrk1StripHit_mix.clear();
+    Dtrk2StripHit_mix.clear();
+    Dtrk1nStripLayer_mix.clear();
+    Dtrk2nStripLayer_mix.clear();
+    Dtrk1nPixelLayer_mix.clear();
+    Dtrk2nPixelLayer_mix.clear();
+    Dtrk1Chi2ndf_mix.clear();
+    Dtrk2Chi2ndf_mix.clear();
+    Dtrk1MassHypo_mix.clear();
+    Dtrk2MassHypo_mix.clear();
+    Dtrk1Algo_mix.clear();
+    Dtrk2Algo_mix.clear();
+    Dtrk1originalAlgo_mix.clear();
+    Dtrk2originalAlgo_mix.clear();
+    Dtrk1highPurity_mix.clear();
+    Dtrk2highPurity_mix.clear();
+    Dtrk1Idx_mix.clear();
+    Dtrk2Idx_mix.clear();
+    Dtrk1EtaErr_mix.clear();
+    Dtrk2EtaErr_mix.clear();
+    Dtrk1PhiErr_mix.clear();
+    Dtrk2PhiErr_mix.clear();
+    Dtrk1Y_mix.clear();
+    Dtrk2Y_mix.clear();
+    Dtrk1D0Err_mix.clear();
+    Dtrk2D0Err_mix.clear();
+    Dtrk1MVAVal_mix.clear();
+    Dtrk2MVAVal_mix.clear();
+    Dtrk1Quality_mix.clear();
+    Dtrk2Quality_mix.clear();
+    Dgen_mix.clear();
+    DgenIndex_mix.clear();
+    DgennDa_mix.clear();
+    Dgenpt_mix.clear();
+    Dgeneta_mix.clear();
+    Dgenphi_mix.clear();
+    Dgeny_mix.clear();
+    DgencollisionId_mix.clear();
+    DgenBAncestorpt_mix.clear();
+    DgenBAncestorpdgId_mix.clear();
+
+    Gy_mix.clear();
+    Geta_mix.clear();
+    Gphi_mix.clear();
+    Gpt_mix.clear();
+    GpdgId_mix.clear();
+    GcollisionId_mix.clear();
+    GisSignal_mix.clear();
+    GBAncestorpt_mix.clear();
+    GBAncestorpdgId_mix.clear();
+    Gtk1pt_mix.clear();
+    Gtk1eta_mix.clear();
+    Gtk1y_mix.clear();
+    Gtk1phi_mix.clear();
+    Gtk2pt_mix.clear();
+    Gtk2eta_mix.clear();
+    Gtk2y_mix.clear();
+    Gtk2phi_mix.clear();
+
     
 }
 

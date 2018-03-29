@@ -100,13 +100,6 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
   jet_tree_akpu3pf->SetBranchStatus("*", 0);
   jetTree jt_akpu3pf(jet_tree_akpu3pf);
 
-  TTree* jet_tree_akpu4pf = 0;
-  if (isPP) jet_tree_akpu4pf = (TTree*)finput->Get("ak4PFJetAnalyzer/t");
-  else jet_tree_akpu4pf = (TTree*)finput->Get("akPu4PFJetAnalyzer/t");
-  if (!jet_tree_akpu4pf) { printf("Could not access jet tree!\n"); return 1; }
-  jet_tree_akpu4pf->SetBranchStatus("*", 0);
-  jetTree jt_akpu4pf(jet_tree_akpu4pf);
-
   TTree* pfcand_tree = 0;
   if (isPP) pfcand_tree = (TTree*)finput->Get("pfcandAnalyzer/pfTree");
   else pfcand_tree = (TTree*)finput->Get("pfcandAnalyzerCS/pfTree");
@@ -364,26 +357,6 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
       djt.gensubid_akpu3pf.push_back(jt_akpu3pf.gensubid[igen]);
     }
 
-    jet_tree_akpu4pf->GetEntry(j);
-
-    int njet_akpu4pf = 0;
-    for (int ij = 0; ij < jt_akpu4pf.nref; ij++) {
-      if (jt_akpu4pf.jtpt[ij] > jetptmin && fabs(jt_akpu4pf.jteta[ij]) < 2.0) {
-        float jetpt_corr = jt_akpu4pf.jtpt[ij];
-        djt.jetptCorr_akpu4pf.push_back(jetpt_corr);
-        djt.jetpt_akpu4pf.push_back(jt_akpu4pf.jtpt[ij]);
-        djt.jeteta_akpu4pf.push_back(jt_akpu4pf.jteta[ij]);
-        djt.jetphi_akpu4pf.push_back(jt_akpu4pf.jtphi[ij]);
-        djt.gjetpt_akpu4pf.push_back(jt_akpu4pf.refpt[ij]);
-        djt.gjeteta_akpu4pf.push_back(jt_akpu4pf.refeta[ij]);
-        djt.gjetphi_akpu4pf.push_back(jt_akpu4pf.refphi[ij]);
-        djt.gjetflavor_akpu4pf.push_back(jt_akpu4pf.refparton_flavor[ij]);
-        djt.subid_akpu4pf.push_back(jt_akpu4pf.subid[ij]);
-        djt.chargedSum_akpu4pf.push_back(jt_akpu4pf.chargedSum[ij]);
-        njet_akpu4pf++;
-      }
-    }
-    djt.njet_akpu4pf = njet_akpu4pf;
     //! End jet selection
     
     int nmix = 0;
