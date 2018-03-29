@@ -9,13 +9,14 @@ DOMIX=${1:-0}
 MAKEHISTS=${2:-0}
 DOMBSUB=${3:-0}
 
-DJETPATH="/mnt/T2_US_MIT/submit-hi2/scratch/jwang/Djets/MC"
-WORKPATH="/mnt/T2_US_MIT/submit-hi2/scratch/mjpeters/Djet/MC"
-#WORKPATH="~/scratchmc"
-MBPATH="/mnt/hadoop/cms/store/user/rbi/merged/Hydjet_Quenched_MinBias_5020GeV_750-HINPbPbWinter16DR-NoPU_75X_mcRun2_HeavyIon_forest_v2"
-DJETFILE="DjetFiles_20171215_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_Pthat30_20171214"
+#DJETPATH="~/mbfile/T2_US_MIT/submit-hi2/scratch/jwang/Djets/MC"
+#WORKPATH="~/mbfile/T2_US_MIT/submit-hi2/scratch/mjpeters/Djet/MC"
+DJETPATH="/mnt/T2_US_MIT/submit-hi2/scratch/ginnocen"
+WORKPATH="/mnt/T2_US_MIT/submit-hi2/scratch/ginnocen"
+MBPATH="~/mbfile/T2_US_MIT/hadoop/cms/store/user/rbi/merged/Hydjet_Quenched_MinBias_5020GeV_750-HINPbPbWinter16DR-NoPU_75X_mcRun2_HeavyIon_forest_v2"
+DJETFILE="ginnocen"
 MBJETFILE="0"
-MBMIXFILE="djetmixfull"
+MBMIXFILE="test_fullstatistics20files"
 ISPP=0
 ISMC=1
 OUTFILE="MBsubtract_out"
@@ -47,13 +48,13 @@ then
     fi
     g++ djtana_savetpl_corr.C $(root-config --cflags --libs) -Wall -O2 -o djtana_savetpl_corr.exe
     g++ djtana_plothist.C $(root-config --cflags --libs) -Wall -O2 -o djtana_plothist.exe
-    ./djtana_savetpl_corr.exe "${DJETPATH}/${DJETFILE}.root" "rootfiles/${DJETFILE}_hists" $COLL $ISMC 1 20 0.0 2.0 0 
-    ./djtana_savetpl_corr.exe "${DJETPATH}/${DJETFILE}.root" "rootfiles/gen_${DJETFILE}_hists" $COLL $ISMC 3 20 0.0 2.0 0 
-    ./djtana_savetpl_corr.exe "${WORKPATH}/${MBMIXFILE}.root" "rootfiles/${MBMIXFILE}_hists" $COLL $ISMC 1 20 0.0 2.0 1
+    ./djtana_savetpl_corr.exe "${WORKPATH}/${MBMIXFILE}.root" "rootfiles/${DJETFILE}_hists" $COLL $ISMC 1 40 0.0 1.6 0 
+    ./djtana_savetpl_corr.exe "${WORKPATH}/${MBMIXFILE}.root" "rootfiles/gen_${DJETFILE}_hists" $COLL $ISMC 3 40 0.0 1.6 0 
+    ./djtana_savetpl_corr.exe "${WORKPATH}/${MBMIXFILE}.root" "rootfiles/${MBMIXFILE}_hists" $COLL $ISMC 1 40 0.0 1.6 1
     wait
-    ./djtana_plothist.exe "rootfiles/${DJETFILE}_hists" $DJETFILE $COLL $ISMC 20 0.0 2.0 &
-    ./djtana_plothist.exe "rootfiles/gen_${DJETFILE}_hists" "gen_${DJETFILE}" $COLL $ISMC 20 0.0 2.0 &
-    ./djtana_plothist.exe "rootfiles/${MBMIXFILE}_hists" $MBMIXFILE $COLL $ISMC 20 0.0 2.0
+    ./djtana_plothist.exe "rootfiles/${DJETFILE}_hists" $DJETFILE $COLL $ISMC 40 0.0 2.0 &
+    ./djtana_plothist.exe "rootfiles/gen_${DJETFILE}_hists" "gen_${DJETFILE}" $COLL $ISMC 40 0.0 2.0 &
+    ./djtana_plothist.exe "rootfiles/${MBMIXFILE}_hists" $MBMIXFILE $COLL $ISMC 40 0.0 2.0
     rm djtana_savetpl_corr.exe
     rm djtana_plothist.exe
 fi
