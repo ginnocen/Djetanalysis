@@ -27,16 +27,18 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
   int ptreject = 0;
   int ibinreject = 0;
   TVector norm(nPtBins);
+  for(int i=0;i<nPtBins;i++)norm[i]=0;
   for(int i=0;i<rnentries;i++)
     {
       if(i%10000==0) std::cout<<std::setiosflags(std::ios::left)<<"  [ \033[1;36m"<<std::setw(10)<<i<<"\033[0m"<<" / "<<std::setw(10)<<rnentries<<" ] "<<"\033[1;36m"<<std::setw(4)<<Form("%.0f%s",100.*i/rnentries,"%")<<"\033[0m"<<"   >>   djtana_savetpl_corr("<<std::setw(5)<<Form("%s,",collisionsyst.Data())<<" "<<std::setw(5)<<Form("%s,",tMC[isMC].Data())<<" "<<std::setw(20)<<Form("%sD_%sjet)", djt.aDopt[irecogen].Data(), djt.ajetopt[irecogen].Data())<<"\r"<<std::flush<<std::endl;
       //
       djt.fChain->GetEntry(i);
+      for(int i=0;i<nPtBins;i++) norm[i]++;
       //
       // to add event selection ...
       int njets;
       if(!useMB) njets = *(djt.anjet[irecogen]);
-      if(useMB) njets = *(djt.MBanjet[irecogen]);
+      if(useMB) njets = *(djt.anjet_mix[irecogen]);
       Int_t ibincent = ispp?0:xjjc::findibin(&centBins,(float)djt.hiBin/2);
       for(int jj=0;jj<njets;jj++)
         {
@@ -47,9 +49,9 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
           //if(!djtjetsel) continue;
           float jetpt;
           if(!useMB) jetpt = (**djt.ajetpt[irecogen])[jj];
-          if(useMB) jetpt = (**djt.MBajetpt[irecogen])[jj];
+          if(useMB) jetpt = (**djt.ajetpt_mix[irecogen])[jj];
           if(djtcorr::ptCorr(1.,jetpt,0.,ibincent)) continue;
-          if(jetpt<jetptmin || fabs((**djt.ajeteta[irecogen])[jj])<jetetamin || fabs((**djt.ajeteta[irecogen])[jj]>jetetamax)) continue;
+          if(jetpt<jetptmin || (!useMB && fabs((**djt.ajeteta[irecogen])[jj])<jetetamin) || (useMB && fabs((**djt.ajeteta_mix[irecogen])[jj]<jetetamin)) || (!useMB && fabs((**djt.ajeteta[irecogen])[jj]>jetetamax)) || (useMB && fabs((**djt.ajeteta_mix[irecogen])[jj]>jetetamax))) continue;
           if(irecoref==3 && (**djt.asubid[irecogen])[jj]!=0) continue;
           //if(irecoref==4 && (**djt.asubid[irecogen])[jj]==0) continue;
           ncountjet++;
@@ -61,8 +63,8 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
           }
           if(useMB)
           {
-            hJetPhi->Fill((**djt.MBajetphi[irecogen])[jj]);
-            hJetEta->Fill((**djt.MBajeteta[irecogen])[jj]);
+            hJetPhi->Fill((**djt.ajetphi_mix[irecogen])[jj]);
+            hJetEta->Fill((**djt.ajeteta_mix[irecogen])[jj]);
           }
           for(int jd=0;jd<1;jd++)
             {
@@ -71,10 +73,12 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
                          
               // to add pt-dependent event selection ...
               Float_t deltaphi;
+              Float_t deltaeta;
               if(!useMB) deltaphi = TMath::ACos(TMath::Cos((**djt.aDphi[irecogen])[jd] - (**djt.ajetphi[irecogen])[jj]));
-              if(useMB) deltaphi = TMath::ACos(TMath::Cos((**djt.aDphi[irecogen])[jd] - (**djt.MBajetphi[irecogen])[jj]));
+              if(useMB) deltaphi = TMath::ACos(TMath::Cos((**djt.aDphi[irecogen])[jd] - (**djt.ajetphi_mix[irecogen])[jj]));
               if(deltaphi>TMath::Pi() || deltaphi<-TMath::Pi()) std::cout << "bad deltaphi, jet " << jj << " D " << jd << " value " << deltaphi << std::endl;
-              Float_t deltaeta = (**djt.aDeta[irecogen])[jd] - (**djt.ajeteta[irecogen])[jj];
+              if(!useMB) deltaeta = (**djt.aDeta[irecogen])[jd] - (**djt.ajeteta[irecogen])[jj];
+              if(useMB) deltaeta = (**djt.aDeta[irecogen])[jd] - (**djt.ajeteta_mix[irecogen])[jj];
               Float_t deltaetaref = (**djt.aDeta[irecogen])[jd] + (**djt.ajeteta[irecogen])[jj];
               Float_t deltaR[nRefBins] = {(float)TMath::Sqrt(pow(deltaphi, 2) + pow(deltaeta, 2)),
                                           (float)TMath::Sqrt(pow(deltaphi, 2) + pow(deltaetaref, 2))};
@@ -88,7 +92,6 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
               if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
               if(!djtDsel) continue;
               if(irecoref==3 && (*djt.GcollisionId)[jd]!=0) continue;
-              
 
               if((irecogen==0 || irecogen==2) && jj==0)
               {
@@ -164,7 +167,6 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
           if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
           if(!djtDsel) continue;
           if(irecoref==3 && (*djt.GcollisionId)[jd]!=0) continue;
-          norm[ibinpt]++;
           hDPhi[ibinpt]->Fill((**djt.aDphi[irecogen])[jd]);
           hDEta[ibinpt]->Fill((**djt.aDeta[irecogen])[jd]);  
         }

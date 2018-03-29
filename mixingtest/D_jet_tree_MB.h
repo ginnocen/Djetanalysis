@@ -15,16 +15,20 @@ class DJetTree {
     DJetTree() {
         isPP = 0;
         run = 0;
+        run_mix = 0;
         evt = 0;
+        evt_mix = 0;
         lumi = 0;
+        lumi_mix = 0;
         hiBin = -1;
-        MBhiBin = -1;
+        hiBin_mix = -1;
         vz = -99;
-        MBvz = -1;
+        vz_mix = -1;
         weight = -1;
 	    pthat = -1;
 
         njet_akpu3pf = 0;
+        njet_akpu3pf_mix = 0;
         njet_akpu4pf = 0;
 
         RunNo = -99;
@@ -71,17 +75,20 @@ class DJetTree {
 
     int isPP;
     uint32_t run;
+    uint32_t run_mix;
     unsigned long long evt;
+    unsigned long long evt_mix;
     uint32_t lumi;
+    uint32_t lumi_mix;
     int hiBin;
-    int MBhiBin;
+    int hiBin_mix;
     float vz;
-    float MBvz;
+    float vz_mix;
     float weight;
     float pthat;
 
     float hiEvtPlanes[29];
-    float MBhiEvtPlanes[29];
+    float hiEvtPlanes_mix[29];
 
     int njet_akpu3pf;
     std::vector<float> jetptCorr_akpu3pf;
@@ -90,11 +97,11 @@ class DJetTree {
     std::vector<float> jeteta_akpu3pf;
     std::vector<float> jetphi_akpu3pf;
 
-    int MBnjet_akpu3pf;
-    std::vector<float> MBjetpt_akpu3pf;
-    std::vector<float> MBjeteta_akpu3pf;
-    std::vector<float> MBjetphi_akpu3pf;
-    std::vector<int> MBsubid_akpu3pf;
+    int njet_akpu3pf_mix;
+    std::vector<float> jetpt_akpu3pf_mix;
+    std::vector<float> jeteta_akpu3pf_mix;
+    std::vector<float> jetphi_akpu3pf_mix;
+    std::vector<int> subid_akpu3pf_mix;
 
     std::vector<int> jetnpfpart_akpu3pf;
     std::vector<float> gjetpt_akpu3pf;
@@ -270,17 +277,20 @@ class DJetTree {
 void DJetTree::create_tree(TTree* t) {
     t->Branch("isPP", &isPP, "isPP/I");
     t->Branch("run", &run, "run/i");
+    t->Branch("run_mix",&run_mix,"run_mix/i");
     t->Branch("evt", &evt, "evt/l");
+    t->Branch("evt_mix",&evt_mix,"evt_mix/l");
     t->Branch("lumi", &lumi, "lumi/i");
+    t->Branch("lumi_mix",&lumi_mix,"lumi_mix/i");
     t->Branch("hiBin", &hiBin, "hiBin/I");
-    t->Branch("MBhiBin", &MBhiBin ,"MBhiBin/I");
+    t->Branch("hiBin_mix", &hiBin_mix ,"hiBin_mix/I");
     t->Branch("vz", &vz, "vz/F");
-    t->Branch("MBvz", &MBvz, "MBvz/F");
+    t->Branch("vz_mix", &vz_mix, "vz_mix/F");
     t->Branch("weight", &weight, "weight/F");
     t->Branch("pthat", &pthat, "pthat/F");
 
     t->Branch("hiEvtPlanes", hiEvtPlanes, "hiEvtPlanes[29]/F");
-    t->Branch("MBhiEvtPlanes", MBhiEvtPlanes, "hiEvtPlanes[29]/F");
+    t->Branch("hiEvtPlanes_mix", hiEvtPlanes_mix, "hiEvtPlanes_mix[29]/F");
 
     t->Branch("njet_akpu3pf", &njet_akpu3pf, "njet_akpu3pf/I");
     t->Branch("jetptCorr_akpu3pf", &jetptCorr_akpu3pf);
@@ -290,11 +300,11 @@ void DJetTree::create_tree(TTree* t) {
     t->Branch("jetphi_akpu3pf", &jetphi_akpu3pf);
     t->Branch("jetnpfpart_akpu3pf", &jetnpfpart_akpu3pf);
 
-    t->Branch("MBnjet_akpu3pf", &MBnjet_akpu3pf, "MBnjet_akpu3pf/I");
-    t->Branch("MBjetpt_akpu3pf", &MBjetpt_akpu3pf);
-    t->Branch("MBjeteta_akpu3pf", &MBjeteta_akpu3pf);
-    t->Branch("MBjetphi_akpu3pf", &MBjetphi_akpu3pf);
-    t->Branch("MBsubid_akpu3pf", &MBsubid_akpu3pf);
+    t->Branch("njet_akpu3pf_mix", &njet_akpu3pf_mix, "njet_akpu3pf_mix/I");
+    t->Branch("jetpt_akpu3pf_mix", &jetpt_akpu3pf_mix);
+    t->Branch("jeteta_akpu3pf_mix", &jeteta_akpu3pf_mix);
+    t->Branch("jetphi_akpu3pf_mix", &jetphi_akpu3pf_mix);
+    t->Branch("subid_akpu3pf_mix", &subid_akpu3pf_mix);
 
     t->Branch("gjetpt_akpu3pf", &gjetpt_akpu3pf);
     t->Branch("gjeteta_akpu3pf", &gjeteta_akpu3pf);
@@ -628,10 +638,10 @@ void DJetTree::clear_vectors() {
     muSum_akpu3pf.clear();
     muN_akpu3pf.clear();
 
-    MBjetpt_akpu3pf.clear();
-    MBjeteta_akpu3pf.clear();
-    MBjetphi_akpu3pf.clear();
-    MBsubid_akpu3pf.clear();
+    jetpt_akpu3pf_mix.clear();
+    jeteta_akpu3pf_mix.clear();
+    jetphi_akpu3pf_mix.clear();
+    subid_akpu3pf_mix.clear();
 
     genpt_akpu3pf.clear();
     geneta_akpu3pf.clear();

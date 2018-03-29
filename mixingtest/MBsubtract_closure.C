@@ -61,12 +61,12 @@ int MBsubtract_closure(std::string Djetfile, std::string mixfile, std::string ge
         if(plotdphi) cdphi->Clear();
         //d->Clear();
 
-        Djet_dr[i]->Sumw2();
-        Djet_dphi[i]->Sumw2();
-        mix_dr[i]->Sumw2();
-        mix_dphi[i]->Sumw2();
-        gen_dr[i]->Sumw2();
-        gen_dphi[i]->Sumw2();
+        //Djet_dr[i]->Sumw2();
+        //Djet_dphi[i]->Sumw2();
+        //mix_dr[i]->Sumw2();
+        //mix_dphi[i]->Sumw2();
+        //gen_dr[i]->Sumw2();
+        //gen_dphi[i]->Sumw2();
         Djet_dr[i]->Scale(1./nD_djt[i]);
         Djet_dphi[i]->Scale(1./nD_djt[i]);
         mix_dr[i]->Scale(1./nD_mix[i]);
