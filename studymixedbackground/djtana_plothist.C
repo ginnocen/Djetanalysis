@@ -62,7 +62,7 @@ void djtana_plothist(TString inputhistname, TString outputname,
       TString fullname = hJetHists[i]->GetName();
       fullname += "_";
       // Saves twice for easy comparison; this one compares the same histogram in different datasets
-      c->SaveAs(Form("plots/%s/%s.png",name.Data(),fullname.Append(outputname).Data()));
+      //c->SaveAs(Form("plots/%s/%s.png",name.Data(),fullname.Append(outputname).Data()));
       // And this one compares different histograms in the same dataset
       c->SaveAs(Form("plots/%s/%s.png",outputname.Data(),fullname.Data()));
       delete c;
@@ -84,7 +84,7 @@ void djtana_plothist(TString inputhistname, TString outputname,
           name(re) = "";
           TString fullname = (hDHists.at(i))[j]->GetName();
           fullname += "_";
-          c->SaveAs(Form("plots/%s/%s.png",name.Data(),fullname.Append(outputname).Data()));
+          //c->SaveAs(Form("plots/%s/%s.png",name.Data(),fullname.Append(outputname).Data()));
           c->SaveAs(Form("plots/%s/%s.png",outputname.Data(),fullname.Data()));
           delete c;
           delete hempty;
@@ -103,8 +103,8 @@ void djtana_plothist(TString inputhistname, TString outputname,
             name(re) = "";
             TString fullname = (h2DHists.at(i))[j]->GetName();
             fullname += "_";
-            c->SaveAs(Form("plots/%s/%s.png",name.Data(),fullname.Append(outputname).Data()));
-          c->SaveAs(Form("plots/%s/%s.png",outputname.Data(),fullname.Data()));
+            //c->SaveAs(Form("plots/%s/%s.png",name.Data(),fullname.Append(outputname).Data()));
+            c->SaveAs(Form("plots/%s/%s.png",outputname.Data(),fullname.Data()));
             delete c;
         } 
     }
