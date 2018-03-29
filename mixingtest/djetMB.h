@@ -47,16 +47,21 @@ public:
   std::vector<float>*   jetphi_akpu3pf_mix;
   std::vector<int>*     jetnpfpart_akpu3pf;
   std::vector<float>*   gjetpt_akpu3pf;
+  std::vector<float>*   gjetpt_akpu3pf_mix;
   std::vector<float>*   gjeteta_akpu3pf;
+  std::vector<float>*   gjeteta_akpu3pf_mix;
   std::vector<float>*   gjetphi_akpu3pf;
+  std::vector<float>*   gjetphi_akpu3pf_mix;
   std::vector<int>*     gjetflavor_akpu3pf;
   std::vector<float>*   chargedSum_akpu3pf;
   std::vector<int>*     subid_akpu3pf;
+  std::vector<int>*     subid_akpu3pf_mix;
   Int_t                 ngen_akpu3pf;
   std::vector<float>*   genpt_akpu3pf;
   std::vector<float>*   geneta_akpu3pf;
   std::vector<float>*   genphi_akpu3pf;
   std::vector<int>*     gensubid_akpu3pf;
+  std::vector<int>*     gensubid_akpu3pf_mix;
   Int_t                 njet_akpu4pf;
   std::vector<float>*   jetptCorr_akpu4pf;
   std::vector<float>*   jetpt_akpu4pf;
@@ -77,6 +82,7 @@ public:
   Int_t                 EvtNo;
   Int_t                 LumiNo;
   Int_t                 Dsize;
+  Int_t                 Dsize_mix;
   Float_t               PVx;
   Float_t               PVy;
   Float_t               PVz;
@@ -275,28 +281,236 @@ public:
   Float_t               pthatweight;
   Float_t               maxDgenpt;
 
+  std::vector<int>*     Dindex_mix;
+  std::vector<int>*     Dtype_mix;
+  std::vector<float>*   Dmass_mix;
+  std::vector<float>*   Dpt_mix;
+  std::vector<float>*   Deta_mix;
+  std::vector<float>*   Dphi_mix;
+  std::vector<float>*   Dy_mix;
+  std::vector<float>*   DvtxX_mix;
+  std::vector<float>*   DvtxY_mix;
+  std::vector<float>*   Dd0_mix;
+  std::vector<float>*   Dd0Err_mix;
+  std::vector<float>*   Ddxyz_mix;
+  std::vector<float>*   DdxyzErr_mix;
+  std::vector<float>*   Dchi2ndf_mix;
+  std::vector<float>*   Dchi2cl_mix;
+  std::vector<float>*   Ddtheta_mix;
+  std::vector<float>*   Dlxy_mix;
+  std::vector<float>*   Dalpha_mix;
+  std::vector<float>*   DsvpvDistance_mix;
+  std::vector<float>*   DsvpvDisErr_mix;
+  std::vector<float>*   DsvpvDistance_2D_mix;
+  std::vector<float>*   DsvpvDisErr_2D_mix;
+  std::vector<float>*   DtktkRes_chi2ndf_mix;
+  std::vector<float>*   DtktkRes_chi2cl_mix;
+  std::vector<float>*   DtktkRes_alpha_mix;
+  std::vector<float>*   DtktkRes_svpvDistance_mix;
+  std::vector<float>*   DtktkRes_svpvDisErr_mix;
+  std::vector<float>*   DlxyBS_mix;
+  std::vector<float>*   DlxyBSErr_mix;
+  std::vector<float>*   DMaxDoca_mix;
+  std::vector<float>*   Dtrk1Pt_mix;
+  std::vector<float>*   Dtrk2Pt_mix;
+  std::vector<float>*   Dtrk1Eta_mix;
+  std::vector<float>*   Dtrk2Eta_mix;
+  std::vector<float>*   Dtrk1Phi_mix;
+  std::vector<float>*   Dtrk2Phi_mix;
+  std::vector<float>*   Dtrk1PtErr_mix;
+  std::vector<float>*   Dtrk2PtErr_mix;
+  std::vector<float>*   Dtrk1Dxy_mix;
+  std::vector<float>*   Dtrk2Dxy_mix;
+  std::vector<float>*   Dtrk1PixelHit_mix;
+  std::vector<float>*   Dtrk2PixelHit_mix;
+  std::vector<float>*   Dtrk1StripHit_mix;
+  std::vector<float>*   Dtrk2StripHit_mix;
+  std::vector<float>*   Dtrk1nStripLayer_mix;
+  std::vector<float>*   Dtrk2nStripLayer_mix;
+  std::vector<float>*   Dtrk1nPixelLayer_mix;
+  std::vector<float>*   Dtrk2nPixelLayer_mix;
+  std::vector<float>*   Dtrk1Chi2ndf_mix;
+  std::vector<float>*   Dtrk2Chi2ndf_mix;
+  std::vector<float>*   Dtrk1MassHypo_mix;
+  std::vector<float>*   Dtrk2MassHypo_mix;
+  std::vector<int>*     Dtrk1Algo_mix;
+  std::vector<int>*     Dtrk2Algo_mix;
+  std::vector<int>*     Dtrk1originalAlgo_mix;
+  std::vector<int>*     Dtrk2originalAlgo_mix;
+  std::vector<bool>*    Dtrk1highPurity_mix;
+  std::vector<bool>*    Dtrk2highPurity_mix;
+  std::vector<float>*   Dtrk3Pt_mix;
+  std::vector<float>*   Dtrk4Pt_mix;
+  std::vector<float>*   Dtrk3Eta_mix;
+  std::vector<float>*   Dtrk4Eta_mix;
+  std::vector<float>*   Dtrk3Phi_mix;
+  std::vector<float>*   Dtrk4Phi_mix;
+  std::vector<float>*   Dtrk3PtErr_mix;
+  std::vector<float>*   Dtrk4PtErr_mix;
+  std::vector<float>*   Dtrk3Dxy_mix;
+  std::vector<float>*   Dtrk4Dxy_mix;
+  std::vector<float>*   Dtrk3PixelHit_mix;
+  std::vector<float>*   Dtrk4PixelHit_mix;
+  std::vector<float>*   Dtrk3StripHit_mix;
+  std::vector<float>*   Dtrk4StripHit_mix;
+  std::vector<float>*   Dtrk3nStripLayer_mix;
+  std::vector<float>*   Dtrk4nStripLayer_mix;
+  std::vector<float>*   Dtrk3nPixelLayer_mix;
+  std::vector<float>*   Dtrk4nPixelLayer_mix;
+  std::vector<float>*   Dtrk3Chi2ndf_mix;
+  std::vector<float>*   Dtrk4Chi2ndf_mix;
+  std::vector<float>*   Dtrk3MassHypo_mix;
+  std::vector<float>*   Dtrk4MassHypo_mix;
+  std::vector<int>*     Dtrk3Algo_mix;
+  std::vector<int>*     Dtrk4Algo_mix;
+  std::vector<int>*     Dtrk3originalAlgo_mix;
+  std::vector<int>*     Dtrk4originalAlgo_mix;
+  std::vector<bool>*    Dtrk3highPurity_mix;
+  std::vector<bool>*    Dtrk4highPurity_mix;
+  std::vector<int>*     Dtrk1Idx_mix;
+  std::vector<int>*     Dtrk2Idx_mix;
+  std::vector<float>*   Dtrk1EtaErr_mix;
+  std::vector<float>*   Dtrk2EtaErr_mix;
+  std::vector<float>*   Dtrk1PhiErr_mix;
+  std::vector<float>*   Dtrk2PhiErr_mix;
+  std::vector<float>*   Dtrk1Y_mix;
+  std::vector<float>*   Dtrk2Y_mix;
+  std::vector<float>*   Dtrk1D0Err_mix;
+  std::vector<float>*   Dtrk2D0Err_mix;
+  std::vector<float>*   Dtrk1MVAVal_mix;
+  std::vector<float>*   Dtrk2MVAVal_mix;
+  std::vector<int>*     Dtrk1Quality_mix;
+  std::vector<int>*     Dtrk2Quality_mix;
+  std::vector<int>*     Dtrk3Idx_mix;
+  std::vector<int>*     Dtrk4Idx_mix;
+  std::vector<float>*   Dtrk3EtaErr_mix;
+  std::vector<float>*   Dtrk4EtaErr_mix;
+  std::vector<float>*   Dtrk3PhiErr_mix;
+  std::vector<float>*   Dtrk4PhiErr_mix;
+  std::vector<float>*   Dtrk3Y_mix;
+  std::vector<float>*   Dtrk4Y_mix;
+  std::vector<float>*   Dtrk3D0Err_mix;
+  std::vector<float>*   Dtrk4D0Err_mix;
+  std::vector<float>*   Dtrk3MVAVal_mix;
+  std::vector<float>*   Dtrk4MVAVal_mix;
+  std::vector<int>*     Dtrk3Quality_mix;
+  std::vector<int>*     Dtrk4Quality_mix;
+  std::vector<float>*   DtktkResmass_mix;
+  std::vector<float>*   DtktkRespt_mix;
+  std::vector<float>*   DtktkReseta_mix;
+  std::vector<float>*   DtktkResphi_mix;
+  std::vector<float>*   DRestrk1Pt_mix;
+  std::vector<float>*   DRestrk1Eta_mix;
+  std::vector<float>*   DRestrk1Phi_mix;
+  std::vector<float>*   DRestrk1Y_mix;
+  std::vector<float>*   DRestrk1Dxy_mix;
+  std::vector<float>*   DRestrk1D0Err_mix;
+  std::vector<int>*     DRestrk1originalAlgo_mix;
+  std::vector<float>*   DRestrk2Pt_mix;
+  std::vector<float>*   DRestrk2Eta_mix;
+  std::vector<float>*   DRestrk2Phi_mix;
+  std::vector<float>*   DRestrk2Y_mix;
+  std::vector<float>*   DRestrk2Dxy_mix;
+  std::vector<float>*   DRestrk2D0Err_mix;
+  std::vector<int>*     DRestrk2originalAlgo_mix;
+  std::vector<float>*   DRestrk3Pt_mix;
+  std::vector<float>*   DRestrk3Eta_mix;
+  std::vector<float>*   DRestrk3Phi_mix;
+  std::vector<float>*   DRestrk3Y_mix;
+  std::vector<float>*   DRestrk3Dxy_mix;
+  std::vector<float>*   DRestrk3D0Err_mix;
+  std::vector<int>*     DRestrk3originalAlgo_mix;
+  std::vector<float>*   DRestrk4Pt_mix;
+  std::vector<float>*   DRestrk4Eta_mix;
+  std::vector<float>*   DRestrk4Phi_mix;
+  std::vector<float>*   DRestrk4Y_mix;
+  std::vector<float>*   DRestrk4Dxy_mix;
+  std::vector<float>*   DRestrk4D0Err_mix;
+  std::vector<int>*     DRestrk4originalAlgo_mix;
+  std::vector<float>*   Dgen_mix;
+  std::vector<int>*     DgenIndex_mix;
+  std::vector<int>*     DgennDa_mix;
+  std::vector<float>*   Dgenpt_mix;
+  std::vector<float>*   Dgeneta_mix;
+  std::vector<float>*   Dgenphi_mix;
+  std::vector<float>*   Dgeny_mix;
+  std::vector<int>*     DgencollisionId_mix;
+  std::vector<float>*   DgenBAncestorpt_mix;
+  std::vector<int>*     DgenBAncestorpdgId_mix;
+  Int_t                 Gsize_mix;
+  std::vector<float>*   Gy_mix;
+  std::vector<float>*   Geta_mix;
+  std::vector<float>*   Gphi_mix;
+  std::vector<float>*   Gpt_mix;
+  std::vector<int>*     GpdgId_mix;
+  std::vector<int>*     GcollisionId_mix;
+  std::vector<int>*     GisSignal_mix;
+  std::vector<float>*   GBAncestorpt_mix;
+  std::vector<int>*     GBAncestorpdgId_mix;
+  std::vector<float>*   Gtk1pt_mix;
+  std::vector<float>*   Gtk1eta_mix;
+  std::vector<float>*   Gtk1y_mix;
+  std::vector<float>*   Gtk1phi_mix;
+  std::vector<float>*   Gtk2pt_mix;
+  std::vector<float>*   Gtk2eta_mix;
+  std::vector<float>*   Gtk2y_mix;
+  std::vector<float>*   Gtk2phi_mix;
+  Float_t               pthatweight_mix;
+  Float_t               maxDgenpt_mix;
+
   const static int ncases = 4;
-  TString                aDopt[ncases]     =   {"reco",               "gen",                "reco",            "gen"};
-  int*                   anD[ncases]       =   {&Dsize,               &Gsize,               &Dsize,            &Gsize};
-  std::vector<float>**   aDpt[ncases]      =   {&Dpt,                 &Gpt,                 &Dpt,              &Gpt};
-  std::vector<float>**   aDeta[ncases]     =   {&Deta,                &Geta,                &Deta,             &Geta};
-  std::vector<float>**   aDphi[ncases]     =   {&Dphi,                &Gphi,                &Dphi,             &Gphi};
-  TString                ajetopt[ncases]   =   {"reco",               "reco",               "gen",             "gen"};
+  const static int mixcases = 4;
+  TString                aDopt[mixcases][ncases]     =   {{"reco",               "gen",                "reco",            "gen"},
+                                                          {"recomix",            "genmix",             "recomix",         "genmix"},
+                                                          {"reco",               "gen",                "reco",            "gen"},
+                                                          {"recomix",            "genmix",             "recomix",         "genmix"}};
+  int*                   anD[mixcases][ncases]       =   {{&Dsize,               &Gsize,               &Dsize,            &Gsize},
+                                                          {&Dsize_mix,           &Gsize_mix,           &Dsize_mix,        &Gsize_mix},
+                                                          {&Dsize,               &Gsize,               &Dsize,            &Gsize},
+                                                          {&Dsize_mix,           &Gsize_mix,           &Dsize_mix,        &Gsize_mix}};
+  std::vector<float>**   aDpt[mixcases][ncases]      =   {{&Dpt,                 &Gpt,                 &Dpt,              &Gpt},
+                                                          {&Dpt_mix,             &Gpt_mix,             &Dpt_mix,          &Gpt_mix},
+                                                          {&Dpt,                 &Gpt,                 &Dpt,              &Gpt},
+                                                          {&Dpt_mix,             &Gpt_mix,             &Dpt_mix,          &Gpt_mix}};
+  std::vector<float>**   aDeta[mixcases][ncases]     =   {{&Deta,                &Geta,                &Deta,             &Geta},
+                                                          {&Deta_mix,            &Geta_mix,            &Deta_mix,         &Geta_mix},
+                                                          {&Deta,                &Geta,                &Deta,             &Geta},
+                                                          {&Deta_mix,            &Geta_mix,            &Deta_mix,         &Geta_mix}};
+  std::vector<float>**   aDphi[mixcases][ncases]     =   {{&Dphi,                &Gphi,                &Dphi,             &Gphi},
+                                                          {&Dphi_mix,            &Gphi_mix,            &Dphi_mix,         &Gphi_mix},
+                                                          {&Dphi,                &Gphi,                &Dphi,             &Gphi},
+                                                          {&Dphi_mix,            &Gphi_mix,            &Dphi_mix,         &Gphi_mix}};                                                
+  TString                ajetopt[mixcases][ncases]   =   {{"reco",               "reco",               "gen",             "gen"},
+                                                          {"reco",               "reco",               "gen",             "gen"},
+                                                          {"recomix",            "recomix",            "genmix",          "genmix"},
+                                                          {"recomix",            "recomix",            "genmix",          "genmix"}};
   // int*                   anjet[ncases]     =   {&njet_akpu3pf,        &njet_akpu3pf,        &ngen_akpu3pf,     &ngen_akpu3pf};
   // std::vector<float>**   ajetpt[ncases]    =   {&jetpt_akpu3pf,       &jetpt_akpu3pf,       &genpt_akpu3pf,    &genpt_akpu3pf};
   // std::vector<float>**   ajeteta[ncases]   =   {&jeteta_akpu3pf,      &jeteta_akpu3pf,      &geneta_akpu3pf,   &geneta_akpu3pf};
   // std::vector<float>**   ajetphi[ncases]   =   {&jetphi_akpu3pf,      &jetphi_akpu3pf,      &genphi_akpu3pf,   &genphi_akpu3pf};
   // std::vector<int>**     asubid[ncases]    =   {&subid_akpu3pf,       &subid_akpu3pf,       &gensubid_akpu3pf, &gensubid_akpu3pf};
 
-  int*                   anjet[ncases]     =   {&njet_akpu3pf,        &njet_akpu3pf,        &njet_akpu3pf,      &njet_akpu3pf};
-  int*                   anjet_mix[ncases]   =   {&njet_akpu3pf_mix,      &njet_akpu3pf_mix,      &njet_akpu3pf,      &njet_akpu3pf};
-  std::vector<float>**   ajetpt[ncases]    =   {&jetpt_akpu3pf,       &jetpt_akpu3pf,       &gjetpt_akpu3pf,    &gjetpt_akpu3pf};
-  std::vector<float>**   ajetpt_mix[ncases]  =   {&jetpt_akpu3pf_mix,     &jetpt_akpu3pf_mix,     &gjetpt_akpu3pf,    &gjetpt_akpu3pf};
-  std::vector<float>**   ajeteta[ncases]   =   {&jeteta_akpu3pf,      &jeteta_akpu3pf,      &gjeteta_akpu3pf,   &gjeteta_akpu3pf};
-  std::vector<float>**   ajeteta_mix[ncases] =   {&jeteta_akpu3pf_mix,    &jeteta_akpu3pf_mix,    &gjeteta_akpu3pf,   &gjeteta_akpu3pf};
-  std::vector<float>**   ajetphi[ncases]   =   {&jetphi_akpu3pf,      &jetphi_akpu3pf,      &gjetphi_akpu3pf,   &gjetphi_akpu3pf};
-  std::vector<float>**   ajetphi_mix[ncases] =   {&jetphi_akpu3pf_mix,    &jetphi_akpu3pf_mix,    &gjetphi_akpu3pf,   &gjetphi_akpu3pf};
-  std::vector<int>**     asubid[ncases]    =   {&subid_akpu3pf,       &subid_akpu3pf,       &subid_akpu3pf,     &subid_akpu3pf};
+  int*                   anjet[mixcases][ncases]     =   {{&njet_akpu3pf,        &njet_akpu3pf,        &njet_akpu3pf,      &njet_akpu3pf},
+                                                          {&njet_akpu3pf,        &njet_akpu3pf,        &njet_akpu3pf,      &njet_akpu3pf},
+                                                          {&njet_akpu3pf_mix,    &njet_akpu3pf_mix,    &njet_akpu3pf_mix,  &njet_akpu3pf_mix},
+                                                          {&njet_akpu3pf_mix,    &njet_akpu3pf_mix,    &njet_akpu3pf_mix,  &njet_akpu3pf_mix}};
+  std::vector<float>**   ajetpt[mixcases][ncases]    =   {{&jetpt_akpu3pf,       &jetpt_akpu3pf,       &gjetpt_akpu3pf,    &gjetpt_akpu3pf},
+                                                          {&jetpt_akpu3pf,       &jetpt_akpu3pf,       &gjetpt_akpu3pf,    &gjetpt_akpu3pf},
+                                                          {&jetpt_akpu3pf_mix,   &jetpt_akpu3pf_mix,   &gjetpt_akpu3pf_mix,&gjetpt_akpu3pf_mix},
+                                                          {&jetpt_akpu3pf_mix,   &jetpt_akpu3pf_mix,   &gjetpt_akpu3pf_mix,&gjetpt_akpu3pf_mix}};
+  std::vector<float>**   ajeteta[mixcases][ncases]   =   {{&jeteta_akpu3pf,      &jeteta_akpu3pf,      &gjeteta_akpu3pf,    &gjeteta_akpu3pf},
+                                                          {&jeteta_akpu3pf,      &jeteta_akpu3pf,      &gjeteta_akpu3pf,    &gjeteta_akpu3pf},
+                                                          {&jeteta_akpu3pf_mix,  &jeteta_akpu3pf_mix,  &gjeteta_akpu3pf_mix,&gjeteta_akpu3pf_mix},
+                                                          {&jeteta_akpu3pf_mix,  &jeteta_akpu3pf_mix,  &gjeteta_akpu3pf_mix,&gjeteta_akpu3pf_mix}};
+  std::vector<float>**   ajetphi[mixcases][ncases]   =   {{&jetphi_akpu3pf,      &jetphi_akpu3pf,      &gjetphi_akpu3pf,    &gjetphi_akpu3pf},
+                                                          {&jetphi_akpu3pf,      &jetphi_akpu3pf,      &gjetphi_akpu3pf,    &gjetphi_akpu3pf},
+                                                          {&jetphi_akpu3pf_mix,  &jetphi_akpu3pf_mix,  &gjetphi_akpu3pf_mix,&gjetphi_akpu3pf_mix},
+                                                          {&jetphi_akpu3pf_mix,  &jetphi_akpu3pf_mix,  &gjetphi_akpu3pf_mix,&gjetphi_akpu3pf_mix}};
+  std::vector<int>**     asubid[mixcases][ncases]    =   {{&subid_akpu3pf,       &subid_akpu3pf,       &subid_akpu3pf,        &subid_akpu3pf},
+                                                          {&subid_akpu3pf,       &subid_akpu3pf,       &subid_akpu3pf,        &subid_akpu3pf},
+                                                          {&subid_akpu3pf_mix,   &subid_akpu3pf_mix,   &gensubid_akpu3pf_mix, &gensubid_akpu3pf_mix},
+                                                          {&subid_akpu3pf_mix,   &subid_akpu3pf_mix,   &gensubid_akpu3pf_mix, &gensubid_akpu3pf_mix}};
+
 
   Int_t HLT_AK4Jet40;
   Int_t HLT_AK4Jet60;
@@ -313,7 +527,7 @@ public:
   void setjetcut(Float_t _cut_jetpt_min, Float_t _cut_jeteta_min, Float_t _cut_jeteta_max);
   void setbindepcut(Float_t _cut_Dsvpv, Float_t _cut_Dalpha);
   int isDselected(Int_t j, Option_t* option);
-  int isjetselected(Int_t j, Option_t* option);
+  int isjetselected(Int_t j, int MBopt, int irecogen);
   int ishltselected(Option_t* option);
 
   Float_t           cut_trkPt;
@@ -404,15 +618,20 @@ void djet::Init(TTree *tree, TTree *hlt)
   jetphi_akpu3pf_mix = 0;
   jetnpfpart_akpu3pf = 0;
   gjetpt_akpu3pf = 0;
+  gjetpt_akpu3pf_mix = 0;
   gjeteta_akpu3pf = 0;
+  gjeteta_akpu3pf_mix = 0;
   gjetphi_akpu3pf = 0;
+  gjetphi_akpu3pf_mix = 0;
   gjetflavor_akpu3pf = 0;
   chargedSum_akpu3pf = 0;
   subid_akpu3pf = 0;
+  subid_akpu3pf_mix = 0;
   genpt_akpu3pf = 0;
   geneta_akpu3pf = 0;
   genphi_akpu3pf = 0;
   gensubid_akpu3pf = 0;
+  gensubid_akpu3pf_mix = 0;
   jetptCorr_akpu4pf = 0;
   jetpt_akpu4pf = 0;
   jeteta_akpu4pf = 0;
@@ -601,6 +820,180 @@ void djet::Init(TTree *tree, TTree *hlt)
   Gtk2y = 0;
   Gtk2phi = 0;
 
+  Dindex_mix = 0;
+  Dtype_mix = 0;
+  Dmass_mix = 0;
+  Dpt_mix = 0;
+  Deta_mix = 0;
+  Dphi_mix = 0;
+  Dy_mix = 0;
+  DvtxX_mix = 0;
+  DvtxY_mix = 0;
+  Dd0_mix = 0;
+  Dd0Err_mix = 0;
+  Ddxyz_mix = 0;
+  DdxyzErr_mix = 0;
+  Dchi2ndf_mix = 0;
+  Dchi2cl_mix = 0;
+  Ddtheta_mix = 0;
+  Dlxy_mix = 0;
+  Dalpha_mix = 0;
+  DsvpvDistance_mix = 0;
+  DsvpvDisErr_mix = 0;
+  DsvpvDistance_2D_mix = 0;
+  DsvpvDisErr_2D_mix = 0;
+  DtktkRes_chi2ndf_mix = 0;
+  DtktkRes_chi2cl_mix = 0;
+  DtktkRes_alpha_mix = 0;
+  DtktkRes_svpvDistance_mix = 0;
+  DtktkRes_svpvDisErr_mix = 0;
+  DlxyBS_mix = 0;
+  DlxyBSErr_mix = 0;
+  DMaxDoca_mix = 0;
+  Dtrk1Pt_mix = 0;
+  Dtrk2Pt_mix = 0;
+  Dtrk1Eta_mix = 0;
+  Dtrk2Eta_mix = 0;
+  Dtrk1Phi_mix = 0;
+  Dtrk2Phi_mix = 0;
+  Dtrk1PtErr_mix = 0;
+  Dtrk2PtErr_mix = 0;
+  Dtrk1Dxy_mix = 0;
+  Dtrk2Dxy_mix = 0;
+  Dtrk1PixelHit_mix = 0;
+  Dtrk2PixelHit_mix = 0;
+  Dtrk1StripHit_mix = 0;
+  Dtrk2StripHit_mix = 0;
+  Dtrk1nStripLayer_mix = 0;
+  Dtrk2nStripLayer_mix = 0;
+  Dtrk1nPixelLayer_mix = 0;
+  Dtrk2nPixelLayer_mix = 0;
+  Dtrk1Chi2ndf_mix = 0;
+  Dtrk2Chi2ndf_mix = 0;
+  Dtrk1MassHypo_mix = 0;
+  Dtrk2MassHypo_mix = 0;
+  Dtrk1Algo_mix = 0;
+  Dtrk2Algo_mix = 0;
+  Dtrk1originalAlgo_mix = 0;
+  Dtrk2originalAlgo_mix = 0;
+  Dtrk1highPurity_mix = 0;
+  Dtrk2highPurity_mix = 0;
+  Dtrk3Pt_mix = 0;
+  Dtrk4Pt_mix = 0;
+  Dtrk3Eta_mix = 0;
+  Dtrk4Eta_mix = 0;
+  Dtrk3Phi_mix = 0;
+  Dtrk4Phi_mix = 0;
+  Dtrk3PtErr_mix = 0;
+  Dtrk4PtErr_mix = 0;
+  Dtrk3Dxy_mix = 0;
+  Dtrk4Dxy_mix = 0;
+  Dtrk3PixelHit_mix = 0;
+  Dtrk4PixelHit_mix = 0;
+  Dtrk3StripHit_mix = 0;
+  Dtrk4StripHit_mix = 0;
+  Dtrk3nStripLayer_mix = 0;
+  Dtrk4nStripLayer_mix = 0;
+  Dtrk3nPixelLayer_mix = 0;
+  Dtrk4nPixelLayer_mix = 0;
+  Dtrk3Chi2ndf_mix = 0;
+  Dtrk4Chi2ndf_mix = 0;
+  Dtrk3MassHypo_mix = 0;
+  Dtrk4MassHypo_mix = 0;
+  Dtrk3Algo_mix = 0;
+  Dtrk4Algo_mix = 0;
+  Dtrk3originalAlgo_mix = 0;
+  Dtrk4originalAlgo_mix = 0;
+  Dtrk3highPurity_mix = 0;
+  Dtrk4highPurity_mix = 0;
+  Dtrk1Idx_mix = 0;
+  Dtrk2Idx_mix = 0;
+  Dtrk1EtaErr_mix = 0;
+  Dtrk2EtaErr_mix = 0;
+  Dtrk1PhiErr_mix = 0;
+  Dtrk2PhiErr_mix = 0;
+  Dtrk1Y_mix = 0;
+  Dtrk2Y_mix = 0;
+  Dtrk1D0Err_mix = 0;
+  Dtrk2D0Err_mix = 0;
+  Dtrk1MVAVal_mix = 0;
+  Dtrk2MVAVal_mix = 0;
+  Dtrk1Quality_mix = 0;
+  Dtrk2Quality_mix = 0;
+  Dtrk3Idx_mix = 0;
+  Dtrk4Idx_mix = 0;
+  Dtrk3EtaErr_mix = 0;
+  Dtrk4EtaErr_mix = 0;
+  Dtrk3PhiErr_mix = 0;
+  Dtrk4PhiErr_mix = 0;
+  Dtrk3Y_mix = 0;
+  Dtrk4Y_mix = 0;
+  Dtrk3D0Err_mix = 0;
+  Dtrk4D0Err_mix = 0;
+  Dtrk3MVAVal_mix = 0;
+  Dtrk4MVAVal_mix = 0;
+  Dtrk3Quality_mix = 0;
+  Dtrk4Quality_mix = 0;
+  DtktkResmass_mix = 0;
+  DtktkRespt_mix = 0;
+  DtktkReseta_mix = 0;
+  DtktkResphi_mix = 0;
+  DRestrk1Pt_mix = 0;
+  DRestrk1Eta_mix = 0;
+  DRestrk1Phi_mix = 0;
+  DRestrk1Y_mix = 0;
+  DRestrk1Dxy_mix = 0;
+  DRestrk1D0Err_mix = 0;
+  DRestrk1originalAlgo_mix = 0;
+  DRestrk2Pt_mix = 0;
+  DRestrk2Eta_mix = 0;
+  DRestrk2Phi_mix = 0;
+  DRestrk2Y_mix = 0;
+  DRestrk2Dxy_mix = 0;
+  DRestrk2D0Err_mix = 0;
+  DRestrk2originalAlgo_mix = 0;
+  DRestrk3Pt_mix = 0;
+  DRestrk3Eta_mix = 0;
+  DRestrk3Phi_mix = 0;
+  DRestrk3Y_mix = 0;
+  DRestrk3Dxy_mix = 0;
+  DRestrk3D0Err_mix = 0;
+  DRestrk3originalAlgo_mix = 0;
+  DRestrk4Pt_mix = 0;
+  DRestrk4Eta_mix = 0;
+  DRestrk4Phi_mix = 0;
+  DRestrk4Y_mix = 0;
+  DRestrk4Dxy_mix = 0;
+  DRestrk4D0Err_mix = 0;
+  DRestrk4originalAlgo_mix = 0;
+  Dgen_mix = 0;
+  DgenIndex_mix = 0;
+  DgennDa_mix = 0;
+  Dgenpt_mix = 0;
+  Dgeneta_mix = 0;
+  Dgenphi_mix = 0;
+  Dgeny_mix = 0;
+  DgencollisionId_mix = 0;
+  DgenBAncestorpt_mix = 0;
+  DgenBAncestorpdgId_mix = 0;
+  Gy_mix = 0;
+  Geta_mix = 0;
+  Gphi_mix = 0;
+  Gpt_mix = 0;
+  GpdgId_mix = 0;
+  GcollisionId_mix = 0;
+  GisSignal_mix = 0;
+  GBAncestorpt_mix = 0;
+  GBAncestorpdgId_mix = 0;
+  Gtk1pt_mix = 0;
+  Gtk1eta_mix = 0;
+  Gtk1y_mix = 0;
+  Gtk1phi_mix = 0;
+  Gtk2pt_mix = 0;
+  Gtk2eta_mix = 0;
+  Gtk2y_mix = 0;
+  Gtk2phi_mix = 0;
+
   // Set branch addresses and branch pointers
   if(!tree) {std::cout << "init failed" << std::endl; return;}
   fChain = tree;
@@ -634,14 +1027,19 @@ void djet::Init(TTree *tree, TTree *hlt)
   fChain->SetBranchAddress("gjetpt_akpu3pf", &gjetpt_akpu3pf);
   fChain->SetBranchAddress("gjeteta_akpu3pf", &gjeteta_akpu3pf);
   fChain->SetBranchAddress("gjetphi_akpu3pf", &gjetphi_akpu3pf);
+  fChain->SetBranchAddress("gjetpt_akpu3pf_mix", &gjetpt_akpu3pf_mix);
+  fChain->SetBranchAddress("gjeteta_akpu3pf_mix", &gjeteta_akpu3pf_mix);
+  fChain->SetBranchAddress("gjetphi_akpu3pf_mix", &gjetphi_akpu3pf_mix);
   fChain->SetBranchAddress("gjetflavor_akpu3pf", &gjetflavor_akpu3pf);
   fChain->SetBranchAddress("chargedSum_akpu3pf", &chargedSum_akpu3pf);
   fChain->SetBranchAddress("subid_akpu3pf", &subid_akpu3pf);
+  fChain->SetBranchAddress("subid_akpu3pf_mix", &subid_akpu3pf_mix);
   fChain->SetBranchAddress("ngen_akpu3pf", &ngen_akpu3pf);
   fChain->SetBranchAddress("genpt_akpu3pf", &genpt_akpu3pf);
   fChain->SetBranchAddress("geneta_akpu3pf", &geneta_akpu3pf);
   fChain->SetBranchAddress("genphi_akpu3pf", &genphi_akpu3pf);
   fChain->SetBranchAddress("gensubid_akpu3pf", &gensubid_akpu3pf);
+  fChain->SetBranchAddress("gensubid_akpu3pf_mix", &gensubid_akpu3pf_mix);  
   fChain->SetBranchAddress("njet_akpu4pf", &njet_akpu4pf);
   fChain->SetBranchAddress("jetptCorr_akpu4pf", &jetptCorr_akpu4pf);
   fChain->SetBranchAddress("jetpt_akpu4pf", &jetpt_akpu4pf);
@@ -662,6 +1060,7 @@ void djet::Init(TTree *tree, TTree *hlt)
   fChain->SetBranchAddress("EvtNo", &EvtNo);
   fChain->SetBranchAddress("LumiNo", &LumiNo);
   fChain->SetBranchAddress("Dsize", &Dsize);
+  fChain->SetBranchAddress("Dsize_mix", &Dsize_mix);
   fChain->SetBranchAddress("PVx", &PVx);
   fChain->SetBranchAddress("PVy", &PVy);
   fChain->SetBranchAddress("PVz", &PVz);
@@ -683,6 +1082,7 @@ void djet::Init(TTree *tree, TTree *hlt)
   fChain->SetBranchAddress("BSWidthXErr", &BSWidthXErr);
   fChain->SetBranchAddress("BSWidthY", &BSWidthY);
   fChain->SetBranchAddress("BSWidthYErr", &BSWidthYErr);
+
   fChain->SetBranchAddress("Dindex", &Dindex);
   fChain->SetBranchAddress("Dtype", &Dtype);
   fChain->SetBranchAddress("Dmass", &Dmass);
@@ -860,6 +1260,183 @@ void djet::Init(TTree *tree, TTree *hlt)
   fChain->SetBranchAddress("pthatweight", &pthatweight);
   fChain->SetBranchAddress("maxDgenpt", &maxDgenpt);
 
+  fChain->SetBranchAddress("Dindex_mix", &Dindex_mix);
+  fChain->SetBranchAddress("Dtype_mix", &Dtype_mix);
+  fChain->SetBranchAddress("Dmass_mix", &Dmass_mix);
+  fChain->SetBranchAddress("Dpt_mix", &Dpt_mix);
+  fChain->SetBranchAddress("Deta_mix", &Deta_mix);
+  fChain->SetBranchAddress("Dphi_mix", &Dphi_mix);
+  fChain->SetBranchAddress("Dy_mix", &Dy_mix);
+  fChain->SetBranchAddress("DvtxX_mix", &DvtxX_mix);
+  fChain->SetBranchAddress("DvtxY_mix", &DvtxY_mix);
+  fChain->SetBranchAddress("Dd0_mix", &Dd0_mix);
+  fChain->SetBranchAddress("Dd0Err_mix", &Dd0Err_mix);
+  fChain->SetBranchAddress("Ddxyz_mix", &Ddxyz_mix);
+  fChain->SetBranchAddress("DdxyzErr_mix", &DdxyzErr_mix);
+  fChain->SetBranchAddress("Dchi2ndf_mix", &Dchi2ndf_mix);
+  fChain->SetBranchAddress("Dchi2cl_mix", &Dchi2cl_mix);
+  fChain->SetBranchAddress("Ddtheta_mix", &Ddtheta_mix);
+  fChain->SetBranchAddress("Dlxy_mix", &Dlxy_mix);
+  fChain->SetBranchAddress("Dalpha_mix", &Dalpha_mix);
+  fChain->SetBranchAddress("DsvpvDistance_mix", &DsvpvDistance_mix);
+  fChain->SetBranchAddress("DsvpvDisErr_mix", &DsvpvDisErr_mix);
+  fChain->SetBranchAddress("DsvpvDistance_2D_mix", &DsvpvDistance_2D_mix);
+  fChain->SetBranchAddress("DsvpvDisErr_2D_mix", &DsvpvDisErr_2D_mix);
+  fChain->SetBranchAddress("DtktkRes_chi2ndf_mix", &DtktkRes_chi2ndf_mix);
+  fChain->SetBranchAddress("DtktkRes_chi2cl_mix", &DtktkRes_chi2cl_mix);
+  fChain->SetBranchAddress("DtktkRes_alpha_mix", &DtktkRes_alpha_mix);
+  fChain->SetBranchAddress("DtktkRes_svpvDistance_mix", &DtktkRes_svpvDistance_mix);
+  fChain->SetBranchAddress("DtktkRes_svpvDisErr_mix", &DtktkRes_svpvDisErr_mix);
+  fChain->SetBranchAddress("DlxyBS_mix", &DlxyBS_mix);
+  fChain->SetBranchAddress("DlxyBSErr_mix", &DlxyBSErr_mix);
+  fChain->SetBranchAddress("DMaxDoca_mix", &DMaxDoca_mix);
+  fChain->SetBranchAddress("Dtrk1Pt_mix", &Dtrk1Pt_mix);
+  fChain->SetBranchAddress("Dtrk2Pt_mix", &Dtrk2Pt_mix);
+  fChain->SetBranchAddress("Dtrk1Eta_mix", &Dtrk1Eta_mix);
+  fChain->SetBranchAddress("Dtrk2Eta_mix", &Dtrk2Eta_mix);
+  fChain->SetBranchAddress("Dtrk1Phi_mix", &Dtrk1Phi_mix);
+  fChain->SetBranchAddress("Dtrk2Phi_mix", &Dtrk2Phi_mix);
+  fChain->SetBranchAddress("Dtrk1PtErr_mix", &Dtrk1PtErr_mix);
+  fChain->SetBranchAddress("Dtrk2PtErr_mix", &Dtrk2PtErr_mix);
+  fChain->SetBranchAddress("Dtrk1Dxy_mix", &Dtrk1Dxy_mix);
+  fChain->SetBranchAddress("Dtrk2Dxy_mix", &Dtrk2Dxy_mix);
+  fChain->SetBranchAddress("Dtrk1PixelHit_mix", &Dtrk1PixelHit_mix);
+  fChain->SetBranchAddress("Dtrk2PixelHit_mix", &Dtrk2PixelHit_mix);
+  fChain->SetBranchAddress("Dtrk1StripHit_mix", &Dtrk1StripHit_mix);
+  fChain->SetBranchAddress("Dtrk2StripHit_mix", &Dtrk2StripHit_mix);
+  fChain->SetBranchAddress("Dtrk1nStripLayer_mix", &Dtrk1nStripLayer_mix);
+  fChain->SetBranchAddress("Dtrk2nStripLayer_mix", &Dtrk2nStripLayer_mix);
+  fChain->SetBranchAddress("Dtrk1nPixelLayer_mix", &Dtrk1nPixelLayer_mix);
+  fChain->SetBranchAddress("Dtrk2nPixelLayer_mix", &Dtrk2nPixelLayer_mix);
+  fChain->SetBranchAddress("Dtrk1Chi2ndf_mix", &Dtrk1Chi2ndf_mix);
+  fChain->SetBranchAddress("Dtrk2Chi2ndf_mix", &Dtrk2Chi2ndf_mix);
+  fChain->SetBranchAddress("Dtrk1MassHypo_mix", &Dtrk1MassHypo_mix);
+  fChain->SetBranchAddress("Dtrk2MassHypo_mix", &Dtrk2MassHypo_mix);
+  fChain->SetBranchAddress("Dtrk1Algo_mix", &Dtrk1Algo_mix);
+  fChain->SetBranchAddress("Dtrk2Algo_mix", &Dtrk2Algo_mix);
+  fChain->SetBranchAddress("Dtrk1originalAlgo_mix", &Dtrk1originalAlgo_mix);
+  fChain->SetBranchAddress("Dtrk2originalAlgo_mix", &Dtrk2originalAlgo_mix);
+  fChain->SetBranchAddress("Dtrk1highPurity_mix", &Dtrk1highPurity_mix);
+  fChain->SetBranchAddress("Dtrk2highPurity_mix", &Dtrk2highPurity_mix);
+  fChain->SetBranchAddress("Dtrk3Pt_mix", &Dtrk3Pt_mix);
+  fChain->SetBranchAddress("Dtrk4Pt_mix", &Dtrk4Pt_mix);
+  fChain->SetBranchAddress("Dtrk3Eta_mix", &Dtrk3Eta_mix);
+  fChain->SetBranchAddress("Dtrk4Eta_mix", &Dtrk4Eta_mix);
+  fChain->SetBranchAddress("Dtrk3Phi_mix", &Dtrk3Phi_mix);
+  fChain->SetBranchAddress("Dtrk4Phi_mix", &Dtrk4Phi_mix);
+  fChain->SetBranchAddress("Dtrk3PtErr_mix", &Dtrk3PtErr_mix);
+  fChain->SetBranchAddress("Dtrk4PtErr_mix", &Dtrk4PtErr_mix);
+  fChain->SetBranchAddress("Dtrk3Dxy_mix", &Dtrk3Dxy_mix);
+  fChain->SetBranchAddress("Dtrk4Dxy_mix", &Dtrk4Dxy_mix);
+  fChain->SetBranchAddress("Dtrk3PixelHit_mix", &Dtrk3PixelHit_mix);
+  fChain->SetBranchAddress("Dtrk4PixelHit_mix", &Dtrk4PixelHit_mix);
+  fChain->SetBranchAddress("Dtrk3StripHit_mix", &Dtrk3StripHit_mix);
+  fChain->SetBranchAddress("Dtrk4StripHit_mix", &Dtrk4StripHit_mix);
+  fChain->SetBranchAddress("Dtrk3nStripLayer_mix", &Dtrk3nStripLayer_mix);
+  fChain->SetBranchAddress("Dtrk4nStripLayer_mix", &Dtrk4nStripLayer_mix);
+  fChain->SetBranchAddress("Dtrk3nPixelLayer_mix", &Dtrk3nPixelLayer_mix);
+  fChain->SetBranchAddress("Dtrk4nPixelLayer_mix", &Dtrk4nPixelLayer_mix);
+  fChain->SetBranchAddress("Dtrk3Chi2ndf_mix", &Dtrk3Chi2ndf_mix);
+  fChain->SetBranchAddress("Dtrk4Chi2ndf_mix", &Dtrk4Chi2ndf_mix);
+  fChain->SetBranchAddress("Dtrk3MassHypo_mix", &Dtrk3MassHypo_mix);
+  fChain->SetBranchAddress("Dtrk4MassHypo_mix", &Dtrk4MassHypo_mix);
+  fChain->SetBranchAddress("Dtrk3Algo_mix", &Dtrk3Algo_mix);
+  fChain->SetBranchAddress("Dtrk4Algo_mix", &Dtrk4Algo_mix);
+  fChain->SetBranchAddress("Dtrk3originalAlgo_mix", &Dtrk3originalAlgo_mix);
+  fChain->SetBranchAddress("Dtrk4originalAlgo_mix", &Dtrk4originalAlgo_mix);
+  fChain->SetBranchAddress("Dtrk3highPurity_mix", &Dtrk3highPurity_mix);
+  fChain->SetBranchAddress("Dtrk4highPurity_mix", &Dtrk4highPurity_mix);
+  fChain->SetBranchAddress("Dtrk1Idx_mix", &Dtrk1Idx_mix);
+  fChain->SetBranchAddress("Dtrk2Idx_mix", &Dtrk2Idx_mix);
+  fChain->SetBranchAddress("Dtrk1EtaErr_mix", &Dtrk1EtaErr_mix);
+  fChain->SetBranchAddress("Dtrk2EtaErr_mix", &Dtrk2EtaErr_mix);
+  fChain->SetBranchAddress("Dtrk1PhiErr_mix", &Dtrk1PhiErr_mix);
+  fChain->SetBranchAddress("Dtrk2PhiErr_mix", &Dtrk2PhiErr_mix);
+  fChain->SetBranchAddress("Dtrk1Y_mix", &Dtrk1Y_mix);
+  fChain->SetBranchAddress("Dtrk2Y_mix", &Dtrk2Y_mix);
+  fChain->SetBranchAddress("Dtrk1D0Err_mix", &Dtrk1D0Err_mix);
+  fChain->SetBranchAddress("Dtrk2D0Err_mix", &Dtrk2D0Err_mix);
+  fChain->SetBranchAddress("Dtrk1MVAVal_mix", &Dtrk1MVAVal_mix);
+  fChain->SetBranchAddress("Dtrk2MVAVal_mix", &Dtrk2MVAVal_mix);
+  fChain->SetBranchAddress("Dtrk1Quality_mix", &Dtrk1Quality_mix);
+  fChain->SetBranchAddress("Dtrk2Quality_mix", &Dtrk2Quality_mix);
+  fChain->SetBranchAddress("Dtrk3Idx_mix", &Dtrk3Idx_mix);
+  fChain->SetBranchAddress("Dtrk4Idx_mix", &Dtrk4Idx_mix);
+  fChain->SetBranchAddress("Dtrk3EtaErr_mix", &Dtrk3EtaErr_mix);
+  fChain->SetBranchAddress("Dtrk4EtaErr_mix", &Dtrk4EtaErr_mix);
+  fChain->SetBranchAddress("Dtrk3PhiErr_mix", &Dtrk3PhiErr_mix);
+  fChain->SetBranchAddress("Dtrk4PhiErr_mix", &Dtrk4PhiErr_mix);
+  fChain->SetBranchAddress("Dtrk3Y_mix", &Dtrk3Y_mix);
+  fChain->SetBranchAddress("Dtrk4Y_mix", &Dtrk4Y_mix);
+  fChain->SetBranchAddress("Dtrk3D0Err_mix", &Dtrk3D0Err_mix);
+  fChain->SetBranchAddress("Dtrk4D0Err_mix", &Dtrk4D0Err_mix);
+  fChain->SetBranchAddress("Dtrk3MVAVal_mix", &Dtrk3MVAVal_mix);
+  fChain->SetBranchAddress("Dtrk4MVAVal_mix", &Dtrk4MVAVal_mix);
+  fChain->SetBranchAddress("Dtrk3Quality_mix", &Dtrk3Quality_mix);
+  fChain->SetBranchAddress("Dtrk4Quality_mix", &Dtrk4Quality_mix);
+  fChain->SetBranchAddress("DtktkResmass_mix", &DtktkResmass_mix);
+  fChain->SetBranchAddress("DtktkRespt_mix", &DtktkRespt_mix);
+  fChain->SetBranchAddress("DtktkReseta_mix", &DtktkReseta_mix);
+  fChain->SetBranchAddress("DtktkResphi_mix", &DtktkResphi_mix);
+  fChain->SetBranchAddress("DRestrk1Pt_mix", &DRestrk1Pt_mix);
+  fChain->SetBranchAddress("DRestrk1Eta_mix", &DRestrk1Eta_mix);
+  fChain->SetBranchAddress("DRestrk1Phi_mix", &DRestrk1Phi_mix);
+  fChain->SetBranchAddress("DRestrk1Y_mix", &DRestrk1Y_mix);
+  fChain->SetBranchAddress("DRestrk1Dxy_mix", &DRestrk1Dxy_mix);
+  fChain->SetBranchAddress("DRestrk1D0Err_mix", &DRestrk1D0Err_mix);
+  fChain->SetBranchAddress("DRestrk1originalAlgo_mix", &DRestrk1originalAlgo_mix);
+  fChain->SetBranchAddress("DRestrk2Pt_mix", &DRestrk2Pt_mix);
+  fChain->SetBranchAddress("DRestrk2Eta_mix", &DRestrk2Eta_mix);
+  fChain->SetBranchAddress("DRestrk2Phi_mix", &DRestrk2Phi_mix);
+  fChain->SetBranchAddress("DRestrk2Y_mix", &DRestrk2Y_mix);
+  fChain->SetBranchAddress("DRestrk2Dxy_mix", &DRestrk2Dxy_mix);
+  fChain->SetBranchAddress("DRestrk2D0Err_mix", &DRestrk2D0Err_mix);
+  fChain->SetBranchAddress("DRestrk2originalAlgo_mix", &DRestrk2originalAlgo_mix);
+  fChain->SetBranchAddress("DRestrk3Pt_mix", &DRestrk3Pt_mix);
+  fChain->SetBranchAddress("DRestrk3Eta_mix", &DRestrk3Eta_mix);
+  fChain->SetBranchAddress("DRestrk3Phi_mix", &DRestrk3Phi_mix);
+  fChain->SetBranchAddress("DRestrk3Y_mix", &DRestrk3Y_mix);
+  fChain->SetBranchAddress("DRestrk3Dxy_mix", &DRestrk3Dxy_mix);
+  fChain->SetBranchAddress("DRestrk3D0Err_mix", &DRestrk3D0Err_mix);
+  fChain->SetBranchAddress("DRestrk3originalAlgo_mix", &DRestrk3originalAlgo_mix);
+  fChain->SetBranchAddress("DRestrk4Pt_mix", &DRestrk4Pt_mix);
+  fChain->SetBranchAddress("DRestrk4Eta_mix", &DRestrk4Eta_mix);
+  fChain->SetBranchAddress("DRestrk4Phi_mix", &DRestrk4Phi_mix);
+  fChain->SetBranchAddress("DRestrk4Y_mix", &DRestrk4Y_mix);
+  fChain->SetBranchAddress("DRestrk4Dxy_mix", &DRestrk4Dxy_mix);
+  fChain->SetBranchAddress("DRestrk4D0Err_mix", &DRestrk4D0Err_mix);
+  fChain->SetBranchAddress("DRestrk4originalAlgo_mix", &DRestrk4originalAlgo_mix);
+  fChain->SetBranchAddress("Dgen_mix", &Dgen_mix);
+  fChain->SetBranchAddress("DgenIndex_mix", &DgenIndex_mix);
+  fChain->SetBranchAddress("DgennDa_mix", &DgennDa_mix);
+  fChain->SetBranchAddress("Dgenpt_mix", &Dgenpt_mix);
+  fChain->SetBranchAddress("Dgeneta_mix", &Dgeneta_mix);
+  fChain->SetBranchAddress("Dgenphi_mix", &Dgenphi_mix);
+  fChain->SetBranchAddress("Dgeny_mix", &Dgeny_mix);
+  fChain->SetBranchAddress("DgencollisionId_mix", &DgencollisionId_mix);
+  fChain->SetBranchAddress("DgenBAncestorpt_mix", &DgenBAncestorpt_mix);
+  fChain->SetBranchAddress("DgenBAncestorpdgId_mix", &DgenBAncestorpdgId_mix);
+  fChain->SetBranchAddress("Gsize_mix", &Gsize_mix);
+  fChain->SetBranchAddress("Gy_mix", &Gy_mix);
+  fChain->SetBranchAddress("Geta_mix", &Geta_mix);
+  fChain->SetBranchAddress("Gphi_mix", &Gphi_mix);
+  fChain->SetBranchAddress("Gpt_mix", &Gpt_mix);
+  fChain->SetBranchAddress("GpdgId_mix", &GpdgId_mix);
+  fChain->SetBranchAddress("GcollisionId_mix", &GcollisionId_mix);
+  fChain->SetBranchAddress("GisSignal_mix", &GisSignal_mix);
+  fChain->SetBranchAddress("GBAncestorpt_mix", &GBAncestorpt_mix);
+  fChain->SetBranchAddress("GBAncestorpdgId_mix", &GBAncestorpdgId_mix);
+  fChain->SetBranchAddress("Gtk1pt_mix", &Gtk1pt_mix);
+  fChain->SetBranchAddress("Gtk1eta_mix", &Gtk1eta_mix);
+  fChain->SetBranchAddress("Gtk1y_mix", &Gtk1y_mix);
+  fChain->SetBranchAddress("Gtk1phi_mix", &Gtk1phi_mix);
+  fChain->SetBranchAddress("Gtk2pt_mix", &Gtk2pt_mix);
+  fChain->SetBranchAddress("Gtk2eta_mix", &Gtk2eta_mix);
+  fChain->SetBranchAddress("Gtk2y_mix", &Gtk2y_mix);
+  fChain->SetBranchAddress("Gtk2phi_mix", &Gtk2phi_mix);
+  fChain->SetBranchAddress("pthatweight_mix", &pthatweight_mix);
+  fChain->SetBranchAddress("maxDgenpt_mix", &maxDgenpt_mix);
+
   if(!hlt) return;
   fHlt = hlt;
   fHlt->SetMakeClass(1);
@@ -947,7 +1524,7 @@ int djet::isDselected(int j, Option_t* option)
   TString opt  = option;
   opt.ToLower();
   if((opt.Contains("r") && opt.Contains("g")) || (!opt.Contains("r") && !opt.Contains("g"))) return -2;
-  if(opt.Contains("r"))
+  if(opt.Contains("r") && !opt.Contains("m"))
     {
       if(!fsetDcut) _KERROR_SETCUT(D, D);
       if(!fsettrkcut) _KERROR_SETCUT(trk, D);
@@ -962,7 +1539,22 @@ int djet::isDselected(int j, Option_t* option)
          ) return 1;
       else return 0;
     }
-  if(opt.Contains("g"))
+  if(opt.Contains("r") && opt.Contains("m"))
+    {
+      if(!fsetDcut) _KERROR_SETCUT(D, D);
+        if(!fsettrkcut) _KERROR_SETCUT(trk, D);
+        if((*Dtrk1Pt_mix)[j] > cut_trkPt && (*Dtrk2Pt_mix)[j] > cut_trkPt &&
+           TMath::Abs((*Dtrk1Eta_mix)[j]) < cut_trkEta && TMath::Abs((*Dtrk2Eta_mix)[j]) < cut_trkEta &&
+           ((*Dtrk1PtErr_mix)[j]/(*Dtrk1Pt_mix)[j]) < cut_trkPtErr && ((*Dtrk2PtErr_mix)[j]/(*Dtrk2Pt_mix)[j]) < cut_trkPtErr &&
+           (*Dtrk1highPurity_mix)[j] && (*Dtrk2highPurity_mix)[j] &&
+           ((*DsvpvDistance_mix)[j]/(*DsvpvDisErr_mix)[j]) > cut_Dsvpv &&
+           (*Dalpha_mix)[j] < cut_Dalpha &&
+           (*Dchi2cl_mix)[j] >cut_Dchi2cl &&
+           TMath::Abs((*Dy_mix)[j]) < cut_Dy
+           ) return 1;
+        else return 0;
+    }
+  if(opt.Contains("g") && !opt.Contains("m"))
     {
       if(!fsetGcut) _KERROR_SETCUT(G, D);
       if(((*GisSignal)[j]==1 || (*GisSignal)[j]==2) &&
@@ -970,37 +1562,23 @@ int djet::isDselected(int j, Option_t* option)
          ) return 1;
       else return 0;
     }
+  if(opt.Contains("g") && opt.Contains("m"))
+    {
+      if(!fsetGcut) _KERROR_SETCUT(G, D);
+      if(((*GisSignal_mix)[j]==1 || (*GisSignal_mix)[j]==2) &&
+         TMath::Abs((*Gy_mix)[j]) < cut_Gy
+         ) return 1;
+      else return 0;
+    }
   return -3;
 }
 
-int djet::isjetselected(int j, Option_t* option)
+int djet::isjetselected(int j, int MBopt, int irecogen)
 {
-    TString opt  = option;
-  opt.ToLower();
-  if((opt.Contains("r") && opt.Contains("g")) ||
-    (opt.Contains("r") && opt.Contains("m")) ||
-    (opt.Contains("g") && opt.Contains("m")) ||
-    (!opt.Contains("r") && !opt.Contains("g") && !opt.Contains("m"))) return -2;
   if(!fsetjetcut) _KERROR_SETCUT(jet, jet);
-  if(opt.Contains("r"))
-    {
-      if((*jetpt_akpu3pf)[j] > cut_jetpt_min && 
-         TMath::Abs((*jeteta_akpu3pf)[j]) > cut_jeteta_min && TMath::Abs((*jeteta_akpu3pf)[j]) < cut_jeteta_max) return 1;
-      else return 0;
-    }
-  if(opt.Contains("g"))
-    {
-      if((*gjetpt_akpu3pf)[j] > cut_jetpt_min && 
-         TMath::Abs((*gjeteta_akpu3pf)[j]) > cut_jeteta_min && TMath::Abs((*gjeteta_akpu3pf)[j]) < cut_jeteta_max) return 1;
-      else return 0;
-    }
-  if(opt.Contains("m"))
-    {
-      if((*jetpt_akpu3pf_mix)[j] > cut_jetpt_min &&
-        TMath::Abs((*jeteta_akpu3pf_mix)[j]) > cut_jeteta_min && TMath::Abs((*jeteta_akpu3pf_mix)[j]) < cut_jeteta_max) return 1;
-      else return 0;
-    }
-  return -3;
+  if((**ajetpt[MBopt][irecogen])[j] > cut_jetpt_min && 
+  TMath::Abs((**ajeteta[MBopt][irecogen])[j]) > cut_jeteta_min && TMath::Abs((**ajeteta[MBopt][irecogen])[j]) < cut_jeteta_max) return 1;
+  else return 0;
 }
 
 int djet::ishltselected(Option_t* option)

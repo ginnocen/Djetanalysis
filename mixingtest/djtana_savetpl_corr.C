@@ -30,15 +30,13 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
   for(int i=0;i<nPtBins;i++)norm[i]=0;
   for(int i=0;i<rnentries;i++)
     {
-      if(i%10000==0) std::cout<<std::setiosflags(std::ios::left)<<"  [ \033[1;36m"<<std::setw(10)<<i<<"\033[0m"<<" / "<<std::setw(10)<<rnentries<<" ] "<<"\033[1;36m"<<std::setw(4)<<Form("%.0f%s",100.*i/rnentries,"%")<<"\033[0m"<<"   >>   djtana_savetpl_corr("<<std::setw(5)<<Form("%s,",collisionsyst.Data())<<" "<<std::setw(5)<<Form("%s,",tMC[isMC].Data())<<" "<<std::setw(20)<<Form("%sD_%sjet)", djt.aDopt[irecogen].Data(), djt.ajetopt[irecogen].Data())<<"\r"<<std::flush<<std::endl;
+      if(i%10000==0) std::cout<<std::setiosflags(std::ios::left)<<"  [ \033[1;36m"<<std::setw(10)<<i<<"\033[0m"<<" / "<<std::setw(10)<<rnentries<<" ] "<<"\033[1;36m"<<std::setw(4)<<Form("%.0f%s",100.*i/rnentries,"%")<<"\033[0m"<<"   >>   djtana_savetpl_corr("<<std::setw(5)<<Form("%s,",collisionsyst.Data())<<" "<<std::setw(5)<<Form("%s,",tMC[isMC].Data())<<" "<<std::setw(20)<<Form("%sD_%sjet)", djt.aDopt[useMB][irecogen].Data(), djt.ajetopt[useMB][irecogen].Data())<<"\r"<<std::flush<<std::endl;
       //
       djt.fChain->GetEntry(i);
       for(int i=0;i<nPtBins;i++) norm[i]++;
       //
       // to add event selection ...
-      int njets;
-      if(!useMB) njets = *(djt.anjet[irecogen]);
-      if(useMB) njets = *(djt.anjet_mix[irecogen]);
+      int njets = *(djt.anjet[useMB][irecogen]);
       Int_t ibincent = ispp?0:xjjc::findibin(&centBins,(float)djt.hiBin/2);
       for(int jj=0;jj<njets;jj++)
         {
@@ -47,59 +45,45 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
           //if(useMB) djtjetsel = djt.isjetselected(jj,"m");
           //if(djtjetsel < 0) {std::cout << "bad djtjetsel " << djtjetsel << std::endl; return;}
           //if(!djtjetsel) continue;
-          float jetpt;
-          if(!useMB) jetpt = (**djt.ajetpt[irecogen])[jj];
-          if(useMB) jetpt = (**djt.ajetpt_mix[irecogen])[jj];
+          float jetpt = (**djt.ajetpt[useMB][irecogen])[jj];
           if(djtcorr::ptCorr(1.,jetpt,0.,ibincent)) continue;
-          if(jetpt<jetptmin || (!useMB && fabs((**djt.ajeteta[irecogen])[jj])<jetetamin) || (useMB && fabs((**djt.ajeteta_mix[irecogen])[jj])<jetetamin) || (!useMB && fabs((**djt.ajeteta[irecogen])[jj])>jetetamax) || (useMB && fabs((**djt.ajeteta_mix[irecogen])[jj])>jetetamax)) continue;
-          if(irecoref==3 && (**djt.asubid[irecogen])[jj]!=0) continue;
+          if(jetpt<jetptmin || fabs((**djt.ajeteta[useMB][irecogen])[jj])<jetetamin || fabs((**djt.ajeteta[useMB][irecogen])[jj])>jetetamax) continue;
+          if(irecoref==3 && (**djt.asubid[useMB][irecogen])[jj]!=0) continue;
           //if(irecoref==4 && (**djt.asubid[irecogen])[jj]==0) continue;
           ncountjet++;
           // reco
-          if(!useMB)
-          {
-            hJetPhi->Fill((**djt.ajetphi[irecogen])[jj]);
-            hJetEta->Fill((**djt.ajeteta[irecogen])[jj]);
-          }
-          if(useMB)
-          {
-            hJetPhi->Fill((**djt.ajetphi_mix[irecogen])[jj]);
-            hJetEta->Fill((**djt.ajeteta_mix[irecogen])[jj]);
-          }
-          for(int jd=0;jd<1;jd++)
+          hJetPhi->Fill((**djt.ajetphi[useMB][irecogen])[jj]);
+          hJetEta->Fill((**djt.ajeteta[useMB][irecogen])[jj]);
+          for(int jd=0;jd<(*djt.anD[useMB][irecogen]);jd++)
             {
-              Int_t ibinpt = xjjc::findibin(&ptBins, (**djt.aDpt[irecogen])[jd]);
+              Int_t ibinpt = xjjc::findibin(&ptBins, (**djt.aDpt[useMB][irecogen])[jd]);
               if(ibinpt<0) {if(jj==0) ibinreject++; continue;} 
                          
               // to add pt-dependent event selection ...
-              Float_t deltaphi;
-              Float_t deltaeta;
-              if(!useMB) deltaphi = TMath::ACos(TMath::Cos((**djt.aDphi[irecogen])[jd] - (**djt.ajetphi[irecogen])[jj]));
-              if(useMB) deltaphi = TMath::ACos(TMath::Cos((**djt.aDphi[irecogen])[jd] - (**djt.ajetphi_mix[irecogen])[jj]));
+              Float_t deltaphi = TMath::ACos(TMath::Cos((**djt.aDphi[useMB][irecogen])[jd] - (**djt.ajetphi[useMB][irecogen])[jj]));
               if(deltaphi>TMath::Pi() || deltaphi<-TMath::Pi()) std::cout << "bad deltaphi, jet " << jj << " D " << jd << " value " << deltaphi << std::endl;
-              if(!useMB) deltaeta = (**djt.aDeta[irecogen])[jd] - (**djt.ajeteta[irecogen])[jj];
-              if(useMB) deltaeta = (**djt.aDeta[irecogen])[jd] - (**djt.ajeteta_mix[irecogen])[jj];
-              Float_t deltaetaref = (**djt.aDeta[irecogen])[jd] + (**djt.ajeteta[irecogen])[jj];
+              Float_t deltaeta = (**djt.aDeta[useMB][irecogen])[jd] - (**djt.ajeteta[useMB][irecogen])[jj];
+              Float_t deltaetaref = (**djt.aDeta[useMB][irecogen])[jd] + (**djt.ajeteta[useMB][irecogen])[jj];
               Float_t deltaR[nRefBins] = {(float)TMath::Sqrt(pow(deltaphi, 2) + pow(deltaeta, 2)),
                                           (float)TMath::Sqrt(pow(deltaphi, 2) + pow(deltaetaref, 2))};
-              Float_t zvariable = (**djt.aDpt[irecogen])[jd]/(**djt.ajetpt[irecogen])[jj];
+              Float_t zvariable = (**djt.aDpt[useMB][irecogen])[jd]/(**djt.ajetpt[useMB][irecogen])[jj];
 
               Int_t result_initcutval = initcutval_bindep_flat(collisionsyst,ibinpt);
               if(result_initcutval) return;
               djt.settrkcut(cutval_trkPt, cutval_trkEta, cutval_trkPtErr);
               djt.setDcut(cutval_Dsvpv, cutval_Dalpha, cutval_Dchi2cl, cutval_Dy);                  
-              Int_t djtDsel = djt.isDselected(jd, djt.aDopt[irecogen]);
+              Int_t djtDsel = djt.isDselected(jd, djt.aDopt[useMB][irecogen]);
               if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
               if(!djtDsel) continue;
-              if(irecoref==3 && (*djt.GcollisionId)[jd]!=0) continue;
+              //if(irecoref==3 && (*djt.GcollisionId)[jd]!=0) continue;
 
-              if((irecogen==0 || irecogen==2) && jj==0)
-              {
-                hDphivsDtrk1hit[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk1PixelHit)[jd]);
-                hDphivsDtrk2hit[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk2PixelHit)[jd]);
-                hDphivsDtrk1algo[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk1Algo)[jd]);
-                hDphivsDtrk2algo[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk2Algo)[jd]);
-              }
+              //if((irecogen==0 || irecogen==2) && jj==0)
+              //{
+                //hDphivsDtrk1hit[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk1PixelHit)[jd]);
+                //hDphivsDtrk2hit[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk2PixelHit)[jd]);
+                //hDphivsDtrk1algo[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk1Algo)[jd]);
+                //hDphivsDtrk2algo[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk2Algo)[jd]);
+              //}
               //if((**djt.aDpt[irecogen])[jd]>2.0 && fabs((**djt.aDeta[irecogen])[jd])<1.6)
               //{
                 //if((!useMB && fabs((**djt.ajeteta[irecogen])[jj]) < 1.6) || (useMB && fabs((**djt.MBajeteta[irecogen])[jj])<1.6))
@@ -119,7 +103,7 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
                   if(result_initcutval) return;
                   djt.settrkcut(cutval_trkPt, cutval_trkEta, cutval_trkPtErr);
                   djt.setDcut(cutval_Dsvpv, cutval_Dalpha, cutval_Dchi2cl, cutval_Dy);                  
-                  Int_t djtDsel = djt.isDselected(jd, djt.aDopt[irecogen]);
+                  Int_t djtDsel = djt.isDselected(jd, djt.aDopt[useMB][irecogen]);
                   if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
                   if(!djtDsel) continue;
                   ahNumREfficiency[l][ibinpt]->Fill(deltaR[l],1./ahNumREfficiency[l][ibinpt]->GetBinWidth(ibindr+1));
@@ -155,23 +139,23 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
             */
 
         }
-        for(int jd=0;jd<(*djt.anD[irecogen]);jd++)
+        for(int jd=0;jd<(*djt.anD[useMB][irecogen]);jd++)
         {
-          Int_t ibinpt = xjjc::findibin(&ptBins, (**djt.aDpt[irecogen])[jd]);
+          Int_t ibinpt = xjjc::findibin(&ptBins, (**djt.aDpt[useMB][irecogen])[jd]);
           if(ibinpt<0) {ibinreject++; continue;}
           Int_t result_initcutval = initcutval_bindep_flat(collisionsyst,ibinpt);
           if(result_initcutval) return;
           djt.settrkcut(cutval_trkPt, cutval_trkEta, cutval_trkPtErr);
           djt.setDcut(cutval_Dsvpv, cutval_Dalpha, cutval_Dchi2cl, cutval_Dy);                  
-          Int_t djtDsel = djt.isDselected(jd, djt.aDopt[irecogen]);
+          Int_t djtDsel = djt.isDselected(jd, djt.aDopt[useMB][irecogen]);
           if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
           if(!djtDsel) continue;
-          if(irecoref==3 && (*djt.GcollisionId)[jd]!=0) continue;
-          hDPhi[ibinpt]->Fill((**djt.aDphi[irecogen])[jd]);
-          hDEta[ibinpt]->Fill((**djt.aDeta[irecogen])[jd]);  
+          //if(irecoref==3 && (*djt.GcollisionId)[jd]!=0) continue;
+          hDPhi[ibinpt]->Fill((**djt.aDphi[useMB][irecogen])[jd]);
+          hDEta[ibinpt]->Fill((**djt.aDeta[useMB][irecogen])[jd]);  
         }
     }
-  std::cout<<std::setiosflags(std::ios::left)<<"  Processed "<<"\033[1;31m"<<rnentries<<"\033[0m out of\033[1;31m "<<nentries<<"\033[0m event(s)."<<"   >>   djtana_savetpl_corr("<<std::setw(5)<<Form("%s,",collisionsyst.Data())<<" "<<std::setw(5)<<Form("%s,",tMC[isMC].Data())<<" "<<std::setw(30)<<Form("%sD_%sjet)", djt.aDopt[irecogen].Data(), djt.ajetopt[irecogen].Data())<<std::endl;
+  std::cout<<std::setiosflags(std::ios::left)<<"  Processed "<<"\033[1;31m"<<rnentries<<"\033[0m out of\033[1;31m "<<nentries<<"\033[0m event(s)."<<"   >>   djtana_savetpl_corr("<<std::setw(5)<<Form("%s,",collisionsyst.Data())<<" "<<std::setw(5)<<Form("%s,",tMC[isMC].Data())<<" "<<std::setw(30)<<Form("%sD_%sjet)", djt.aDopt[useMB][irecogen].Data(), djt.ajetopt[useMB][irecogen].Data())<<std::endl;
   std::cout<<std::endl;
 
   hNjets->SetBinContent(1, ncountjet);
