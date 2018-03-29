@@ -79,7 +79,7 @@ int MBsubtract_closure(std::string Djetfile, std::string mixfile, std::string ge
         MBsub_dphi[i]->Add(mix_dphi[i],-1);
 
         TH2F* hemptydr = new TH2F("hemptydr",Form("pt[%d];#Delta R;",i),1,0.,0.5,1,pow(10.,-4),pow(10.,0));
-        TH2F* hemptydphi = new TH2F("hemptydphi",Form("pt[%d];#Delta#phi",i),1,0,TMath::Pi(),1,MBsub_dphi[i]->GetMinimum(),Djet_dphi[i]->GetMaximum());
+        TH2F* hemptydphi = new TH2F("hemptydphi",Form("pt[%d];#Delta#phi",i),1,0,TMath::Pi(),1,mix_dphi[i]->GetMinimum(),Djet_dphi[i]->GetMaximum());
 
         if(plotdr)
         {

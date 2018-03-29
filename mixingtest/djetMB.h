@@ -289,13 +289,13 @@ public:
   // std::vector<int>**     asubid[ncases]    =   {&subid_akpu3pf,       &subid_akpu3pf,       &gensubid_akpu3pf, &gensubid_akpu3pf};
 
   int*                   anjet[ncases]     =   {&njet_akpu3pf,        &njet_akpu3pf,        &njet_akpu3pf,      &njet_akpu3pf};
-  int*                   MBanjet[ncases]   =   {&njet_akpu3pf_mix,      &njet_akpu3pf_mix,      &njet_akpu3pf,      &njet_akpu3pf};
+  int*                   anjet_mix[ncases]   =   {&njet_akpu3pf_mix,      &njet_akpu3pf_mix,      &njet_akpu3pf,      &njet_akpu3pf};
   std::vector<float>**   ajetpt[ncases]    =   {&jetpt_akpu3pf,       &jetpt_akpu3pf,       &gjetpt_akpu3pf,    &gjetpt_akpu3pf};
-  std::vector<float>**   MBajetpt[ncases]  =   {&jetpt_akpu3pf_mix,     &jetpt_akpu3pf_mix,     &gjetpt_akpu3pf,    &gjetpt_akpu3pf};
+  std::vector<float>**   ajetpt_mix[ncases]  =   {&jetpt_akpu3pf_mix,     &jetpt_akpu3pf_mix,     &gjetpt_akpu3pf,    &gjetpt_akpu3pf};
   std::vector<float>**   ajeteta[ncases]   =   {&jeteta_akpu3pf,      &jeteta_akpu3pf,      &gjeteta_akpu3pf,   &gjeteta_akpu3pf};
-  std::vector<float>**   MBajeteta[ncases] =   {&jeteta_akpu3pf_mix,    &jeteta_akpu3pf_mix,    &gjeteta_akpu3pf,   &gjeteta_akpu3pf};
+  std::vector<float>**   ajeteta_mix[ncases] =   {&jeteta_akpu3pf_mix,    &jeteta_akpu3pf_mix,    &gjeteta_akpu3pf,   &gjeteta_akpu3pf};
   std::vector<float>**   ajetphi[ncases]   =   {&jetphi_akpu3pf,      &jetphi_akpu3pf,      &gjetphi_akpu3pf,   &gjetphi_akpu3pf};
-  std::vector<float>**   MBajetphi[ncases] =   {&jetphi_akpu3pf_mix,    &jetphi_akpu3pf_mix,    &gjetphi_akpu3pf,   &gjetphi_akpu3pf};
+  std::vector<float>**   ajetphi_mix[ncases] =   {&jetphi_akpu3pf_mix,    &jetphi_akpu3pf_mix,    &gjetphi_akpu3pf,   &gjetphi_akpu3pf};
   std::vector<int>**     asubid[ncases]    =   {&subid_akpu3pf,       &subid_akpu3pf,       &subid_akpu3pf,     &subid_akpu3pf};
 
   Int_t HLT_AK4Jet40;

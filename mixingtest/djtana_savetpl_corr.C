@@ -51,7 +51,7 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
           if(!useMB) jetpt = (**djt.ajetpt[irecogen])[jj];
           if(useMB) jetpt = (**djt.ajetpt_mix[irecogen])[jj];
           if(djtcorr::ptCorr(1.,jetpt,0.,ibincent)) continue;
-          if(jetpt<jetptmin || (!useMB && fabs((**djt.ajeteta[irecogen])[jj])<jetetamin) || (useMB && fabs((**djt.ajeteta_mix[irecogen])[jj]<jetetamin)) || (!useMB && fabs((**djt.ajeteta[irecogen])[jj]>jetetamax)) || (useMB && fabs((**djt.ajeteta_mix[irecogen])[jj]>jetetamax))) continue;
+          if(jetpt<jetptmin || (!useMB && fabs((**djt.ajeteta[irecogen])[jj])<jetetamin) || (useMB && fabs((**djt.ajeteta_mix[irecogen])[jj])<jetetamin) || (!useMB && fabs((**djt.ajeteta[irecogen])[jj])>jetetamax) || (useMB && fabs((**djt.ajeteta_mix[irecogen])[jj])>jetetamax)) continue;
           if(irecoref==3 && (**djt.asubid[irecogen])[jj]!=0) continue;
           //if(irecoref==4 && (**djt.asubid[irecogen])[jj]==0) continue;
           ncountjet++;
