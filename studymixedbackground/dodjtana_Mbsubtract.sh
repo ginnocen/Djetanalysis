@@ -16,7 +16,7 @@ fi
 MAKEHISTS=${1:-0}
 DOMBSUB=${2:-0}
 
-INPUTPATH="~/mbfile/T2_US_MIT/submit-hi2/scratch/ginnocen"
+INPUTPATH="${PREFIX}/scratch/ginnocen"
 INPUTFILE="test_fullstatistics20files"
 ISPP=0
 ISMC=1
