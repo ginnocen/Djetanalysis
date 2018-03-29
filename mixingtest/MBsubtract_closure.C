@@ -61,12 +61,12 @@ int MBsubtract_closure(std::string Djetfile, std::string mixfile, std::string ge
         if(plotdphi) cdphi->Clear();
         //d->Clear();
 
-        Djet_dr[i]->Sumw2();
-        Djet_dphi[i]->Sumw2();
-        mix_dr[i]->Sumw2();
-        mix_dphi[i]->Sumw2();
-        gen_dr[i]->Sumw2();
-        gen_dphi[i]->Sumw2();
+        //Djet_dr[i]->Sumw2();
+        //Djet_dphi[i]->Sumw2();
+        //mix_dr[i]->Sumw2();
+        //mix_dphi[i]->Sumw2();
+        //gen_dr[i]->Sumw2();
+        //gen_dphi[i]->Sumw2();
         Djet_dr[i]->Scale(1./nD_djt[i]);
         Djet_dphi[i]->Scale(1./nD_djt[i]);
         mix_dr[i]->Scale(1./nD_mix[i]);
@@ -79,7 +79,7 @@ int MBsubtract_closure(std::string Djetfile, std::string mixfile, std::string ge
         MBsub_dphi[i]->Add(mix_dphi[i],-1);
 
         TH2F* hemptydr = new TH2F("hemptydr",Form("pt[%d];#Delta R;",i),1,0.,0.5,1,pow(10.,-4),pow(10.,0));
-        TH2F* hemptydphi = new TH2F("hemptydphi",Form("pt[%d];#Delta#phi",i),1,0,TMath::Pi(),1,MBsub_dphi[i]->GetMinimum(),Djet_dphi[i]->GetMaximum());
+        TH2F* hemptydphi = new TH2F("hemptydphi",Form("pt[%d];#Delta#phi",i),1,0,TMath::Pi(),1,mix_dphi[i]->GetMinimum(),Djet_dphi[i]->GetMaximum());
 
         if(plotdr)
         {

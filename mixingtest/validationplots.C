@@ -6,7 +6,7 @@
 
 void validationplots()
 {
-	std::string filename = "~/scratchmc/djetmixfull.root";
+	std::string filename = "~/scratchmc/djetmixsignalfifty.root";
 	Float_t jetptmin = 20;
 	TFile* f = TFile::Open(filename.c_str());
 	TTree* t = (TTree*)f->Get("djt");
