@@ -1,20 +1,18 @@
 #ifndef _DJTANA_H_
 #define _DJTANA_H_
 
-#include "../includes/djet.h"
+#include "djetMB.h"
 #include "../includes/prefilters.h"
 #include "../includes/xjjcuti.h"
 #include "../includes/xjjrootuti.h"
 #include "../includes/dfitter.h"
-#include "../includes/paramCorr.h"
+#include "../includes/djtcorr.h"
 #include <iostream>
 #include <iomanip>
 #include <TMath.h>
 #include <TH1F.h>
 #include <TH2F.h>
 #include <TLegend.h>
-#include <TRandom2.h>
-#include <TRandom3.h>
 
 const Float_t DZERO_MASS = 1.8649;
 
@@ -58,16 +56,40 @@ TH1F* ahSignalZsubP[2][nPtBins];
 TH1F* ahSignalRsubRatio[nPtBins];
 TH1F* ahSignalZsubRatio[nPtBins];
 
+// histograms for correlation studies
+
+TH1F* hJetPhi;
+TH1F* hJetEta;
+TH1F* hDPhi[nPtBins];
+TH1F* hDEta[nPtBins];
+TH1F* hDdelPhi[nPtBins];
+TH1F* hDdelEta[nPtBins];
+TH2F* hCorr[nPtBins];
+TH2F* hDphivsDtrk1hit[nPtBins];
+TH2F* hDphivsDtrk2hit[nPtBins];
+TH2F* hDphivsDtrk1algo[nPtBins];
+TH2F* hDphivsDtrk2algo[nPtBins];
 //
 int createhists(Option_t* option)
 {
   TString opt  = option;
   opt.ToLower();
   if(opt=="savetpl")
-    {
+    { 
+      hJetPhi=new TH1F("hJetPhi", ";#phi;",100,0., TMath::Pi());
+      hJetEta=new TH1F("hJetEta", ";#eta;",100,-2.,2.);
       hNjets = new TH1F("hNjets", "", 1, 0, 1); // ... is it necessary
       for(int i=0;i<nPtBins;i++)
         {
+          hDPhi[i]=new TH1F(Form("hDPhi_pt_%d",i),";#phi;",20,-TMath::Pi(),TMath::Pi());
+          hDEta[i]=new TH1F(Form("hDEta_pt_%d",i),";#eta;",20,-2.,2.);
+          hDdelPhi[i]=new TH1F(Form("hDdelPhi_pt_%d",i),";#Delta#phi;",20,0.,TMath::Pi());
+          hDdelEta[i]=new TH1F(Form("hDdelEta_pt_%d",i),";#Delta#eta;",20,-4.,4.);
+          hCorr[i]=new TH2F(Form("hCorr_pt_%d",i),";#Delta#eta;#Delta#phi;",100,-4.,4.,50,0.,TMath::Pi());
+          hDphivsDtrk1hit[i]=new TH2F(Form("hDphivsDtrk1hit_pt_%d",i),";#phi;Dtrk1PixelHit",100,-TMath::Pi(),TMath::Pi(),50,0.,50.);
+          hDphivsDtrk2hit[i]=new TH2F(Form("hDphivsDtrk2hit_pt_%d",i),";#phi;Dtrk2PixelHit",100,-TMath::Pi(),TMath::Pi(),50,0.,50.);
+          hDphivsDtrk1algo[i]=new TH2F(Form("hDphivsDtrk1algo_pt_%d",i),";#phi;Dtrk1Algo",100,-TMath::Pi(),TMath::Pi(),50,0.,50.);
+          hDphivsDtrk2algo[i]=new TH2F(Form("hDphivsDtrk2algo_pt_%d",i),";#phi;Dtrk2Algo",100,-TMath::Pi(),TMath::Pi(),50,0.,50.);
           for(int l=0;l<nRefBins;l++)
             {
               ahREfficiency[l][i] = new TH1F(Form("hREfficiency_%s_pt_%d",tRef[l].Data(),i), ";#DeltaR;", nDrBins, drBins);
@@ -147,8 +169,19 @@ int writehists(Option_t* option)
   if(opt=="savetpl")
     {
       hNjets->Write(); // ... is it necessary
+      hJetPhi->Write();
+      hJetEta->Write();
       for(int i=0;i<nPtBins;i++)
         {
+          hDPhi[i]->Write();
+          hDEta[i]->Write();
+          hDdelPhi[i]->Write();
+          hDdelEta[i]->Write();
+          hCorr[i]->Write();
+          hDphivsDtrk1hit[i]->Write();
+          hDphivsDtrk2hit[i]->Write();
+          hDphivsDtrk1algo[i]->Write();
+          hDphivsDtrk2algo[i]->Write();
           for(int l=0;l<nRefBins;l++)
             {
               ahREfficiency[l][i]->Write();
@@ -226,6 +259,7 @@ int gethists(TFile* inf, Option_t* option)
   opt.ToLower();
   if(opt=="hist")
     {
+      hJetPhi= (TH1F*)inf->Get("hJetPhi");
       hNjets = (TH1F*)inf->Get("hNjets");
       for(int i=0;i<nPtBins;i++)
         {
@@ -265,10 +299,22 @@ int gethists(TFile* inf, Option_t* option)
     }
   if(opt.Contains("plothist"))
     {
+      hJetPhi = (TH1F*)inf->Get("hJetPhi");
+      hJetEta = (TH1F*)inf->Get("hJetEta");
       for(int i=0;i<nPtBins;i++)
         {
+          hDEta[i] = (TH1F*)inf->Get(Form("hDEta_pt_%d",i));
+          hDPhi[i] = (TH1F*)inf->Get(Form("hDPhi_pt_%d",i));
+          hDdelPhi[i] = (TH1F*)inf->Get(Form("hDdelPhi_pt_%d",i));
+          hDdelEta[i] = (TH1F*)inf->Get(Form("hDdelEta_pt_%d",i));
+          hCorr[i] = (TH2F*)inf->Get(Form("hCorr_pt_%d",i));
+          hDphivsDtrk1hit[i] = (TH2F*)inf->Get(Form("hDphivsDtrk1hit_pt_%d",i));
+          hDphivsDtrk2hit[i] = (TH2F*)inf->Get(Form("hDphivsDtrk2hit_pt_%d",i));
+          hDphivsDtrk1algo[i] = (TH2F*)inf->Get(Form("hDphivsDtrk1algo_pt_%d",i));
+          hDphivsDtrk2algo[i] = (TH2F*)inf->Get(Form("hDphivsDtrk2algo_pt_%d",i));
           for(int l=0;l<nRefBins;l++)
             {
+              ahNumREfficiency[l][i] = (TH1F*)inf->Get(Form("hNumREfficiency_%s_pt_%d",tRef[l].Data(),i));
               ahSignalRnorm[l][i] = (TH1F*)inf->Get(Form("hSignalRnorm_%s_pt_%d",tRef[l].Data(),i));
               ahSignalZnorm[l][i] = (TH1F*)inf->Get(Form("hSignalZnorm_%s_pt_%d",tRef[l].Data(),i));
             }
