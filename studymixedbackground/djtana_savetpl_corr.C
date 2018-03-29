@@ -40,16 +40,10 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
       Int_t ibincent = ispp?0:xjjc::findibin(&centBins,(float)djt.hiBin/2);
       for(int jj=0;jj<njets;jj++)
         {
-          //int djtjetsel;
-          //if(!useMB) djtjetsel = djt.isjetselected(jj, djt.ajetopt[irecogen]);
-          //if(useMB) djtjetsel = djt.isjetselected(jj,"m");
-          //if(djtjetsel < 0) {std::cout << "bad djtjetsel " << djtjetsel << std::endl; return;}
-          //if(!djtjetsel) continue;
           float jetpt = (**djt.ajetpt[useMB][irecogen])[jj];
           if(djtcorr::ptCorr(1.,jetpt,0.,ibincent)) continue;
           if(jetpt<jetptmin || fabs((**djt.ajeteta[useMB][irecogen])[jj])<jetetamin || fabs((**djt.ajeteta[useMB][irecogen])[jj])>jetetamax) continue;
           if(irecoref==3 && (**djt.asubid[useMB][irecogen])[jj]!=0) continue;
-          //if(irecoref==4 && (**djt.asubid[irecogen])[jj]==0) continue;
           ncountjet++;
           // reco
           hJetPhi->Fill((**djt.ajetphi[useMB][irecogen])[jj]);
@@ -76,23 +70,9 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
               if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
               if(!djtDsel) continue;
               //if(irecoref==3 && (*djt.GcollisionId)[jd]!=0) continue;
-
-              //if((irecogen==0 || irecogen==2) && jj==0)
-              //{
-                //hDphivsDtrk1hit[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk1PixelHit)[jd]);
-                //hDphivsDtrk2hit[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk2PixelHit)[jd]);
-                //hDphivsDtrk1algo[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk1Algo)[jd]);
-                //hDphivsDtrk2algo[ibinpt]->Fill((**djt.aDphi[irecogen])[jd],(*djt.Dtrk2Algo)[jd]);
-              //}
-              //if((**djt.aDpt[irecogen])[jd]>2.0 && fabs((**djt.aDeta[irecogen])[jd])<1.6)
-              //{
-                //if((!useMB && fabs((**djt.ajeteta[irecogen])[jj]) < 1.6) || (useMB && fabs((**djt.MBajeteta[irecogen])[jj])<1.6))
-                //{
-                  hDdelPhi[ibinpt]->Fill(deltaphi);
-                  hDdelEta[ibinpt]->Fill(deltaeta);
-                  hCorr[ibinpt]->Fill(deltaeta,deltaphi);
-                //}
-              //}
+              hDdelPhi[ibinpt]->Fill(deltaphi);
+              hDdelEta[ibinpt]->Fill(deltaeta);
+              hCorr[ibinpt]->Fill(deltaeta,deltaphi);
               
               
               for(int l=0;l<nRefBins;l++)
@@ -109,35 +89,6 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
                   ahNumREfficiency[l][ibinpt]->Fill(deltaR[l],1./ahNumREfficiency[l][ibinpt]->GetBinWidth(ibindr+1));
                 }
             }
-          // gen
-          /*
-          for(int jd=0;jd<*(djt.anD[irecogen+1]);jd++)
-            {
-              Int_t ibinpt = xjjc::findibin(&ptBins, (**djt.aDpt[irecogen+1])[jd]);
-              if(ibinpt<0) continue;              
-              
-              // to add pt-dependent event selection ...
-              
-              Float_t deltaphi = TMath::ACos(TMath::Cos((**djt.aDphi[irecogen+1])[jd] - (**djt.ajetphi[irecogen+1])[jj]));
-              Float_t deltaeta = (**djt.aDeta[irecogen+1])[jd] - (**djt.ajeteta[irecogen+1])[jj];
-              Float_t deltaetaref = (**djt.aDeta[irecogen+1])[jd] + (**djt.ajeteta[irecogen+1])[jj];
-              Float_t deltaR[nRefBins] = {(float)TMath::Sqrt(pow(deltaphi, 2) + pow(deltaeta, 2)),
-                                          (float)TMath::Sqrt(pow(deltaphi, 2) + pow(deltaetaref, 2))};
-              Float_t zvariable = (**djt.aDpt[irecogen+1])[jd]/(**djt.ajetpt[irecogen+1])[jj];
-              
-              for(int l=0;l<nRefBins;l++)
-                {
-                  Int_t djtDsel = djt.isDselected(jd, djt.aDopt[irecogen+1]);
-                  if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
-                  if(!djtDsel) continue;
-                  ahDenREfficiency[l][ibinpt]->Fill(deltaR[l]);
-                  
-                  if(deltaR[l]>0.3) continue; // ... to discuss
-                  ahDenZEfficiency[l][ibinpt]->Fill(zvariable);
-                }
-            }
-            */
-
         }
         for(int jd=0;jd<(*djt.anD[useMB][irecogen]);jd++)
         {
@@ -159,19 +110,6 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
   std::cout<<std::endl;
 
   hNjets->SetBinContent(1, ncountjet);
-  /*for(int l=0;l<nRefBins;l++)
-    {
-      for(int i=0;i<nPtBins;i++)
-        {
-          ahNumREfficiency[l][i]->Sumw2();
-          ahDenREfficiency[l][i]->Sumw2();
-          ahNumZEfficiency[l][i]->Sumw2();
-          ahDenZEfficiency[l][i]->Sumw2();
-          ahREfficiency[l][i]->Divide(ahNumREfficiency[l][i], ahDenREfficiency[l][i]);
-          ahZEfficiency[l][i]->Divide(ahNumZEfficiency[l][i], ahDenZEfficiency[l][i]);
-        }
-    }
-  */
 
   TFile* outf = new TFile(Form("%s.root",outputname.Data()), "recreate");
   outf->cd();
