@@ -48,6 +48,7 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
           // reco
           hJetPhi->Fill((**djt.ajetphi[useMB][irecogen])[jj]);
           hJetEta->Fill((**djt.ajeteta[useMB][irecogen])[jj]);
+          hJetPt->Fill(jetpt);
           for(int jd=0;jd<(*djt.anD[useMB][irecogen]);jd++)
             {
               Int_t ibinpt = xjjc::findibin(&ptBins, (**djt.aDpt[useMB][irecogen])[jd]);
@@ -102,6 +103,7 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
           if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
           if(!djtDsel) continue;
           //if(irecoref==3 && (*djt.GcollisionId)[jd]!=0) continue;
+          hDPt->Fill((**djt.aDpt[useMB][irecogen])[jd]);
           hDPhi[ibinpt]->Fill((**djt.aDphi[useMB][irecogen])[jd]);
           hDEta[ibinpt]->Fill((**djt.aDeta[useMB][irecogen])[jd]);  
         }

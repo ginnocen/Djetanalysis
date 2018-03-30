@@ -1,5 +1,6 @@
 #include "djtana.h"
 #include "TString.h"
+#include "TVector.h"
 #include "TRegexp.h"
 #include "../includes/djet.h"
 
@@ -16,6 +17,8 @@ void djtana_plothist(TString inputhistname, TString outputname,
   TFile* infhist = new TFile(Form("%s.root",inputhistname.Data()));
   if(infhist->IsZombie()) return;
 
+  TVector* numevents = (TVector*)infhist->Get("nD");
+
   if(!infhist->IsOpen()) return;
   if(gethists(infhist, "plothist")) return;
 
@@ -31,27 +34,34 @@ void djtana_plothist(TString inputhistname, TString outputname,
   for(int j=0;j<sizeof(zBins)/sizeof(zBins[0]);j++) vzBins.push_back(zBins[j]);
   Float_t jet_ymax = 20000;
   Float_t D_ymax = 20000;
-  std::vector<TH1F*>               hJetHists     =  {(TH1F*)hJetPhi,         (TH1F*)hJetEta};
-  std::vector<Float_t>             jetmins       =  {0.,                     -2.};
-  std::vector<Float_t>             jetmaxes      =  {(Float_t)TMath::Pi(),   2.};
-  std::vector<TString>             jettitle      =  {"#phi",                 "#eta"};
-  std::vector<TH1F**>              hDHists       =  {(TH1F**)hDPhi,          (TH1F**)hDEta,                   (TH1F**)hDdelPhi,         (TH1F**)hDdelEta};   
-  std::vector<Float_t>             Dmins         =  {-(Float_t)TMath::Pi(),  -2.,                             0.,                       -4.};
-  std::vector<Float_t>             Dmaxes        =  {(Float_t)TMath::Pi(),   2.,                              (Float_t)TMath::Pi(),     4.};   
-  std::vector<TString>             Dtitle        =  {"#phi",                 "#eta",                          "#Delta#phi",             "#Delta#eta"};                         
+  std::vector<TH1F*>               hJetHists     =  {(TH1F*)hJetPhi,         (TH1F*)hJetEta,                  (TH1F*)hJetPt,            (TH1F*)hDPt};
+  std::vector<Float_t>             jetmins       =  {0.,                     -2.,                             0.,                       0.};
+  std::vector<Float_t>             jetmaxes      =  {(Float_t)TMath::Pi(),   2.,                               200.,                    100.};
+  std::vector<TString>             jettitle      =  {"#phi",                 "#eta",                          "p_{T}",                  "p_{T}"};
+  std::vector<TString>             jetytitle     =  {"#frac{1}{N_{jet}} #frac{dN_{jet}}{d#phi}","#frac{1}{N_{jet}} #frac{dN_{jet}}{d#eta}","#frac{1}{N_{jet}} #frac{dN_{jet}}{dp_{T}}","#frac{1}{N_{D}} #frac{dN_{D}}{dp_{T}}"};
+  std::vector<TH1F**>              hDHists       =  {(TH1F**)hDPhi,          (TH1F**)hDEta,                   (TH1F**)hDdelPhi,         (TH1F**)hDdelEta,        (TH1F**)ahNumREfficiency[0]};   
+  std::vector<Float_t>             Dmins         =  {-(Float_t)TMath::Pi(),  -2.,                             0.,                       -4.,                      0.};
+  std::vector<Float_t>             Dmaxes        =  {(Float_t)TMath::Pi(),   2.,                              (Float_t)TMath::Pi(),     4.,                       0.5};   
+  std::vector<TString>             Dtitle        =  {"#phi",                 "#eta",                          "#Delta#phi",             "#Delta#eta",             "#DeltaR"}; 
+  std::vector<TString>             Dytitle       =  {"#frac{1}{N_{D}} #frac{dN_{D}}{d#phi}","#frac{1}{N_{D}} #frac{dN_{D}}{d#eta}","#frac{1}{N_{evt}} #frac{dN_{evt}}{d#Delta#phi}","#frac{1}{N_{evt}} #frac{dN_{evt}}{d#Delta#eta}","#frac{1}{N_{evt}} #frac{dN_{evt}}{d#DeltaR}"};                        
   std::vector<TString>             xtitle        =  {"#DeltaR",              "z = p_{T}^{D} / p_{T}^{jet}"};
   std::vector<TString>             ytitle        =  {"#rho(#DeltaR)",        "#rho(z)"};
   std::vector<TString>             tname         =  {"dr",                   "z"};
   std::vector<std::vector<float>>  vxBins        =  {vdrBins,                vzBins};
   std::vector<TH2F**>              h2DHists      =  {hCorr,                  hDphivsDtrk1hit,                 hDphivsDtrk2hit,          hDphivsDtrk1algo,         hDphivsDtrk2algo}; 
+  std::vector<TString>             ptbinlabel    =  {"4 < p_{T}^{D} < 20 GeV/c","p_{T}^{D} > 20 GeV/c"};
 
   // plot
 
-  for(int i=0;i<2;i++)
+  for(int i=0;i<4;i++)
     {
-      TCanvas* c = new TCanvas("c","",600,600);      
-      TH2F* hempty = new TH2F("hempty",Form(";%s;",jettitle[i].Data()),1,jetmins[i],jetmaxes[i],1,0.,hJetHists[i]->GetMaximum());
-      xjjroot::sethempty(hempty,0,0.5);
+      TCanvas* c = new TCanvas("c","",600,600);
+      if(i==2 || i==3) c->SetLogy(); 
+      c->SetLeftMargin(0.22);   
+      hJetHists.at(i)->Sumw2();
+      hJetHists.at(i)->Scale(1./hJetHists.at(i)->GetEntries());  
+      TH2F* hempty = new TH2F("hempty",Form(";%s;%s",jettitle[i].Data(),jetytitle[i].Data()),1,jetmins[i],jetmaxes[i],1,pow(10,-4),hJetHists[i]->GetMaximum()*1.25);
+      xjjroot::sethempty(hempty,0,0.55);
       hempty->Draw();
       xjjroot::setthgrstyle(hJetHists[i],kBlack,20,1.2,kBlack,1,1,-1,-1,-1);
       hJetHists[i]->Draw("pe same");
@@ -60,32 +70,41 @@ void djtana_plothist(TString inputhistname, TString outputname,
       TString name = hJetHists[i]->GetName();
       name(re) = "";
       TString fullname = hJetHists[i]->GetName();
-      fullname += "_";
       // Saves twice for easy comparison; this one compares the same histogram in different datasets
       //c->SaveAs(Form("plots/%s/%s.png",name.Data(),fullname.Append(outputname).Data()));
       // And this one compares different histograms in the same dataset
-      c->SaveAs(Form("plots/%s/%s.png",outputname.Data(),fullname.Data()));
+      c->SaveAs(Form("plots/%s/%s.pdf",outputname.Data(),fullname.Data()));
       delete c;
       delete hempty;
     }
-  for(int i=0;i<4;i++)
+  for(int i=0;i<5;i++)
     {
       for(int j=0;j<nPtBins;j++)
         {
-          TCanvas* c = new TCanvas("c","",600,600);      
-          TH2F* hempty = new TH2F("hempty",Form("pt_{%d};%s;",j,Dtitle[i].Data()),1,Dmins[i],Dmaxes[i],1,0.,(hDHists.at(i))[j]->GetMaximum());
-          xjjroot::sethempty(hempty,0,0.5);
+          TCanvas* c = new TCanvas("c","",600,600);
+          if(i==4) c->SetLogy(); 
+          (hDHists.at(i))[j]->Sumw2();
+          if(i==0 || i==1) (hDHists.at(i))[j]->Scale(1./(hDHists.at(i))[j]->GetEntries());  
+          if(i>1) (hDHists.at(i))[j]->Scale(1./(*numevents)[j]);   
+          TH2F* hempty = new TH2F("hempty",Form(";%s;%s",Dtitle[i].Data(),Dytitle[i].Data()),1,Dmins[i],Dmaxes[i],1,pow(10,-4),(hDHists.at(i))[j]->GetMaximum()*1.25);
+          xjjroot::sethempty(hempty,0,0.3);
           hempty->Draw();
           xjjroot::setthgrstyle((hDHists.at(i))[j],kBlack,20,1.2,kBlack,1,1,-1,-1,-1);
           (hDHists.at(i))[j]->Draw("pe same");
           xjjroot::drawCMS(collisionsyst);
+          xjjroot::drawtex(0.70,0.85,vectex[0].Data());
+          xjjroot::drawtex(0.70,0.80,ptbinlabel[j].Data());
+          xjjroot::drawtex(0.70,0.75,vectex[1].Data());
+          xjjroot::drawtex(0.70,0.70,vectex[2].Data());
           TRegexp re("_pt_.");
           TString name = (hDHists.at(i))[j]->GetName();
+          std::cout << name << std::endl;
           name(re) = "";
           TString fullname = (hDHists.at(i))[j]->GetName();
-          fullname += "_";
+          TRegexp ree("_eta");
+          fullname(ree) = "";
           //c->SaveAs(Form("plots/%s/%s.png",name.Data(),fullname.Append(outputname).Data()));
-          c->SaveAs(Form("plots/%s/%s.png",outputname.Data(),fullname.Data()));
+          c->SaveAs(Form("plots/%s/%s.pdf",outputname.Data(),fullname.Data()));
           delete c;
           delete hempty;
         }
@@ -104,7 +123,7 @@ void djtana_plothist(TString inputhistname, TString outputname,
             TString fullname = (h2DHists.at(i))[j]->GetName();
             fullname += "_";
             //c->SaveAs(Form("plots/%s/%s.png",name.Data(),fullname.Append(outputname).Data()));
-            c->SaveAs(Form("plots/%s/%s.png",outputname.Data(),fullname.Data()));
+            c->SaveAs(Form("plots/%s/%s.pdf",outputname.Data(),fullname.Data()));
             delete c;
         } 
     }

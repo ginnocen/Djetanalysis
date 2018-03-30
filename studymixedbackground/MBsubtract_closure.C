@@ -78,7 +78,7 @@ int MBsubtract_closure(std::string Djetfile, std::string mixfile, std::string ge
         MBsub_dr[i]->Add(mix_dr[i],-1);  
         MBsub_dphi[i]->Add(mix_dphi[i],-1);
 
-        TH2F* hemptydr = new TH2F("hemptydr",Form("pt[%d];#Delta R;",i),1,0.,0.5,1,pow(10.,-4),pow(10.,0));
+        TH2F* hemptydr = new TH2F("hemptydr",Form("pt[%d];#Delta R;",i),1,0.,0.5,1,pow(10.,-5),pow(10.,0));
         TH2F* hemptydphi = new TH2F("hemptydphi",Form("pt[%d];#Delta#phi",i),1,0,TMath::Pi(),1,mix_dphi[i]->GetMinimum(),Djet_dphi[i]->GetMaximum());
 
         if(plotdr)
@@ -102,7 +102,7 @@ int MBsubtract_closure(std::string Djetfile, std::string mixfile, std::string ge
             ldr[i]->AddEntry(MBsub_dr[i],"MB-subtracted","l");
             ldr[i]->Draw();
             xjjroot::drawCMS("PbPb");
-            cdr->SaveAs(Form("plots/MBsub_dr_pt_%d.png",i));
+            cdr->SaveAs(Form("plots/MBsub_dr_pt_%d.pdf",i));
         }
 
         if(plotdphi)
@@ -126,7 +126,7 @@ int MBsubtract_closure(std::string Djetfile, std::string mixfile, std::string ge
             ldphi[i]->AddEntry(MBsub_dphi[i],"MB-subtracted","l");
             ldphi[i]->Draw();
             xjjroot::drawCMS("PbPb");
-            cdphi->SaveAs(Form("plots/MBsub_dphi_pt_%d.png",i));
+            cdphi->SaveAs(Form("plots/MBsub_dphi_pt_%d.pdf",i));
         }
 /*
         d->cd();

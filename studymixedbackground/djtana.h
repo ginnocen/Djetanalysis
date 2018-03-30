@@ -60,6 +60,8 @@ TH1F* ahSignalZsubRatio[nPtBins];
 
 TH1F* hJetPhi;
 TH1F* hJetEta;
+TH1F* hJetPt;
+TH1F* hDPt;
 TH1F* hDPhi[nPtBins];
 TH1F* hDEta[nPtBins];
 TH1F* hDdelPhi[nPtBins];
@@ -78,6 +80,8 @@ int createhists(Option_t* option)
     { 
       hJetPhi=new TH1F("hJetPhi", ";#phi;",100,0., TMath::Pi());
       hJetEta=new TH1F("hJetEta", ";#eta;",100,-2.,2.);
+      hJetPt=new TH1F("hJetPt",";p_{t};",100,0,200);
+      hDPt=new TH1F("hDPt",";p_{t};",100,0,100);
       hNjets = new TH1F("hNjets", "", 1, 0, 1); // ... is it necessary
       for(int i=0;i<nPtBins;i++)
         {
@@ -171,6 +175,8 @@ int writehists(Option_t* option)
       hNjets->Write(); // ... is it necessary
       hJetPhi->Write();
       hJetEta->Write();
+      hJetPt->Write();
+      hDPt->Write();
       for(int i=0;i<nPtBins;i++)
         {
           hDPhi[i]->Write();
@@ -301,6 +307,8 @@ int gethists(TFile* inf, Option_t* option)
     {
       hJetPhi = (TH1F*)inf->Get("hJetPhi");
       hJetEta = (TH1F*)inf->Get("hJetEta");
+      hJetPt  = (TH1F*)inf->Get("hJetPt");
+      hDPt    = (TH1F*)inf->Get("hDPt");
       for(int i=0;i<nPtBins;i++)
         {
           hDEta[i] = (TH1F*)inf->Get(Form("hDEta_pt_%d",i));
