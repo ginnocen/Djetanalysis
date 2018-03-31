@@ -67,6 +67,6 @@ fi
 if [[ $DOMBSUB -eq 1 ]]
 then
     g++ MBsubtract_closure.C $(root-config --cflags --libs) -Werror -Wall -O2 -o MBsubtract_closure.exe
-    ./MBsubtract_closure.exe "rootfiles/${INPUTFILE}signal_hists.root" "rootfiles/mixjet_${INPUTFILE}_hists.root" "rootfiles/gen_${INPUTFILE}_hists.root" "rootfiles/${OUTFILE}.root"
+    ./MBsubtract_closure.exe "rootfiles/${INPUTFILE}signal_hists.root" "rootfiles/mixjet_${INPUTFILE}_hists.root" "rootfiles/mixD_${INPUTFILE}_hists.root" "rootfiles/mixboth_${INPUTFILE}_hists.root" "rootfiles/gen_${INPUTFILE}_hists.root" "rootfiles/${OUTFILE}.root" $JETPTMIN $JETETAMIN $JETETAMAX
     rm MBsubtract_closure.exe
 fi
