@@ -479,7 +479,11 @@ public:
   std::vector<float>**   aDphi[mixcases][ncases]     =   {{&Dphi,                &Gphi,                &Dphi,             &Gphi},
                                                           {&Dphi_mix,            &Gphi_mix,            &Dphi_mix,         &Gphi_mix},
                                                           {&Dphi,                &Gphi,                &Dphi,             &Gphi},
-                                                          {&Dphi_mix,            &Gphi_mix,            &Dphi_mix,         &Gphi_mix}};                                                
+                                                          {&Dphi_mix,            &Gphi_mix,            &Dphi_mix,         &Gphi_mix}};   
+  std::vector<int>**   aDcollId[mixcases][ncases]  =   {{&DgencollisionId,     &GcollisionId,        &DgencollisionId,  &GcollisionId},
+                                                          {&DgencollisionId_mix, &GcollisionId_mix,    &DgencollisionId_mix, &GcollisionId_mix},
+                                                          {&DgencollisionId,     &GcollisionId,        &DgencollisionId,  &GcollisionId},
+                                                          {&DgencollisionId_mix, &GcollisionId_mix,    &DgencollisionId_mix, &GcollisionId_mix}};                                                
   TString                ajetopt[mixcases][ncases]   =   {{"reco",               "reco",               "gen",             "gen"},
                                                           {"reco",               "reco",               "gen",             "gen"},
                                                           {"recomix",            "recomix",            "genmix",          "genmix"},

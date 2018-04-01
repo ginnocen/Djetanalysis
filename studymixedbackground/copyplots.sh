@@ -38,5 +38,9 @@ cp -a MBsub_dphi_pt_0.pdf ${NOTESPATH}/plotevtmix/DeltaPhicompare_pt_0.pdf
 cp -a MBsub_dphi_pt_1.pdf ${NOTESPATH}/plotevtmix/DeltaPhicompare_pt_1.pdf
 cp -a MBsub_dr_pt_0.pdf ${NOTESPATH}/plotevtmix/DeltaRcompare_pt_0.pdf
 cp -a MBsub_dr_pt_1.pdf ${NOTESPATH}/plotevtmix/DeltaRcompare_pt_1.pdf
+cp -a bkgd_ratio_dr_pt_0.pdf ${NOTESPATH}/plotevtmix/BkgdRatio_dr_pt_0.pdf
+cp -a bkgd_ratio_dr_pt_1.pdf ${NOTESPATH}/plotevtmix/BkgdRatio_dr_pt_1.pdf
+cp -a bkgd_ratio_dphi_pt_0.pdf ${NOTESPATH}/plotevtmix/BkgdRatio_dphi_pt_0.pdf
+cp -a bkgd_ratio_dphi_pt_1.pdf ${NOTESPATH}/plotevtmix/BkgdRatio_dphi_pt_1.pdf
 
 cd ..

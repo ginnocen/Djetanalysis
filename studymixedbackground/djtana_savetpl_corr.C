@@ -70,8 +70,11 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
               Int_t djtDsel = djt.isDselected(jd, djt.aDopt[useMB][irecogen]);
               if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
               if(!djtDsel) continue;
-              //if(irecoref==3 && (*djt.GcollisionId)[jd]!=0) continue;
+              if(irecoref==3 && irecogen == 0 && isMC == 1 && (*djt.Dgen)[jd]!=23333) continue;
+              //if(irecoref==3 && (**djt.aDcollId[useMB][irecogen])[jd]!=0) continue;
               hDdelPhi[ibinpt]->Fill(deltaphi);
+              if(useMB==1) std::cout << "deltaphi " << deltaphi << std::endl;
+              if(useMB==1) std::cout << "deltaeta " << deltaeta << std::endl;
               hDdelEta[ibinpt]->Fill(deltaeta);
               hCorr[ibinpt]->Fill(deltaeta,deltaphi);
               
@@ -87,6 +90,7 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
                   Int_t djtDsel = djt.isDselected(jd, djt.aDopt[useMB][irecogen]);
                   if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
                   if(!djtDsel) continue;
+                  if(useMB==1 && l==0) std::cout << "deltaR " << deltaR[l] << std::endl;
                   ahNumREfficiency[l][ibinpt]->Fill(deltaR[l],1./ahNumREfficiency[l][ibinpt]->GetBinWidth(ibindr+1));
                 }
             }
@@ -102,7 +106,8 @@ void djtana_savetpl_corr(TString inputname, TString outputname,
           Int_t djtDsel = djt.isDselected(jd, djt.aDopt[useMB][irecogen]);
           if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
           if(!djtDsel) continue;
-          //if(irecoref==3 && (*djt.GcollisionId)[jd]!=0) continue;
+          if(irecoref==3 && irecogen == 0 && isMC == 1 && (*djt.Dgen)[jd]!=23333) continue;
+          if(irecoref==3 && isMC ==1 && (**djt.aDcollId[useMB][irecogen])[jd]!=0) continue;
           hDPt->Fill((**djt.aDpt[useMB][irecogen])[jd]);
           hDPhi[ibinpt]->Fill((**djt.aDphi[useMB][irecogen])[jd]);
           hDEta[ibinpt]->Fill((**djt.aDeta[useMB][irecogen])[jd]);  
