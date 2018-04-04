@@ -1,14 +1,15 @@
 #ifndef _JETFFSCALE_H_
 #define _JETFFSCALE_H_
 
-#include "RtypesCore.h"
-Float_t jtptBins[] = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300};
-const int nJtptBins = sizeof(jtptBins)/sizeof(jtptBins[0])-1;
-#define _JTPTBINS
+// #include "RtypesCore.h"
+// Float_t jtptBins[] = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300};
+// const int nJtptBins = sizeof(jtptBins)/sizeof(jtptBins[0])-1;
+// #define _JTPTBINS
 
 #include "../includes/djet.h"
-#include "../includes/prefilters.h"
-#include "../includes/paramCorr.h"
+#include "prefilters.h"
+#include "../includes/djtcorr.h"
+#include "../includes/djtweight.h"
 #include "../includes/xjjcuti.h"
 #include "../includes/xjjrootuti.h"
 #include <iostream>
@@ -25,11 +26,11 @@ Float_t minJtnpfBins = 0, maxJtnpfBins = (float)nJtnpfBins;
 Float_t jtnpfBins[nJtnpfBins];
 
 Float_t xrangeAng;
-void setxrangeAng(Int_t ispp) {xrangeAng = ispp?0.05:0.08;}
+void setxrangeAng(Int_t ispp) { xrangeAng = ispp?0.05:0.08; }
 
 void init(Int_t ispp) 
 {
-  setnCentBins(ispp); setxrangeAng(ispp);
+  setxrangeAng(ispp);
   for(int i=0;i<=nJtnpfBins;i++)
     {
       jtnpfBins[i] = minJtnpfBins + (maxJtnpfBins-minJtnpfBins)*i/nJtnpfBins;

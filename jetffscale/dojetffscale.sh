@@ -1,13 +1,15 @@
 #!/bin/bash
 # dojetffscale.sh #
 
+source ../includes/utility.shinc
+cp ../includes/prefilters_data.h prefilters.h
+
 DO_SAVEHIST=${1:-0}
 DO_USEHIST=${2:-0}
 DO_PLOTHIST=${3:-0}
 DO_PLOTPAR=${4:-0}
 DO_PLOTHIST_COMB=${5:-0}
 
-ifCorr=1
 # Select the systems the macros run on 
 iCOL=(0 1)
 
@@ -19,35 +21,14 @@ COLSYST=('pp' 'PbPb')
 # dataset[nCOL]
 INPUTDANAME=(
     '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20171215_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20171214_pthatweight.root'
-    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20171215_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20171214_pthatweight.root'
+    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20180328_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20180326_pthatweight.root'
 )
+
+MAXEVT=-1
 
 # Do not touch the macros below if you don't know what they mean #
 
 [[ $DO_SAVEHIST -eq 0 && $DO_USEHIST -eq 0 && $DO_PLOTHIST -eq 0 && $DO_PLOTPAR -eq 0 && $DO_PLOTHIST_COMB -eq 0 ]] && echo "./dojetresolution.sh [DO_SAVEHIST] [DO_USEHIST] [DO_PLOTHIST] [DO_PLOTPAR] [DO_PLOTHIST_COMB]"
-
-#
-nCOL=${#COLSYST[@]}
-
-#
-NC='\033[0m'
-FUNCOLOR='\033[1;33m'
-ARGCOLOR='\033[1;32m'
-ERRCOLOR='\033[1;31m'
-
-#
-function float_to_string()
-{
-    if [[ $# -ne 1 ]]
-    then
-        echo -e "${ERRCOLOR}error:${NC} invalid argument number - float_to_string()"
-        return 1
-    fi
-    part1=`echo $1 | awk -F "." '{print $1}'`
-    part2=`echo $1 | awk -F "." '{print $2}'`
-    rt_float_to_string=${part1:-0}p${part2:-0}
-    echo $rt_float_to_string
-}
 
 function produce_postfix()
 {
@@ -61,14 +42,7 @@ function produce_postfix()
 
 #
 FOLDERS=("rootfiles" "plotresos" "plotfits" "plotresopts")
-for i in ${FOLDERS[@]}
-do
-    if [[ ! -d $i ]]
-    then
-	mkdir -p $i
-    fi
-done
-
+mk_dirs ${FOLDERS[@]}
 ##
 
 # jetffscale_savehist.C #
@@ -80,13 +54,12 @@ do
     if [[ $DO_SAVEHIST -eq 1 ]]
     then
         echo -e "-- Processing ${FUNCOLOR}jetffscale_savehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
-        ./jetffscale_savehist.exe "${INPUTDANAME[i]}" "rootfiles/hist_${tPOSTFIX}" "${COLSYST[i]}" "$ifCorr" &
+        ./jetffscale_savehist.exe "${INPUTDANAME[i]}" "rootfiles/hist_${tPOSTFIX}" "${COLSYST[i]}" $MAXEVT &
         echo
     fi
 done
 wait
 rm jetffscale_savehist.exe
-
 
 # jetffscale_usehist.C #
 
@@ -158,3 +131,5 @@ then
     done
 fi
 rm jetffscale_plotpar.exe
+
+rm prefilters.h

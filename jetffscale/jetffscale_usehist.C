@@ -9,6 +9,7 @@ void jetffscale_usehist(TString inputhistname, TString outputname,
   if(arguerr(collisionsyst)) return;
   Int_t ispp = collisionsyst=="pp"?1:0;
   init(ispp);
+  djtcorr::setnCentBins(ispp);
   
   xjjroot::setgstyle();
 
