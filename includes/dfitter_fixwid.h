@@ -37,7 +37,6 @@
 #include <TLatex.h>
 #include <TMath.h>
 #include <TFitResult.h>
-#include <ctime>
 
 namespace xjjroot
 {
@@ -47,9 +46,7 @@ namespace xjjroot
     dfitter(Option_t* option="") {foption = option; resolveoption(); init();}
     ~dfitter() {};
 
-    TF1* fit(const TH1* hmass, const TH1* hmassMCSignal, const TH1* hmassMCSwapped, TString collisionsyst="", const std::vector<TString>& vtex=std::vector<TString>());
-    Int_t drawfit(TString collisionsyst="", const std::vector<TString>& vtex=std::vector<TString>());
-    Int_t drawpull(const std::vector<TString>& vtex=std::vector<TString>());
+    TF1* fit(const TH1* hmass, const TH1* hmassMCSignal, const TH1* hmassMCSwapped, Float_t fixpar11, TString collisionsyst="", const std::vector<TString>& vtex=std::vector<TString>());
     Bool_t isFitted() const {return fparamfuns;}
 
     Double_t GetS() const {return S;}
@@ -86,9 +83,6 @@ namespace xjjroot
     Double_t NDF;
     Double_t Chi2Prob;
 
-    TH1* hist_h;
-    TH1* hist_hpull;
-
     TF1* fun_f;
     TF1* fun_mass;
     TF1* fun_swap;
@@ -100,7 +94,6 @@ namespace xjjroot
     TString foption;
     Bool_t fparamfun_f;
     Bool_t fparamfuns;
-    Bool_t fsethist;
     Bool_t f3gaus;
     Bool_t fdrawyield;
     Bool_t fdrawchi2;
@@ -144,8 +137,6 @@ namespace xjjroot
     void reset();
     void createfun();
     void deletefun();
-    void deletehist();
-    void clearhist();
     void clearvar();
     void calvar();
     void resolveoption();
@@ -182,17 +173,14 @@ void xjjroot::dfitter::resolveoption()
   if(foption.Contains("X")) fsaveplot = false;
 }
 
-TF1* xjjroot::dfitter::fit(const TH1* hmass, const TH1* hmassMCSignal, const TH1* hmassMCSwapped, TString collisionsyst/*=""*/, const std::vector<TString> &vtex/*=std::vector<TString>()*/)
+TF1* xjjroot::dfitter::fit(const TH1* hmass, const TH1* hmassMCSignal, const TH1* hmassMCSwapped, Float_t fixpar11, TString collisionsyst/*=""*/, const std::vector<TString> &vtex/*=std::vector<TString>()*/)
 {
   reset();
   init();
 
-  hist_h = (TH1*)hmass->Clone(Form("hist_h_%d",std::time(nullptr)));
-  sethist(hist_h);
-
-  TH1* h = (TH1*)hmass->Clone(Form("%s_clone_%d",hmass->GetName(),std::time(nullptr)));
-  TH1* hMCSignal = (TH1*)hmassMCSignal->Clone(Form("%s_clone_%d",hmassMCSignal->GetName(),std::time(nullptr)));
-  TH1* hMCSwapped = (TH1*)hmassMCSwapped->Clone(Form("%s_clone_%d",hmassMCSwapped->GetName(),std::time(nullptr)));
+  TH1* h = (TH1*)hmass->Clone(Form("%s_clone",hmass->GetName()));
+  TH1* hMCSignal = (TH1*)hmassMCSignal->Clone(Form("%s_clone",hmassMCSignal->GetName()));
+  TH1* hMCSwapped = (TH1*)hmassMCSwapped->Clone(Form("%s_clone",hmassMCSwapped->GetName()));
   sethist(h);
   sethist(hMCSignal);
   sethist(hMCSwapped);
@@ -271,7 +259,10 @@ TF1* xjjroot::dfitter::fit(const TH1* hmass, const TH1* hmassMCSignal, const TH1
   fun_f->ReleaseParameter(1);
   fun_f->SetParLimits(1, 1.86, 1.87);
   fun_f->ReleaseParameter(11);
-  fun_f->SetParLimits(11, -0.5, 0.5);
+  if(fixpar11 < -1)
+    fun_f->SetParLimits(11, -0.5, 0.5);
+  else
+    fun_f->FixParameter(11, fixpar11);
   h->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
   h->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
   h->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
@@ -286,32 +277,18 @@ TF1* xjjroot::dfitter::fit(const TH1* hmass, const TH1* hmassMCSignal, const TH1
       fun_f->SetParameter(6, 0);
     }
 
+  std::cout<<fun_f->GetParameter(11)<<std::endl;
+
   fparamfun_f = true;
   setfunparameters();
   calvar();
-
-  hist_hpull = (TH1*)h->Clone(Form("hist_hpull_%d",std::time(nullptr)));
-  hist_hpull->SetMaximum(-1111);
-  for(int i=0;i<h->GetNbinsX();i++)
-    {
-      Float_t nfit = fun_f->Integral(h->GetBinLowEdge(i+1),h->GetBinLowEdge(i+1)+h->GetBinWidth(i+1))/h->GetBinWidth(i+1);
-      if(h->GetBinContent(i+1)==0)
-        {
-          hist_hpull->SetBinContent(i+1,0.);
-        }
-      else hist_hpull->SetBinContent(i+1,(h->GetBinContent(i+1)-nfit)/h->GetBinError(i+1));
-      hist_hpull->SetBinError(i+1,0);
-    }
-  fsethist = true;
   
-  // plot
-
   h->Draw("e");
-  TF1* fun_clone_f = clonefun(fun_f, Form("fun_f_%d",std::time(nullptr)));
-  TF1* fun_clone_mass = clonefun(fun_mass, Form("fun_mass_%d",std::time(nullptr)));
-  TF1* fun_clone_swap = clonefun(fun_swap, Form("fun_swap_%d",std::time(nullptr)));
-  TF1* fun_clone_background = clonefun(fun_background, Form("fun_background_%d",std::time(nullptr)));
-  TF1* fun_clone_not_mass = clonefun(fun_not_mass, Form("fun_not_mass_%d",std::time(nullptr)));
+  TF1* fun_clone_f = clonefun(fun_f, Form("%s_fun_f",hmass->GetName()));
+  TF1* fun_clone_mass = clonefun(fun_mass, Form("%s_fun_mass",hmass->GetName()));
+  TF1* fun_clone_swap = clonefun(fun_swap, Form("%s_fun_swap",hmass->GetName()));
+  TF1* fun_clone_background = clonefun(fun_background, Form("%s_fun_background",hmass->GetName()));
+  TF1* fun_clone_not_mass = clonefun(fun_not_mass, Form("%s_fun_not_mass",hmass->GetName()));
 
   fun_clone_background->Draw("same");   
   fun_clone_mass->Draw("same");
@@ -368,87 +345,15 @@ TF1* xjjroot::dfitter::fit(const TH1* hmass, const TH1* hmassMCSignal, const TH1
   return fun_clone_f;
 }
 
-
-Int_t xjjroot::dfitter::drawfit(TString collisionsyst/*=""*/, const std::vector<TString> &vtex/*=std::vector<TString>()*/)
-{
-  if(!fparamfuns || !fsethist) { std::cout<<"error: hist_h or funs are not set up properly."<<std::endl; return 1; }
-  
-  TH1* hist_h_clone = (TH1*)hist_h->Clone(Form("hist_h_%d",std::time(nullptr)));
-  hist_h_clone->Draw("e");
-  TF1* fun_clone_f = clonefun(fun_f, Form("fun_f_%d",std::time(nullptr)));
-  TF1* fun_clone_mass = clonefun(fun_mass, Form("fun_mass_%d",std::time(nullptr)));
-  TF1* fun_clone_swap = clonefun(fun_swap, Form("fun_swap_%d",std::time(nullptr)));
-  TF1* fun_clone_background = clonefun(fun_background, Form("fun_background_%d",std::time(nullptr)));
-
-  fun_clone_background->Draw("same");   
-  fun_clone_mass->Draw("same");
-  fun_clone_swap->Draw("same");
-  fun_clone_f->Draw("same");
-
-  drawleg(hist_h_clone, fun_clone_f, fun_clone_mass, fun_clone_swap, fun_clone_background);
-  drawCMS(collisionsyst);
-
-  Float_t texxpos = 0.22, texypos = 0.90, texdypos = 0.053;
-  if(!vtex.empty())
-    {
-      texypos+=texlinespc;
-      for(std::vector<TString>::const_iterator it=vtex.begin(); it!=vtex.end(); it++) 
-        drawtex(texxpos, texypos=(texypos-texdypos-texlinespc), *it);
-    }
-  return 0;
-}
-
-Int_t xjjroot::dfitter::drawpull(const std::vector<TString> &vtex/*=std::vector<TString>()*/)
-{
-  if(!fparamfun_f || !fsethist) { std::cout<<"error: hist_h or funs are not set up properly."<<std::endl; return 1; }
-
-  hist_hpull->SetMinimum(-4.);
-  hist_hpull->SetMaximum(4.);
-  hist_hpull->SetYTitle("Pull");
-  hist_hpull->GetXaxis()->SetTitleOffset(1.);
-  hist_hpull->GetYaxis()->SetTitleOffset(0.65);
-  hist_hpull->GetXaxis()->SetLabelOffset(0.007);
-  hist_hpull->GetYaxis()->SetLabelOffset(0.007);
-  hist_hpull->GetXaxis()->SetTitleSize(0.12);
-  hist_hpull->GetYaxis()->SetTitleSize(0.12);
-  hist_hpull->GetXaxis()->SetLabelSize(0.1);
-  hist_hpull->GetYaxis()->SetLabelSize(0.1);
-  hist_hpull->GetYaxis()->SetNdivisions(504);
-  
-  TH1* hist_hpull_clone = (TH1*)hist_hpull->Clone(Form("hist_hpull_%d",std::time(nullptr)));
-  hist_hpull_clone->Draw("p");
-  drawline(min_hist_dzero, 0, max_hist_dzero, 0, 2, 7, 2);
-  hist_hpull_clone->Draw("p same");
-
-  Float_t texxpos = 0.22, texypos = 0.90, texdypos = 0.053;
-  if(!vtex.empty())
-    {
-      texypos+=texlinespc;
-      for(std::vector<TString>::const_iterator it=vtex.begin(); it!=vtex.end(); it++) 
-        drawtex(texxpos, texypos=(texypos-texdypos-texlinespc), *it);
-    }
-
-  return 0;
-}
-
 void xjjroot::dfitter::reset()
 {
   clearvar();
   deletefun();
-  deletehist();
-}
-
-void xjjroot::dfitter::clearhist()
-{
-  fsethist = false;
-  hist_h = 0;
-  hist_hpull = 0;
 }
 
 void xjjroot::dfitter::init()
 {
   clearvar();
-  clearhist();
   createfun();
   setfunstyle();
 }
@@ -463,12 +368,6 @@ void xjjroot::dfitter::clearvar()
   Chi2 = 0;
   NDF = 0;
   Chi2Prob = 0;
-}
-
-void xjjroot::dfitter::deletehist()
-{
-  delete hist_h;
-  delete hist_hpull;
 }
 
 void xjjroot::dfitter::calvar()
