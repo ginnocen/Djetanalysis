@@ -4,12 +4,18 @@
 DO_SAVEHIST=${1:-0}
 DO_USEHIST=${2:-0}
 DO_PLOTHIST=${3:-0}
+DO_PLOTHISTQG=${4:-0}
 
-ifCorr=1
+source ../includes/utility.shinc
+cp ../includes/prefilters_data.h prefilters.h
+
 # Select the systems the macros run on 
 iCOL=(0 1)
-
+iFLAVOR=(0 1 2)
 ##
+
+# nFLAVOR
+FLAVOR=('incl' 'quark' 'gluon')
 
 # nCOL loop
 COLSYST=('pp' 'PbPb')
@@ -17,55 +23,32 @@ COLSYST=('pp' 'PbPb')
 # dataset[nCOL]
 INPUTDANAME=(
     '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20171215_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20171214_pthatweight.root'
-    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20171215_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20171214_pthatweight.root'
+    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20180328_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20180326_pthatweight.root'
 )
+
+MAXEVT=-1
 
 # Do not touch the macros below if you don't know what they mean #
 
-[[ $DO_SAVEHIST -eq 0 && $DO_USEHIST -eq 0 && $DO_PLOTHIST -eq 0 ]] && echo "./dojetresolution.sh [DO_SAVEHIST] [DO_USEHIST] [DO_PLOTHIST]"
-
-#
-nCOL=${#COLSYST[@]}
-
-#
-NC='\033[0m'
-FUNCOLOR='\033[1;33m'
-ARGCOLOR='\033[1;32m'
-ERRCOLOR='\033[1;31m'
-
-#
-function float_to_string()
-{
-    if [[ $# -ne 1 ]]
-    then
-        echo -e "${ERRCOLOR}error:${NC} invalid argument number - float_to_string()"
-        return 1
-    fi
-    part1=`echo $1 | awk -F "." '{print $1}'`
-    part2=`echo $1 | awk -F "." '{print $2}'`
-    rt_float_to_string=${part1:-0}p${part2:-0}
-    echo $rt_float_to_string
-}
+[[ $DO_SAVEHIST -eq 0 && $DO_USEHIST -eq 0 && $DO_PLOTHIST -eq 0 && $DO_PLOTHISTQG -eq 0 ]] && echo "./dojetresolution.sh [DO_SAVEHIST] [DO_USEHIST] [DO_PLOTHIST] [DO_PLOTHISTQG]"
 
 function produce_postfix()
 {
-    if [[ $# -ne 1 ]]
+    if [[ $# -eq 2 ]]
     then
+        echo ${COLSYST[$1]}_${FLAVOR[$2]}
+    elif [[ $# -eq 1 ]]
+    then
+        echo ${COLSYST[$1]}
+    else
         echo -e "\033[1;31merror:${NC} invalid argument number - produce_postfix()"
         return 1
     fi
-    echo ${COLSYST[$1]}
 }
 
 #
-FOLDERS=("rootfiles" "plotresos" "plotfits" "plotfitsall")
-for i in ${FOLDERS[@]}
-do
-    if [[ ! -d $i ]]
-    then
-	mkdir -p $i
-    fi
-done
+FOLDERS=("rootfiles" "plotresos" "plotfits" "plotfitsall" "plotqg" "plotfitspull" "plotmatrix" "plotpar")
+mk_dirs ${FOLDERS[@]}
 
 ##
 
@@ -74,13 +57,16 @@ done
 g++ jetreso_savehist.C $(root-config --cflags --libs) -g -o jetreso_savehist.exe || return 1;
 for i in ${iCOL[@]}
 do
-    tPOSTFIX=Djet_reso_$(produce_postfix $i)
-    if [[ $DO_SAVEHIST -eq 1 ]]
-    then
-        echo -e "-- Processing ${FUNCOLOR}jetreso_savehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
-        ./jetreso_savehist.exe "${INPUTDANAME[i]}" "rootfiles/hist_${tPOSTFIX}" "${COLSYST[i]}" "$ifCorr" &
-        echo
-    fi
+    for j in ${iFLAVOR[@]}
+    do
+        tPOSTFIX=Djet_reso_$(produce_postfix $i $j)
+        if [[ $DO_SAVEHIST -eq 1 ]]
+        then
+            echo -e "-- Processing ${FUNCOLOR}jetreso_savehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
+            ./jetreso_savehist.exe "${INPUTDANAME[i]}" "rootfiles/hist_${tPOSTFIX}" "${COLSYST[i]}" $j $MAXEVT &
+            echo
+        fi
+    done
 done
 wait
 rm jetreso_savehist.exe
@@ -93,11 +79,14 @@ if [[ $DO_USEHIST -eq 1 ]]
 then
     for i in ${iCOL[@]}
     do
-        tPOSTFIX=Djet_reso_$(produce_postfix $i)
-        echo -e "-- Processing ${FUNCOLOR}jetreso_usehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
-        [[ ! -f "rootfiles/hist_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/hist_${tPOSTFIX}.root doesn't exist. Process jetreso_savehist.C first."; continue; }
-        ./jetreso_usehist.exe "rootfiles/hist_${tPOSTFIX}" "${tPOSTFIX}" "${COLSYST[i]}"
-        echo
+        for j in ${iFLAVOR[@]}
+        do
+            tPOSTFIX=Djet_reso_$(produce_postfix $i $j)
+            echo -e "-- Processing ${FUNCOLOR}jetreso_usehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
+            [[ ! -f "rootfiles/hist_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/hist_${tPOSTFIX}.root doesn't exist. Process jetreso_savehist.C first."; continue; }
+            ./jetreso_usehist.exe "rootfiles/hist_${tPOSTFIX}" "${tPOSTFIX}" "${COLSYST[i]}"
+            echo
+        done
     done
 fi
 rm jetreso_usehist.exe
@@ -110,13 +99,41 @@ if [[ $DO_PLOTHIST -eq 1 ]]
 then
     for i in ${iCOL[@]}
     do
-        tPOSTFIX=Djet_reso_$(produce_postfix $i)
-        echo -e "-- Processing ${FUNCOLOR}jetreso_plothist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
-        [[ ! -f "rootfiles/reso_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/reso_${tPOSTFIX}.root doesn't exist. Process jetreso_usehist.C first."; continue; }
-        ./jetreso_plothist.exe "rootfiles/reso_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}"
-        echo
+        for j in ${iFLAVOR[@]}
+        do
+
+            tPOSTFIX=Djet_reso_$(produce_postfix $i $j)
+            echo -e "-- Processing ${FUNCOLOR}jetreso_plothist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
+            [[ ! -f "rootfiles/reso_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/reso_${tPOSTFIX}.root doesn't exist. Process jetreso_usehist.C first."; continue; }
+            ./jetreso_plothist.exe "rootfiles/reso_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}"
+            echo
+        done
     done
     ./jetreso_plotpar.exe
 fi
 rm jetreso_plotpar.exe
 rm jetreso_plothist.exe
+
+# jetreso_plothistqg.C #
+
+g++ jetreso_plothistqg.C $(root-config --cflags --libs) -g -o jetreso_plothistqg.exe || return 1;
+if [[ $DO_PLOTHISTQG -eq 1 ]]
+then
+    for i in ${iCOL[@]}
+    do
+        outPOSTFIX=Djet_reso_$(produce_postfix $i)
+        tPOSTFIX[0]=Djet_reso_$(produce_postfix $i 0)
+        tPOSTFIX[1]=Djet_reso_$(produce_postfix $i 1)
+        tPOSTFIX[2]=Djet_reso_$(produce_postfix $i 2)
+        echo -e "-- Processing ${FUNCOLOR}jetreso_plothistqg.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
+        for postfix in ${tPOSTFIX[@]}
+        do
+            [[ ! -f "rootfiles/reso_${postfix}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/reso_${postfix}.root doesn't exist. Process jetreso_usehist.C first."; exit 1; }
+        done
+        ./jetreso_plothistqg.exe "rootfiles/reso_${tPOSTFIX[0]}" "rootfiles/reso_${tPOSTFIX[1]}" "rootfiles/reso_${tPOSTFIX[2]}" "$outPOSTFIX" "${COLSYST[i]}"
+        echo
+    done
+fi
+rm jetreso_plothistqg.exe
+
+rm prefilters.h

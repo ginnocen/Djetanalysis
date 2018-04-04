@@ -7,6 +7,8 @@ void jetffscale_plotpar(TString inputhistname, TString inputcompname, TString ou
   if(arguerr(collisionsyst)) return;
   Int_t ispp = collisionsyst=="pp"?1:0;
   init(ispp);
+  djtcorr::setnCentBins(ispp);
+  // djtcorr::init(ispp);
 
   xjjroot::setgstyle();
 

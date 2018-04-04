@@ -29,14 +29,14 @@ void jetreso_plotpar()
   for(int p=0;p<NP;p++)
     {
       TCanvas* c = new TCanvas("c", "", 600, 600);
-      TH2F* hempty = new TH2F("hempty", Form(";gen jet p_{T} (GeV/c);%s(%s^{reco} %s %s^{gen})",obs[p].Data(),var[p].Data(),sign[p].Data(),var[p].Data()), 10, resojtptBins[0], resojtptBins[nResoJtptBins], 10, ymin[p], ymax[p]);
+      TH2F* hempty = new TH2F("hempty", Form(";gen jet p_{T} (GeV/c);%s(%s^{reco} %s %s^{gen})",obs[p].Data(),var[p].Data(),sign[p].Data(),var[p].Data()), 10, 30, resojtptBins[nResoJtptBins], 10, ymin[p], ymax[p]);
       xjjroot::sethempty(hempty, 0, 0.4);
       hempty->Draw();
       TLegend* leg = new TLegend(0.60, 0.88-3*0.06, 0.90, 0.88);
       xjjroot::setleg(leg);
       for(int i=0;i<NI;i++)
         {
-          setnCentBins(ispp[i]);
+          djtcorr::setnCentBins(ispp[i]);
           std::vector<std::vector<Float_t>>* paramf = ispp[i]?paramf_pp[p]:paramf_PbPb[p];
           for(int k=0;k<nCentBins;k++)
             {
@@ -54,7 +54,7 @@ void jetreso_plotpar()
       leg->Draw();
       Float_t texxpos = 0.22, texypos = 0.85, texdypos = 0.06; texypos += texdypos;
       xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), "|#eta^{gen jet}| < 1.6");
-      c->SaveAs(Form("plotresos/cReso_%s.pdf",name[p].Data()));
+      c->SaveAs(Form("plotpar/cReso_%s.pdf",name[p].Data()));
 
       delete leg;
       delete hempty;

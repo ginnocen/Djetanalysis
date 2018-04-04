@@ -1,11 +1,13 @@
 #!/bin/bash
 # dojetresolution.sh #
 
+source ../includes/utility.shinc
+cp ../includes/prefilters_data.h prefilters.h
+
 DO_SAVEHIST=${1:-0}
 DO_USEHIST=${2:-0}
 DO_PLOTHIST=${3:-0}
 
-ifCorr=1
 # Select the systems the macros run on 
 iCOL=(0 1)
 
@@ -17,7 +19,7 @@ COLSYST=('pp' 'PbPb')
 # dataset[nCOL]
 INPUTDANAME=(
     '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20171215_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20171214_pthatweight.root'
-    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20171215_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20171214_pthatweight.root'
+    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20180328_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20180326_pthatweight.root'
 )
 
 # Do not touch the macros below if you don't know what they mean #
@@ -25,28 +27,6 @@ INPUTDANAME=(
 [[ $DO_SAVEHIST -eq 0 && $DO_USEHIST -eq 0 && $DO_PLOTHIST -eq 0 ]] && echo "./dojetresolution.sh [DO_SAVEHIST] [DO_USEHIST] [DO_PLOTHIST]"
 
 #
-nCOL=${#COLSYST[@]}
-
-#
-NC='\033[0m'
-FUNCOLOR='\033[1;33m'
-ARGCOLOR='\033[1;32m'
-ERRCOLOR='\033[1;31m'
-
-#
-function float_to_string()
-{
-    if [[ $# -ne 1 ]]
-    then
-        echo -e "${ERRCOLOR}error:${NC} invalid argument number - float_to_string()"
-        return 1
-    fi
-    part1=`echo $1 | awk -F "." '{print $1}'`
-    part2=`echo $1 | awk -F "." '{print $2}'`
-    rt_float_to_string=${part1:-0}p${part2:-0}
-    echo $rt_float_to_string
-}
-
 function produce_postfix()
 {
     if [[ $# -ne 1 ]]
@@ -59,13 +39,7 @@ function produce_postfix()
 
 #
 FOLDERS=("rootfiles" "plotresos" "plotfits" "plotfitsall")
-for i in ${FOLDERS[@]}
-do
-    if [[ ! -d $i ]]
-    then
-	mkdir -p $i
-    fi
-done
+mk_dirs ${FOLDERS[@]}
 
 ##
 
@@ -105,7 +79,6 @@ rm jetreso_usehist.exe
 # jetreso_plothist.C #
 
 g++ jetreso_plothist.C $(root-config --cflags --libs) -g -o jetreso_plothist.exe || return 1;
-g++ jetreso_plotpar.C $(root-config --cflags --libs) -g -o jetreso_plotpar.exe || return 1;
 if [[ $DO_PLOTHIST -eq 1 ]]
 then
     for i in ${iCOL[@]}
@@ -116,7 +89,7 @@ then
         ./jetreso_plothist.exe "rootfiles/reso_${tPOSTFIX}" "$tPOSTFIX" "${COLSYST[i]}"
         echo
     done
-    ./jetreso_plotpar.exe
 fi
-rm jetreso_plotpar.exe
 rm jetreso_plothist.exe
+
+rm prefilters.h

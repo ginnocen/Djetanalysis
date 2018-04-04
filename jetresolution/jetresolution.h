@@ -5,18 +5,13 @@
 Float_t resojtptBins[] = {10, 20, 30, 40, 50, 60, 70, 80, 100, 120, 140, 160, 180, 200, 250, 300};
 const int nResoJtptBins = sizeof(resojtptBins)/sizeof(resojtptBins[0])-1;
 #define _RESOJTPTBINS
-Float_t resodeltajtptBins[] = {10, 30, 50, 70, 100, 140, 200, 300};
-const int nResoDeltaJtptBins = sizeof(resodeltajtptBins)/sizeof(resodeltajtptBins[0])-1;
-#define _RESODELTAJTPTBINS
-Float_t resojtdrBins[] = {0, 0.01, 0.03, 0.05, 0.10, 0.30, 0.50, 0.70};
-const int nResoJtdrBins = sizeof(resojtdrBins)/sizeof(resojtdrBins[0])-1;
-#define _RESOJTDRBINS
 
+#include "prefilters.h"
 #include "../includes/djet.h"
-#include "../includes/prefilters.h"
-#include "../includes/paramCorr.h"
+#include "../includes/djtcorr.h"
 #include "../includes/xjjcuti.h"
 #include "../includes/xjjrootuti.h"
+#include "../includes/djtweight.h"
 #include <iostream>
 #include <iomanip>
 #include <TMath.h>
@@ -37,7 +32,7 @@ Color_t jtetaColor[] = {kBlack, kBlue, kRed+2};
 Float_t xrangeAng;
 void setxrangeAng(Int_t ispp) {xrangeAng = ispp?0.05:0.08;} // 0.05:0.08
 
-void init(Int_t ispp) {setnCentBins(ispp); setxrangeAng(ispp);}
+void init(Int_t ispp) { setxrangeAng(ispp); }
 
 TH1F* ahHistoResoPt[NCentBins][nJtetaBins+1][nResoJtptBins];
 TH1F* ahHistoResoPtCorr[NCentBins][nJtetaBins+1][nResoJtptBins];
@@ -46,16 +41,14 @@ TH1F* ahHistoResoPtFfCorr[NCentBins][nJtetaBins+1][nResoJtptBins];
 TH1F* ahHistoResoPtFfJecCorr[NCentBins][nJtetaBins+1][nResoJtptBins];
 TH1F* ahHistoResoPhi[NCentBins][nJtetaBins+1][nResoJtptBins];
 TH1F* ahHistoResoEta[NCentBins][nJtetaBins+1][nResoJtptBins];
-TH2F* ahHistoResoEtaPhi[NCentBins][nJtetaBins+1][nResoJtptBins];
 
-TH1F* ahHistoResoDrPhi[NCentBins][nJtetaBins+1][nResoJtdrBins];
-TH1F* ahHistoResoDrEta[NCentBins][nJtetaBins+1][nResoJtdrBins];
-TH2F* ahHistoResoDrEtaPhi[NCentBins][nJtetaBins+1][nResoJtdrBins];
-
-TH1F* ahHistoResoRecoDeltaPhi[NCentBins][nJtetaBins+1][nResoDeltaJtptBins];
-TH1F* ahHistoResoRecoDeltaEta[NCentBins][nJtetaBins+1][nResoDeltaJtptBins];
-TH1F* ahHistoResoGenDeltaPhi[NCentBins][nJtetaBins+1][nResoDeltaJtptBins];
-TH1F* ahHistoResoGenDeltaEta[NCentBins][nJtetaBins+1][nResoDeltaJtptBins];
+TH1F* ahHistoPullPt[NCentBins][nJtetaBins+1][nResoJtptBins];
+TH1F* ahHistoPullPtCorr[NCentBins][nJtetaBins+1][nResoJtptBins];
+TH1F* ahHistoPullPtRMatGCorr[NCentBins][nJtetaBins+1][nResoJtptBins];
+TH1F* ahHistoPullPtFfCorr[NCentBins][nJtetaBins+1][nResoJtptBins];
+TH1F* ahHistoPullPtFfJecCorr[NCentBins][nJtetaBins+1][nResoJtptBins];
+TH1F* ahHistoPullPhi[NCentBins][nJtetaBins+1][nResoJtptBins];
+TH1F* ahHistoPullEta[NCentBins][nJtetaBins+1][nResoJtptBins];
 
 TH1F* hScalePt[NCentBins][nJtetaBins+1];
 TH1F* hScalePtCorr[NCentBins][nJtetaBins+1];
@@ -72,23 +65,9 @@ TH1F* hResoPtFfJecCorr[NCentBins][nJtetaBins+1];
 TH1F* hResoPhi[NCentBins][nJtetaBins+1];
 TH1F* hResoEta[NCentBins][nJtetaBins+1];
 
-TH1F* hScaleDrPhi[NCentBins][nJtetaBins+1];
-TH1F* hScaleDrEta[NCentBins][nJtetaBins+1];
-TH1F* hResoDrPhi[NCentBins][nJtetaBins+1];
-TH1F* hResoDrEta[NCentBins][nJtetaBins+1];
-
-TH1F* hScaleRecoDeltaPhi[NCentBins][nJtetaBins+1];
-TH1F* hScaleRecoDeltaEta[NCentBins][nJtetaBins+1];
-TH1F* hResoRecoDeltaPhi[NCentBins][nJtetaBins+1];
-TH1F* hResoRecoDeltaEta[NCentBins][nJtetaBins+1];
-TH1F* hScaleGenDeltaPhi[NCentBins][nJtetaBins+1];
-TH1F* hScaleGenDeltaEta[NCentBins][nJtetaBins+1];
-TH1F* hResoGenDeltaPhi[NCentBins][nJtetaBins+1];
-TH1F* hResoGenDeltaEta[NCentBins][nJtetaBins+1];
-
 TH2F* hRecoVsGenPt;
 TH2F* hRecoVsGenPtCorr;
-TH2F* hRecoVsGenPtRMatGStep1Corr;
+// TH2F* hRecoVsGenPtRMatGStep1Corr;
 TH2F* hRecoVsGenPtRMatGCorr;
 TH2F* hRecoVsGenPtFfCorr;
 TH2F* hRecoVsGenPtFfJecCorr;
@@ -122,55 +101,25 @@ int createhists(Option_t* option)
                   ahHistoResoPhi[k][j][i]->Sumw2();
                   ahHistoResoEta[k][j][i] = new TH1F(Form("hHistoResoEta_%d_%d_%d",k,j,i), ";#eta^{reco} - #eta^{gen};", 50, 0-xrangeAng, xrangeAng);
                   ahHistoResoEta[k][j][i]->Sumw2();
-                }
-              for(int i=0;i<nResoDeltaJtptBins;i++)
-                {
-                  ahHistoResoRecoDeltaPhi[k][j][i] = new TH1F(Form("hHistoResoRecoDeltaPhi_%d_%d_%d",k,j,i), ";#phi^{reco} - #phi^{gen};", 50, -0.2, 0.2);
-                  ahHistoResoRecoDeltaPhi[k][j][i]->Sumw2();
-                  ahHistoResoRecoDeltaEta[k][j][i] = new TH1F(Form("hHistoResoRecoDeltaEta_%d_%d_%d",k,j,i), ";#eta^{reco} - #eta^{gen};", 50, -0.2, 0.2);
-                  ahHistoResoRecoDeltaEta[k][j][i]->Sumw2();
-                  ahHistoResoGenDeltaPhi[k][j][i] = new TH1F(Form("hHistoResoGenDeltaPhi_%d_%d_%d",k,j,i), ";#phi^{reco} - #phi^{gen};", 50, -0.2, 0.2);
-                  ahHistoResoGenDeltaPhi[k][j][i]->Sumw2();
-                  ahHistoResoGenDeltaEta[k][j][i] = new TH1F(Form("hHistoResoGenDeltaEta_%d_%d_%d",k,j,i), ";#eta^{reco} - #eta^{gen};", 50, -0.2, 0.2);
-                  ahHistoResoGenDeltaEta[k][j][i]->Sumw2();
-                }
-              for(int i=0;i<nResoJtdrBins;i++)
-                {
-                  ahHistoResoDrPhi[k][j][i] = new TH1F(Form("hHistoResoDrPhi_%d_%d_%d",k,j,i), ";#phi^{reco} - #phi^{gen};", 50, 0-xrangeAng, xrangeAng);
-                  ahHistoResoDrPhi[k][j][i]->Sumw2();
-                  ahHistoResoDrEta[k][j][i] = new TH1F(Form("hHistoResoDrEta_%d_%d_%d",k,j,i), ";#eta^{reco} - #eta^{gen};", 50, 0-xrangeAng, xrangeAng);
-                  ahHistoResoDrEta[k][j][i]->Sumw2();
+
+                  ahHistoPullPt[k][j][i] = new TH1F(Form("hHistoPullPt_%d_%d_%d",k,j,i), ";p_{T}^{reco} / p_{T}^{gen};Pull", 50, 0, 2);
+                  ahHistoPullPtCorr[k][j][i] = new TH1F(Form("hHistoPullPtCorr_%d_%d_%d",k,j,i), ";p_{T}^{reco} / p_{T}^{gen}, Corr;Pull", 50, 0, 2);
+                  ahHistoPullPtRMatGCorr[k][j][i] = new TH1F(Form("hHistoPullPtRMatGCorr_%d_%d_%d",k,j,i), ";p_{T}^{reco} / p_{T}^{gen}, RMatGCorr;Pull", 50, 0, 2);
+                  ahHistoPullPtFfCorr[k][j][i] = new TH1F(Form("hHistoPullPtFfCorr_%d_%d_%d",k,j,i), ";p_{T}^{reco} / p_{T}^{gen}, frag-dep Corr;Pull", 50, 0, 2);
+                  ahHistoPullPtFfJecCorr[k][j][i] = new TH1F(Form("hHistoPullPtFfJecCorr_%d_%d_%d",k,j,i), ";p_{T}^{reco} / p_{T}^{gen}, frag-dep Corr;Pull", 50, 0, 2);
+                  ahHistoPullPhi[k][j][i] = new TH1F(Form("hHistoPullPhi_%d_%d_%d",k,j,i), ";#phi^{reco} - #phi^{gen};Pull", 50, 0-xrangeAng, xrangeAng);
+                  ahHistoPullEta[k][j][i] = new TH1F(Form("hHistoPullEta_%d_%d_%d",k,j,i), ";#eta^{reco} - #eta^{gen};Pull", 50, 0-xrangeAng, xrangeAng);
                 }
             }
         }
       hRecoVsGenPt = new TH2F("hRecoVsGenPt", ";gref jet p_{T} (GeV/c);reco jet p_{T} (GeV)", nMapjtptBins, mapjtptBins, nMapjtptBins, mapjtptBins);
       hRecoVsGenPtCorr = new TH2F("hRecoVsGenPtCorr", ";gref jet p_{T} (GeV/c);reco jet p_{T} (GeV)", nMapjtptBins, mapjtptBins, nMapjtptBins, mapjtptBins);
-      hRecoVsGenPtRMatGStep1Corr = new TH2F("hRecoVsGenPtRMatGStep1Corr", ";gref jet p_{T} (GeV/c);reco jet p_{T} (GeV)", nMapjtptBins, mapjtptBins, nMapjtptBins, mapjtptBins);
+      // hRecoVsGenPtRMatGStep1Corr = new TH2F("hRecoVsGenPtRMatGStep1Corr", ";gref jet p_{T} (GeV/c);reco jet p_{T} (GeV)", nMapjtptBins, mapjtptBins, nMapjtptBins, mapjtptBins);
       hRecoVsGenPtRMatGCorr = new TH2F("hRecoVsGenPtRMatGCorr", ";gref jet p_{T} (GeV/c);reco jet p_{T} (GeV)", nMapjtptBins, mapjtptBins, nMapjtptBins, mapjtptBins);
       hRecoVsGenPtFfCorr = new TH2F("hRecoVsGenPtFfCorr", ";gref jet p_{T} (GeV/c);reco jet p_{T} (GeV)", nMapjtptBins, mapjtptBins, nMapjtptBins, mapjtptBins);
       hRecoVsGenPtFfJecCorr = new TH2F("hRecoVsGenPtFfJecCorr", ";gref jet p_{T} (GeV/c);reco jet p_{T} (GeV)", nMapjtptBins, mapjtptBins, nMapjtptBins, mapjtptBins);
       hGenSmearVsGenPt = new TH2F("hGenSmearVsGenPt", ";gref jet p_{T} (GeV/c);reco jet p_{T} (GeV)", nMapjtptBins, mapjtptBins, nMapjtptBins, mapjtptBins);
       hGenPtCorrNorm = new TH1F("hGenPtCorrNorm", ";gref jet p_{T} (GeV/c);", nMapjtptBins, mapjtptBins);
-      return 0;
-    }
-  if(opt=="savehistetaphi")
-    {
-      for(int k=0;k<nCentBins;k++)
-        {
-          for(int j=0;j<nJtetaBins+1;j++)
-            {
-              for(int i=0;i<nResoJtptBins;i++)
-                {
-                  ahHistoResoEtaPhi[k][j][i] = new TH2F(Form("hHistoResoEtaPhi_%d_%d_%d",k,j,i), ";#phi^{reco} - #phi^{gen};#eta^{reco} - #eta^{gen}", 50, 0-xrangeAng, xrangeAng, 50, 0-xrangeAng, xrangeAng);
-                  ahHistoResoEtaPhi[k][j][i]->Sumw2();
-                } 
-              for(int i=0;i<nResoJtdrBins;i++)
-                {
-                  ahHistoResoDrEtaPhi[k][j][i] = new TH2F(Form("hHistoResoDrEtaPhi_%d_%d_%d",k,j,i), ";#phi^{reco} - #phi^{gen};#eta^{reco} - #eta^{gen}", 50, 0-xrangeAng, xrangeAng, 50, 0-xrangeAng, xrangeAng);
-                  ahHistoResoDrEtaPhi[k][j][i]->Sumw2();
-                }
-            }
-        }
       return 0;
     }
   if(opt=="usehist")
@@ -193,20 +142,17 @@ int createhists(Option_t* option)
               hScalePtFfJecCorr[k][j] = new TH1F(Form("hScalePtFfJecCorr_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);#mu(p_{T}^{reco} / p_{T}^{gen}), frag-dep Corr", nResoJtptBins, resojtptBins);
               hScalePhi[k][j] = new TH1F(Form("hScalePhi_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);#mu(p_{T}^{reco} / p_{T}^{gen})", nResoJtptBins, resojtptBins);
               hScaleEta[k][j] = new TH1F(Form("hScaleEta_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);#mu(p_{T}^{reco} / p_{T}^{gen})", nResoJtptBins, resojtptBins);
+              for(int i=0;i<nResoJtptBins;i++)
+                {
+                  ahHistoPullPt[k][j][i] = new TH1F(Form("hHistoPullPt_%d_%d_%d",k,j,i), ";p_{T}^{reco} / p_{T}^{gen};Pull", 50, 0, 2);
+                  ahHistoPullPtCorr[k][j][i] = new TH1F(Form("hHistoPullPtCorr_%d_%d_%d",k,j,i), ";p_{T}^{reco} / p_{T}^{gen}, Corr;Pull", 50, 0, 2);
+                  ahHistoPullPtRMatGCorr[k][j][i] = new TH1F(Form("hHistoPullPtRMatGCorr_%d_%d_%d",k,j,i), ";p_{T}^{reco} / p_{T}^{gen}, RMatGCorr;Pull", 50, 0, 2);
+                  ahHistoPullPtFfCorr[k][j][i] = new TH1F(Form("hHistoPullPtFfCorr_%d_%d_%d",k,j,i), ";p_{T}^{reco} / p_{T}^{gen}, frag-dep Corr;Pull", 50, 0, 2);
+                  ahHistoPullPtFfJecCorr[k][j][i] = new TH1F(Form("hHistoPullPtFfJecCorr_%d_%d_%d",k,j,i), ";p_{T}^{reco} / p_{T}^{gen}, frag-dep Corr;Pull", 50, 0, 2);
+                  ahHistoPullPhi[k][j][i] = new TH1F(Form("hHistoPullPhi_%d_%d_%d",k,j,i), ";#phi^{reco} - #phi^{gen};Pull", 50, 0-xrangeAng, xrangeAng);
+                  ahHistoPullEta[k][j][i] = new TH1F(Form("hHistoPullEta_%d_%d_%d",k,j,i), ";#eta^{reco} - #eta^{gen};Pull", 50, 0-xrangeAng, xrangeAng);
+                }
 
-              hResoRecoDeltaPhi[k][j] = new TH1F(Form("hResoRecoDeltaPhi_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);#sigma(#phi^{reco} - #phi^{gen})", nResoDeltaJtptBins, resodeltajtptBins);
-              hResoRecoDeltaEta[k][j] = new TH1F(Form("hResoRecoDeltaEta_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);#sigma(#eta^{reco} - #eta^{gen})", nResoDeltaJtptBins, resodeltajtptBins);
-              hResoGenDeltaPhi[k][j] = new TH1F(Form("hResoGenDeltaPhi_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);#sigma(#phi^{reco} - #phi^{gen})", nResoDeltaJtptBins, resodeltajtptBins);
-              hResoGenDeltaEta[k][j] = new TH1F(Form("hResoGenDeltaEta_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);#sigma(#eta^{reco} - #eta^{gen})", nResoDeltaJtptBins, resodeltajtptBins);
-              hScaleRecoDeltaPhi[k][j] = new TH1F(Form("hScaleRecoDeltaPhi_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);#mu(p_{T}^{reco} / p_{T}^{gen})", nResoDeltaJtptBins, resodeltajtptBins);
-              hScaleRecoDeltaEta[k][j] = new TH1F(Form("hScaleRecoDeltaEta_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);#mu(p_{T}^{reco} / p_{T}^{gen})", nResoDeltaJtptBins, resodeltajtptBins);
-              hScaleGenDeltaPhi[k][j] = new TH1F(Form("hScaleGenDeltaPhi_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);#mu(p_{T}^{reco} / p_{T}^{gen})", nResoDeltaJtptBins, resodeltajtptBins);
-              hScaleGenDeltaEta[k][j] = new TH1F(Form("hScaleGenDeltaEta_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);#mu(p_{T}^{reco} / p_{T}^{gen})", nResoDeltaJtptBins, resodeltajtptBins);
-
-              hResoDrPhi[k][j] = new TH1F(Form("hResoDrPhi_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);#sigma(#phi^{reco} - #phi^{gen})", nResoJtdrBins, resojtdrBins);
-              hResoDrEta[k][j] = new TH1F(Form("hResoDrEta_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);#sigma(#eta^{reco} - #eta^{gen})", nResoJtdrBins, resojtdrBins);
-              hScaleDrPhi[k][j] = new TH1F(Form("hScaleDrPhi_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);#mu(p_{T}^{reco} / p_{T}^{gen})", nResoJtdrBins, resojtdrBins);
-              hScaleDrEta[k][j] = new TH1F(Form("hScaleDrEta_%d_%d",k,j), ";Gen Jet p_{T} (GeV/c);#mu(p_{T}^{reco} / p_{T}^{gen})", nResoJtdrBins, resojtdrBins);
             }
         }
       return 0;
@@ -235,46 +181,16 @@ int gethists(TFile* inf, Option_t* option)
                   ahHistoResoPhi[k][j][i] = (TH1F*)inf->Get(Form("hHistoResoPhi_%d_%d_%d",k,j,i));
                   ahHistoResoEta[k][j][i] = (TH1F*)inf->Get(Form("hHistoResoEta_%d_%d_%d",k,j,i));
                 }
-              for(int i=0;i<nResoDeltaJtptBins;i++)
-                {
-                  ahHistoResoRecoDeltaPhi[k][j][i] = (TH1F*)inf->Get(Form("hHistoResoRecoDeltaPhi_%d_%d_%d",k,j,i));
-                  ahHistoResoRecoDeltaEta[k][j][i] = (TH1F*)inf->Get(Form("hHistoResoRecoDeltaEta_%d_%d_%d",k,j,i));
-                  ahHistoResoGenDeltaPhi[k][j][i] = (TH1F*)inf->Get(Form("hHistoResoGenDeltaPhi_%d_%d_%d",k,j,i));
-                  ahHistoResoGenDeltaEta[k][j][i] = (TH1F*)inf->Get(Form("hHistoResoGenDeltaEta_%d_%d_%d",k,j,i));
-                }
-              for(int i=0;i<nResoJtdrBins;i++)
-                {
-                  ahHistoResoDrPhi[k][j][i] = (TH1F*)inf->Get(Form("hHistoResoDrPhi_%d_%d_%d",k,j,i));
-                  ahHistoResoDrEta[k][j][i] = (TH1F*)inf->Get(Form("hHistoResoDrEta_%d_%d_%d",k,j,i));
-                }
             }
         }
       hRecoVsGenPt = (TH2F*)inf->Get("hRecoVsGenPt");
       hRecoVsGenPtCorr = (TH2F*)inf->Get("hRecoVsGenPtCorr");
-      hRecoVsGenPtRMatGStep1Corr = (TH2F*)inf->Get("hRecoVsGenPtRMatGStep1Corr");
+      // hRecoVsGenPtRMatGStep1Corr = (TH2F*)inf->Get("hRecoVsGenPtRMatGStep1Corr");
       hRecoVsGenPtRMatGCorr = (TH2F*)inf->Get("hRecoVsGenPtRMatGCorr");
       hRecoVsGenPtFfCorr = (TH2F*)inf->Get("hRecoVsGenPtFfCorr");
       hRecoVsGenPtFfJecCorr = (TH2F*)inf->Get("hRecoVsGenPtFfJecCorr");
       hGenSmearVsGenPt = (TH2F*)inf->Get("hGenSmearVsGenPt");
       hGenPtCorrNorm = (TH1F*)inf->Get("hGenPtCorrNorm");
-      return 0;
-    }
-  if(opt=="usehistetaphi")
-    {
-      for(int k=0;k<nCentBins;k++)
-        {
-          for(int j=0;j<nJtetaBins+1;j++)
-            {
-              for(int i=0;i<nResoJtptBins;i++)
-                {
-                  ahHistoResoEtaPhi[k][j][i] = (TH2F*)inf->Get(Form("hHistoResoEtaPhi_%d_%d_%d",k,j,i));
-                }
-              for(int i=0;i<nResoJtdrBins;i++)
-                {
-                  ahHistoResoDrEtaPhi[k][j][i] = (TH2F*)inf->Get(Form("hHistoResoDrEtaPhi_%d_%d_%d",k,j,i));
-                }
-            }
-        }
       return 0;
     }
   if(opt=="plothist")
@@ -297,20 +213,6 @@ int gethists(TFile* inf, Option_t* option)
               hScalePtFfJecCorr[k][j] = (TH1F*)inf->Get(Form("hScalePtFfJecCorr_%d_%d",k,j));
               hScalePhi[k][j] = (TH1F*)inf->Get(Form("hScalePhi_%d_%d",k,j));
               hScaleEta[k][j] = (TH1F*)inf->Get(Form("hScaleEta_%d_%d",k,j));
-
-              hResoDrPhi[k][j] = (TH1F*)inf->Get(Form("hResoDrPhi_%d_%d",k,j));
-              hResoDrEta[k][j] = (TH1F*)inf->Get(Form("hResoDrEta_%d_%d",k,j));
-              hScaleDrPhi[k][j] = (TH1F*)inf->Get(Form("hScaleDrPhi_%d_%d",k,j));
-              hScaleDrEta[k][j] = (TH1F*)inf->Get(Form("hScaleDrEta_%d_%d",k,j));
-
-              hResoRecoDeltaPhi[k][j] = (TH1F*)inf->Get(Form("hResoRecoDeltaPhi_%d_%d",k,j));
-              hResoRecoDeltaEta[k][j] = (TH1F*)inf->Get(Form("hResoRecoDeltaEta_%d_%d",k,j));
-              hResoGenDeltaPhi[k][j] = (TH1F*)inf->Get(Form("hResoGenDeltaPhi_%d_%d",k,j));
-              hResoGenDeltaEta[k][j] = (TH1F*)inf->Get(Form("hResoGenDeltaEta_%d_%d",k,j));
-              hScaleRecoDeltaPhi[k][j] = (TH1F*)inf->Get(Form("hScaleRecoDeltaPhi_%d_%d",k,j));
-              hScaleRecoDeltaEta[k][j] = (TH1F*)inf->Get(Form("hScaleRecoDeltaEta_%d_%d",k,j));
-              hScaleGenDeltaPhi[k][j] = (TH1F*)inf->Get(Form("hScaleGenDeltaPhi_%d_%d",k,j));
-              hScaleGenDeltaEta[k][j] = (TH1F*)inf->Get(Form("hScaleGenDeltaEta_%d_%d",k,j));
             }
         }
       return 0;
@@ -339,46 +241,16 @@ int writehists(Option_t* option)
                   ahHistoResoPhi[k][j][i]->Write();
                   ahHistoResoEta[k][j][i]->Write();
                 }
-              for(int i=0;i<nResoDeltaJtptBins;i++)
-                {
-                  ahHistoResoRecoDeltaPhi[k][j][i]->Write();
-                  ahHistoResoRecoDeltaEta[k][j][i]->Write();
-                  ahHistoResoGenDeltaPhi[k][j][i]->Write();
-                  ahHistoResoGenDeltaEta[k][j][i]->Write();
-                }
-              for(int i=0;i<nResoJtdrBins;i++)
-                {
-                  ahHistoResoDrPhi[k][j][i]->Write();
-                  ahHistoResoDrEta[k][j][i]->Write();
-                }
             }
         }
       hRecoVsGenPt->Write();
       hRecoVsGenPtCorr->Write();
-      hRecoVsGenPtRMatGStep1Corr->Write();
+      // hRecoVsGenPtRMatGStep1Corr->Write();
       hRecoVsGenPtRMatGCorr->Write();
       hRecoVsGenPtFfCorr->Write();
       hRecoVsGenPtFfJecCorr->Write();
       hGenSmearVsGenPt->Write();
       hGenPtCorrNorm->Write();
-      return 0;
-    }
-  if(opt=="savehistetaphi")
-    {
-      for(int k=0;k<nCentBins;k++)
-        {
-          for(int j=0;j<nJtetaBins+1;j++)
-            {
-              for(int i=0;i<nResoJtptBins;i++)
-                {
-                  ahHistoResoEtaPhi[k][j][i]->Write();
-                }
-              for(int i=0;i<nResoJtdrBins;i++)
-                {
-                  ahHistoResoDrEtaPhi[k][j][i]->Write();
-                }
-            }
-        }
       return 0;
     }
   if(opt=="usehist")
@@ -401,16 +273,6 @@ int writehists(Option_t* option)
               hScalePtFfJecCorr[k][j]->Write();
               hScalePhi[k][j]->Write();
               hScaleEta[k][j]->Write();
-
-              hResoRecoDeltaPhi[k][j]->Write();
-              hResoRecoDeltaEta[k][j]->Write();
-              hResoGenDeltaPhi[k][j]->Write();
-              hResoGenDeltaEta[k][j]->Write();
-
-              hResoDrPhi[k][j]->Write();
-              hResoDrEta[k][j]->Write();
-              hScaleDrPhi[k][j]->Write();
-              hScaleDrEta[k][j]->Write();
             }
         }
       return 0;

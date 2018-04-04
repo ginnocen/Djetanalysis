@@ -1,11 +1,12 @@
 #include "jetffscale.h"
 
 void jetffscale_plothist_comb(TString inputhistnamepp, TString inputhistnamepbpb, TString inputscalepp, TString inputscalepbpb, TString outputname,
-                              Int_t plotCorr=0)
+                              Int_t plotCorr=1)
 {
   xjjroot::setgstyle();
 
   init(1);
+  djtcorr::setnCentBins(1);
   TFile* infpp = new TFile(Form("%s.root",inputhistnamepp.Data()));
   if(!infpp->IsOpen()) return;
   if(gethists(infpp, "plothistpp")) return;
@@ -14,6 +15,7 @@ void jetffscale_plothist_comb(TString inputhistnamepp, TString inputhistnamepbpb
   if(gethists(infscalepp, "plothistscalepp")) return;
 
   init(0);
+  djtcorr::setnCentBins(0);
   TFile* infpbpb = new TFile(Form("%s.root",inputhistnamepbpb.Data()));
   if(!infpbpb->IsOpen()) return;
   if(gethists(infpbpb, "plothistpbpb")) return;
@@ -24,8 +26,8 @@ void jetffscale_plothist_comb(TString inputhistnamepp, TString inputhistnamepbpb
   TH2F* hemptyScaleNpfPtPP = new TH2F("hemptyScaleNpfPtPP", Form(";%s;#mu(p_{T}^{reco} / p_{T}^{gen})", "nPF"), 10, minJtnpfBins, maxJtnpfBins, 10, 0.8, 1.2);
   xjjroot::sethempty(hemptyScaleNpfPtPP, 0, 0.4);
   TH2F* hemptyScaleNpfPtPbPb = new TH2F("hemptyScaleNpfPtPbPb", Form(";%s;#mu(p_{T}^{reco} / p_{T}^{gen})", "nCS"), 10, minJtnpfBins, maxJtnpfBins, 10, 0.8, 1.4);
-  Float_t vfitmin[nJtptBins] = {0., 0., 2., 4., 4., 4.,     4., 4.,   4., 4.,   4., 4., 4., 4.,     4., 4., 4., 4.,     2., 2., 2., 2., 2., 2., 2., 2.,         5., 5., 5.};
-  Float_t vfitmax[nJtptBins] = {6., 8., 10., 15., 15., 15., 18., 18., 20., 20., 20., 20., 25., 25., 28., 27., 28., 28., 30., 30., 30., 30., 30., 30., 30., 30., 30., 30., 30.};
+  Float_t vfitmin[nJtptBins] = {0., 0., 2., 4., 4., 4.,     4., 4.,   4., 4.,   4., 4., 4., 4.,     4., 4., 4., 4.,     2., 2., 2., 2., 2., 2., 2., 2.,         5., 5., 5., 5.};
+  Float_t vfitmax[nJtptBins] = {6., 8., 10., 15., 15., 15., 15., 18., 20., 20., 20., 20., 25., 25., 28., 27., 28., 28., 30., 30., 30., 30., 30., 30., 30., 30., 30., 30., 30., 30.};
   for(int i=0;i<nJtptBins;i++)
     {
       TCanvas* c4 = new TCanvas("c4", "", 2400, 600);
@@ -54,7 +56,7 @@ void jetffscale_plothist_comb(TString inputhistnamepp, TString inputhistnamepbpb
           if(plotCorr) xjjroot::drawbox(minJtnpfBins, 0.95, maxJtnpfBins, 1.05, kGray, 0.4, 1001);
           xjjroot::drawline(minJtnpfBins, 1.0, maxJtnpfBins, 1.0, kGray+3, 2, 3);
           if(plotCorr)
-            vhvScalePt[k]->Draw("same");
+            { vhvScalePt[k]->Draw("same"); }
           vhScaleNpfPt[k]->Draw("same pe");
           afScaleNpfPt->at(k) = new TF1(Form("fScaleNpfPt%d",k), "[1]*(x-[0])", fitmin, fitmax);
           afScaleNpfPt->at(k)->SetParameters(vpfP0[k], vpfP1[k]);

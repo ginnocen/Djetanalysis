@@ -1,12 +1,13 @@
 #include "jetffscale.h"
 
 void jetffscale_plothist(TString inputhistname, TString inputscale, TString outputname,
-                         TString collisionsyst, Int_t plotCorr=0)
+                         TString collisionsyst, Int_t plotCorr=1)
 {
   int arguerr(TString collisionsyst);
   if(arguerr(collisionsyst)) return;
   Int_t ispp = collisionsyst=="pp"?1:0;
   init(ispp);
+  djtcorr::setnCentBins(ispp);
 
   xjjroot::setgstyle();
 
@@ -20,8 +21,8 @@ void jetffscale_plothist(TString inputhistname, TString inputscale, TString outp
 
   TH2F* hemptyScaleNpfPt = new TH2F("hemptyScaleNpfPt", Form(";%s;#mu(p_{T}^{reco} / p_{T}^{gen})", ispp?"nPF":"nCS"), 10, minJtnpfBins, maxJtnpfBins, 10, ispp?0.8:0.8, ispp?1.2:1.4);
   xjjroot::sethempty(hemptyScaleNpfPt, 0, 0.4);
-  Float_t vfitmin[nJtptBins] = {0., 0., 2., 4., 4., 4.,     4., 4.,   4., 4.,   4., 4., 4., 4.,     4., 4., 4., 4.,     2., 2., 2., 2., 2., 2., 2., 2.,         5., 5., 5.};
-  Float_t vfitmax[nJtptBins] = {6., 8., 10., 15., 15., 15., 18., 18., 20., 20., 20., 20., 25., 25., 28., 27., 28., 28., 30., 30., 30., 30., 30., 30., 30., 30., 30., 30., 30.};
+  Float_t vfitmin[nJtptBins] = {0., 0., 2., 4., 4., 4.,     4., 4.,   4., 4.,   4., 4., 4., 4.,     4., 4., 4., 4.,     2., 2., 2., 2., 2., 2., 2., 2.,         5., 5., 5., 5.};
+  Float_t vfitmax[nJtptBins] = {6., 8., 10., 15., 15., 15., 15., 18., 20., 20., 20., 20., 25., 25., 28., 27., 28., 28., 30., 30., 30., 30., 30., 30., 30., 30., 30., 30., 30., 30.};
   for(int k=0;k<nCentBins;k++)
     {
       TString texcent = Form("Cent. %.0f - %.0f%s", centBins[k], centBins[k+1], "%");
