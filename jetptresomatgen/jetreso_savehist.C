@@ -1,21 +1,17 @@
 #include "jetresolution.h"
 
 void jetreso_savehist(TString inputname, TString outputname, TString collisionsyst,
-                      Int_t ifCorr=0, Int_t maxevt=-1)
+                      Int_t maxevt=-1)
 {
   int arguerr(TString collisionsyst);
   if(arguerr(collisionsyst)) return;
   Int_t ispp = collisionsyst=="pp"?1:0;
   init(ispp);
+  djtweight::init();
+  djtcorr::setParameters(ispp);
 
   if(createhists("savehist")) return;
   djet djt(inputname, ispp, 1);
-
-  std::vector<std::vector<Float_t>>* paramfScalePt = ispp?&paramfScaleRecoPt_pp:&paramfScaleRecoPt_PbPb;
-  std::vector<std::vector<Float_t>>* paramfP0 = ispp?&paramfP0_pp:&paramfP0_PbPb;
-  std::vector<std::vector<Float_t>>* paramfP1 = ispp?&paramfP1_pp:&paramfP1_PbPb;
-  std::vector<std::vector<Float_t>>* paramRealfP0 = ispp?&paramRealfP0_pp:&paramRealfP0_PbPb;
-  std::vector<std::vector<Float_t>>* paramRealfP1 = ispp?&paramRealfP1_pp:&paramRealfP1_PbPb;
 
   int64_t nentries = djt.fChain->GetEntriesFast();
   int rnentries = (maxevt>0&&maxevt<=nentries)?maxevt:nentries;
@@ -31,6 +27,9 @@ void jetreso_savehist(TString inputname, TString outputname, TString collisionsy
       Int_t ibincent = ispp?0:xjjc::findibin(&centBins, (float)(djt.hiBin/2.));
       if(ibincent<0) {std::cout<<"wrong ibincent"<<std::endl; return;}
 
+      Float_t cweight = ispp?1.:djtweight::getcentweight(djt.hiBin);
+      Float_t evtweight = djt.pthatweight*cweight;
+
       // loop jets
       for(int jj=0;jj<djt.njet_akpu3pf;jj++)
         {
@@ -42,29 +41,21 @@ void jetreso_savehist(TString inputname, TString outputname, TString collisionsy
           Int_t ibinpt = xjjc::findibin(&resojtptBins, (*djt.jetpt_akpu3pf)[jj]);
           if(ibinpt<0) continue;
 
-          // Float_t cweight = 1.;
-          Float_t cweight = ispp?1.:centweight[djt.hiBin];
-          // Float_t evtweight = 1;
-          Float_t evtweight = djt.pthatweight*cweight;
+          Float_t jetrecopt = (*djt.jetpt_akpu3pf)[jj];
+          Float_t jetrecopt_vRMatGPt = (*djt.jetpt_akpu3pf)[jj];
+          Float_t jetrecopt_vFfScalePt = (*djt.jetpt_akpu3pf)[jj];
+          if( djtcorr::ptCorr(5, jetrecopt_vRMatGPt, 0., ibincent) ) return;
+          if( djtcorr::ptCorr(4, jetrecopt_vFfScalePt, (*djt.jetnpfpart_akpu3pf)[jj], ibincent) ) return;
 
-          Float_t vScalePt = ifCorr?(paramfScalePt->at(ibincent).at(0)+paramfScalePt->at(ibincent).at(1)/TMath::Sqrt((*djt.jetpt_akpu3pf)[jj])+paramfScalePt->at(ibincent).at(2)/(*djt.jetpt_akpu3pf)[jj]+paramfScalePt->at(ibincent).at(3)/((*djt.jetpt_akpu3pf)[jj]*(*djt.jetpt_akpu3pf)[jj])):1.;
-          Float_t vFfScalePt = 1;
-          Int_t ibinrecopt = xjjc::findibin(&jtptBins, (*djt.jetpt_akpu3pf)[jj]);
-          if(ibinrecopt >=0)
-            {
-              Float_t pfP0 = paramRealfP0->at(ibincent).at(ibinrecopt);
-              Float_t pfP1 = paramRealfP1->at(ibincent).at(ibinrecopt);
-              vFfScalePt = ifCorr?(pfP1*((*djt.jetnpfpart_akpu3pf)[jj]-pfP0)):1;
-            }
-          ahHistoResoPt[ibincent][0][ibinpt]->Fill((*djt.jetpt_akpu3pf)[jj]/(*djt.gjetpt_akpu3pf)[jj], evtweight);
-          ahHistoResoPtCorr[ibincent][0][ibinpt]->Fill(((*djt.jetpt_akpu3pf)[jj]/vScalePt)/(*djt.gjetpt_akpu3pf)[jj], evtweight);
-          ahHistoResoPtFfCorr[ibincent][0][ibinpt]->Fill(((*djt.jetpt_akpu3pf)[jj]/vFfScalePt)/(*djt.gjetpt_akpu3pf)[jj], evtweight);
+          ahHistoResoPt[ibincent][0][ibinpt]->Fill(jetrecopt/(*djt.gjetpt_akpu3pf)[jj], evtweight);
+          ahHistoResoPtCorr[ibincent][0][ibinpt]->Fill(jetrecopt_vRMatGPt/(*djt.gjetpt_akpu3pf)[jj], evtweight);
+          ahHistoResoPtFfCorr[ibincent][0][ibinpt]->Fill(jetrecopt_vFfScalePt/(*djt.gjetpt_akpu3pf)[jj], evtweight);
           ahHistoResoPhi[ibincent][0][ibinpt]->Fill((*djt.jetphi_akpu3pf)[jj]-(*djt.gjetphi_akpu3pf)[jj], evtweight);
           ahHistoResoEta[ibincent][0][ibinpt]->Fill((*djt.jeteta_akpu3pf)[jj]-(*djt.gjeteta_akpu3pf)[jj], evtweight);
 
-          ahHistoResoPt[ibincent][ibineta+1][ibinpt]->Fill((*djt.jetpt_akpu3pf)[jj]/(*djt.gjetpt_akpu3pf)[jj], evtweight);
-          ahHistoResoPtCorr[ibincent][ibineta+1][ibinpt]->Fill(((*djt.jetpt_akpu3pf)[jj]/vScalePt)/(*djt.gjetpt_akpu3pf)[jj], evtweight);
-          ahHistoResoPtFfCorr[ibincent][ibineta+1][ibinpt]->Fill(((*djt.jetpt_akpu3pf)[jj]/vFfScalePt)/(*djt.gjetpt_akpu3pf)[jj], evtweight);
+          ahHistoResoPt[ibincent][ibineta+1][ibinpt]->Fill(jetrecopt/(*djt.gjetpt_akpu3pf)[jj], evtweight);
+          ahHistoResoPtCorr[ibincent][ibineta+1][ibinpt]->Fill(jetrecopt_vRMatGPt/(*djt.gjetpt_akpu3pf)[jj], evtweight);
+          ahHistoResoPtFfCorr[ibincent][ibineta+1][ibinpt]->Fill(jetrecopt_vFfScalePt/(*djt.gjetpt_akpu3pf)[jj], evtweight);
           ahHistoResoPhi[ibincent][ibineta+1][ibinpt]->Fill((*djt.jetphi_akpu3pf)[jj]-(*djt.gjetphi_akpu3pf)[jj], evtweight);
           ahHistoResoEta[ibincent][ibineta+1][ibinpt]->Fill((*djt.jeteta_akpu3pf)[jj]-(*djt.gjeteta_akpu3pf)[jj], evtweight);
         }
@@ -81,19 +72,9 @@ void jetreso_savehist(TString inputname, TString outputname, TString collisionsy
 
 int main(int argc, char* argv[])
 {
-  if(argc==6)
-    {
-      jetreso_savehist(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]));
-      return 0;
-    }
   if(argc==5)
     {
       jetreso_savehist(argv[1], argv[2], argv[3], atoi(argv[4]));
-      return 0;
-    }
-  if(argc==4)
-    {
-      jetreso_savehist(argv[1], argv[2], argv[3]);
       return 0;
     }
   return 1;

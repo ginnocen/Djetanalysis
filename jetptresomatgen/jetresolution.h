@@ -1,9 +1,10 @@
 #ifndef _JETRESOLUTION_H_
 #define _JETRESOLUTION_H_
 
+#include "prefilters.h"
 #include "../includes/djet.h"
-#include "../includes/prefilters.h"
-#include "../includes/paramCorr.h"
+#include "../includes/djtcorr.h"
+#include "../includes/djtweight.h"
 #include "../includes/xjjcuti.h"
 #include "../includes/xjjrootuti.h"
 #include <iostream>
@@ -15,16 +16,13 @@
 #include <TCanvas.h>
 #include <TF1.h>
 
-Float_t resojtptBins[] = {10, 20, 30, 40, 50, 60, 70, 80, 100, 120, 140, 160, 180, 200, 250, 300};
-const int nResoJtptBins = sizeof(resojtptBins)/sizeof(resojtptBins[0])-1;
-Float_t jtetaBins[] = {0, 1.0, 1.6};
+Float_t jtetaBins[] = {0.3, 1.0, 1.6};
 const int nJtetaBins = sizeof(jtetaBins)/sizeof(jtetaBins[0])-1;
 Color_t jtetaColor[] = {kBlack, kBlue, kRed+2};
 
 Float_t xrangeAng;
-void setxrangeAng(Int_t ispp) {xrangeAng = ispp?0.05:0.08;}
-
-void init(Int_t ispp) {setnCentBins(ispp); setxrangeAng(ispp);}
+void setxrangeAng(Int_t ispp) { xrangeAng = ispp?0.05:0.08; }
+void init(Int_t ispp) { setxrangeAng(ispp); }
 
 TH1F* ahHistoResoPt[NCentBins][nJtetaBins+1][nResoJtptBins];
 TH1F* ahHistoResoPtCorr[NCentBins][nJtetaBins+1][nResoJtptBins];
