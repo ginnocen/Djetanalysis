@@ -46,7 +46,7 @@ Float_t param1fResoPtFfJecCorr_peri_err = 0.0139354;
 // sqrt([0]*[0]+[1]*[1]/x+[2]*[2]/(x*x))
 
 // pp
-std::vector<std::vector<Float_t>> paramfScaleRecoPt_pp = {{1.00213, 0.371503, 1.69773, 0}};
+std::vector<std::vector<Float_t>> paramfScaleRecoPt_pp = {{1.00543, 0.309141, 1.73998, 0}};
 
 std::vector<std::vector<Float_t>> paramfScalePt_pp = {{1.00015, -0.21315, 1.82462, 0}};
 std::vector<std::vector<Float_t>> paramfResoPt_pp = {{0.0766372, 0.825332, 0}};
@@ -54,34 +54,34 @@ std::vector<std::vector<Float_t>> paramfResoPtCorr_pp = {{0.0775148, 0.824444, 0
 std::vector<std::vector<Float_t>> paramfResoPhi_pp = {{0.00357677, 0.0517923, 0}};
 std::vector<std::vector<Float_t>> paramfResoEta_pp = {{-0.0026966, -0.03799, -4.0313e-05}};
 std::vector<std::vector<Float_t>> paramfScalePtFfCorr_pp = {{0.969778, 0.221112, -5.5763, 85.0571}};
-std::vector<std::vector<Float_t>> paramfResoPtFfJecCorr_pp = {{0.0718088, 0.871882, 0}};
+std::vector<std::vector<Float_t>> paramfResoPtFfJecCorr_pp = {{0.0673364, 0.925819, 0}};
 
 std::vector<std::vector<Float_t>> paramfScalePtQ_pp = {{1.01219, -0.131363, 2.16967, 0}};
 std::vector<std::vector<Float_t>> paramfScalePtG_pp = {{0.974809, 0.025065, 0.783917, 0}};
 
 // PbPb
-std::vector<std::vector<Float_t>> paramfScaleRecoPt_PbPb = {{0.98, 1.51804, -8.57594, 483.001},
-                                                            {0.98, 1.48117, -9.94075, 333.871}};
+std::vector<std::vector<Float_t>> paramfScaleRecoPt_PbPb = {{0.98, 1.26385, -5.77925, 348.559},
+                                                            {0.98, 1.42795, -8.55143, 258.404}};
 
-std::vector<std::vector<Float_t>> paramfScalePt_PbPb = {{0.986528, 0.393473, -10.2676, 275.712},
-                                                        {0.967475, 0.794111, -10.6019, 208.91}};
-std::vector<std::vector<Float_t>> paramfResoPt_PbPb = {{0.0761373, 1.25131, 6.3818},
-                                                       {0.0754337, 1.34341, 0}};
-std::vector<std::vector<Float_t>> paramfResoPtCorr_PbPb = {{0.0774399, 1.49503, 7.84127},
-                                                           {0.0774399, 1.21844, 5.41395}};
-std::vector<std::vector<Float_t>> paramfResoPhi_PbPb = {{0.0165147, 0.0822335, 1.3887},
-                                                        {0.0161443, 0.0267169, 1.02173}};
-std::vector<std::vector<Float_t>> paramfResoEta_PbPb = {{0.0166437, 3.81913e-06, 1.33787},
-                                                        {0.0158205, -1.00767e-06, 0.860816}};
-std::vector<std::vector<Float_t>> paramfScalePtFfCorr_PbPb = {{0.88159, 3.10849, -36.6637, 490.326},
-                                                              {0.918543, 1.76715, -20.8582, 233.459}};
-std::vector<std::vector<Float_t>> paramfResoPtFfJecCorr_PbPb = {{0.0724779, 1.08185, 12.4263},
-                                                                {0.0724779, 0.992695, 8.18682}};
+std::vector<std::vector<Float_t>> paramfScalePt_PbPb = {{0.984464, 0.438003, -10.5242, 271.303},
+                                                        {0.970596, 0.655654, -7.38715, 136.269}};
+std::vector<std::vector<Float_t>> paramfResoPt_PbPb = {{0.0761373, 1.25131, 5.69205},
+                                                       {0.0754337, 1.22496, 0}};
+std::vector<std::vector<Float_t>> paramfResoPtCorr_PbPb = {{0.0774399, 1.44746, 7.30283},
+                                                           {0.0774399, 1.1889, 4.14529}};
+std::vector<std::vector<Float_t>> paramfResoPhi_PbPb = {{0.0166242, 0.0597229, 1.35508},
+                                                        {0.0158767, 0.0382784, 0.90171}};
+std::vector<std::vector<Float_t>> paramfResoEta_PbPb = {{0.0164608, -1.31414e-06, 1.2514},
+                                                        {0.0155247, -1.61235e-07, 0.749092}};
+std::vector<std::vector<Float_t>> paramfScalePtFfCorr_PbPb = {{0.872426, 3.33402, -37.9652, 496.641},
+                                                              {0.936001, 1.31161, -15.7559, 148.137}};
+std::vector<std::vector<Float_t>> paramfResoPtFfJecCorr_PbPb = {{0.0723274, 1.05397, 12.3451},
+                                                                {0.0724779, 0.899026, 7.94219}};
 
-std::vector<std::vector<Float_t>> paramfScalePtQ_PbPb = {{0.95, 1.85957, -15.355, 308.413},
-                                                         {0.95, 1.72989, -13.3642, 221.901}};
-std::vector<std::vector<Float_t>> paramfScalePtG_PbPb = {{0.95, 0.786854, -14.4104, 354.875},
-                                                         {0.95, 0.662886, -9.84546, 200.487}};
+std::vector<std::vector<Float_t>> paramfScalePtQ_PbPb = {{0.95, 1.88387, -15.9795, 307.035},
+                                                         {0.95, 1.69994, -11.6519, 174.094}};
+std::vector<std::vector<Float_t>> paramfScalePtG_PbPb = {{0.95, 0.704264, -13.1215, 316.252},
+                                                         {0.95, 0.667612, -7.60797, 137.381}};
 
 // fP0: [0]-exp([1]+[2]*x)
 // fP1: [0]+[3]*x-exp([1]+[2]*x)
