@@ -16,8 +16,8 @@ std::vector<std::vector<Float_t>>* paramRealfP1 = 0;
 
 std::vector<std::vector<Float_t>>* paramfResoPhi = 0;
 std::vector<std::vector<Float_t>>* paramfResoEta = 0;
-std::vector<std::vector<Float_t>>* paramfResoDeltaPhi = 0;
-std::vector<std::vector<Float_t>>* paramfResoDeltaEta = 0;
+// std::vector<std::vector<Float_t>>* paramfResoDeltaPhi = 0;
+// std::vector<std::vector<Float_t>>* paramfResoDeltaEta = 0;
 
 std::vector<std::vector<Float_t>>* corrFactor6080 = 0;
 std::vector<std::vector<Float_t>>* corrFactor80100 = 0;
@@ -62,7 +62,7 @@ namespace djtcorr
 
   int ptCorr(int jescale, float &jetpt, float jetnpfpart, int ibincent)
   {
-    if(!paramfScaleRecoPt || !paramfScalePt || !paramRealfP1 || !paramRealfP0 || !paramfScalePtFfCorr) { std::cout<<"error: set parameters first."<<std::endl; return 2; }
+    if(!paramfScaleRecoPt || !paramfScalePt || !paramRealfP1 || !paramRealfP0 || !paramfScalePtFfCorr) { std::cout<<"error: set parameters first. (djt::ptCorr)"<<std::endl; return 2; }
     if(jescale==1)
       {
         Float_t jetrecomatgenpt = jetpt / (paramfScaleRecoPt->at(ibincent).at(0) + paramfScaleRecoPt->at(ibincent).at(1)/TMath::Sqrt(jetpt) + paramfScaleRecoPt->at(ibincent).at(2)/jetpt + paramfScaleRecoPt->at(ibincent).at(3)/(jetpt*jetpt));
@@ -112,7 +112,7 @@ namespace djtcorr
 
   int ptSmear(float &jetpt, int ibincent)
   {
-    if(!paramfResoPt) { std::cout<<"error: set parameters first."<<std::endl; return 2; }
+    if(!paramfResoPt) { std::cout<<"error: set parameters first. (djt::ptSmear)"<<std::endl; return 2; }
     // if(jetpt > 10)
     if(jetpt > 0)
       {
@@ -126,7 +126,7 @@ namespace djtcorr
 
   int angleSmear(int gensmearphi, float &jeteta, float &jetphi, float jetpt, int ibincent)
   {
-    if(!paramfResoPhi || !paramfResoEta || !paramfResoDeltaPhi || !paramfResoDeltaEta) { std::cout<<"error: set parameters first."<<std::endl; return 2; }
+    if(!paramfResoPhi || !paramfResoEta) { std::cout<<"error: set parameters first. (djt::angleSmear)"<<std::endl; return 2; }
     if(gensmearphi==1)
       {
         Float_t sigmaPhi = TMath::Sqrt(paramfResoPhi->at(ibincent).at(0)*paramfResoPhi->at(ibincent).at(0) +
@@ -140,97 +140,94 @@ namespace djtcorr
         jeteta = jeteta + pRandom3->Gaus(0, sigmaEta);
         return 0;
       }
-    else if(gensmearphi==2)
-      {
-        Float_t sigmaPhi = TMath::Sqrt(paramfResoDeltaPhi->at(ibincent).at(0)*paramfResoDeltaPhi->at(ibincent).at(0) +
-                                       paramfResoDeltaPhi->at(ibincent).at(1)*paramfResoDeltaPhi->at(ibincent).at(1)/jetpt +
-                                       paramfResoDeltaPhi->at(ibincent).at(2)*paramfResoDeltaPhi->at(ibincent).at(2)/(jetpt*jetpt)
-                                       - (paramfResoDeltaPhi->at(ibincent).at(3)*paramfResoDeltaPhi->at(ibincent).at(3) +
-                                          paramfResoDeltaPhi->at(ibincent).at(4)*paramfResoDeltaPhi->at(ibincent).at(4)/jetpt +
-                                          paramfResoDeltaPhi->at(ibincent).at(5)*paramfResoDeltaPhi->at(ibincent).at(5)/(jetpt*jetpt)));
-        jetphi = jetphi + pRandom3->Gaus(0, sigmaPhi);
+    // else if(gensmearphi==2)
+    //   {
+    //     Float_t sigmaPhi = TMath::Sqrt(paramfResoDeltaPhi->at(ibincent).at(0)*paramfResoDeltaPhi->at(ibincent).at(0) +
+    //                                    paramfResoDeltaPhi->at(ibincent).at(1)*paramfResoDeltaPhi->at(ibincent).at(1)/jetpt +
+    //                                    paramfResoDeltaPhi->at(ibincent).at(2)*paramfResoDeltaPhi->at(ibincent).at(2)/(jetpt*jetpt)
+    //                                    - (paramfResoDeltaPhi->at(ibincent).at(3)*paramfResoDeltaPhi->at(ibincent).at(3) +
+    //                                       paramfResoDeltaPhi->at(ibincent).at(4)*paramfResoDeltaPhi->at(ibincent).at(4)/jetpt +
+    //                                       paramfResoDeltaPhi->at(ibincent).at(5)*paramfResoDeltaPhi->at(ibincent).at(5)/(jetpt*jetpt)));
+    //     jetphi = jetphi + pRandom3->Gaus(0, sigmaPhi);
 
-        Float_t sigmaEta = TMath::Sqrt(paramfResoDeltaEta->at(ibincent).at(0)*paramfResoDeltaEta->at(ibincent).at(0) +
-                                       paramfResoDeltaEta->at(ibincent).at(1)*paramfResoDeltaEta->at(ibincent).at(1)/jetpt +
-                                       paramfResoDeltaEta->at(ibincent).at(2)*paramfResoDeltaEta->at(ibincent).at(2)/(jetpt*jetpt)
-                                       - (paramfResoDeltaEta->at(ibincent).at(3)*paramfResoDeltaEta->at(ibincent).at(3) +
-                                          paramfResoDeltaEta->at(ibincent).at(4)*paramfResoDeltaEta->at(ibincent).at(4)/jetpt +
-                                          paramfResoDeltaEta->at(ibincent).at(5)*paramfResoDeltaEta->at(ibincent).at(5)/(jetpt*jetpt)));
-        jeteta = jeteta + pRandom3->Gaus(0, sigmaEta);
-        return 0;
-      }
+    //     Float_t sigmaEta = TMath::Sqrt(paramfResoDeltaEta->at(ibincent).at(0)*paramfResoDeltaEta->at(ibincent).at(0) +
+    //                                    paramfResoDeltaEta->at(ibincent).at(1)*paramfResoDeltaEta->at(ibincent).at(1)/jetpt +
+    //                                    paramfResoDeltaEta->at(ibincent).at(2)*paramfResoDeltaEta->at(ibincent).at(2)/(jetpt*jetpt)
+    //                                    - (paramfResoDeltaEta->at(ibincent).at(3)*paramfResoDeltaEta->at(ibincent).at(3) +
+    //                                       paramfResoDeltaEta->at(ibincent).at(4)*paramfResoDeltaEta->at(ibincent).at(4)/jetpt +
+    //                                       paramfResoDeltaEta->at(ibincent).at(5)*paramfResoDeltaEta->at(ibincent).at(5)/(jetpt*jetpt)));
+    //     jeteta = jeteta + pRandom3->Gaus(0, sigmaEta);
+    //     return 0;
+    //   }
     std::cout<<"invalid gensmearphi"<<std::endl; 
     return 1; 
   }
 
-  int ptSmearPP(std::vector<float>* vjetpt, float jetpt, int ibincent, int NSMEAR)
-  {
-    Float_t sigmaPtPP = TMath::Sqrt((paramfResoPtCorr_PbPb.at(ibincent).at(0)*paramfResoPtCorr_PbPb.at(ibincent).at(0) +
-                                     paramfResoPtCorr_PbPb.at(ibincent).at(1)*paramfResoPtCorr_PbPb.at(ibincent).at(1)/jetpt +
-                                     paramfResoPtCorr_PbPb.at(ibincent).at(2)*paramfResoPtCorr_PbPb.at(ibincent).at(2)/(jetpt*jetpt)) -
-                                    (paramfResoPtCorr_pp.at(ibincent).at(0)*paramfResoPtCorr_pp.at(ibincent).at(0) +
-                                     paramfResoPtCorr_pp.at(ibincent).at(1)*paramfResoPtCorr_pp.at(ibincent).at(1)/jetpt +
-                                     paramfResoPtCorr_pp.at(ibincent).at(2)*paramfResoPtCorr_pp.at(ibincent).at(2)/(jetpt*jetpt)));
-    for(int s=0;s<NSMEAR;s++)
-      {
-        float sjetpt = jetpt;
-        if(jetpt > 10)
-          {
-            sjetpt = jetpt * pRandom3->Gaus(1, sigmaPtPP);
-          }
-        vjetpt->push_back(sjetpt);
-      }
-    return 0;
-  }
-
-  int angleSmearPP(std::vector<float>* vjeteta, std::vector<float>* vjetphi, float jeteta, float jetphi, float jetpt, int ibincent, int NSMEAR)
-  {
-    Float_t sigmaPhiPP = TMath::Sqrt((paramfResoPhi_PbPb.at(ibincent).at(0)*paramfResoPhi_PbPb.at(ibincent).at(0) +
-                                      paramfResoPhi_PbPb.at(ibincent).at(1)*paramfResoPhi_PbPb.at(ibincent).at(1)/jetpt +
-                                      paramfResoPhi_PbPb.at(ibincent).at(2)*paramfResoPhi_PbPb.at(ibincent).at(2)/(jetpt*jetpt)) -
-                                     (paramfResoPhi_pp.at(ibincent).at(0)*paramfResoPhi_pp.at(ibincent).at(0) +
-                                      paramfResoPhi_pp.at(ibincent).at(1)*paramfResoPhi_pp.at(ibincent).at(1)/jetpt +
-                                      paramfResoPhi_pp.at(ibincent).at(2)*paramfResoPhi_pp.at(ibincent).at(2)/(jetpt*jetpt)));
-    Float_t sigmaEtaPP = TMath::Sqrt((paramfResoEta_PbPb.at(ibincent).at(0)*paramfResoEta_PbPb.at(ibincent).at(0) +
-                                      paramfResoEta_PbPb.at(ibincent).at(1)*paramfResoEta_PbPb.at(ibincent).at(1)/jetpt +
-                                      paramfResoEta_PbPb.at(ibincent).at(2)*paramfResoEta_PbPb.at(ibincent).at(2)/(jetpt*jetpt)) -
-                                     (paramfResoEta_pp.at(ibincent).at(0)*paramfResoEta_pp.at(ibincent).at(0) +
-                                      paramfResoEta_pp.at(ibincent).at(1)*paramfResoEta_pp.at(ibincent).at(1)/jetpt +
-                                      paramfResoEta_pp.at(ibincent).at(2)*paramfResoEta_pp.at(ibincent).at(2)/(jetpt*jetpt)));
-    for(int s=0;s<NSMEAR;s++)
-      {
-        float sjetphi = jetphi + pRandom3->Gaus(0, sigmaPhiPP);
-        float sjeteta = jeteta + pRandom3->Gaus(0, sigmaEtaPP);
-        vjetphi->push_back(sjetphi);
-        vjeteta->push_back(sjeteta);
-      }
-    return 0;
-  }
-
   int getcorrFactor(float &corrfactor, int ibinpt, int ibindr, float jetptmin, float jetptmax)
   {
-    if(!corrFactor6080 || !corrFactor80100 || !corrFactor100999 || !corrFactor60999) { std::cout<<"error: set parameters first."<<std::endl; return 2; }
+    if(!corrFactor6080 || !corrFactor80100 || !corrFactor100999 || !corrFactor60999) { std::cout<<"error: set parameters first. (djtcorr::getcorrFactor)"<<std::endl; return 2; }
     if(jetptmin==60 && jetptmax==80) { corrfactor = corrFactor6080->at(ibinpt).at(ibindr); return 0; }
     else if(jetptmin==80 && jetptmax==100) { corrfactor = corrFactor80100->at(ibinpt).at(ibindr); return 0; }
     else if(jetptmin==100 && jetptmax==999) { corrfactor = corrFactor100999->at(ibinpt).at(ibindr); return 0; }
     else if(jetptmin==60 && jetptmax==999) { corrfactor = corrFactor60999->at(ibinpt).at(ibindr); return 0; }
-    else { std::cout<<"error: invalid jetptmin or jetptmax."<<std::endl; return 1; }
-
-    return 0;    
+    std::cout<<"error: invalid jetptmin or jetptmax."<<std::endl; 
+    return 1;
   }
 
   int getcorrFactorSg(float &corrfactorSg, int ibinpt, int ibindr, float jetptmin, float jetptmax)
   {
-    // if(!corrFactorSg) { std::cout<<"error: set parameters first."<<std::endl; return 2; }
-    if(!corrFactorSg6080 || !corrFactorSg80100 || !corrFactorSg100999 || !corrFactorSg60999) { std::cout<<"error: set parameters first."<<std::endl; return 2; }
+    if(!corrFactorSg6080 || !corrFactorSg80100 || !corrFactorSg100999 || !corrFactorSg60999) { std::cout<<"error: set parameters first. (djtcorr::getorrFactorSg)"<<std::endl; return 2; }
     if(jetptmin==60 && jetptmax==80) { corrfactorSg = corrFactorSg6080->at(ibinpt).at(ibindr); return 0; }
     else if(jetptmin==80 && jetptmax==100) { corrfactorSg = corrFactorSg80100->at(ibinpt).at(ibindr); return 0; }
     else if(jetptmin==100 && jetptmax==999) { corrfactorSg = corrFactorSg100999->at(ibinpt).at(ibindr); return 0; }
     else if(jetptmin==60 && jetptmax==999) { corrfactorSg = corrFactorSg60999->at(ibinpt).at(ibindr); return 0; }
-    else { std::cout<<"error: invalid jetptmin or jetptmax."<<std::endl; return 1; }
-    // corrfactorSg = corrFactorSg->at(ibinpt).at(ibindr);
-    // return 0;    
+    std::cout<<"error: invalid jetptmin or jetptmax."<<std::endl; 
+    return 1;
   }
+
+  // int ptSmearPP(std::vector<float>* vjetpt, float jetpt, int ibincent, int NSMEAR)
+  // {
+  //   Float_t sigmaPtPP = TMath::Sqrt((paramfResoPtCorr_PbPb.at(ibincent).at(0)*paramfResoPtCorr_PbPb.at(ibincent).at(0) +
+  //                                    paramfResoPtCorr_PbPb.at(ibincent).at(1)*paramfResoPtCorr_PbPb.at(ibincent).at(1)/jetpt +
+  //                                    paramfResoPtCorr_PbPb.at(ibincent).at(2)*paramfResoPtCorr_PbPb.at(ibincent).at(2)/(jetpt*jetpt)) -
+  //                                   (paramfResoPtCorr_pp.at(ibincent).at(0)*paramfResoPtCorr_pp.at(ibincent).at(0) +
+  //                                    paramfResoPtCorr_pp.at(ibincent).at(1)*paramfResoPtCorr_pp.at(ibincent).at(1)/jetpt +
+  //                                    paramfResoPtCorr_pp.at(ibincent).at(2)*paramfResoPtCorr_pp.at(ibincent).at(2)/(jetpt*jetpt)));
+  //   for(int s=0;s<NSMEAR;s++)
+  //     {
+  //       float sjetpt = jetpt;
+  //       if(jetpt > 10)
+  //         {
+  //           sjetpt = jetpt * pRandom3->Gaus(1, sigmaPtPP);
+  //         }
+  //       vjetpt->push_back(sjetpt);
+  //     }
+  //   return 0;
+  // }
+
+  // int angleSmearPP(std::vector<float>* vjeteta, std::vector<float>* vjetphi, float jeteta, float jetphi, float jetpt, int ibincent, int NSMEAR)
+  // {
+  //   Float_t sigmaPhiPP = TMath::Sqrt((paramfResoPhi_PbPb.at(ibincent).at(0)*paramfResoPhi_PbPb.at(ibincent).at(0) +
+  //                                     paramfResoPhi_PbPb.at(ibincent).at(1)*paramfResoPhi_PbPb.at(ibincent).at(1)/jetpt +
+  //                                     paramfResoPhi_PbPb.at(ibincent).at(2)*paramfResoPhi_PbPb.at(ibincent).at(2)/(jetpt*jetpt)) -
+  //                                    (paramfResoPhi_pp.at(ibincent).at(0)*paramfResoPhi_pp.at(ibincent).at(0) +
+  //                                     paramfResoPhi_pp.at(ibincent).at(1)*paramfResoPhi_pp.at(ibincent).at(1)/jetpt +
+  //                                     paramfResoPhi_pp.at(ibincent).at(2)*paramfResoPhi_pp.at(ibincent).at(2)/(jetpt*jetpt)));
+  //   Float_t sigmaEtaPP = TMath::Sqrt((paramfResoEta_PbPb.at(ibincent).at(0)*paramfResoEta_PbPb.at(ibincent).at(0) +
+  //                                     paramfResoEta_PbPb.at(ibincent).at(1)*paramfResoEta_PbPb.at(ibincent).at(1)/jetpt +
+  //                                     paramfResoEta_PbPb.at(ibincent).at(2)*paramfResoEta_PbPb.at(ibincent).at(2)/(jetpt*jetpt)) -
+  //                                    (paramfResoEta_pp.at(ibincent).at(0)*paramfResoEta_pp.at(ibincent).at(0) +
+  //                                     paramfResoEta_pp.at(ibincent).at(1)*paramfResoEta_pp.at(ibincent).at(1)/jetpt +
+  //                                     paramfResoEta_pp.at(ibincent).at(2)*paramfResoEta_pp.at(ibincent).at(2)/(jetpt*jetpt)));
+  //   for(int s=0;s<NSMEAR;s++)
+  //     {
+  //       float sjetphi = jetphi + pRandom3->Gaus(0, sigmaPhiPP);
+  //       float sjeteta = jeteta + pRandom3->Gaus(0, sigmaEtaPP);
+  //       vjetphi->push_back(sjetphi);
+  //       vjeteta->push_back(sjeteta);
+  //     }
+  //   return 0;
+  // }
 
 }
 
