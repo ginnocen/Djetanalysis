@@ -1,20 +1,22 @@
 #ifndef _DJTANA_H_
 #define _DJTANA_H_
 
+#include "prefilters.h"
 #include "../includes/djet.h"
-#include "../includes/prefilters.h"
 #include "../includes/xjjcuti.h"
 #include "../includes/xjjrootuti.h"
 #include "../includes/dfitter.h"
-#include "../includes/paramCorr.h"
+#include "../includes/djtcorr.h"
+#include "../includes/djthlt.h"
+#include "../includes/djtweight.h"
+#include "../includes/systmetics.h"
 #include <iostream>
 #include <iomanip>
 #include <TMath.h>
 #include <TH1F.h>
 #include <TH2F.h>
 #include <TLegend.h>
-#include <TRandom2.h>
-#include <TRandom3.h>
+#include <TGraphErrors.h>
 
 const Float_t DZERO_MASS = 1.8649;
 
@@ -22,41 +24,57 @@ const Float_t DZERO_MASS = 1.8649;
 const int nRefBins = 2;
 TString tRef[nRefBins] = {"eta", "etaref"};
 
-Color_t amcolor[nPtBins] = {kBlack, kRed};
-Style_t amstyle[nRefBins][nPtBins] = {{20,     21},   {24,     25}};
+Color_t amcolor[2] = {kBlack, kRed};
+Style_t amstyle[nRefBins][2] = {{20, 21},   {24, 25}};
+
+Color_t fmcolor[2] = {kAzure-6, kRed+3};
+Style_t fmstyle[2] = {20, 21};
+Color_t ffcolor[2] = {kAzure-4, kRed-9};
+TString fleg[2] = {"pp", "PbPb"};
 
 TH1F* ahHistoRMass[nRefBins][nPtBins][nDrBins];
 TH1F* ahHistoRMassSignal[nRefBins][nPtBins][nDrBins];
 TH1F* ahHistoRMassSwapped[nRefBins][nPtBins][nDrBins];
-TH1F* ahHistoZMass[nRefBins][nPtBins][nZBins];
-TH1F* ahHistoZMassSignal[nRefBins][nPtBins][nZBins];
-TH1F* ahHistoZMassSwapped[nRefBins][nPtBins][nZBins];
-    
+
 TH1F* hNjets;
+
 TH1F* ahREfficiency[nRefBins][nPtBins];
+TH1F* ahREff[nRefBins][nPtBins];
+TH1F* ahRAcceptance[nRefBins][nPtBins];
+
 TH1F* ahNumREfficiency[nRefBins][nPtBins];
 TH1F* ahDenREfficiency[nRefBins][nPtBins];
-TH1F* ahZEfficiency[nRefBins][nPtBins];
-TH1F* ahNumZEfficiency[nRefBins][nPtBins];
-TH1F* ahDenZEfficiency[nRefBins][nPtBins];
+TH1F* ahAccREfficiency[nRefBins][nPtBins];
 
 TH1F* ahSignalRraw[nRefBins][nPtBins];
-TH1F* ahSignalZraw[nRefBins][nPtBins];
 TH1F* ahSignalR[nRefBins][nPtBins];
-TH1F* ahSignalZ[nRefBins][nPtBins];
 TH1F* ahSignalRnorm[nRefBins][nPtBins];
-TH1F* ahSignalZnorm[nRefBins][nPtBins];
 TH1F* ahSignalRsub[nPtBins];
-TH1F* ahSignalZsub[nPtBins];
+TH1F* ahSignalRsubUncorr[nPtBins];
 
 TH1F* ahSignalRnormP[2][nRefBins][nPtBins];
-TH1F* ahSignalZnormP[2][nRefBins][nPtBins];
 TH1F* ahSignalRnormRatio[nRefBins][nPtBins];
-TH1F* ahSignalZnormRatio[nRefBins][nPtBins];
 TH1F* ahSignalRsubP[2][nPtBins];
-TH1F* ahSignalZsubP[2][nPtBins];
+TH1F* ahSignalRsubUncorrP[2][nPtBins];
 TH1F* ahSignalRsubRatio[nPtBins];
-TH1F* ahSignalZsubRatio[nPtBins];
+TH1F* ahSignalRsubUncorrRatio[nPtBins];
+
+TGraphErrors* agSignalRsubP[2][nPtBins];
+TGraphErrors* agSignalRsubUncorrP[2][nPtBins];
+TGraphErrors* agSignalRsubRatio[nPtBins];
+TGraphErrors* agSignalRsubUncorrRatio[nPtBins];
+
+TH1F* ahHistoRMassRef[nPtBins];
+TH1F* ahHistoRMassSignalRef[nPtBins];
+TH1F* ahHistoRMassSwappedRef[nPtBins];
+TH1F* ahREfficiencyRef[nPtBins];
+TH1F* ahREffRef[nPtBins];
+TH1F* ahRAcceptanceRef[nPtBins];
+TH1F* ahNumREfficiencyRef[nPtBins];
+TH1F* ahDenREfficiencyRef[nPtBins];
+TH1F* ahAccREfficiencyRef[nPtBins];
+TH1F* ahSignalRrawRef[nPtBins];
+TH1F* ahSignalRRef[nPtBins];
 
 //
 int createhists(Option_t* option)
@@ -65,28 +83,47 @@ int createhists(Option_t* option)
   opt.ToLower();
   if(opt=="savetpl")
     {
-      hNjets = new TH1F("hNjets", "", 1, 0, 1); // ... is it necessary
       for(int i=0;i<nPtBins;i++)
         {
           for(int l=0;l<nRefBins;l++)
             {
-              ahREfficiency[l][i] = new TH1F(Form("hREfficiency_%s_pt_%d",tRef[l].Data(),i), ";#DeltaR;", nDrBins, drBins);
-              ahNumREfficiency[l][i] = new TH1F(Form("hNumREfficiency_%s_pt_%d",tRef[l].Data(),i), ";#DeltaR;", nDrBins, drBins);
-              ahDenREfficiency[l][i] = new TH1F(Form("hDenREfficiency_%s_pt_%d",tRef[l].Data(),i), ";#DeltaR;", nDrBins, drBins);
-              ahZEfficiency[l][i] = new TH1F(Form("hZEfficiency_%s_pt_%d",tRef[l].Data(),i), ";p_{T}^{D} / p_{T}^{jet};", nZBins, zBins);
-              ahNumZEfficiency[l][i] = new TH1F(Form("hNumZEfficiency_%s_pt_%d",tRef[l].Data(),i), ";p_{T}^{D} / p_{T}^{jet};", nZBins, zBins);
-              ahDenZEfficiency[l][i] = new TH1F(Form("hDenZEfficiency_%s_pt_%d",tRef[l].Data(),i), ";p_{T}^{D} / p_{T}^{jet};", nZBins, zBins);
+              ahREfficiency[l][i] = new TH1F(Form("hREfficiency_%s_pt_%d",tRef[l].Data(),i), ";r;", nDrBins, drBins);
+              ahREfficiency[l][i]->Sumw2();
+              ahREff[l][i] = new TH1F(Form("hREff_%s_pt_%d",tRef[l].Data(),i), ";r;", nDrBins, drBins);
+              ahREff[l][i]->Sumw2();
+              ahRAcceptance[l][i] = new TH1F(Form("hRAcceptance_%s_pt_%d",tRef[l].Data(),i), ";r;", nDrBins, drBins);
+              ahRAcceptance[l][i]->Sumw2();
+              ahNumREfficiency[l][i] = new TH1F(Form("hNumREfficiency_%s_pt_%d",tRef[l].Data(),i), ";r;", nDrBins, drBins);
+              ahNumREfficiency[l][i]->Sumw2();
+              ahDenREfficiency[l][i] = new TH1F(Form("hDenREfficiency_%s_pt_%d",tRef[l].Data(),i), ";r;", nDrBins, drBins);
+              ahDenREfficiency[l][i]->Sumw2();
+              ahAccREfficiency[l][i] = new TH1F(Form("hAccREfficiency_%s_pt_%d",tRef[l].Data(),i), ";r;", nDrBins, drBins);
+              ahAccREfficiency[l][i]->Sumw2();
               for(int j=0;j<nDrBins;j++) 
                 {
                   ahHistoRMassSignal[l][i][j] = new TH1F(Form("hHistoRMassSignal_%s_pt_%d_dr_%d",tRef[l].Data(),i,j), ";m_{#piK} (GeV/c^{2});Entries / (5 MeV/c^{2})", 60, 1.7, 2.0);
+                  ahHistoRMassSignal[l][i][j]->Sumw2();
                   ahHistoRMassSwapped[l][i][j] = new TH1F(Form("hHistoRMassSwapped_%s_pt_%d_dr_%d",tRef[l].Data(),i,j), ";m_{#piK} (GeV/c^{2});Entries / (5 MeV/c^{2})", 60, 1.7, 2.0);
-                }
-              for(int j=0;j<nZBins;j++) 
-                {
-                  ahHistoZMassSignal[l][i][j] = new TH1F(Form("hHistoZMassSignal_%s_pt_%d_z_%d",tRef[l].Data(),i,j), ";m_{#piK} (GeV/c^{2});Entries / (5 MeV/c^{2})", 60, 1.7, 2.0);
-                  ahHistoZMassSwapped[l][i][j] = new TH1F(Form("hHistoZMassSwapped_%s_pt_%d_z_%d",tRef[l].Data(),i,j), ";m_{#piK} (GeV/c^{2});Entries / (5 MeV/c^{2})", 60, 1.7, 2.0);
+                  ahHistoRMassSwapped[l][i][j]->Sumw2();
                 }
             }
+          ahREfficiencyRef[i] = new TH1F(Form("hREfficiencyRef_pt_%d",i), ";r;", 1, 0, 0.3);
+          ahREfficiencyRef[i]->Sumw2();
+          ahREffRef[i] = new TH1F(Form("hREffRef_pt_%d",i), ";r;", 1, 0, 0.3);
+          ahREffRef[i]->Sumw2();
+          ahRAcceptanceRef[i] = new TH1F(Form("hRAcceptanceRef_pt_%d",i), ";r;", 1, 0, 0.3);
+          ahRAcceptanceRef[i]->Sumw2();
+          ahNumREfficiencyRef[i] = new TH1F(Form("hNumREfficiencyRef_pt_%d",i), ";r;", 1, 0, 0.3);
+          ahNumREfficiencyRef[i]->Sumw2();
+          ahDenREfficiencyRef[i] = new TH1F(Form("hDenREfficiencyRef_pt_%d",i), ";r;", 1, 0, 0.3);
+          ahDenREfficiencyRef[i]->Sumw2();
+          ahAccREfficiencyRef[i] = new TH1F(Form("hAccREfficiencyRef_pt_%d",i), ";r;", 1, 0, 0.3);
+          ahAccREfficiencyRef[i]->Sumw2();
+
+          ahHistoRMassSignalRef[i] = new TH1F(Form("hHistoRMassSignalRef_pt_%d",i), ";m_{#piK} (GeV/c^{2});Entries / (5 MeV/c^{2})", 60, 1.7, 2.0);
+          ahHistoRMassSignalRef[i]->Sumw2();
+          ahHistoRMassSwappedRef[i] = new TH1F(Form("hHistoRMassSwappedRef_pt_%d",i), ";m_{#piK} (GeV/c^{2});Entries / (5 MeV/c^{2})", 60, 1.7, 2.0);
+          ahHistoRMassSwappedRef[i]->Sumw2();
         }
       return 0;
     }
@@ -97,9 +134,14 @@ int createhists(Option_t* option)
         {
           for(int l=0;l<nRefBins;l++)
             {
-              for(int j=0;j<nDrBins;j++) ahHistoRMass[l][i][j] = new TH1F(Form("hHistoRMass_%s_pt_%d_dr_%d",tRef[l].Data(),i,j), ";m_{#piK} (GeV/c^{2});Entries / (5 MeV/c^{2})", 60, 1.7, 2.0);
-              for(int j=0;j<nZBins;j++) ahHistoZMass[l][i][j] = new TH1F(Form("hHistoZMass_%s_pt_%d_z_%d",tRef[l].Data(),i,j), ";m_{#piK} (GeV/c^{2});Entries / (5 MeV/c^{2})", 60, 1.7, 2.0);
+              for(int j=0;j<nDrBins;j++) 
+                {
+                  ahHistoRMass[l][i][j] = new TH1F(Form("hHistoRMass_%s_pt_%d_dr_%d",tRef[l].Data(),i,j), ";m_{#piK} (GeV/c^{2});Entries / (5 MeV/c^{2})", 60, 1.7, 2.0);
+                  ahHistoRMass[l][i][j]->Sumw2();
+                }
             }
+          ahHistoRMassRef[i] = new TH1F(Form("hHistoRMassRef_pt_%d",i), ";m_{#piK} (GeV/c^{2});Entries / (5 MeV/c^{2})", 60, 1.7, 2.0);
+          ahHistoRMassRef[i]->Sumw2();
         }
       return 0;
     }
@@ -109,15 +151,21 @@ int createhists(Option_t* option)
         {
           for(int l=0;l<nRefBins;l++)
             {
-              ahSignalRraw[l][i] = new TH1F(Form("hSignalRraw_%s_pt_%d",tRef[l].Data(),i), ";#DeltaR;", nDrBins, drBins);
-              ahSignalZraw[l][i] = new TH1F(Form("hSignalZraw_%s_pt_%d",tRef[l].Data(),i), ";p_{T}^{D} / p_{T}^{jet};", nZBins, zBins);
-              ahSignalR[l][i] = new TH1F(Form("hSignalR_%s_pt_%d",tRef[l].Data(),i), ";#DeltaR;", nDrBins, drBins);
-              ahSignalZ[l][i] = new TH1F(Form("hSignalZ_%s_pt_%d",tRef[l].Data(),i), ";p_{T}^{D} / p_{T}^{jet};", nZBins, zBins);
-              ahSignalRnorm[l][i] = new TH1F(Form("hSignalRnorm_%s_pt_%d",tRef[l].Data(),i), ";#DeltaR;", nDrBins, drBins);
-              ahSignalZnorm[l][i] = new TH1F(Form("hSignalZnorm_%s_pt_%d",tRef[l].Data(),i), ";p_{T}^{D} / p_{T}^{jet};", nZBins, zBins);
+              ahSignalRraw[l][i] = new TH1F(Form("hSignalRraw_%s_pt_%d",tRef[l].Data(),i), ";r;", nDrBins, drBins);
+              ahSignalRraw[l][i]->Sumw2();
+              ahSignalR[l][i] = new TH1F(Form("hSignalR_%s_pt_%d",tRef[l].Data(),i), ";r;", nDrBins, drBins);
+              ahSignalR[l][i]->Sumw2();
+              ahSignalRnorm[l][i] = new TH1F(Form("hSignalRnorm_%s_pt_%d",tRef[l].Data(),i), ";r;", nDrBins, drBins);
+              ahSignalRnorm[l][i]->Sumw2();
             }
-          ahSignalRsub[i] = new TH1F(Form("hSignalRsub_pt_%d",i), ";#DeltaR;", nDrBins, drBins);
-          ahSignalZsub[i] = new TH1F(Form("hSignalZsub_pt_%d",i), ";p_{T}^{D} / p_{T}^{jet};", nZBins, zBins);
+          ahSignalRsub[i] = new TH1F(Form("hSignalRsub_pt_%d",i), ";r;", nDrBins, drBins);
+          ahSignalRsub[i]->Sumw2();
+          ahSignalRsubUncorr[i] = new TH1F(Form("hSignalRsubUncorr_pt_%d",i), ";r;", nDrBins, drBins);
+          ahSignalRsubUncorr[i]->Sumw2();
+          ahSignalRRef[i] = new TH1F(Form("hSignalRRef_pt_%d",i), ";r;", 1, 0, 0.3);
+          ahSignalRRef[i]->Sumw2();
+          ahSignalRrawRef[i] = new TH1F(Form("hSignalRrawRef_pt_%d",i), ";r;", 1, 0, 0.3);
+          ahSignalRrawRef[i]->Sumw2();
         }
       return 0;
     }
@@ -127,11 +175,13 @@ int createhists(Option_t* option)
         {
           for(int l=0;l<nRefBins;l++)
             {
-              ahSignalRnormRatio[l][i] = new TH1F(Form("hSignalRnormRatio_%s_pt_%d",tRef[l].Data(),i), ";#DeltaR;", nDrBins, drBins);
-              ahSignalZnormRatio[l][i] = new TH1F(Form("hSignalZnormRatio_%s_pt_%d",tRef[l].Data(),i), ";p_{T}^{D} / p_{T}^{jet};", nZBins, zBins);
+              ahSignalRnormRatio[l][i] = new TH1F(Form("hSignalRnormRatio_%s_pt_%d",tRef[l].Data(),i), ";r;", nDrBins, drBins);
+              ahSignalRnormRatio[l][i]->Sumw2();
             }
-          ahSignalRsubRatio[i] = new TH1F(Form("hSignalRsubRatio_pt_%d",i), ";#DeltaR;", nDrBins, drBins);
-          ahSignalZsubRatio[i] = new TH1F(Form("hSignalZsubRatio_pt_%d",i), ";p_{T}^{D} / p_{T}^{jet};", nZBins, zBins);
+          ahSignalRsubRatio[i] = new TH1F(Form("hSignalRsubRatio_pt_%d",i), ";r;", nDrBins, drBins);
+          ahSignalRsubRatio[i]->Sumw2();
+          ahSignalRsubUncorrRatio[i] = new TH1F(Form("hSignalRsubUncorrRatio_pt_%d",i), ";r;", nDrBins, drBins);
+          ahSignalRsubUncorrRatio[i]->Sumw2();
         }
       return 0;
     }
@@ -146,28 +196,31 @@ int writehists(Option_t* option)
 
   if(opt=="savetpl")
     {
-      hNjets->Write(); // ... is it necessary
       for(int i=0;i<nPtBins;i++)
         {
           for(int l=0;l<nRefBins;l++)
             {
               ahREfficiency[l][i]->Write();
+              ahREff[l][i]->Write();
+              ahRAcceptance[l][i]->Write();
               ahNumREfficiency[l][i]->Write();
               ahDenREfficiency[l][i]->Write();
-              ahZEfficiency[l][i]->Write();
-              ahNumZEfficiency[l][i]->Write();
-              ahDenZEfficiency[l][i]->Write();
+              ahAccREfficiency[l][i]->Write();
               for(int j=0;j<nDrBins;j++) 
                 {
                   ahHistoRMassSignal[l][i][j]->Write();
                   ahHistoRMassSwapped[l][i][j]->Write();
                 }
-              for(int j=0;j<nZBins;j++) 
-                {
-                  ahHistoZMassSignal[l][i][j]->Write();
-                  ahHistoZMassSwapped[l][i][j]->Write();
-                }
             }
+          ahREfficiencyRef[i]->Write();
+          ahREffRef[i]->Write();
+          ahRAcceptanceRef[i]->Write();
+          ahNumREfficiencyRef[i]->Write();
+          ahDenREfficiencyRef[i]->Write();
+          ahAccREfficiencyRef[i]->Write();
+
+          ahHistoRMassSignalRef[i]->Write();
+          ahHistoRMassSwappedRef[i]->Write();
         }
       return 0;
     }
@@ -179,8 +232,8 @@ int writehists(Option_t* option)
           for(int l=0;l<nRefBins;l++)
             {
               for(int j=0;j<nDrBins;j++) ahHistoRMass[l][i][j]->Write();
-              for(int j=0;j<nZBins;j++) ahHistoZMass[l][i][j]->Write();
             }
+          ahHistoRMassRef[i]->Write();
         }
       return 0;
     }
@@ -191,14 +244,11 @@ int writehists(Option_t* option)
           for(int l=0;l<nRefBins;l++)
             {
               ahSignalRraw[l][i]->Write();
-              ahSignalZraw[l][i]->Write();
               ahSignalR[l][i]->Write();
-              ahSignalZ[l][i]->Write();
               ahSignalRnorm[l][i]->Write();
-              ahSignalZnorm[l][i]->Write();
             }
           ahSignalRsub[i]->Write();
-          ahSignalZsub[i]->Write();
+          ahSignalRsubUncorr[i]->Write();
         }
       return 0;
     }
@@ -209,10 +259,9 @@ int writehists(Option_t* option)
           for(int l=0;l<nRefBins;l++)
             {
               ahSignalRnormRatio[l][i]->Write();
-              ahSignalZnormRatio[l][i]->Write();
             }
           ahSignalRsubRatio[i]->Write();
-          ahSignalZsubRatio[i]->Write();
+          ahSignalRsubUncorrRatio[i]->Write();
         }
       return 0;
     }
@@ -232,8 +281,8 @@ int gethists(TFile* inf, Option_t* option)
           for(int l=0;l<nRefBins;l++)
             {
               for(int j=0;j<nDrBins;j++) ahHistoRMass[l][i][j] = (TH1F*)inf->Get(Form("hHistoRMass_%s_pt_%d_dr_%d",tRef[l].Data(),i,j));
-              for(int j=0;j<nZBins;j++) ahHistoZMass[l][i][j] = (TH1F*)inf->Get(Form("hHistoZMass_%s_pt_%d_z_%d",tRef[l].Data(),i,j));
             }
+          ahHistoRMassRef[i] = (TH1F*)inf->Get(Form("hHistoRMassRef_pt_%d",i));
         }
       return 0;
     }
@@ -244,22 +293,25 @@ int gethists(TFile* inf, Option_t* option)
           for(int l=0;l<nRefBins;l++)
             {
               ahREfficiency[l][i] = (TH1F*)inf->Get(Form("hREfficiency_%s_pt_%d",tRef[l].Data(),i));
-              ahDenREfficiency[l][i] = (TH1F*)inf->Get(Form("hDenREfficiency_%s_pt_%d",tRef[l].Data(),i));
+              ahREff[l][i] = (TH1F*)inf->Get(Form("hREff_%s_pt_%d",tRef[l].Data(),i));
+              ahRAcceptance[l][i] = (TH1F*)inf->Get(Form("hRAcceptance_%s_pt_%d",tRef[l].Data(),i));
               ahNumREfficiency[l][i] = (TH1F*)inf->Get(Form("hNumREfficiency_%s_pt_%d",tRef[l].Data(),i));
-              ahZEfficiency[l][i] = (TH1F*)inf->Get(Form("hZEfficiency_%s_pt_%d",tRef[l].Data(),i));
-              ahNumZEfficiency[l][i] = (TH1F*)inf->Get(Form("hNumZEfficiency_%s_pt_%d",tRef[l].Data(),i));
-              ahDenZEfficiency[l][i] = (TH1F*)inf->Get(Form("hDenZEfficiency_%s_pt_%d",tRef[l].Data(),i));
+              ahDenREfficiency[l][i] = (TH1F*)inf->Get(Form("hDenREfficiency_%s_pt_%d",tRef[l].Data(),i));
+              ahAccREfficiency[l][i] = (TH1F*)inf->Get(Form("hAccREfficiency_%s_pt_%d",tRef[l].Data(),i));
               for(int j=0;j<nDrBins;j++) 
                 {
                   ahHistoRMassSignal[l][i][j] = (TH1F*)inf->Get(Form("hHistoRMassSignal_%s_pt_%d_dr_%d",tRef[l].Data(),i,j));
                   ahHistoRMassSwapped[l][i][j] = (TH1F*)inf->Get(Form("hHistoRMassSwapped_%s_pt_%d_dr_%d",tRef[l].Data(),i,j));
                 }
-              for(int j=0;j<nZBins;j++) 
-                {
-                  ahHistoZMassSignal[l][i][j] = (TH1F*)inf->Get(Form("hHistoZMassSignal_%s_pt_%d_z_%d",tRef[l].Data(),i,j));
-                  ahHistoZMassSwapped[l][i][j] = (TH1F*)inf->Get(Form("hHistoZMassSwapped_%s_pt_%d_z_%d",tRef[l].Data(),i,j));
-                }
             }
+          ahREfficiencyRef[i] = (TH1F*)inf->Get(Form("hREfficiencyRef_pt_%d",i));
+          ahREffRef[i] = (TH1F*)inf->Get(Form("hREffRef_pt_%d",i));
+          ahRAcceptanceRef[i] = (TH1F*)inf->Get(Form("hRAcceptanceRef_pt_%d",i));
+          ahNumREfficiencyRef[i] = (TH1F*)inf->Get(Form("hNumREfficiencyRef_pt_%d",i));
+          ahDenREfficiencyRef[i] = (TH1F*)inf->Get(Form("hDenREfficiencyRef_pt_%d",i));
+          ahAccREfficiencyRef[i] = (TH1F*)inf->Get(Form("hAccREfficiencyRef_pt_%d",i));
+          ahHistoRMassSignalRef[i] = (TH1F*)inf->Get(Form("hHistoRMassSignalRef_pt_%d",i));
+          ahHistoRMassSwappedRef[i] = (TH1F*)inf->Get(Form("hHistoRMassSwappedRef_pt_%d",i));
         }
       return 0;
     }
@@ -270,10 +322,9 @@ int gethists(TFile* inf, Option_t* option)
           for(int l=0;l<nRefBins;l++)
             {
               ahSignalRnorm[l][i] = (TH1F*)inf->Get(Form("hSignalRnorm_%s_pt_%d",tRef[l].Data(),i));
-              ahSignalZnorm[l][i] = (TH1F*)inf->Get(Form("hSignalZnorm_%s_pt_%d",tRef[l].Data(),i));
             }
           ahSignalRsub[i] = (TH1F*)inf->Get(Form("hSignalRsub_pt_%d",i));
-          ahSignalZsub[i] = (TH1F*)inf->Get(Form("hSignalZsub_pt_%d",i));
+          ahSignalRsubUncorr[i] = (TH1F*)inf->Get(Form("hSignalRsubUncorr_pt_%d",i));
         }
       return 0;
     }
@@ -286,13 +337,11 @@ int gethists(TFile* inf, Option_t* option)
             {
               ahSignalRnormP[isPbPb][l][i] = (TH1F*)inf->Get(Form("hSignalRnorm_%s_pt_%d",tRef[l].Data(),i));
               ahSignalRnormP[isPbPb][l][i]->SetName(Form("hSignalRnorm_%s_pt_%d_%s",tRef[l].Data(),i,tPbPb[isPbPb].Data()));
-              ahSignalZnormP[isPbPb][l][i] = (TH1F*)inf->Get(Form("hSignalZnorm_%s_pt_%d",tRef[l].Data(),i));
-              ahSignalZnormP[isPbPb][l][i]->SetName(Form("hSignalZnorm_%s_pt_%d_%s",tRef[l].Data(),i,tPbPb[isPbPb].Data()));
             }
           ahSignalRsubP[isPbPb][i] = (TH1F*)inf->Get(Form("hSignalRsub_pt_%d",i));
           ahSignalRsubP[isPbPb][i]->SetName(Form("hSignalRsub_pt_%d_%s",i,tPbPb[isPbPb].Data()));
-          ahSignalZsubP[isPbPb][i] = (TH1F*)inf->Get(Form("hSignalZsub_pt_%d",i));
-          ahSignalZsubP[isPbPb][i]->SetName(Form("hSignalZsub_pt_%d_%s",i,tPbPb[isPbPb].Data()));
+          ahSignalRsubUncorrP[isPbPb][i] = (TH1F*)inf->Get(Form("hSignalRsubUncorr_pt_%d",i));
+          ahSignalRsubUncorrP[isPbPb][i]->SetName(Form("hSignalRsubUncorr_pt_%d_%s",i,tPbPb[isPbPb].Data()));
         }
       return 0;
     }
@@ -303,10 +352,9 @@ int gethists(TFile* inf, Option_t* option)
           for(int l=0;l<nRefBins;l++)
             {
               ahSignalRnormRatio[l][i] = (TH1F*)inf->Get(Form("hSignalRnormRatio_%s_pt_%d",tRef[l].Data(),i));
-              ahSignalZnormRatio[l][i] = (TH1F*)inf->Get(Form("hSignalZnormRatio_%s_pt_%d",tRef[l].Data(),i));
             }
           ahSignalRsubRatio[i] = (TH1F*)inf->Get(Form("hSignalRsubRatio_pt_%d",i));
-          ahSignalZsubRatio[i] = (TH1F*)inf->Get(Form("hSignalZsubRatio_pt_%d",i));
+          ahSignalRsubUncorrRatio[i] = (TH1F*)inf->Get(Form("hSignalRsubUncorrRatio_pt_%d",i));
         }
       return 0;
     }
@@ -314,6 +362,54 @@ int gethists(TFile* inf, Option_t* option)
   return 1;
 }
 
+void verbose_stat(Float_t jetptmin, Float_t jetptmax)
+{
+  for(int i=0;i<nPtBins;i++)
+    {
+      TString texpt = ptBins[i+1]<999?Form("%s - %s",xjjc::number_remove_zero(ptBins[i]).c_str(),xjjc::number_remove_zero(ptBins[i+1]).c_str()):Form(" > %s",xjjc::number_remove_zero(ptBins[i]).c_str());
+      std::cout<<std::setiosflags(std::ios::left)<<"jetpt "<<std::setw(5)<<jetptmin<<" - "<<std::setw(5)<<jetptmax<<" Dpt "<<std::setw(10)<<texpt<<std::endl;
+      std::cout<<"normal cone:"<<std::endl;
+      int l=0;
+      std::cout<<std::setiosflags(std::ios::left)<<std::setw(13)<<"r";
+      std::cout<<std::setiosflags(std::ios::left)<<std::setw(15)<<"raw"<<std::setw(15)<<"raw stat";
+      std::cout<<std::setiosflags(std::ios::left)<<std::setw(15)<<"eff"<<std::setw(15)<<"eff stat";
+      std::cout<<std::setiosflags(std::ios::left)<<std::setw(15)<<"yield/dr"<<std::setw(15)<<"yield/dr stat";
+      std::cout<<std::endl;
+      for(int j=0;j<nDrBins;j++)
+        {
+          std::cout<<std::setiosflags(std::ios::left)<<std::setw(6)<<drBins[j]<<" - "<<std::setw(6)<<drBins[j+1];
+          std::cout<<std::setiosflags(std::ios::left)<<std::setw(15)<<(ahSignalRraw)[l][i]->GetBinContent(j+1)<<std::setw(15)<<(ahSignalRraw)[l][i]->GetBinError(j+1);
+          std::cout<<std::setiosflags(std::ios::left)<<std::setw(15)<<(ahREfficiency)[l][i]->GetBinContent(j+1)<<std::setw(15)<<(ahREfficiency)[l][i]->GetBinError(j+1);
+          std::cout<<std::setiosflags(std::ios::left)<<std::setw(15)<<(ahSignalRnorm)[l][i]->GetBinContent(j+1)<<std::setw(15)<<(ahSignalRnorm)[l][i]->GetBinError(j+1);
+          std::cout<<std::endl;
+        }
+      std::cout<<"ref cone:"<<std::endl;
+      l = 1;
+      std::cout<<std::setiosflags(std::ios::left)<<std::setw(13)<<"r";
+      std::cout<<std::setiosflags(std::ios::left)<<std::setw(15)<<"yield/dr"<<std::setw(15)<<"yield/dr stat";
+      std::cout<<std::endl;
+      for(int j=0;j<nDrBins;j++)
+        {
+          std::cout<<std::setiosflags(std::ios::left)<<std::setw(6)<<drBins[j]<<" - "<<std::setw(6)<<drBins[j+1];
+          std::cout<<std::setiosflags(std::ios::left)<<std::setw(15)<<(ahSignalRrawRef)[i]->GetBinContent(j+1)<<std::setw(15)<<(ahSignalRrawRef)[i]->GetBinError(j+1);
+          std::cout<<std::setiosflags(std::ios::left)<<std::setw(15)<<(ahREfficiencyRef)[i]->GetBinContent(j+1)<<std::setw(15)<<(ahREfficiencyRef)[i]->GetBinError(j+1);
+          std::cout<<std::setiosflags(std::ios::left)<<std::setw(15)<<(ahSignalRnorm)[l][i]->GetBinContent(j+1)<<std::setw(15)<<(ahSignalRnorm)[l][i]->GetBinError(j+1);
+          std::cout<<std::endl;
+        }
+      std::cout<<"subtracted:"<<std::endl;
+      std::cout<<std::setiosflags(std::ios::left)<<std::setw(13)<<"r";
+      std::cout<<std::setiosflags(std::ios::left)<<std::setw(15)<<"(1/N)dN/dr"<<std::setw(15)<<"(1/N)dN/dr stat";
+      std::cout<<std::endl;
+      for(int j=0;j<nDrBins;j++)
+        {
+          std::cout<<std::setiosflags(std::ios::left)<<std::setw(6)<<drBins[j]<<" - "<<std::setw(6)<<drBins[j+1];
+          std::cout<<std::setiosflags(std::ios::left)<<std::setw(15)<<(ahSignalRsub)[i]->GetBinContent(j+1)<<std::setw(15)<<(ahSignalRsub)[i]->GetBinError(j+1);
+          std::cout<<std::endl;
+        }
+    }
+}
 
 
 #endif
+
+
