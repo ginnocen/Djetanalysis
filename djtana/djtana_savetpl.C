@@ -17,6 +17,8 @@ void djtana_savetpl(TString inputname, TString outputname,
 
   djet djt(inputname, ispp, 1);
   // djt.setjetcut(jetptmin, jetetamin, jetetamax);
+  djt.settrkcut(cutval_trkPt, cutval_trkEta, cutval_trkPtErr);
+  djt.setDcut(cutval_Dsvpv, cutval_Dalpha, cutval_Dchi2cl, cutval_Dy);
   djt.setGcut(cutval_Dy);
   initcutval(collisionsyst);
 
@@ -49,135 +51,101 @@ void djtana_savetpl(TString inputname, TString outputname,
           Float_t jetnpdfpart = 0;
           if(jescale==2) jetnpdfpart = (*djt.jetnpfpart_akpu3pf)[jj];
 
-          // JEC
-          if(djt.ajetopt[irecogen]=="reco" && jescale)
-            if(djtcorr::ptCorr(jescale, jetpt, jetnpdfpart, ibincent)) return;
-
-          // smear pt
           std::vector<float>* vjetpt = new std::vector<float>();
-          if(djt.ajetopt[irecogen]=="gen" && gensmearpt)
-            {
-              for(int n=0;n<NSMEAR;n++)
-                {
-                  float sjetpt = jetpt;
-                  if(djtcorr::ptSmear(sjetpt, ibincent)) return;
-                  vjetpt->push_back(sjetpt);
-                }
-            }
-          else
-            { vjetpt->push_back(jetpt); }
-
-          // smear angle
           std::vector<float>* vjetphi = new std::vector<float>();
           std::vector<float>* vjeteta = new std::vector<float>();
-          if(djt.ajetopt[irecogen]=="gen" && gensmearphi)
-            {
-              for(int n=0;n<NSMEAR;n++)
-                {
-                  float sjetphi = jetphi, sjeteta = jeteta;
-                  if(djtcorr::angleSmear(gensmearphi, sjeteta, sjetphi, vjetpt->at(n), ibincent)) return;
-                  vjetphi->push_back(sjetphi);
-                  vjeteta->push_back(sjeteta);
-                }
-            }
-          else
-            {
-              vjetphi->push_back(jetphi);
-              vjeteta->push_back(jeteta);
-            }
 
+          if(djtcorr::processjets(jetpt, jetphi, jeteta, jetnpdfpart, ibincent,
+                                  vjetpt, vjetphi, vjeteta,
+                                  jescale, gensmearphi,
+                                  djt.ajetopt[irecogen]=="reco" && jescale,
+                                  djt.ajetopt[irecogen]=="gen" && gensmearpt,
+                                  djt.ajetopt[irecogen]=="gen" && gensmearphi, NSMEAR)) return;
           Bool_t issmear = djt.ajetopt[irecogen]=="gen" && (gensmearpt || gensmearphi);
 
-          // reco
-          for(int jd=0;jd<*(djt.anD[irecogen]);jd++)
+          int nsjet = vjetpt->size();
+          if(nsjet!=vjeteta->size() || nsjet!=vjetphi->size() || nsjet!=(issmear?NSMEAR:1)) { std::cout<<"error: wrong number of jet in vector."<<std::endl; return; }
+          for(int s=0;s<nsjet;s++)
             {
-              Int_t ibinpt = xjjc::findibin(&ptBins, (**djt.aDpt[irecogen])[jd]);
-              if(ibinpt<0) continue;
-              Int_t ibinselpt = xjjc::findibin(&ptselBins, (**djt.aDpt[irecogen])[jd]);
-
-              if((**djt.aDcollisionId[irecogen])[jd] != 0) continue;
-
-              Float_t Dgenpt = (**djt.aDgenpt[irecogen])[jd];
-              Float_t weightDgen = djtweight::getDptweight(Dgenpt, ispp);
-
-              int nsjet = vjetpt->size();
-              if(nsjet!=vjeteta->size() || nsjet!=vjetphi->size() || nsjet!=(issmear?NSMEAR:1)) { std::cout<<"error: wrong number of jet in vector."<<std::endl; return; }
-              for(int s=0;s<nsjet;s++)
+              if(vjetpt->at(s) < jetptmin || vjetpt->at(s) > jetptmax) continue;
+              if(!(TMath::Abs(vjeteta->at(s)) > jetetamin && TMath::Abs(vjeteta->at(s)) < jetetamax)) continue;
+              // reco
+              for(int jd=0;jd<*(djt.anD[irecogen]);jd++)
                 {
-                  if(vjetpt->at(s) < jetptmin || vjetpt->at(s) > jetptmax) continue;
-                  if(!(TMath::Abs(vjeteta->at(s)) > jetetamin && TMath::Abs(vjeteta->at(s)) < jetetamax)) continue;
+                  Int_t ibinpt = xjjc::findibin(&ptBins, (**djt.aDpt[irecogen])[jd]);
+                  if(ibinpt<0) continue;
+                  Int_t ibinselpt = xjjc::findibin(&ptselBins, (**djt.aDpt[irecogen])[jd]);
 
-                  Float_t deltaphi = TMath::ACos(TMath::Cos((**djt.aDphi[irecogen])[jd] - vjetphi->at(s)));
-                  Float_t deltaeta = (**djt.aDeta[irecogen])[jd] - vjeteta->at(s);
-                  Float_t deltaetaref = (**djt.aDeta[irecogen])[jd] + vjeteta->at(s);
-                  Float_t deltaR[nRefBins] = {(float)TMath::Sqrt(pow(deltaphi, 2) + pow(deltaeta, 2)),
-                                              (float)TMath::Sqrt(pow(deltaphi, 2) + pow(deltaetaref, 2))};
+                  if((**djt.aDcollisionId[irecogen])[jd] != 0) continue;
+
+                  Float_t Dgenpt = (**djt.aDgenpt[irecogen])[jd];
+                  Float_t weightDgen = isMC?1:djtweight::getDptweight(Dgenpt, ispp);
+
+                  Float_t deltaR[nRefBins];
+                  deltaR[0] = djtuti::calr((**djt.aDphi[irecogen])[jd], (**djt.aDeta[irecogen])[jd], vjetphi->at(s), vjeteta->at(s), 0);
+                  deltaR[1] = djtuti::calr((**djt.aDphi[irecogen])[jd], (**djt.aDeta[irecogen])[jd], vjetphi->at(s), vjeteta->at(s), 1);
                   for(int l=0;l<nRefBins;l++)
                     {
                       Int_t ibindr = xjjc::findibin(&drBins, deltaR[l]);
                       if(ibindr<0) continue;
-
                       Int_t result_initcutval = initcutval_bindep(collisionsyst, ibinselpt, ibindr);
                       if(result_initcutval) return;
-                      djt.settrkcut(cutval_trkPt, cutval_trkEta, cutval_trkPtErr);
-                      djt.setDcut(cutval_Dsvpv, cutval_Dalpha, cutval_Dchi2cl, cutval_Dy);
+                      djt.setbindepcut(cutval_Dsvpv, cutval_Dalpha);
                       Int_t djtDsel = djt.isDselected(jd, djt.aDopt[irecogen]);
                       if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
                       if(!djtDsel) continue;
                       if((*djt.Dgen)[jd]==23333)
                         {
-                          ahHistoRMassSignal[l][ibinpt][ibindr]->Fill((*djt.Dmass)[jd], 1. / nsjet);
+                          if(!l) 
+                            {
+                              ahHistoRMassSignal[ibinpt][ibindr]->Fill((*djt.Dmass)[jd], 1. / nsjet);
+                              if(deltaR[l] < 0.3) ahHistoRMassSignalRef[ibinpt]->Fill((*djt.Dmass)[jd], 1. / nsjet);
+                              if(deltaR[l] < 0.5) ahHistoRMassSignalMe[ibinpt]->Fill((*djt.Dmass)[jd], 1. / nsjet);
+                            }
                           ahNumREfficiency[l][ibinpt]->Fill(deltaR[l], evtweight*weightDgen / nsjet);
                           if(deltaR[l] < 0.3 && l)
                             {
-                              ahHistoRMassSignalRef[ibinpt]->Fill((*djt.Dmass)[jd], 1. / nsjet);
+                              // ahHistoRMassSignalRef[ibinpt]->Fill((*djt.Dmass)[jd], 1. / nsjet);
                               ahNumREfficiencyRef[ibinpt]->Fill(deltaR[l], evtweight*weightDgen / nsjet);                              
                             }
                         }
                       if((*djt.Dgen)[jd]==23344) 
                         {
-                          ahHistoRMassSwapped[l][ibinpt][ibindr]->Fill((*djt.Dmass)[jd], 1. / nsjet);
-                          if(deltaR[l] < 0.3 && l)
-                            ahHistoRMassSwappedRef[ibinpt]->Fill((*djt.Dmass)[jd], 1. / nsjet);
+                          if(!l) 
+                            {
+                              ahHistoRMassSwapped[ibinpt][ibindr]->Fill((*djt.Dmass)[jd], 1. / nsjet);
+                              if(deltaR[l] < 0.3) ahHistoRMassSwappedRef[ibinpt]->Fill((*djt.Dmass)[jd], 1. / nsjet);
+                              if(deltaR[l] < 0.5) ahHistoRMassSwappedMe[ibinpt]->Fill((*djt.Dmass)[jd], 1. / nsjet);
+                            }
+                          // if(deltaR[l] < 0.3 && l)
+                          //   ahHistoRMassSwappedRef[ibinpt]->Fill((*djt.Dmass)[jd], 1. / nsjet);
                         }
                     }
                 }
-            }
 
-          // gen
-          for(int jd=0;jd<djt.Gsize;jd++)
-            {
-              Int_t ibinpt = xjjc::findibin(&ptBins, (*djt.Gpt)[jd]);
-              if(ibinpt<0) continue;
-
-              if((*djt.GcollisionId)[jd] != 0) continue;
-
-              Float_t Gpt = (*djt.Gpt)[jd];
-              Float_t weightG = djtweight::getDptweight(Gpt, ispp);
-
-              int nsjet = vjetpt->size();
-              if(nsjet!=vjeteta->size() || nsjet!=vjetphi->size() || nsjet!=(issmear?NSMEAR:1)) { std::cout<<"error: wrong number of jet in vector."<<std::endl; return; }
-              for(int s=0;s<nsjet;s++)
+              // gen
+              for(int jd=0;jd<djt.Gsize;jd++)
                 {
-                  if(vjetpt->at(s) < jetptmin || vjetpt->at(s) > jetptmax) continue;
-                  if(!(TMath::Abs(vjeteta->at(s)) > jetetamin && TMath::Abs(vjeteta->at(s)) < jetetamax)) continue;
+                  Int_t ibinpt = xjjc::findibin(&ptBins, (*djt.Gpt)[jd]);
+                  if(ibinpt<0) continue;
 
-                  Float_t deltaphi = TMath::ACos(TMath::Cos((*djt.Gphi)[jd] - vjetphi->at(s)));
-                  Float_t deltaeta = (*djt.Geta)[jd] - vjeteta->at(s);
-                  Float_t deltaetaref = (*djt.Geta)[jd] + vjeteta->at(s);
-                  Float_t deltaR[nRefBins] = {(float)TMath::Sqrt(pow(deltaphi, 2) + pow(deltaeta, 2)),
-                                              (float)TMath::Sqrt(pow(deltaphi, 2) + pow(deltaetaref, 2))};
+                  if((*djt.GcollisionId)[jd] != 0) continue;
+                  Int_t djtDsel = djt.isDselected(jd, "gen");
+                  if(djtDsel < 0) { std::cout<<"error: invalid option for isDselected()"<<std::endl; return; }
+                  if(!djtDsel) continue;
+
+                  Float_t Gpt = (*djt.Gpt)[jd];
+                  Float_t weightG = isMC?1.:djtweight::getDptweight(Gpt, ispp);
+
+                  Float_t deltaR[nRefBins];
+                  deltaR[0] = djtuti::calr((*djt.Gphi)[jd], (*djt.Geta)[jd], vjetphi->at(s), vjeteta->at(s), 0);
+                  deltaR[1] = djtuti::calr((*djt.Gphi)[jd], (*djt.Geta)[jd], vjetphi->at(s), vjeteta->at(s), 1);
                   for(int l=0;l<nRefBins;l++)
                     {
-                      Int_t djtDsel = djt.isDselected(jd, "gen");
-                      if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
-                      if(!djtDsel) continue;
-
                       ahDenREfficiency[l][ibinpt]->Fill(deltaR[l], evtweight*weightG / nsjet);
                       if(deltaR[l] < 0.3 && l)
                         ahDenREfficiencyRef[ibinpt]->Fill(deltaR[l], evtweight*weightG / nsjet);
-                      if(djtDsel && 
-                         TMath::Abs((*djt.Gtk1eta)[jd]) < 2.0 && TMath::Abs((*djt.Gtk2eta)[jd]) < 2.0 && (*djt.Gtk1pt)[jd] > 2.0 && (*djt.Gtk2pt)[jd] > 2.0)
+                      if(TMath::Abs((*djt.Gtk1eta)[jd]) < 2.0 && TMath::Abs((*djt.Gtk2eta)[jd]) < 2.0 && (*djt.Gtk1pt)[jd] > 2.0 && (*djt.Gtk2pt)[jd] > 2.0)
                         {
                           ahAccREfficiency[l][ibinpt]->Fill(deltaR[l], evtweight*weightG / nsjet);
                           if(deltaR[l] < 0.3 && l)

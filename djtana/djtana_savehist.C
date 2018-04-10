@@ -18,8 +18,14 @@ void djtana_savehist(TString inputname, TString outputname,
  
   djet djt(inputname, ispp, isMC);
   // djt.setjetcut(jetptmin, jetetamin, jetetamax);
+  djt.settrkcut(cutval_trkPt, cutval_trkEta, cutval_trkPtErr);
+  djt.setDcut(cutval_Dsvpv, cutval_Dalpha, cutval_Dchi2cl, cutval_Dy);
   djt.setGcut(cutval_Dy);
   initcutval(collisionsyst);
+
+  Bool_t doJEC = djt.ajetopt[irecogen]=="reco" && jescale;
+  Bool_t doSmearPt =  djt.ajetopt[irecogen]=="gen" && gensmearpt;
+  Bool_t doSmearAngle = djt.ajetopt[irecogen]=="gen" && gensmearphi;
 
   Int_t fileno = -1;
   if(ispp && !isMC)
@@ -32,6 +38,7 @@ void djtana_savehist(TString inputname, TString outputname,
   int rnentries = (maxevt>0&&(maxevt+istart)<=nentries)?(istart+maxevt):nentries;
   int ncountjet = 0;
   int NSMEAR=15;
+  // loop events
   for(int i=istart;i<rnentries;i++)
     {
       if(i%10000==0) std::cout<<std::setiosflags(std::ios::left)<<"  [ \033[1;36m"<<std::setw(10)<<i<<"\033[0m"<<" / "<<std::setw(10)<<rnentries<<" ] "<<"\033[1;36m"<<std::setw(4)<<Form("%.0f%s",100.*i/rnentries,"%")<<"\033[0m"<<"   >>   djtana_savehist("<<std::setw(5)<<Form("%s,",collisionsyst.Data())<<" "<<std::setw(5)<<Form("%s,",tMC[isMC].Data())<<" "<<std::setw(20)<<Form("%sD_%sjet)", djt.aDopt[irecogen].Data(), djt.ajetopt[irecogen].Data())<<"\r"<<std::flush;
@@ -61,92 +68,156 @@ void djtana_savehist(TString inputname, TString outputname,
           Float_t jetnpdfpart = 0;
           if(jescale==2) jetnpdfpart = (*djt.jetnpfpart_akpu3pf)[jj];
 
-          // JEC
-          if(djt.ajetopt[irecogen]=="reco" && jescale)
-            if(djtcorr::ptCorr(jescale, jetpt, jetnpdfpart, ibincent)) return;
-
-          // smear pt
           std::vector<float>* vjetpt = new std::vector<float>();
-          if(djt.ajetopt[irecogen]=="gen" && gensmearpt)
-            {
-              for(int n=0;n<NSMEAR;n++)
-                {
-                  float sjetpt = jetpt;
-                  if(djtcorr::ptSmear(sjetpt, ibincent)) return;
-                  vjetpt->push_back(sjetpt);
-                }
-            }
-          else
-            { vjetpt->push_back(jetpt); }
-
-          // smear angle
           std::vector<float>* vjetphi = new std::vector<float>();
           std::vector<float>* vjeteta = new std::vector<float>();
-          if(djt.ajetopt[irecogen]=="gen" && gensmearphi)
-            {
-              for(int n=0;n<NSMEAR;n++)
-                {
-                  float sjetphi = jetphi, sjeteta = jeteta;
-                  if(djtcorr::angleSmear(gensmearphi, sjeteta, sjetphi, vjetpt->at(n), ibincent)) return;
-                  vjetphi->push_back(sjetphi);
-                  vjeteta->push_back(sjeteta);
-                }
-            }
-          else
-            {
-              vjetphi->push_back(jetphi);
-              vjeteta->push_back(jeteta);
-            }
 
+          if(djtcorr::processjets(jetpt, jetphi, jeteta, jetnpdfpart, ibincent,
+                                  vjetpt, vjetphi, vjeteta, 
+                                  jescale, gensmearphi,
+                                  djt.ajetopt[irecogen]=="reco" && jescale,
+                                  djt.ajetopt[irecogen]=="gen" && gensmearpt,
+                                  djt.ajetopt[irecogen]=="gen" && gensmearphi, NSMEAR)) return;
           Bool_t issmear = djt.ajetopt[irecogen]=="gen" && (gensmearpt || gensmearphi);
 
-          // loop D
-          for(int jd=0;jd<*(djt.anD[irecogen]);jd++)
+          int nsjet = vjetpt->size();
+          if(nsjet!=vjeteta->size() || nsjet!=vjetphi->size() || nsjet!=(issmear?NSMEAR:1)) { std::cout<<"error: wrong number of jet in vector."<<std::endl; return; }
+          for(int s=0;s<nsjet;s++)
             {
-              Int_t ibinpt = xjjc::findibin(&ptBins, (**djt.aDpt[irecogen])[jd]);
-              if(ibinpt<0) continue;
+              if(vjetpt->at(s) < jetptmin || vjetpt->at(s) > jetptmax) continue;
+              if(!(TMath::Abs(vjeteta->at(s)) > jetetamin && TMath::Abs(vjeteta->at(s)) < jetetamax)) continue;
 
-              if(isMC && signalMC && (**djt.aDcollisionId[irecogen])[jd]!=0) continue;
-
-              Int_t ibinselpt = xjjc::findibin(&ptselBins, (**djt.aDpt[irecogen])[jd]);
-              if(ibinselpt<0) { std::cout<<" error: wrong ibinselpt."<<std::endl; return; }
-
-              Float_t Dgenpt = isMC?(**djt.aDgenpt[irecogen])[jd]:100.;
-              Float_t weightDgen = isMC?djtweight::getDptweight(Dgenpt, ispp):1.;
-
-              int nsjet = vjetpt->size();
-              if(nsjet!=vjeteta->size() || nsjet!=vjetphi->size() || nsjet!=(issmear?NSMEAR:1)) { std::cout<<"error: wrong number of jet in vector."<<std::endl; return; }
-              for(int s=0;s<nsjet;s++)
+              // loop D
+              for(int jd=0;jd<*(djt.anD[irecogen]);jd++)
                 {
-                  if(vjetpt->at(s) < jetptmin || vjetpt->at(s) > jetptmax) continue;
-                  if(!(TMath::Abs(vjeteta->at(s)) > jetetamin && TMath::Abs(vjeteta->at(s)) < jetetamax)) continue;
+                  if(isMC && signalMC && (**djt.aDcollisionId[irecogen])[jd]!=0) continue;
+                  Int_t ibinpt = xjjc::findibin(&ptBins, (**djt.aDpt[irecogen])[jd]);
+                  if(ibinpt<0) continue;
+                  Int_t ibinselpt = xjjc::findibin(&ptselBins, (**djt.aDpt[irecogen])[jd]);
+                  if(ibinselpt<0) { std::cout<<" error: wrong ibinselpt."<<std::endl; return; }
 
-                  Float_t deltaphi = TMath::ACos(TMath::Cos((**djt.aDphi[irecogen])[jd] - vjetphi->at(s)));
-                  Float_t deltaeta = (**djt.aDeta[irecogen])[jd] - vjeteta->at(s);
-                  Float_t deltaetaref = (**djt.aDeta[irecogen])[jd] + vjeteta->at(s);
-                  Float_t deltaR[nRefBins] = {(float)TMath::Sqrt(pow(deltaphi, 2) + pow(deltaeta, 2)),
-                                              (float)TMath::Sqrt(pow(deltaphi, 2) + pow(deltaetaref, 2))};
-                  // Float_t corrfactor = 1, corrfactorSg = 1;
+                  Float_t deltaR[nRefBins];
+                  deltaR[0] = djtuti::calr((**djt.aDphi[irecogen])[jd], (**djt.aDeta[irecogen])[jd], vjetphi->at(s), vjeteta->at(s), 0);
+                  deltaR[1] = djtuti::calr((**djt.aDphi[irecogen])[jd], (**djt.aDeta[irecogen])[jd], vjetphi->at(s), vjeteta->at(s), 1);
+
                   for(int l=0;l<nRefBins;l++)
                     {
                       Int_t ibindr = xjjc::findibin(&drBins, deltaR[l]);
                       if(ibindr<0) continue;
                       Int_t result_initcutval = initcutval_bindep(collisionsyst, ibinselpt, ibindr);
                       if(result_initcutval) return;
-                      djt.settrkcut(cutval_trkPt, cutval_trkEta, cutval_trkPtErr);
-                      djt.setDcut(cutval_Dsvpv, cutval_Dalpha, cutval_Dchi2cl, cutval_Dy);
+                      djt.setbindepcut(cutval_Dsvpv, cutval_Dalpha);
                       Int_t djtDsel = djt.isDselected(jd, djt.aDopt[irecogen]);
                       if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
                       if(!djtDsel) continue;
                       Float_t Dmass = irecogen%2==0?(*djt.Dmass)[jd]:DZERO_MASS;
-                      ahHistoRMass[l][ibinpt][ibindr]->Fill(Dmass, evtweight*weightDgen / nsjet);
+                      ahHistoRMass[l][ibinpt][ibindr]->Fill(Dmass, evtweight / nsjet);
                       if(deltaR[l] < 0.3 && l)
-                        ahHistoRMassRef[ibinpt]->Fill(Dmass, evtweight*weightDgen / nsjet);
+                        ahHistoRMassRef[ibinpt]->Fill(Dmass, evtweight / nsjet);
                     }
+                } //! loopD
+              // mix-UE D
+              if(ispp || signalMC) continue;
+              if(djt.nmix==0) continue;
+              for(int jd=0;jd<*(djt.anD_mix[irecogen]);jd++)
+                {
+                  std::cout<<"test"<<std::endl;
+                  if(isMC && signalMC && (**djt.aDcollisionId_mix[irecogen])[jd]!=0) continue;
+                  Int_t ibinpt = xjjc::findibin(&ptBins, (**djt.aDpt_mix[irecogen])[jd]);
+                  if(ibinpt<0) continue;
+                  Int_t ibinselpt = xjjc::findibin(&ptselBins, (**djt.aDpt_mix[irecogen])[jd]);
+                  if(ibinselpt<0) { std::cout<<" error: wrong ibinselpt."<<std::endl; return; }
+                  Float_t deltaR = djtuti::calr((**djt.aDphi_mix[irecogen])[jd], (**djt.aDeta_mix[irecogen])[jd], vjetphi->at(s), vjeteta->at(s), 0);
+                  Int_t ibindr = xjjc::findibin(&drBins, deltaR);
+                  if(ibindr<0) continue;
+                  Int_t result_initcutval = initcutval_bindep(collisionsyst, ibinselpt, ibindr);
+                  if(result_initcutval) return;
+                  djt.setbindepcut(cutval_Dsvpv, cutval_Dalpha);
+                  Int_t djtDsel = djt.isDselected_mix(jd, djt.aDopt[irecogen]);
+                  if(djtDsel < 0) { std::cout<<"error: invalid option for isDselected_mix()"<<std::endl; return; }
+                  if(!djtDsel) continue;
+                  Float_t Dmass = irecogen%2==0?(*djt.Dmass)[jd]:DZERO_MASS;
+                  ahHistoRMassMe[1][ibinpt]->Fill(Dmass, evtweight / nsjet);
+                }//! loop UE D
+            }
+        } //!loop jets
+
+      // loop UE jets
+      if(ispp || signalMC) continue;
+      if(djt.nmix==0) continue;
+      for(int jj=0;jj<*(djt.anjet_mix[irecogen]);jj++)
+        {
+          if(isMC && signalMC && (**djt.asubid_mix[irecogen])[jj]!=0) continue;
+          
+          Float_t jetpt = (**djt.ajetpt_mix[irecogen])[jj];
+          Float_t jetphi = (**djt.ajetphi_mix[irecogen])[jj];
+          Float_t jeteta = (**djt.ajeteta_mix[irecogen])[jj];
+          Float_t jetnpdfpart = 0;
+          if(jescale==2) jetnpdfpart = (*djt.jetnpfpart_akpu3pf_mix)[jj];
+
+          std::vector<float>* vjetpt = new std::vector<float>();
+          std::vector<float>* vjetphi = new std::vector<float>();
+          std::vector<float>* vjeteta = new std::vector<float>();
+
+          if(djtcorr::processjets(jetpt, jetphi, jeteta, jetnpdfpart, ibincent,
+                                  vjetpt, vjetphi, vjeteta, 
+                                  jescale, gensmearphi,
+                                  djt.ajetopt[irecogen]=="reco" && jescale,
+                                  djt.ajetopt[irecogen]=="gen" && gensmearpt,
+                                  djt.ajetopt[irecogen]=="gen" && gensmearphi, NSMEAR)) return;
+          Bool_t issmear = djt.ajetopt[irecogen]=="gen" && (gensmearpt || gensmearphi);
+
+          int nsjet = vjetpt->size();
+          if(nsjet!=vjeteta->size() || nsjet!=vjetphi->size() || nsjet!=(issmear?NSMEAR:1)) { std::cout<<"error: wrong number of jet in vector."<<std::endl; return; }
+
+          for(int s=0;s<nsjet;s++)
+            {
+              if(vjetpt->at(s) < jetptmin || vjetpt->at(s) > jetptmax) continue;
+              if(!(TMath::Abs(vjeteta->at(s)) > jetetamin && TMath::Abs(vjeteta->at(s)) < jetetamax)) continue;
+
+              // loop D
+              for(int jd=0;jd<*(djt.anD[irecogen]);jd++)
+                {
+                  Int_t ibinpt = xjjc::findibin(&ptBins, (**djt.aDpt[irecogen])[jd]);
+                  if(ibinpt<0) continue;
+                  if(isMC && signalMC && (**djt.aDcollisionId[irecogen])[jd]!=0) continue;
+                  Int_t ibinselpt = xjjc::findibin(&ptselBins, (**djt.aDpt[irecogen])[jd]);
+                  if(ibinselpt<0) { std::cout<<" error: wrong ibinselpt."<<std::endl; return; }
+                  Float_t deltaR = djtuti::calr((**djt.aDphi[irecogen])[jd], (**djt.aDeta[irecogen])[jd], vjetphi->at(s), vjeteta->at(s), 0);
+                  Int_t ibindr = xjjc::findibin(&drBins, deltaR);
+                  if(ibindr<0) continue;
+                  Int_t result_initcutval = initcutval_bindep(collisionsyst, ibinselpt, ibindr);
+                  if(result_initcutval) return;
+                  djt.setbindepcut(cutval_Dsvpv, cutval_Dalpha);
+                  Int_t djtDsel = djt.isDselected(jd, djt.aDopt[irecogen]);
+                  if(djtDsel < 0) return;
+                  if(!djtDsel) continue;
+                  Float_t Dmass = irecogen%2==0?(*djt.Dmass)[jd]:DZERO_MASS;
+                  ahHistoRMassMe[0][ibinpt]->Fill(Dmass, evtweight / nsjet);
+                }
+              // mix-UE D
+              for(int jd=0;jd<*(djt.anD_mix[irecogen]);jd++)
+                {
+                  Int_t ibinpt = xjjc::findibin(&ptBins, (**djt.aDpt_mix[irecogen])[jd]);
+                  if(ibinpt<0) continue;
+                  Int_t ibinselpt = xjjc::findibin(&ptselBins, (**djt.aDpt_mix[irecogen])[jd]);
+                  if(ibinselpt<0) { std::cout<<" error: wrong ibinselpt."<<std::endl; return; }
+                  Float_t deltaR = djtuti::calr((**djt.aDphi_mix[irecogen])[jd], (**djt.aDeta_mix[irecogen])[jd], vjetphi->at(s), vjeteta->at(s), 0);
+                  Int_t ibindr = xjjc::findibin(&drBins, deltaR);
+                  if(ibindr<0) continue;
+                  Int_t result_initcutval = initcutval_bindep(collisionsyst, ibinselpt, ibindr);
+                  if(result_initcutval) return;
+                  djt.setbindepcut(cutval_Dsvpv, cutval_Dalpha);
+                  Int_t djtDsel = djt.isDselected_mix(jd, djt.aDopt[irecogen]);
+                  if(djtDsel < 0) return;
+                  if(!djtDsel) continue;
+                  Float_t Dmass = irecogen%2==0?(*djt.Dmass)[jd]:DZERO_MASS;
+                  ahHistoRMassMe[2][ibinpt]->Fill(Dmass, evtweight / nsjet);
                 }
             }
-        }
-    }
+        } //! loop UE jets
+    } //! loop events
+
   std::cout<<std::setiosflags(std::ios::left)<<"  Processed "<<"\033[1;31m"<<rnentries<<"\033[0m out of\033[1;31m "<<nentries<<"\033[0m event(s)."<<"   >>   djtana_savehist("<<std::setw(5)<<Form("%s,",collisionsyst.Data())<<" "<<std::setw(5)<<Form("%s,",tMC[isMC].Data())<<" "<<std::setw(30)<<Form("%sD_%sjet)", djt.aDopt[irecogen].Data(), djt.ajetopt[irecogen].Data())<<std::endl;
   std::cout<<std::endl;
 
