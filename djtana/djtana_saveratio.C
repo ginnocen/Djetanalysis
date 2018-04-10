@@ -16,23 +16,8 @@ void djtana_saveratio(std::vector<TString> inputhistname, TString outputname)
 
   for(int i=0;i<nPtBins;i++)
     {
-      for(int l=0;l<nRefBins;l++)
-        {
-          TH1F* hSignalXnormP[2][2] = {{ahSignalRnormP[0][l][i]}, 
-                                       {ahSignalRnormP[1][l][i]}};
-          TH1F* hSignalXnormRatio[2] = {ahSignalRnormRatio[l][i]};
-          for(int k=0;k<1;k++)
-            {
-              hSignalXnormRatio[k]->Divide(hSignalXnormP[1][k], hSignalXnormP[0][k]);
-            }
-        }
-      TH1F* hSignalXsubP[2][2] = {{ahSignalRsubP[0][i]}, 
-                                  {ahSignalRsubP[1][i]}};
-      TH1F* hSignalXsubRatio[2] = {ahSignalRsubRatio[i]};
-      for(int k=0;k<1;k++)
-        {
-          hSignalXsubRatio[k]->Divide(hSignalXsubP[1][k], hSignalXsubP[0][k]);
-        }
+      ahSignalRsubRatio[i]->Divide(ahSignalRsubP[1][i], ahSignalRsubP[0][i]);
+      ahSignalRsubRatioMe[i]->Divide(ahSignalRsubMeP[1][i], ahSignalRsubMeP[0][i]);
     }
   
   TFile* outf = new TFile(Form("%s.root",outputname.Data()), "recreate");

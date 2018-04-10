@@ -2,8 +2,7 @@
 
 void djtana_plotratio(TString inputhistname, TString outputname,
                       Int_t isMC,
-                      Float_t jetptmin, Float_t jetptmax, Float_t jetetamin, Float_t jetetamax,
-                      Int_t plotwosub = 0)
+                      Float_t jetptmin, Float_t jetptmax, Float_t jetetamin, Float_t jetetamax)
 {
   int arguerr();
   if(arguerr()) return;
@@ -24,51 +23,59 @@ void djtana_plotratio(TString inputhistname, TString outputname,
   TString texjetpt = jetptmax<999?Form("%s < p_{T}^{jet} < %s GeV/c",xjjc::number_remove_zero(jetptmin).c_str(),xjjc::number_remove_zero(jetptmax).c_str()):Form("p_{T}^{jet} > %s GeV/c",xjjc::number_remove_zero(jetptmin).c_str());
   vectex.push_back(texjetpt);
 
-  std::vector<float> vdrBins, vzBins;
-  for(int j=0;j<sizeof(drBins)/sizeof(drBins[0]);j++) vdrBins.push_back(drBins[j]);
-  std::vector<TH1F**> hSignalXsubRatio  = {(TH1F**)ahSignalRsubRatio};
-  std::vector<TH1F**> hSignalXnormRatio  = {(TH1F**)ahSignalRnormRatio};
-  std::vector<TString> xtitle  = {"r"};
-  std::vector<TString> ytitle  = {isMC?"#frac{1}{N_{JD}} #frac{dN_{JD}}{dr}_{P+H}/#frac{1}{N_{JD}} #frac{dN_{JD}}{dr}_{P}":"#frac{1}{N_{JD}} #frac{dN_{JD}}{dr}_{PbPb}/#frac{1}{N_{JD}} #frac{dN_{JD}}{dr}_{pp}"};
-  std::vector<TString> tname  = {"dr"};
-  std::vector<std::vector<float>> vxBins  = {vdrBins};
+  TString ytitle  = isMC?"#frac{1}{N_{JD}} #frac{dN_{JD}}{dr}_{P+H}/#frac{1}{N_{JD}} #frac{dN_{JD}}{dr}_{P}":"#frac{1}{N_{JD}} #frac{dN_{JD}}{dr}_{PbPb}/#frac{1}{N_{JD}} #frac{dN_{JD}}{dr}_{pp}";
   Float_t yaxismin = isMC?0.5:0, yaxismax = isMC?1.5:5.e+0;
 
   // plot
-  for(int k=0;k<1;k++)
+  for(int i=0;i<nPtBins;i++)
     {
       TCanvas* c = new TCanvas("c", "", 600, 600);
       // if(!isMC) c->SetLogy();
-      TH2F* hempty = new TH2F("hempty", Form(";%s;%s",xtitle[k].Data(),ytitle[k].Data()), 5, vxBins[k].front(), vxBins[k].back(), 10, yaxismin, yaxismax);
+      TH2F* hempty = new TH2F("hempty", Form(";%s;%s","r",ytitle.Data()), 5, drBins[0], drBins[nDrBins], 10, yaxismin, yaxismax);
       xjjroot::sethempty(hempty, 0, 0.3);
       hempty->GetXaxis()->SetNdivisions(505);
       hempty->Draw();
-      xjjroot::drawline(vxBins[k].front(), 1, vxBins[k].back(), 1, kGray+2, 2, 2);
-      TLegend* leg = new TLegend(0.53, 0.88-nPtBins*0.06*(1+plotwosub), 0.85, 0.88);
+      xjjroot::drawline(drBins[0], 1, drBins[nDrBins], 1, kGray+2, 2, 2);
+      TLegend* leg = new TLegend(0.53, 0.88-0.06, 0.85, 0.88);
       xjjroot::setleg(leg);
-      for(int i=0;i<nPtBins;i++)
-        {
-          xjjroot::setthgrstyle((hSignalXsubRatio.at(k))[i], amcolor[i], amstyle[0][i], 1.2, amcolor[i], 1, 1, -1, -1, -1);
-          (hSignalXsubRatio.at(k))[i]->Draw("pe same");
-          TString tleg = ptBins[i+1]==999?Form("p_{T}^{D} > %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str()):Form("%s < p_{T}^{D} < %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str(),xjjc::number_remove_zero(ptBins[i+1]).c_str());
-          leg->AddEntry((hSignalXsubRatio.at(k))[i], tleg.Data(), "p");
-
-          if(plotwosub)
-            {
-              xjjroot::setthgrstyle((hSignalXnormRatio.at(k))[0*nPtBins+i], amcolor[i], amstyle[1][i], 1.2, amcolor[i], 1, 1, -1, -1, -1);
-              (hSignalXnormRatio.at(k))[0*nPtBins+i]->Draw("pe same");
-              leg->AddEntry((hSignalXnormRatio.at(k))[0*nPtBins+i], "before bkg sub", "p");
-            }
-
-          xjjroot::drawCMS("");
-          Float_t texxpos = 0.22, texypos = 0.85, texdypos = 0.06;
-          texypos += texdypos;
-          for(std::vector<TString>::const_iterator it=vectex.begin(); it!=vectex.end(); it++)
-            xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), *it);
-          if(k) xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), "#DeltaR < 0.3");
-        }
+      xjjroot::setthgrstyle(ahSignalRsubRatio[i], amcolor[i], amstyle[0], 1.2, amcolor[i], 1, 1, -1, -1, -1);
+      ahSignalRsubRatio[i]->Draw("pe same");
+      TString tleg = ptBins[i+1]==999?Form("p_{T}^{D} > %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str()):Form("%s < p_{T}^{D} < %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str(),xjjc::number_remove_zero(ptBins[i+1]).c_str());
+      leg->AddEntry(ahSignalRsubRatio[i], tleg.Data(), "p");
+      xjjroot::drawCMS("");
+      Float_t texxpos = 0.22, texypos = 0.85, texdypos = 0.06;
+      texypos += texdypos;
+      for(std::vector<TString>::const_iterator it=vectex.begin(); it!=vectex.end(); it++)
+        xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), *it);
       leg->Draw();
-      c->SaveAs(Form("plotratios/cratio_%s_%s.pdf",tname[k].Data(),outputname.Data()));
+      c->SaveAs(Form("plotratios/cratio_%s_%s_%d.pdf",outputname.Data(),"dr",i));
+      delete leg;
+      delete hempty;
+      delete c;
+    }
+
+  for(int i=0;i<nPtBins;i++)
+    {
+      TCanvas* c = new TCanvas("c", "", 600, 600);
+      // if(!isMC) c->SetLogy();
+      TH2F* hempty = new TH2F("hempty", Form(";%s;%s","r",ytitle.Data()), 5, drBins[0], drBins[nDrBins], 10, yaxismin, yaxismax);
+      xjjroot::sethempty(hempty, 0, 0.3);
+      hempty->GetXaxis()->SetNdivisions(505);
+      hempty->Draw();
+      xjjroot::drawline(drBins[0], 1, drBins[nDrBins], 1, kGray+2, 2, 2);
+      TLegend* leg = new TLegend(0.53, 0.88-0.06, 0.85, 0.88);
+      xjjroot::setleg(leg);
+      xjjroot::setthgrstyle(ahSignalRsubRatioMe[i], amcolor[i], amstyle[0], 1.2, amcolor[i], 1, 1, -1, -1, -1);
+      ahSignalRsubRatioMe[i]->Draw("pe same");
+      TString tleg = ptBins[i+1]==999?Form("p_{T}^{D} > %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str()):Form("%s < p_{T}^{D} < %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str(),xjjc::number_remove_zero(ptBins[i+1]).c_str());
+      leg->AddEntry(ahSignalRsubRatioMe[i], tleg.Data(), "p");
+      xjjroot::drawCMS("");
+      Float_t texxpos = 0.22, texypos = 0.85, texdypos = 0.06;
+      texypos += texdypos;
+      for(std::vector<TString>::const_iterator it=vectex.begin(); it!=vectex.end(); it++)
+        xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), *it);
+      leg->Draw();
+      c->SaveAs(Form("plotratios/cratio_%s_%s_%d_Me.pdf",outputname.Data(),"dr",i));
       delete leg;
       delete hempty;
       delete c;
