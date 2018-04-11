@@ -17,9 +17,9 @@
 class djet 
 {
 public:
-  TTree*                fChain;   //!pointer to the analyzed TTree or TChain
+  TTree*                fChain; //!pointer to the analyzed TTree or TChain
   TTree*                fHlt;
-  
+   
   // Declaration of leaf types
   Int_t                 isPP;
   UInt_t                run;
@@ -30,8 +30,8 @@ public:
   Float_t               weight;
   Float_t               pthat;
   Float_t               hiEvtPlanes[29];
+
   Int_t                 njet_akpu3pf;
-  std::vector<float>*   jetptCorr_akpu3pf;
   std::vector<float>*   jetpt_akpu3pf;
   std::vector<float>*   jeteta_akpu3pf;
   std::vector<float>*   jetphi_akpu3pf;
@@ -40,131 +40,36 @@ public:
   std::vector<float>*   gjeteta_akpu3pf;
   std::vector<float>*   gjetphi_akpu3pf;
   std::vector<int>*     gjetflavor_akpu3pf;
-  std::vector<float>*   chargedSum_akpu3pf;
   std::vector<int>*     subid_akpu3pf;
+
   Int_t                 ngen_akpu3pf;
   std::vector<float>*   genpt_akpu3pf;
   std::vector<float>*   geneta_akpu3pf;
   std::vector<float>*   genphi_akpu3pf;
   std::vector<int>*     gensubid_akpu3pf;
-  Int_t                 njet_akpu4pf;
-  std::vector<float>*   jetptCorr_akpu4pf;
-  std::vector<float>*   jetpt_akpu4pf;
-  std::vector<float>*   jeteta_akpu4pf;
-  std::vector<float>*   jetphi_akpu4pf;
-  std::vector<float>*   gjetpt_akpu4pf;
-  std::vector<float>*   gjeteta_akpu4pf;
-  std::vector<float>*   gjetphi_akpu4pf;
-  std::vector<int>*     gjetflavor_akpu4pf;
-  std::vector<float>*   chargedSum_akpu4pf;
-  std::vector<int>*     subid_akpu4pf;
-  Int_t                 ngen_akpu4pf;
-  std::vector<float>*   genpt_akpu4pf;
-  std::vector<float>*   geneta_akpu4pf;
-  std::vector<float>*   genphi_akpu4pf;
-  std::vector<int>*     gensubid_akpu4pf;
-  Int_t                 RunNo;
-  Int_t                 EvtNo;
-  Int_t                 LumiNo;
+
   Int_t                 Dsize;
-  Float_t               PVx;
-  Float_t               PVy;
-  Float_t               PVz;
-  Float_t               PVnchi2;
-  Float_t               BSx;
-  Float_t               BSy;
-  Float_t               BSz;
-  Float_t               PVxE;
-  Float_t               PVyE;
-  Float_t               PVzE;
-  Float_t               BSxErr;
-  Float_t               BSyErr;
-  Float_t               BSzErr;
-  Float_t               BSdxdz;
-  Float_t               BSdydz;
-  Float_t               BSdxdzErr;
-  Float_t               BSdydzErr;
-  Float_t               BSWidthX;
-  Float_t               BSWidthXErr;
-  Float_t               BSWidthY;
-  Float_t               BSWidthYErr;
-  std::vector<int>*     Dindex;
-  std::vector<int>*     Dtype;
   std::vector<float>*   Dmass;
   std::vector<float>*   Dpt;
   std::vector<float>*   Deta;
   std::vector<float>*   Dphi;
   std::vector<float>*   Dy;
-  std::vector<float>*   DvtxX;
-  std::vector<float>*   DvtxY;
-  std::vector<float>*   Dd0;
-  std::vector<float>*   Dd0Err;
-  std::vector<float>*   Ddxyz;
-  std::vector<float>*   DdxyzErr;
-  std::vector<float>*   Dchi2ndf;
   std::vector<float>*   Dchi2cl;
-  std::vector<float>*   Ddtheta;
-  std::vector<float>*   Dlxy;
   std::vector<float>*   Dalpha;
   std::vector<float>*   DsvpvDistance;
   std::vector<float>*   DsvpvDisErr;
-  std::vector<float>*   DsvpvDistance_2D;
-  std::vector<float>*   DsvpvDisErr_2D;
-  std::vector<float>*   DlxyBS;
-  std::vector<float>*   DlxyBSErr;
-  std::vector<float>*   DMaxDoca;
   std::vector<float>*   Dtrk1Pt;
   std::vector<float>*   Dtrk2Pt;
   std::vector<float>*   Dtrk1Eta;
   std::vector<float>*   Dtrk2Eta;
-  std::vector<float>*   Dtrk1Phi;
-  std::vector<float>*   Dtrk2Phi;
   std::vector<float>*   Dtrk1PtErr;
   std::vector<float>*   Dtrk2PtErr;
-  std::vector<float>*   Dtrk1Dxy;
-  std::vector<float>*   Dtrk2Dxy;
-  std::vector<float>*   Dtrk1PixelHit;
-  std::vector<float>*   Dtrk2PixelHit;
-  std::vector<float>*   Dtrk1StripHit;
-  std::vector<float>*   Dtrk2StripHit;
-  std::vector<float>*   Dtrk1nStripLayer;
-  std::vector<float>*   Dtrk2nStripLayer;
-  std::vector<float>*   Dtrk1nPixelLayer;
-  std::vector<float>*   Dtrk2nPixelLayer;
-  std::vector<float>*   Dtrk1Chi2ndf;
-  std::vector<float>*   Dtrk2Chi2ndf;
-  std::vector<float>*   Dtrk1MassHypo;
-  std::vector<float>*   Dtrk2MassHypo;
-  std::vector<int>*     Dtrk1Algo;
-  std::vector<int>*     Dtrk2Algo;
-  std::vector<int>*     Dtrk1originalAlgo;
-  std::vector<int>*     Dtrk2originalAlgo;
   std::vector<bool>*    Dtrk1highPurity;
   std::vector<bool>*    Dtrk2highPurity;
-  std::vector<int>*     Dtrk1Idx;
-  std::vector<int>*     Dtrk2Idx;
-  std::vector<float>*   Dtrk1EtaErr;
-  std::vector<float>*   Dtrk2EtaErr;
-  std::vector<float>*   Dtrk1PhiErr;
-  std::vector<float>*   Dtrk2PhiErr;
-  std::vector<float>*   Dtrk1Y;
-  std::vector<float>*   Dtrk2Y;
-  std::vector<float>*   Dtrk1D0Err;
-  std::vector<float>*   Dtrk2D0Err;
-  std::vector<float>*   Dtrk1MVAVal;
-  std::vector<float>*   Dtrk2MVAVal;
-  std::vector<int>*     Dtrk1Quality;
-  std::vector<int>*     Dtrk2Quality;
   std::vector<float>*   Dgen;
-  std::vector<int>*     DgenIndex;
-  std::vector<int>*     DgennDa;
   std::vector<float>*   Dgenpt;
-  std::vector<float>*   Dgeneta;
-  std::vector<float>*   Dgenphi;
-  std::vector<float>*   Dgeny;
   std::vector<int>*     DgencollisionId;
-  std::vector<float>*   DgenBAncestorpt;
-  std::vector<int>*     DgenBAncestorpdgId;
+
   Int_t                 Gsize;
   std::vector<float>*   Gy;
   std::vector<float>*   Geta;
@@ -173,39 +78,102 @@ public:
   std::vector<int>*     GpdgId;
   std::vector<int>*     GcollisionId;
   std::vector<int>*     GisSignal;
-  std::vector<float>*   GBAncestorpt;
-  std::vector<int>*     GBAncestorpdgId;
   std::vector<float>*   Gtk1pt;
   std::vector<float>*   Gtk1eta;
-  std::vector<float>*   Gtk1y;
-  std::vector<float>*   Gtk1phi;
   std::vector<float>*   Gtk2pt;
   std::vector<float>*   Gtk2eta;
-  std::vector<float>*   Gtk2y;
-  std::vector<float>*   Gtk2phi;
+
   Float_t               pthatweight;
   Float_t               maxDgenpt;
 
-  const static int ncases = 4;
-  TString               aDopt[ncases]          =  {"reco",            "gen",          "reco",            "gen"};
-  int*                  anD[ncases]            =  {&Dsize,            &Gsize,         &Dsize,            &Gsize};
-  std::vector<float>**  aDpt[ncases]           =  {&Dpt,              &Gpt,           &Dpt,              &Gpt};
-  std::vector<float>**  aDeta[ncases]          =  {&Deta,             &Geta,          &Deta,             &Geta};
-  std::vector<float>**  aDphi[ncases]          =  {&Dphi,             &Gphi,          &Dphi,             &Gphi};
-  std::vector<float>**  aDgenpt[ncases]        =  {&Dgenpt,           &Gpt,           &Dgenpt,           &Gpt};
-  std::vector<int>**    aDcollisionId[ncases]  =  {&DgencollisionId,  &GcollisionId,  &DgencollisionId,  &GcollisionId};
+  int                   nmix;
 
-  TString               ajetopt[ncases]        =  {"reco",            "reco",         "gen",             "gen"};
+  int                   njet_akpu3pf_mix;
+  std::vector<float>*   jetpt_akpu3pf_mix;
+  std::vector<float>*   jeteta_akpu3pf_mix;
+  std::vector<float>*   jetphi_akpu3pf_mix;
+  std::vector<int>*     jetnpfpart_akpu3pf_mix;
+  std::vector<float>*   gjetpt_akpu3pf_mix;
+  std::vector<float>*   gjeteta_akpu3pf_mix;
+  std::vector<float>*   gjetphi_akpu3pf_mix;
+  std::vector<int>*     gjetflavor_akpu3pf_mix;
+  std::vector<int>*     subid_akpu3pf_mix;
+
+  int                   ngen_akpu3pf_mix;
+  std::vector<float>*   genpt_akpu3pf_mix;
+  std::vector<float>*   geneta_akpu3pf_mix;
+  std::vector<float>*   genphi_akpu3pf_mix;
+  std::vector<int>*     gensubid_akpu3pf_mix;
+
+  int                   Dsize_mix;
+  std::vector<float>*   Dmass_mix;
+  std::vector<float>*   Dpt_mix;
+  std::vector<float>*   Deta_mix;
+  std::vector<float>*   Dphi_mix;
+  std::vector<float>*   Dy_mix;
+  std::vector<float>*   Dchi2cl_mix;
+  std::vector<float>*   Dalpha_mix;
+  std::vector<float>*   DsvpvDistance_mix;
+  std::vector<float>*   DsvpvDisErr_mix;
+  std::vector<float>*   Dtrk1Pt_mix;
+  std::vector<float>*   Dtrk2Pt_mix;
+  std::vector<float>*   Dtrk1Eta_mix;
+  std::vector<float>*   Dtrk2Eta_mix;
+  std::vector<float>*   Dtrk1PtErr_mix;
+  std::vector<float>*   Dtrk2PtErr_mix;
+  std::vector<bool>*    Dtrk1highPurity_mix;
+  std::vector<bool>*    Dtrk2highPurity_mix;
+  std::vector<float>*   Dgen_mix;
+  std::vector<float>*   Dgenpt_mix;
+  std::vector<int>*     DgencollisionId_mix;
+
+  int                   Gsize_mix;
+  std::vector<float>*   Gy_mix;
+  std::vector<float>*   Geta_mix;
+  std::vector<float>*   Gphi_mix;
+  std::vector<float>*   Gpt_mix;
+  std::vector<int>*     GpdgId_mix;
+  std::vector<int>*     GcollisionId_mix;
+  std::vector<int>*     GisSignal_mix;
+  std::vector<float>*   Gtk1pt_mix;
+  std::vector<float>*   Gtk1eta_mix;
+  std::vector<float>*   Gtk2pt_mix;
+  std::vector<float>*   Gtk2eta_mix;
+
+  const static int ncases = 4;
+  TString               aDopt[ncases]              =  {"reco",                "gen",                "reco",                "gen"};
+  int*                  anD[ncases]                =  {&Dsize,                &Gsize,               &Dsize,                &Gsize};
+  std::vector<float>**  aDpt[ncases]               =  {&Dpt,                  &Gpt,                 &Dpt,                  &Gpt};
+  std::vector<float>**  aDeta[ncases]              =  {&Deta,                 &Geta,                &Deta,                 &Geta};
+  std::vector<float>**  aDphi[ncases]              =  {&Dphi,                 &Gphi,                &Dphi,                 &Gphi};
+  std::vector<float>**  aDgenpt[ncases]            =  {&Dgenpt,               &Gpt,                 &Dgenpt,               &Gpt};
+  std::vector<int>**    aDcollisionId[ncases]      =  {&DgencollisionId,      &GcollisionId,        &DgencollisionId,      &GcollisionId};
+
+  int*                  anD_mix[ncases]            =  {&Dsize_mix,            &Gsize_mix,           &Dsize_mix,            &Gsize_mix};
+  std::vector<float>**  aDpt_mix[ncases]           =  {&Dpt_mix,              &Gpt_mix,             &Dpt_mix,              &Gpt_mix};
+  std::vector<float>**  aDeta_mix[ncases]          =  {&Deta_mix,             &Geta_mix,            &Deta_mix,             &Geta_mix};
+  std::vector<float>**  aDphi_mix[ncases]          =  {&Dphi_mix,             &Gphi_mix,            &Dphi_mix,             &Gphi_mix};
+  std::vector<float>**  aDgenpt_mix[ncases]        =  {&Dgenpt_mix,           &Gpt_mix,             &Dgenpt_mix,           &Gpt_mix};
+  std::vector<int>**    aDcollisionId_mix[ncases]  =  {&DgencollisionId_mix,  &GcollisionId_mix,    &DgencollisionId_mix,  &GcollisionId_mix};
+
+  TString               ajetopt[ncases]            =  {"reco",                "reco",               "gen",                 "gen"};
+  int*                  anjet[ncases]              =  {&njet_akpu3pf,         &njet_akpu3pf,        &njet_akpu3pf,         &njet_akpu3pf};
+  std::vector<float>**  ajetpt[ncases]             =  {&jetpt_akpu3pf,        &jetpt_akpu3pf,       &gjetpt_akpu3pf,       &gjetpt_akpu3pf};
+  std::vector<float>**  ajeteta[ncases]            =  {&jeteta_akpu3pf,       &jeteta_akpu3pf,      &gjeteta_akpu3pf,      &gjeteta_akpu3pf};
+  std::vector<float>**  ajetphi[ncases]            =  {&jetphi_akpu3pf,       &jetphi_akpu3pf,      &gjetphi_akpu3pf,      &gjetphi_akpu3pf};
+  std::vector<int>**    asubid[ncases]             =  {&subid_akpu3pf,        &subid_akpu3pf,       &subid_akpu3pf,        &subid_akpu3pf};
+
+  int*                  anjet_mix[ncases]          =  {&njet_akpu3pf_mix,     &njet_akpu3pf_mix,    &njet_akpu3pf_mix,     &njet_akpu3pf_mix};
+  std::vector<float>**  ajetpt_mix[ncases]         =  {&jetpt_akpu3pf_mix,    &jetpt_akpu3pf_mix,   &gjetpt_akpu3pf_mix,   &gjetpt_akpu3pf_mix};
+  std::vector<float>**  ajeteta_mix[ncases]        =  {&jeteta_akpu3pf_mix,   &jeteta_akpu3pf_mix,  &gjeteta_akpu3pf_mix,  &gjeteta_akpu3pf_mix};
+  std::vector<float>**  ajetphi_mix[ncases]        =  {&jetphi_akpu3pf_mix,   &jetphi_akpu3pf_mix,  &gjetphi_akpu3pf_mix,  &gjetphi_akpu3pf_mix};
+  std::vector<int>**    asubid_mix[ncases]         =  {&subid_akpu3pf_mix,    &subid_akpu3pf_mix,   &subid_akpu3pf_mix,    &subid_akpu3pf_mix};
+
   // int*                   anjet[ncases]     =   {&njet_akpu3pf,        &njet_akpu3pf,        &ngen_akpu3pf,     &ngen_akpu3pf};
   // std::vector<float>**   ajetpt[ncases]    =   {&jetpt_akpu3pf,       &jetpt_akpu3pf,       &genpt_akpu3pf,    &genpt_akpu3pf};
   // std::vector<float>**   ajeteta[ncases]   =   {&jeteta_akpu3pf,      &jeteta_akpu3pf,      &geneta_akpu3pf,   &geneta_akpu3pf};
   // std::vector<float>**   ajetphi[ncases]   =   {&jetphi_akpu3pf,      &jetphi_akpu3pf,      &genphi_akpu3pf,   &genphi_akpu3pf};
   // std::vector<int>**     asubid[ncases]    =   {&subid_akpu3pf,       &subid_akpu3pf,       &gensubid_akpu3pf, &gensubid_akpu3pf};
-  int*                   anjet[ncases]     =   {&njet_akpu3pf,        &njet_akpu3pf,        &njet_akpu3pf,     &njet_akpu3pf};
-  std::vector<float>**   ajetpt[ncases]    =   {&jetpt_akpu3pf,       &jetpt_akpu3pf,       &gjetpt_akpu3pf,    &gjetpt_akpu3pf};
-  std::vector<float>**   ajeteta[ncases]   =   {&jeteta_akpu3pf,      &jeteta_akpu3pf,      &gjeteta_akpu3pf,   &gjeteta_akpu3pf};
-  std::vector<float>**   ajetphi[ncases]   =   {&jetphi_akpu3pf,      &jetphi_akpu3pf,      &gjetphi_akpu3pf,   &gjetphi_akpu3pf};
-  std::vector<int>**     asubid[ncases]    =   {&subid_akpu3pf,       &subid_akpu3pf,       &subid_akpu3pf, &subid_akpu3pf};
 
   Int_t HLT_AK4Jet40;
   Int_t HLT_AK4Jet60;
@@ -223,7 +191,8 @@ public:
   void setjetcut(Float_t _cut_jetpt_min, Float_t _cut_jeteta_min, Float_t _cut_jeteta_max);
   void setbindepcut(Float_t _cut_Dsvpv, Float_t _cut_Dalpha);
   int isDselected(Int_t j, Option_t* option);
-  int isjetselected(Int_t j, Option_t* option);
+  int isDselected_mix(Int_t j, Option_t* option);
+  // int isjetselected(Int_t j, Option_t* option);
   int ishltselected(Option_t* option);
 
   Float_t           cut_trkPt;
@@ -250,7 +219,7 @@ private:
   virtual void Init(TTree *tree, TTree *hlt);
   virtual Bool_t Notify();
   virtual void Init_member();
-
+  void setbranchaddress(const char* bname, void* addr);
 };
 
 /*
@@ -305,7 +274,6 @@ djet::~djet()
 void djet::Init(TTree *tree, TTree *hlt)
 {
   // Set object pointer
-  jetptCorr_akpu3pf = 0;
   jetpt_akpu3pf = 0;
   jeteta_akpu3pf = 0;
   jetphi_akpu3pf = 0;
@@ -314,103 +282,33 @@ void djet::Init(TTree *tree, TTree *hlt)
   gjeteta_akpu3pf = 0;
   gjetphi_akpu3pf = 0;
   gjetflavor_akpu3pf = 0;
-  chargedSum_akpu3pf = 0;
   subid_akpu3pf = 0;
   genpt_akpu3pf = 0;
   geneta_akpu3pf = 0;
   genphi_akpu3pf = 0;
   gensubid_akpu3pf = 0;
-  jetptCorr_akpu4pf = 0;
-  jetpt_akpu4pf = 0;
-  jeteta_akpu4pf = 0;
-  jetphi_akpu4pf = 0;
-  gjetpt_akpu4pf = 0;
-  gjeteta_akpu4pf = 0;
-  gjetphi_akpu4pf = 0;
-  gjetflavor_akpu4pf = 0;
-  chargedSum_akpu4pf = 0;
-  subid_akpu4pf = 0;
-  genpt_akpu4pf = 0;
-  geneta_akpu4pf = 0;
-  genphi_akpu4pf = 0;
-  gensubid_akpu4pf = 0;
-  Dindex = 0;
-  Dtype = 0;
+
   Dmass = 0;
   Dpt = 0;
   Deta = 0;
   Dphi = 0;
   Dy = 0;
-  DvtxX = 0;
-  DvtxY = 0;
-  Dd0 = 0;
-  Dd0Err = 0;
-  Ddxyz = 0;
-  DdxyzErr = 0;
-  Dchi2ndf = 0;
   Dchi2cl = 0;
-  Ddtheta = 0;
-  Dlxy = 0;
   Dalpha = 0;
   DsvpvDistance = 0;
   DsvpvDisErr = 0;
-  DsvpvDistance_2D = 0;
-  DsvpvDisErr_2D = 0;
-  DlxyBS = 0;
-  DlxyBSErr = 0;
-  DMaxDoca = 0;
   Dtrk1Pt = 0;
   Dtrk2Pt = 0;
   Dtrk1Eta = 0;
   Dtrk2Eta = 0;
-  Dtrk1Phi = 0;
-  Dtrk2Phi = 0;
   Dtrk1PtErr = 0;
   Dtrk2PtErr = 0;
-  Dtrk1Dxy = 0;
-  Dtrk2Dxy = 0;
-  Dtrk1PixelHit = 0;
-  Dtrk2PixelHit = 0;
-  Dtrk1StripHit = 0;
-  Dtrk2StripHit = 0;
-  Dtrk1nStripLayer = 0;
-  Dtrk2nStripLayer = 0;
-  Dtrk1nPixelLayer = 0;
-  Dtrk2nPixelLayer = 0;
-  Dtrk1Chi2ndf = 0;
-  Dtrk2Chi2ndf = 0;
-  Dtrk1MassHypo = 0;
-  Dtrk2MassHypo = 0;
-  Dtrk1Algo = 0;
-  Dtrk2Algo = 0;
-  Dtrk1originalAlgo = 0;
-  Dtrk2originalAlgo = 0;
   Dtrk1highPurity = 0;
   Dtrk2highPurity = 0;
-  Dtrk1Idx = 0;
-  Dtrk2Idx = 0;
-  Dtrk1EtaErr = 0;
-  Dtrk2EtaErr = 0;
-  Dtrk1PhiErr = 0;
-  Dtrk2PhiErr = 0;
-  Dtrk1Y = 0;
-  Dtrk2Y = 0;
-  Dtrk1D0Err = 0;
-  Dtrk2D0Err = 0;
-  Dtrk1MVAVal = 0;
-  Dtrk2MVAVal = 0;
-  Dtrk1Quality = 0;
-  Dtrk2Quality = 0;
   Dgen = 0;
-  DgenIndex = 0;
-  DgennDa = 0;
   Dgenpt = 0;
-  Dgeneta = 0;
-  Dgenphi = 0;
-  Dgeny = 0;
   DgencollisionId = 0;
-  DgenBAncestorpt = 0;
-  DgenBAncestorpdgId = 0;
+
   Gy = 0;
   Geta = 0;
   Gphi = 0;
@@ -418,187 +316,189 @@ void djet::Init(TTree *tree, TTree *hlt)
   GpdgId = 0;
   GcollisionId = 0;
   GisSignal = 0;
-  GBAncestorpt = 0;
-  GBAncestorpdgId = 0;
   Gtk1pt = 0;
   Gtk1eta = 0;
-  Gtk1y = 0;
-  Gtk1phi = 0;
   Gtk2pt = 0;
   Gtk2eta = 0;
-  Gtk2y = 0;
-  Gtk2phi = 0;
+
+  jetpt_akpu3pf_mix = 0;
+  jeteta_akpu3pf_mix = 0;
+  jetphi_akpu3pf_mix = 0;
+  jetnpfpart_akpu3pf_mix = 0;
+  gjetpt_akpu3pf_mix = 0;
+  gjeteta_akpu3pf_mix = 0;
+  gjetphi_akpu3pf_mix = 0;
+  gjetflavor_akpu3pf_mix = 0;
+  subid_akpu3pf_mix = 0;
+  genpt_akpu3pf_mix = 0;
+  geneta_akpu3pf_mix = 0;
+  genphi_akpu3pf_mix = 0;
+  gensubid_akpu3pf_mix = 0;
+
+  Dmass_mix = 0;
+  Dpt_mix = 0;
+  Deta_mix = 0;
+  Dphi_mix = 0;
+  Dy_mix = 0;
+  Dchi2cl_mix = 0;
+  Dalpha_mix = 0;
+  DsvpvDistance_mix = 0;
+  DsvpvDisErr_mix = 0;
+  Dtrk1Pt_mix = 0;
+  Dtrk2Pt_mix = 0;
+  Dtrk1Eta_mix = 0;
+  Dtrk2Eta_mix = 0;
+  Dtrk1PtErr_mix = 0;
+  Dtrk2PtErr_mix = 0;
+  Dtrk1highPurity_mix = 0;
+  Dtrk2highPurity_mix = 0;
+  Dgen_mix = 0;
+  Dgenpt_mix = 0;
+  DgencollisionId_mix = 0;
+
+  Gy_mix = 0;
+  Geta_mix = 0;
+  Gphi_mix = 0;
+  Gpt_mix = 0;
+  GpdgId_mix = 0;
+  GcollisionId_mix = 0;
+  GisSignal_mix = 0;
+  Gtk1pt_mix = 0;
+  Gtk1eta_mix = 0;
+  Gtk2pt_mix = 0;
+  Gtk2eta_mix = 0;
 
   // Set branch addresses and branch pointers
   if(!tree) return;
   fChain = tree;
   fChain->SetMakeClass(1);
+  fChain->SetBranchStatus("*", 0);
 
-  fChain->SetBranchAddress("isPP", &isPP);
-  fChain->SetBranchAddress("run", &run);
-  fChain->SetBranchAddress("evt", &evt);
-  fChain->SetBranchAddress("lumi", &lumi);
-  fChain->SetBranchAddress("hiBin", &hiBin);
-  fChain->SetBranchAddress("vz", &vz);
-  fChain->SetBranchAddress("weight", &weight);
-  fChain->SetBranchAddress("pthat", &pthat);
-  fChain->SetBranchAddress("hiEvtPlanes", hiEvtPlanes);
-  fChain->SetBranchAddress("njet_akpu3pf", &njet_akpu3pf);
-  fChain->SetBranchAddress("jetptCorr_akpu3pf", &jetptCorr_akpu3pf);
-  fChain->SetBranchAddress("jetpt_akpu3pf", &jetpt_akpu3pf);
-  fChain->SetBranchAddress("jeteta_akpu3pf", &jeteta_akpu3pf);
-  fChain->SetBranchAddress("jetphi_akpu3pf", &jetphi_akpu3pf);
-  fChain->SetBranchAddress("jetnpfpart_akpu3pf", &jetnpfpart_akpu3pf);
-  fChain->SetBranchAddress("gjetpt_akpu3pf", &gjetpt_akpu3pf);
-  fChain->SetBranchAddress("gjeteta_akpu3pf", &gjeteta_akpu3pf);
-  fChain->SetBranchAddress("gjetphi_akpu3pf", &gjetphi_akpu3pf);
-  fChain->SetBranchAddress("gjetflavor_akpu3pf", &gjetflavor_akpu3pf);
-  fChain->SetBranchAddress("chargedSum_akpu3pf", &chargedSum_akpu3pf);
-  fChain->SetBranchAddress("subid_akpu3pf", &subid_akpu3pf);
-  fChain->SetBranchAddress("ngen_akpu3pf", &ngen_akpu3pf);
-  fChain->SetBranchAddress("genpt_akpu3pf", &genpt_akpu3pf);
-  fChain->SetBranchAddress("geneta_akpu3pf", &geneta_akpu3pf);
-  fChain->SetBranchAddress("genphi_akpu3pf", &genphi_akpu3pf);
-  fChain->SetBranchAddress("gensubid_akpu3pf", &gensubid_akpu3pf);
-  fChain->SetBranchAddress("njet_akpu4pf", &njet_akpu4pf);
-  fChain->SetBranchAddress("jetptCorr_akpu4pf", &jetptCorr_akpu4pf);
-  fChain->SetBranchAddress("jetpt_akpu4pf", &jetpt_akpu4pf);
-  fChain->SetBranchAddress("jeteta_akpu4pf", &jeteta_akpu4pf);
-  fChain->SetBranchAddress("jetphi_akpu4pf", &jetphi_akpu4pf);
-  fChain->SetBranchAddress("gjetpt_akpu4pf", &gjetpt_akpu4pf);
-  fChain->SetBranchAddress("gjeteta_akpu4pf", &gjeteta_akpu4pf);
-  fChain->SetBranchAddress("gjetphi_akpu4pf", &gjetphi_akpu4pf);
-  fChain->SetBranchAddress("gjetflavor_akpu4pf", &gjetflavor_akpu4pf);
-  fChain->SetBranchAddress("chargedSum_akpu4pf", &chargedSum_akpu4pf);
-  fChain->SetBranchAddress("subid_akpu4pf", &subid_akpu4pf);
-  fChain->SetBranchAddress("ngen_akpu4pf", &ngen_akpu4pf);
-  fChain->SetBranchAddress("genpt_akpu4pf", &genpt_akpu4pf);
-  fChain->SetBranchAddress("geneta_akpu4pf", &geneta_akpu4pf);
-  fChain->SetBranchAddress("genphi_akpu4pf", &genphi_akpu4pf);
-  fChain->SetBranchAddress("gensubid_akpu4pf", &gensubid_akpu4pf);
-  fChain->SetBranchAddress("RunNo", &RunNo);
-  fChain->SetBranchAddress("EvtNo", &EvtNo);
-  fChain->SetBranchAddress("LumiNo", &LumiNo);
-  fChain->SetBranchAddress("Dsize", &Dsize);
-  fChain->SetBranchAddress("PVx", &PVx);
-  fChain->SetBranchAddress("PVy", &PVy);
-  fChain->SetBranchAddress("PVz", &PVz);
-  fChain->SetBranchAddress("PVnchi2", &PVnchi2);
-  fChain->SetBranchAddress("BSx", &BSx);
-  fChain->SetBranchAddress("BSy", &BSy);
-  fChain->SetBranchAddress("BSz", &BSz);
-  fChain->SetBranchAddress("PVxE", &PVxE);
-  fChain->SetBranchAddress("PVyE", &PVyE);
-  fChain->SetBranchAddress("PVzE", &PVzE);
-  fChain->SetBranchAddress("BSxErr", &BSxErr);
-  fChain->SetBranchAddress("BSyErr", &BSyErr);
-  fChain->SetBranchAddress("BSzErr", &BSzErr);
-  fChain->SetBranchAddress("BSdxdz", &BSdxdz);
-  fChain->SetBranchAddress("BSdydz", &BSdydz);
-  fChain->SetBranchAddress("BSdxdzErr", &BSdxdzErr);                           
-  fChain->SetBranchAddress("BSdydzErr", &BSdydzErr);
-  fChain->SetBranchAddress("BSWidthX", &BSWidthX);
-  fChain->SetBranchAddress("BSWidthXErr", &BSWidthXErr);
-  fChain->SetBranchAddress("BSWidthY", &BSWidthY);
-  fChain->SetBranchAddress("BSWidthYErr", &BSWidthYErr);
-  fChain->SetBranchAddress("Dindex", &Dindex);
-  fChain->SetBranchAddress("Dtype", &Dtype);
-  fChain->SetBranchAddress("Dmass", &Dmass);
-  fChain->SetBranchAddress("Dpt", &Dpt);
-  fChain->SetBranchAddress("Deta", &Deta);
-  fChain->SetBranchAddress("Dphi", &Dphi);
-  fChain->SetBranchAddress("Dy", &Dy);
-  fChain->SetBranchAddress("DvtxX", &DvtxX);
-  fChain->SetBranchAddress("DvtxY", &DvtxY);
-  fChain->SetBranchAddress("Dd0", &Dd0);
-  fChain->SetBranchAddress("Dd0Err", &Dd0Err);
-  fChain->SetBranchAddress("Ddxyz", &Ddxyz);
-  fChain->SetBranchAddress("DdxyzErr", &DdxyzErr);
-  fChain->SetBranchAddress("Dchi2ndf", &Dchi2ndf);
-  fChain->SetBranchAddress("Dchi2cl", &Dchi2cl);
-  fChain->SetBranchAddress("Ddtheta", &Ddtheta);
-  fChain->SetBranchAddress("Dlxy", &Dlxy);
-  fChain->SetBranchAddress("Dalpha", &Dalpha);
-  fChain->SetBranchAddress("DsvpvDistance", &DsvpvDistance);
-  fChain->SetBranchAddress("DsvpvDisErr", &DsvpvDisErr);
-  fChain->SetBranchAddress("DsvpvDistance_2D", &DsvpvDistance_2D);
-  fChain->SetBranchAddress("DsvpvDisErr_2D", &DsvpvDisErr_2D);
-  fChain->SetBranchAddress("DlxyBS", &DlxyBS);
-  fChain->SetBranchAddress("DlxyBSErr", &DlxyBSErr);
-  fChain->SetBranchAddress("DMaxDoca", &DMaxDoca);
-  fChain->SetBranchAddress("Dtrk1Pt", &Dtrk1Pt);
-  fChain->SetBranchAddress("Dtrk2Pt", &Dtrk2Pt);
-  fChain->SetBranchAddress("Dtrk1Eta", &Dtrk1Eta);
-  fChain->SetBranchAddress("Dtrk2Eta", &Dtrk2Eta);
-  fChain->SetBranchAddress("Dtrk1Phi", &Dtrk1Phi);
-  fChain->SetBranchAddress("Dtrk2Phi", &Dtrk2Phi);
-  fChain->SetBranchAddress("Dtrk1PtErr", &Dtrk1PtErr);
-  fChain->SetBranchAddress("Dtrk2PtErr", &Dtrk2PtErr);
-  fChain->SetBranchAddress("Dtrk1Dxy", &Dtrk1Dxy);
-  fChain->SetBranchAddress("Dtrk2Dxy", &Dtrk2Dxy);
-  fChain->SetBranchAddress("Dtrk1PixelHit", &Dtrk1PixelHit);
-  fChain->SetBranchAddress("Dtrk2PixelHit", &Dtrk2PixelHit);
-  fChain->SetBranchAddress("Dtrk1StripHit", &Dtrk1StripHit);
-  fChain->SetBranchAddress("Dtrk2StripHit", &Dtrk2StripHit);
-  fChain->SetBranchAddress("Dtrk1nStripLayer", &Dtrk1nStripLayer);
-  fChain->SetBranchAddress("Dtrk2nStripLayer", &Dtrk2nStripLayer);
-  fChain->SetBranchAddress("Dtrk1nPixelLayer", &Dtrk1nPixelLayer);
-  fChain->SetBranchAddress("Dtrk2nPixelLayer", &Dtrk2nPixelLayer);
-  fChain->SetBranchAddress("Dtrk1Chi2ndf", &Dtrk1Chi2ndf);
-  fChain->SetBranchAddress("Dtrk2Chi2ndf", &Dtrk2Chi2ndf);
-  fChain->SetBranchAddress("Dtrk1MassHypo", &Dtrk1MassHypo);
-  fChain->SetBranchAddress("Dtrk2MassHypo", &Dtrk2MassHypo);
-  fChain->SetBranchAddress("Dtrk1Algo", &Dtrk1Algo);
-  fChain->SetBranchAddress("Dtrk2Algo", &Dtrk2Algo);
-  fChain->SetBranchAddress("Dtrk1originalAlgo", &Dtrk1originalAlgo);
-  fChain->SetBranchAddress("Dtrk2originalAlgo", &Dtrk2originalAlgo);
-  fChain->SetBranchAddress("Dtrk1highPurity", &Dtrk1highPurity);
-  fChain->SetBranchAddress("Dtrk2highPurity", &Dtrk2highPurity);
-  fChain->SetBranchAddress("Dtrk1Idx", &Dtrk1Idx);
-  fChain->SetBranchAddress("Dtrk2Idx", &Dtrk2Idx);
-  fChain->SetBranchAddress("Dtrk1EtaErr", &Dtrk1EtaErr);
-  fChain->SetBranchAddress("Dtrk2EtaErr", &Dtrk2EtaErr);
-  fChain->SetBranchAddress("Dtrk1PhiErr", &Dtrk1PhiErr);
-  fChain->SetBranchAddress("Dtrk2PhiErr", &Dtrk2PhiErr);
-  fChain->SetBranchAddress("Dtrk1Y", &Dtrk1Y);
-  fChain->SetBranchAddress("Dtrk2Y", &Dtrk2Y);
-  fChain->SetBranchAddress("Dtrk1D0Err", &Dtrk1D0Err);
-  fChain->SetBranchAddress("Dtrk2D0Err", &Dtrk2D0Err);
-  fChain->SetBranchAddress("Dtrk1MVAVal", &Dtrk1MVAVal);
-  fChain->SetBranchAddress("Dtrk2MVAVal", &Dtrk2MVAVal);
-  fChain->SetBranchAddress("Dtrk1Quality", &Dtrk1Quality);
-  fChain->SetBranchAddress("Dtrk2Quality", &Dtrk2Quality);
-  fChain->SetBranchAddress("Dgen", &Dgen);
-  fChain->SetBranchAddress("DgenIndex", &DgenIndex);
-  fChain->SetBranchAddress("DgennDa", &DgennDa);
-  fChain->SetBranchAddress("Dgenpt", &Dgenpt);
-  fChain->SetBranchAddress("Dgeneta", &Dgeneta);
-  fChain->SetBranchAddress("Dgenphi", &Dgenphi);
-  fChain->SetBranchAddress("Dgeny", &Dgeny);
-  fChain->SetBranchAddress("DgencollisionId", &DgencollisionId);
-  fChain->SetBranchAddress("DgenBAncestorpt", &DgenBAncestorpt);
-  fChain->SetBranchAddress("DgenBAncestorpdgId", &DgenBAncestorpdgId);
-  fChain->SetBranchAddress("Gsize", &Gsize);
-  fChain->SetBranchAddress("Gy", &Gy);
-  fChain->SetBranchAddress("Geta", &Geta);
-  fChain->SetBranchAddress("Gphi", &Gphi);
-  fChain->SetBranchAddress("Gpt", &Gpt);
-  fChain->SetBranchAddress("GpdgId", &GpdgId);
-  fChain->SetBranchAddress("GcollisionId", &GcollisionId);
-  fChain->SetBranchAddress("GisSignal", &GisSignal);
-  fChain->SetBranchAddress("GBAncestorpt", &GBAncestorpt);
-  fChain->SetBranchAddress("GBAncestorpdgId", &GBAncestorpdgId);
-  fChain->SetBranchAddress("Gtk1pt", &Gtk1pt);
-  fChain->SetBranchAddress("Gtk1eta", &Gtk1eta);
-  fChain->SetBranchAddress("Gtk1y", &Gtk1y);
-  fChain->SetBranchAddress("Gtk1phi", &Gtk1phi);
-  fChain->SetBranchAddress("Gtk2pt", &Gtk2pt);
-  fChain->SetBranchAddress("Gtk2eta", &Gtk2eta);
-  fChain->SetBranchAddress("Gtk2y", &Gtk2y);
-  fChain->SetBranchAddress("Gtk2phi", &Gtk2phi);
-  fChain->SetBranchAddress("pthatweight", &pthatweight);
-  fChain->SetBranchAddress("maxDgenpt", &maxDgenpt);
+  setbranchaddress("isPP", &isPP);
+  setbranchaddress("run", &run);
+  setbranchaddress("evt", &evt);
+  setbranchaddress("lumi", &lumi);
+  setbranchaddress("hiBin", &hiBin);
+  setbranchaddress("vz", &vz);
+  setbranchaddress("weight", &weight);
+  setbranchaddress("pthat", &pthat);
+  setbranchaddress("hiEvtPlanes", hiEvtPlanes);
 
+  setbranchaddress("njet_akpu3pf", &njet_akpu3pf);
+  setbranchaddress("jetpt_akpu3pf", &jetpt_akpu3pf);
+  setbranchaddress("jeteta_akpu3pf", &jeteta_akpu3pf);
+  setbranchaddress("jetphi_akpu3pf", &jetphi_akpu3pf);
+  setbranchaddress("jetnpfpart_akpu3pf", &jetnpfpart_akpu3pf);
+  if(fisMC)
+    {
+      setbranchaddress("gjetpt_akpu3pf", &gjetpt_akpu3pf);
+      setbranchaddress("gjeteta_akpu3pf", &gjeteta_akpu3pf);
+      setbranchaddress("gjetphi_akpu3pf", &gjetphi_akpu3pf);
+      setbranchaddress("gjetflavor_akpu3pf", &gjetflavor_akpu3pf);
+      setbranchaddress("subid_akpu3pf", &subid_akpu3pf);
+      setbranchaddress("ngen_akpu3pf", &ngen_akpu3pf);
+      setbranchaddress("genpt_akpu3pf", &genpt_akpu3pf);
+      setbranchaddress("geneta_akpu3pf", &geneta_akpu3pf);
+      setbranchaddress("genphi_akpu3pf", &genphi_akpu3pf);
+      setbranchaddress("gensubid_akpu3pf", &gensubid_akpu3pf);
+    }
+  setbranchaddress("Dsize", &Dsize);
+  setbranchaddress("Dmass", &Dmass);
+  setbranchaddress("Dpt", &Dpt);
+  setbranchaddress("Deta", &Deta);
+  setbranchaddress("Dphi", &Dphi);
+  setbranchaddress("Dy", &Dy);
+  setbranchaddress("Dchi2cl", &Dchi2cl);
+  setbranchaddress("Dalpha", &Dalpha);
+  setbranchaddress("DsvpvDistance", &DsvpvDistance);
+  setbranchaddress("DsvpvDisErr", &DsvpvDisErr);
+  setbranchaddress("Dtrk1Pt", &Dtrk1Pt);
+  setbranchaddress("Dtrk2Pt", &Dtrk2Pt);
+  setbranchaddress("Dtrk1Eta", &Dtrk1Eta);
+  setbranchaddress("Dtrk2Eta", &Dtrk2Eta);
+  setbranchaddress("Dtrk1PtErr", &Dtrk1PtErr);
+  setbranchaddress("Dtrk2PtErr", &Dtrk2PtErr);
+  setbranchaddress("Dtrk1highPurity", &Dtrk1highPurity);
+  setbranchaddress("Dtrk2highPurity", &Dtrk2highPurity);
+  setbranchaddress("Dgen", &Dgen);
+  setbranchaddress("Dgenpt", &Dgenpt);
+  setbranchaddress("DgencollisionId", &DgencollisionId);
+
+  if(fisMC)
+    {
+      setbranchaddress("Gsize", &Gsize);
+      setbranchaddress("Gy", &Gy);
+      setbranchaddress("Geta", &Geta);
+      setbranchaddress("Gphi", &Gphi);
+      setbranchaddress("Gpt", &Gpt);
+      setbranchaddress("GpdgId", &GpdgId);
+      setbranchaddress("GcollisionId", &GcollisionId);
+      setbranchaddress("GisSignal", &GisSignal);
+      setbranchaddress("Gtk1pt", &Gtk1pt);
+      setbranchaddress("Gtk1eta", &Gtk1eta);
+      setbranchaddress("Gtk2pt", &Gtk2pt);
+      setbranchaddress("Gtk2eta", &Gtk2eta);
+
+      setbranchaddress("pthatweight", &pthatweight);
+      setbranchaddress("maxDgenpt", &maxDgenpt);
+    }
+  if(!fispp)
+    {
+      setbranchaddress("njet_akpu3pf_mix", &njet_akpu3pf_mix);
+      setbranchaddress("jetpt_akpu3pf_mix", &jetpt_akpu3pf_mix);
+      setbranchaddress("jeteta_akpu3pf_mix", &jeteta_akpu3pf_mix);
+      setbranchaddress("jetphi_akpu3pf_mix", &jetphi_akpu3pf_mix);
+      setbranchaddress("jetnpfpart_akpu3pf_mix", &jetnpfpart_akpu3pf_mix);
+      if(fisMC)
+        {
+          setbranchaddress("gjetpt_akpu3pf_mix", &gjetpt_akpu3pf_mix);
+          setbranchaddress("gjeteta_akpu3pf_mix", &gjeteta_akpu3pf_mix);
+          setbranchaddress("gjetphi_akpu3pf_mix", &gjetphi_akpu3pf_mix);
+          setbranchaddress("gjetflavor_akpu3pf_mix", &gjetflavor_akpu3pf_mix);
+          setbranchaddress("subid_akpu3pf_mix", &subid_akpu3pf_mix);
+          setbranchaddress("ngen_akpu3pf_mix", &ngen_akpu3pf_mix);
+          setbranchaddress("genpt_akpu3pf_mix", &genpt_akpu3pf_mix);
+          setbranchaddress("geneta_akpu3pf_mix", &geneta_akpu3pf_mix);
+          setbranchaddress("genphi_akpu3pf_mix", &genphi_akpu3pf_mix);
+          setbranchaddress("gensubid_akpu3pf_mix", &gensubid_akpu3pf_mix);
+        }
+      setbranchaddress("Dsize_mix", &Dsize_mix);
+      setbranchaddress("Dmass_mix", &Dmass_mix);
+      setbranchaddress("Dpt_mix", &Dpt_mix);
+      setbranchaddress("Deta_mix", &Deta_mix);
+      setbranchaddress("Dphi_mix", &Dphi_mix);
+      setbranchaddress("Dy_mix", &Dy_mix);
+      setbranchaddress("Dchi2cl_mix", &Dchi2cl_mix);
+      setbranchaddress("Dalpha_mix", &Dalpha_mix);
+      setbranchaddress("DsvpvDistance_mix", &DsvpvDistance_mix);
+      setbranchaddress("DsvpvDisErr_mix", &DsvpvDisErr_mix);
+      setbranchaddress("Dtrk1Pt_mix", &Dtrk1Pt_mix);
+      setbranchaddress("Dtrk2Pt_mix", &Dtrk2Pt_mix);
+      setbranchaddress("Dtrk1Eta_mix", &Dtrk1Eta_mix);
+      setbranchaddress("Dtrk2Eta_mix", &Dtrk2Eta_mix);
+      setbranchaddress("Dtrk1PtErr_mix", &Dtrk1PtErr_mix);
+      setbranchaddress("Dtrk2PtErr_mix", &Dtrk2PtErr_mix);
+      setbranchaddress("Dtrk1highPurity_mix", &Dtrk1highPurity_mix);
+      setbranchaddress("Dtrk2highPurity_mix", &Dtrk2highPurity_mix);
+      setbranchaddress("Dgen_mix", &Dgen_mix);
+      setbranchaddress("Dgenpt_mix", &Dgenpt_mix);
+      setbranchaddress("DgencollisionId_mix", &DgencollisionId_mix);
+      if(fisMC)
+        {
+          setbranchaddress("Gsize_mix", &Gsize_mix);
+          setbranchaddress("Gy_mix", &Gy_mix);
+          setbranchaddress("Geta_mix", &Geta_mix);
+          setbranchaddress("Gphi_mix", &Gphi_mix);
+          setbranchaddress("Gpt_mix", &Gpt_mix);
+          setbranchaddress("GpdgId_mix", &GpdgId_mix);
+          setbranchaddress("GcollisionId_mix", &GcollisionId_mix);
+          setbranchaddress("GisSignal_mix", &GisSignal_mix);
+          setbranchaddress("Gtk1pt_mix", &Gtk1pt_mix);
+          setbranchaddress("Gtk1eta_mix", &Gtk1eta_mix);
+          setbranchaddress("Gtk2pt_mix", &Gtk2pt_mix);
+          setbranchaddress("Gtk2eta_mix", &Gtk2eta_mix);
+        }
+    }
   if(!hlt) return;
   fHlt = hlt;
   fHlt->SetMakeClass(1);
@@ -669,13 +569,13 @@ void djet::setGcut(Float_t _cut_Gy)
   fsetGcut = true;
 }
 
-void djet::setjetcut(Float_t _cut_jetpt_min, Float_t _cut_jeteta_min, Float_t _cut_jeteta_max)
-{
-  cut_jetpt_min = _cut_jetpt_min;
-  cut_jeteta_min = _cut_jeteta_min;
-  cut_jeteta_max = _cut_jeteta_max;
-  fsetjetcut = true;
-}
+// void djet::setjetcut(Float_t _cut_jetpt_min, Float_t _cut_jeteta_min, Float_t _cut_jeteta_max)
+// {
+//   cut_jetpt_min = _cut_jetpt_min;
+//   cut_jeteta_min = _cut_jeteta_min;
+//   cut_jeteta_max = _cut_jeteta_max;
+//   fsetjetcut = true;
+// }
 
 void djet::setbindepcut(Float_t _cut_Dsvpv, Float_t _cut_Dalpha)
 {
@@ -683,7 +583,7 @@ void djet::setbindepcut(Float_t _cut_Dsvpv, Float_t _cut_Dalpha)
   cut_Dalpha = _cut_Dalpha;
 }
 
-#define _KERROR_SETCUT(obj, Dorjet) {std::cout<<" error: set "<<#obj<<" before judging is"<<#Dorjet<<"selected."<<std::endl; return -1;}
+#define _KERROR_SETCUT(obj, Dorjet) { std::cout<<" error: set "<<#obj<<" before judging is"<<#Dorjet<<"selected."<<std::endl; return -1; }
 
 int djet::isDselected(int j, Option_t* option)
 {
@@ -713,29 +613,62 @@ int djet::isDselected(int j, Option_t* option)
          ) return 1;
       else return 0;
     }
+  std::cout<<"error: invalid option for isDselected()"<<std::endl;
   return -3;
 }
 
-int djet::isjetselected(int j, Option_t* option)
+int djet::isDselected_mix(int j, Option_t* option)
 {
   TString opt  = option;
   opt.ToLower();
   if((opt.Contains("r") && opt.Contains("g")) || (!opt.Contains("r") && !opt.Contains("g"))) return -2;
-  if(!fsetjetcut) _KERROR_SETCUT(jet, jet);
   if(opt.Contains("r"))
     {
-      if((*jetpt_akpu3pf)[j] > cut_jetpt_min && 
-         TMath::Abs((*jeteta_akpu3pf)[j]) > cut_jeteta_min && TMath::Abs((*jeteta_akpu3pf)[j]) < cut_jeteta_max) return 1;
+      if(!fsetDcut) _KERROR_SETCUT(D, D);
+      if(!fsettrkcut) _KERROR_SETCUT(trk, D);
+      if((*Dtrk1Pt_mix)[j] > cut_trkPt && (*Dtrk2Pt_mix)[j] > cut_trkPt &&
+         TMath::Abs((*Dtrk1Eta_mix)[j]) < cut_trkEta && TMath::Abs((*Dtrk2Eta_mix)[j]) < cut_trkEta &&
+         ((*Dtrk1PtErr_mix)[j]/(*Dtrk1Pt_mix)[j]) < cut_trkPtErr && ((*Dtrk2PtErr_mix)[j]/(*Dtrk2Pt_mix)[j]) < cut_trkPtErr &&
+         (*Dtrk1highPurity_mix)[j] && (*Dtrk2highPurity_mix)[j] &&
+         ((*DsvpvDistance_mix)[j]/(*DsvpvDisErr_mix)[j]) > cut_Dsvpv &&
+         (*Dalpha_mix)[j] < cut_Dalpha &&
+         (*Dchi2cl_mix)[j] >cut_Dchi2cl &&
+         TMath::Abs((*Dy_mix)[j]) < cut_Dy
+         ) return 1;
       else return 0;
     }
   if(opt.Contains("g"))
     {
-      if((*genpt_akpu3pf)[j] > cut_jetpt_min && 
-         TMath::Abs((*geneta_akpu3pf)[j]) > cut_jeteta_min && TMath::Abs((*geneta_akpu3pf)[j]) < cut_jeteta_max) return 1;
+      if(!fsetGcut) _KERROR_SETCUT(G, D);
+      if(((*GisSignal_mix)[j]==1 || (*GisSignal_mix)[j]==2) &&
+         TMath::Abs((*Gy_mix)[j]) < cut_Gy
+         ) return 1;
       else return 0;
     }
+  std::cout<<"error: invalid option for isDselected_mix()"<<std::endl;
   return -3;
 }
+
+// int djet::isjetselected(int j, Option_t* option)
+// {
+//   TString opt  = option;
+//   opt.ToLower();
+//   if((opt.Contains("r") && opt.Contains("g")) || (!opt.Contains("r") && !opt.Contains("g"))) return -2;
+//   if(!fsetjetcut) _KERROR_SETCUT(jet, jet);
+//   if(opt.Contains("r"))
+//     {
+//       if((*jetpt_akpu3pf)[j] > cut_jetpt_min && 
+//          TMath::Abs((*jeteta_akpu3pf)[j]) > cut_jeteta_min && TMath::Abs((*jeteta_akpu3pf)[j]) < cut_jeteta_max) return 1;
+//       else return 0;
+//     }
+//   if(opt.Contains("g"))
+//     {
+//       if((*genpt_akpu3pf)[j] > cut_jetpt_min && 
+//          TMath::Abs((*geneta_akpu3pf)[j]) > cut_jeteta_min && TMath::Abs((*geneta_akpu3pf)[j]) < cut_jeteta_max) return 1;
+//       else return 0;
+//     }
+//   return -3;
+// }
 
 int djet::ishltselected(Option_t* option)
 {
@@ -755,5 +688,9 @@ int djet::ishltselected(Option_t* option)
 
 }
 
-
+void djet::setbranchaddress(const char* bname, void* addr)
+{
+  fChain->SetBranchStatus(bname, 1);
+  fChain->SetBranchAddress(bname, addr);
+}
 #endif

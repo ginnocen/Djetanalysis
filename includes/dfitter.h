@@ -197,86 +197,6 @@ TF1* xjjroot::dfitter::fit(const TH1* hmass, const TH1* hmassMCSignal, const TH1
   sethist(hMCSignal);
   sethist(hMCSwapped);
 
-  TString fitoption = ffitverbose?"L m":"L m q";
-  // setgstyle();
-  // TCanvas* c = new TCanvas("c", "" , 600, 600);
-  
-  fun_f->SetParLimits(0,  0,     1.e+5);
-  fun_f->SetParLimits(4,  -1000, 1000);
-  fun_f->SetParLimits(10, 0.001, 0.05);
-  fun_f->SetParLimits(2,  0.01,  0.5);
-  fun_f->SetParLimits(8,  0.02,  0.2);
-  if(f3gaus) fun_f->SetParLimits(13, 0.002, 0.1);
-  fun_f->SetParLimits(7,  0,     1);
-  fun_f->SetParLimits(9,  0,     1);
-  if(f3gaus) fun_f->SetParLimits(12, 0, 1);
-    
-  // -- fit MC
-  fun_f->FixParameter(3, 0);
-  fun_f->FixParameter(4, 0);
-  fun_f->FixParameter(5, 0);
-  fun_f->FixParameter(6, 0);
-
-  //  - fit signal 
-  fun_f->FixParameter(11, 0);
-  fun_f->FixParameter(1,  fixparam1);
-  fun_f->FixParameter(7,  1);
-  fun_f->FixParameter(8,  1);
-  fun_f->SetParameter(0,  setparam0);
-  fun_f->SetParameter(1,  setparam1);
-  fun_f->SetParameter(2,  setparam2);
-  fun_f->SetParameter(10, setparam10);
-  if(f3gaus) fun_f->SetParameter(13, setparam13);
-  fun_f->SetParameter(9,  setparam9);
-  if(f3gaus) fun_f->SetParameter(12, setparam12);
-
-  hMCSignal->Fit("fun_f", "q", "", min_hist_dzero, max_hist_dzero);
-  hMCSignal->Fit("fun_f", "q", "", min_hist_dzero, max_hist_dzero);
-  fun_f->ReleaseParameter(1);
-  hMCSignal->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
-  hMCSignal->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
-  hMCSignal->Fit("fun_f", fitoption, "", min_hist_dzero, max_hist_dzero);
-
-  fun_f->FixParameter(1, fun_f->GetParameter(1));
-  fun_f->FixParameter(2, fun_f->GetParameter(2));
-  fun_f->FixParameter(10, fun_f->GetParameter(10));
-  if(f3gaus) fun_f->FixParameter(13, fun_f->GetParameter(13));
-  fun_f->FixParameter(9, fun_f->GetParameter(9));
-  if(f3gaus) fun_f->FixParameter(12, fun_f->GetParameter(12));
-
-  fixparam7 = fun_f->GetParameter(0);
-
-  //   - fit swapped
-  fun_f->FixParameter(7,0);
-  fun_f->ReleaseParameter(8);
-  fun_f->SetParameter(8,setparam8);
-  
-  hMCSwapped->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
-  hMCSwapped->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
-  hMCSwapped->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
-  hMCSwapped->Fit("fun_f",fitoption,"", min_hist_dzero, max_hist_dzero);
-  
-  fixparam7 = fixparam7/(fun_f->GetParameter(0)+fixparam7);
-  fun_f->FixParameter(7, fixparam7);
-  fun_f->FixParameter(8,fun_f->GetParameter(8));
-
-  //  -- fit data
-  fun_f->ReleaseParameter(3);
-  fun_f->ReleaseParameter(4);
-  fun_f->ReleaseParameter(5);
-  fun_f->ReleaseParameter(6);
-  
-  h->Fit("fun_f", "q", "", min_hist_dzero, max_hist_dzero);
-  h->Fit("fun_f", "q", "", min_hist_dzero, max_hist_dzero);
-  fun_f->ReleaseParameter(1);
-  fun_f->SetParLimits(1, 1.86, 1.87);
-  fun_f->ReleaseParameter(11);
-  fun_f->SetParLimits(11, -0.5, 0.5);
-  h->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
-  h->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
-  h->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
-  r = h->Fit("fun_f", Form("%s S",fitoption.Data()),"", min_hist_dzero, max_hist_dzero);
-
   if(h->GetEntries()==0)
     {
       fun_f->SetParameter(0, 0);
@@ -284,6 +204,99 @@ TF1* xjjroot::dfitter::fit(const TH1* hmass, const TH1* hmassMCSignal, const TH1
       fun_f->SetParameter(4, 0);
       fun_f->SetParameter(5, 0);
       fun_f->SetParameter(6, 0);
+      
+      fun_f->SetParameter(1, setparam1);
+      fun_f->SetParameter(2,  setparam2);
+      fun_f->SetParameter(7,  1);
+      fun_f->SetParameter(8,  1);
+      fun_f->SetParameter(9,  setparam9);
+      fun_f->SetParameter(10, setparam10);
+      fun_f->SetParameter(11, 0);
+      if(f3gaus) fun_f->SetParameter(12, setparam12);
+      if(f3gaus) fun_f->SetParameter(13, setparam13);
+    }
+  else
+    {
+      TString fitoption = ffitverbose?"L m":"L m q";
+      // setgstyle();
+      // TCanvas* c = new TCanvas("c", "" , 600, 600);
+  
+      fun_f->SetParLimits(0,  0,     1.e+5);
+      fun_f->SetParLimits(4,  -1000, 1000);
+      fun_f->SetParLimits(10, 0.001, 0.05);
+      fun_f->SetParLimits(2,  0.01,  0.5);
+      fun_f->SetParLimits(8,  0.02,  0.2);
+      if(f3gaus) fun_f->SetParLimits(13, 0.002, 0.1);
+      fun_f->SetParLimits(7,  0,     1);
+      fun_f->SetParLimits(9,  0,     1);
+      if(f3gaus) fun_f->SetParLimits(12, 0, 1);
+    
+      // -- fit MC
+      fun_f->FixParameter(3, 0);
+      fun_f->FixParameter(4, 0);
+      fun_f->FixParameter(5, 0);
+      fun_f->FixParameter(6, 0);
+
+      //  - fit signal 
+      fun_f->FixParameter(11, 0);
+      fun_f->FixParameter(1,  fixparam1);
+      fun_f->FixParameter(7,  1);
+      fun_f->FixParameter(8,  1);
+      fun_f->SetParameter(0,  setparam0);
+      fun_f->SetParameter(1,  setparam1);
+      fun_f->SetParameter(2,  setparam2);
+      fun_f->SetParameter(10, setparam10);
+      if(f3gaus) fun_f->SetParameter(13, setparam13);
+      fun_f->SetParameter(9,  setparam9);
+      if(f3gaus) fun_f->SetParameter(12, setparam12);
+
+      hMCSignal->Fit("fun_f", "q", "", min_hist_dzero, max_hist_dzero);
+      hMCSignal->Fit("fun_f", "q", "", min_hist_dzero, max_hist_dzero);
+      fun_f->ReleaseParameter(1);
+      hMCSignal->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
+      hMCSignal->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
+      hMCSignal->Fit("fun_f", fitoption, "", min_hist_dzero, max_hist_dzero);
+
+      fun_f->FixParameter(1, fun_f->GetParameter(1));
+      fun_f->FixParameter(2, fun_f->GetParameter(2));
+      fun_f->FixParameter(10, fun_f->GetParameter(10));
+      if(f3gaus) fun_f->FixParameter(13, fun_f->GetParameter(13));
+      fun_f->FixParameter(9, fun_f->GetParameter(9));
+      if(f3gaus) fun_f->FixParameter(12, fun_f->GetParameter(12));
+
+      fixparam7 = fun_f->GetParameter(0);
+
+      //   - fit swapped
+      fun_f->FixParameter(7,0);
+      fun_f->ReleaseParameter(8);
+      fun_f->SetParameter(8,setparam8);
+  
+      hMCSwapped->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
+      hMCSwapped->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
+      hMCSwapped->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
+      hMCSwapped->Fit("fun_f",fitoption,"", min_hist_dzero, max_hist_dzero);
+  
+      fixparam7 = fixparam7/(fun_f->GetParameter(0)+fixparam7);
+      fun_f->FixParameter(7, fixparam7);
+      fun_f->FixParameter(8,fun_f->GetParameter(8));
+
+      //  -- fit data
+      fun_f->ReleaseParameter(3);
+      fun_f->ReleaseParameter(4);
+      fun_f->ReleaseParameter(5);
+      fun_f->ReleaseParameter(6);
+  
+      h->Fit("fun_f", "q", "", min_hist_dzero, max_hist_dzero);
+      h->Fit("fun_f", "q", "", min_hist_dzero, max_hist_dzero);
+      fun_f->ReleaseParameter(1);
+      fun_f->SetParLimits(1, 1.86, 1.87);
+      // fun_f->ReleaseParameter(11);
+      // fun_f->SetParLimits(11, -0.5, 0.5);
+      h->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
+      h->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
+      h->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
+      r = h->Fit("fun_f", Form("%s S",fitoption.Data()),"", min_hist_dzero, max_hist_dzero);
+
     }
 
   fparamfun_f = true;
