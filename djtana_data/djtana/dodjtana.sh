@@ -10,16 +10,9 @@ else
 fi
 
 source ../includes/utility.shinc
-cp ../includes/prefilters_data.h prefilters.h
-
-DO_SAVETPL=${1:-0}
-DO_SAVEHIST=${2:-0}
-DO_USEHIST=${3:-0}
-DO_PLOTHIST=${4:-0}
 
 # Select the systems the macros run on 
 iCOL=(1 3)
-jJET=(0 1 2)
 kRECOGEN=(0)
 
 #
@@ -43,13 +36,6 @@ COLSYST=('pp' 'pp' 'PbPb' 'PbPb')
 ISMC=(1 0 1 0)
 HLTOPT=("noHLT" "" "noHLT" "")
 
-# nJET loop
-JETPTMIN=(60 80 100)
-JETPTMAX=(80 100 999)
-JETETAMIN=(0.3 0.3 0.3)
-# JETETAMIN=(0. 0. 0.)
-JETETAMAX=(1.6 1.6 1.6)
-
 MAXEVT=-1
 
 # nRECOGEN loop
@@ -59,14 +45,15 @@ RECOGEN=('RecoD_RecoJet' 'GenD_RecoJet' 'RecoD_GenJet' 'GenD_GenJet')
 INPUTDANAME=(
     "$PREFIX/scratch/jwang/Djets/MC/DjetFiles_20171215_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20171214_pthatweight.root"
     "$PREFIX/scratch/jwang/Djets/data/DjetFiles_20180214_pp_5TeV_HighPtLowerJetsHighPtJet80_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614_HLT406080100.root"
-    "$PREFIX/scratch/jwang/Djets/MC/DjetFiles_20180328_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20180326_pthatweight.root"
-    "$PREFIX/scratch/jwang/Djets/data/DjetFiles_20171120_PbPb_5TeV_HIHardProbes_skimmed_1unit_part1234_26March_20170326_HLTHIPuAK4CaloJet406080100.root"
+    "$PREFIX/scratch/jwang/Djets/MC/DjetFiles_20180406_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20180326_pthatweight.root"
+    "$PREFIX/scratch/jwang/Djets/data/DjetFiles_20180406_PbPb_5TeV_HIHardProbes_skimmed_1unit_part1234_26March_20170326_HLT6080100.root"
+    # "$PREFIX/scratch/jwang/Djets/data/DjetFiles_20171120_PbPb_5TeV_HIHardProbes_skimmed_1unit_part1234_26March_20170326_HLTHIPuAK4CaloJet406080100.root"
 )
 INPUTMCNAME=(
     "$PREFIX/scratch/jwang/Djets/MC/DjetFiles_20171215_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20171214_pthatweight.root"
     "$PREFIX/scratch/jwang/Djets/MC/DjetFiles_20171215_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20171214_pthatweight.root"
-    "$PREFIX/scratch/jwang/Djets/MC/DjetFiles_20180328_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20180326_pthatweight.root"
-    "$PREFIX/scratch/jwang/Djets/MC/DjetFiles_20180328_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20180326_pthatweight.root"
+    "$PREFIX/scratch/jwang/Djets/MC/DjetFiles_20180406_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20180326_pthatweight.root"
+    "$PREFIX/scratch/jwang/Djets/MC/DjetFiles_20180406_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20180326_pthatweight.root"
 )
 
 # Do not touch the macros below if you don't know what they mean #
@@ -178,5 +165,3 @@ then
 fi
 
 rm djtana_plothist.exe
-
-rm prefilters.h

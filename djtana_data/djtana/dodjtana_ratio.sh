@@ -1,16 +1,12 @@
 #!/bin/bash
 # dodjtana_ratio.sh #
 
-DO_SAVERATIO=${1:-0}
-DO_PLOTRATIO=${2:-0}
-DO_FINALPLOT=${3:-0}
+PLOTPYTHIA=1
 
 source ../includes/utility.shinc
-cp ../includes/prefilters_data.h prefilters.h
 
 # Select the systems the macros run on 
 iCOL=(0)
-jJET=(0 1 2)
 kRECOGEN=(0)
 
 ##
@@ -19,13 +15,6 @@ kRECOGEN=(0)
 ISMC=(0 1)
 HLTOPTPP=("" "noHLT")
 HLTOPTPbPb=("" "noHLT")
-
-# nJET loop
-JETPTMIN=(60 80 100)
-JETPTMAX=(80 100 999)
-JETETAMIN=(0.3 0.3 0.3)
-# JETETAMIN=(0.0 0.0 0.0)
-JETETAMAX=(1.6 1.6 1.6)
 
 # nRECOGEN loop
 RECOGEN=('RecoD_RecoJet' 'GenD_RecoJet' 'RecoD_GenJet' 'GenD_GenJet')
@@ -121,12 +110,14 @@ then
                 then
                     tPOSTFIXPP=Djet_pp_$(produce_postfix $i $j $k)_${HLTOPTPP[i]}_wScaleRMG_woSmearPt_woSmearAng
                     tPOSTFIXPbPb=Djet_PbPb_$(produce_postfix $i $j $k)_${HLTOPTPbPb[i]}_wScaleRMG_woSmearPt_woSmearAng
+                    tPOSTFIXPYTHIA=Djet_ppRaw_woCorr_Signal_$(produce_postfix 1 $j 3)_noHLT_woScale_woSmearPt_woSmearAng
                     tPOSTFIX=Djet_$(produce_postfix $i $j $k)_${HLTOPTPP[i]}_${HLTOPTPbPb[i]}_wScaleRMG_woSmearPt_woSmearAng
                     echo -e "-- Processing ${FUNCOLOR}djtana_finalplot.C${NC} :: ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
                     [[ ! -f "rootfiles/xsec_${tPOSTFIXPP}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/xsec_${tPOSTFIXPP}.root doesn't exist. Process djtana_usehist.C first."; continue; }
                     [[ ! -f "rootfiles/xsec_${tPOSTFIXPbPb}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/xsec_${tPOSTFIXPbPb}.root doesn't exist. Process djtana_usehist.C first."; continue; }
                     [[ ! -f "rootfiles/ratio_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/ratio_${tPOSTFIX}.root doesn't exist. Process djtana_saveratio.C first."; continue; }
-                    ./djtana_finalplot.exe "rootfiles/xsec_${tPOSTFIXPP}" "rootfiles/xsec_${tPOSTFIXPbPb}" "rootfiles/ratio_${tPOSTFIX}" "$tPOSTFIX" ${JETPTMIN[j]} ${JETPTMAX[j]} ${JETETAMIN[j]} ${JETETAMAX[j]}
+                    [[ ! -f "../../djtana_mc/djtana/rootfiles/xsec_${tPOSTFIXPYTHIA}.root" && $PLOTPYTHIA -eq 1 ]] && { echo -e "${ERRCOLOR}error:${NC} ../../djtana_mc/djtana/rootfiles/xsec_${tPOSTFIXPYTHIA}.root  doesn't exist. Process Monte-Carlo first."; continue; }
+                    ./djtana_finalplot.exe "rootfiles/xsec_${tPOSTFIXPP}" "rootfiles/xsec_${tPOSTFIXPbPb}" "rootfiles/ratio_${tPOSTFIX}" "$tPOSTFIX" ${JETPTMIN[j]} ${JETPTMAX[j]} ${JETETAMIN[j]} ${JETETAMAX[j]} $PLOTPYTHIA "../../djtana_mc/djtana/rootfiles/xsec_${tPOSTFIXPYTHIA}"
                     echo
                 fi
             done
@@ -135,5 +126,3 @@ then
 fi
 
 rm djtana_finalplot.exe
-
-rm prefilters.h
