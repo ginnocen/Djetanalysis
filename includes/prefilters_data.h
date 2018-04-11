@@ -1,5 +1,5 @@
-#ifndef _PREFILTERS_H_
-#define _PREFILTERS_H_
+#ifndef _PREFILTERS_DATA_H_
+#define _PREFILTERS_DATA_H_
 
 #include <iostream>
 #include <iomanip>
@@ -7,7 +7,6 @@
 #include <map>
 #include <TString.h>
 
-Float_t ptBins[] = {4, 999};
 Float_t drBins[] = {0, 0.05, 0.1, 0.30, 0.50};
 Float_t zBins[] = {0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.90, 1.0};
 const int nCoBins = 2;
@@ -27,6 +26,13 @@ Float_t ptselBins[] = {4, 20, 999};
 const int nPtSelBins = sizeof(ptselBins)/sizeof(ptselBins[0])-1;
 
 Float_t cutval_Dy = 2.0;
+Float_t cutval_trkPt = 2.0;
+Float_t cutval_trkEta = 2.0;
+Float_t cutval_trkPtErr = 0.3;
+Float_t cutval_Dchi2cl = 0.05;
+Float_t cutval_Dsvpv = 0.; //! bin-dep
+Float_t cutval_Dalpha = 0.2; //! bin-dep
+
 /*
   {
   // ----- dR bin -----
@@ -38,57 +44,21 @@ Float_t cutval_Dy = 2.0;
 */
 Float_t cutval_list_Dsvpv[nCoBins][nPtSelBins][nDrBins] = 
   {
-    {{3.26,  3.26,  3.23,  3.23},
+    {{4.00,  3.26,  3.23,  3.23},
      {2.86,  2.86,  2.34,  2.34}},
     {{4.44,  4.44,  4.34,  4.34},
      {2.68,  2.68,  2.08,  2.08}}
   };
 Float_t cutval_list_Dalpha[nCoBins][nPtSelBins][nDrBins] = 
   {
-    {{0.039,  0.039,  0.046,  0.046},
+    {{0.020,  0.039,  0.046,  0.046},
      {0.037,  0.037,  0.039,  0.039}},
     {{0.040,  0.040,  0.043,  0.043},
      {0.038,  0.038,  0.107,  0.107}}
   };
-Float_t cutval_list_Dchi2cl[nCoBins][nPtSelBins][nDrBins] = 
-  {
-    {{0.05,  0.05,  0.05,  0.05},
-     {0.05,  0.05,  0.05,  0.05}},
-    {{0.05,  0.05,  0.05,  0.05},
-     {0.05,  0.05,  0.05,  0.05}}
-  };
-Float_t cutval_list_trkPt[nCoBins][nPtSelBins][nDrBins] = 
-  {
-    {{2.0,  2.0,  2.0,  2.0},
-     {2.0,  2.0,  2.0,  2.0}},
-    {{2.0,  2.0,  2.0,  2.0},
-     {2.0,  2.0,  2.0,  2.0}}
-  };
-Float_t cutval_list_trkEta[nCoBins][nPtSelBins][nDrBins] = 
-  {
-    {{2.0,  2.0,  2.0,  2.0},
-     {2.0,  2.0,  2.0,  2.0}},
-    {{2.0,  2.0,  2.0,  2.0},
-     {2.0,  2.0,  2.0,  2.0}}
-  };
-Float_t cutval_list_trkPtErr[nCoBins][nPtSelBins][nDrBins] = 
-  {
-    {{0.3,  0.3,  0.3,  0.3},
-     {0.3,  0.3,  0.3,  0.3}},
-    {{0.3,  0.3,  0.3,  0.3},
-     {0.3,  0.3,  0.3,  0.3}}
-  };
-
 //
 
-Float_t cutval_trkPt;
-Float_t cutval_trkEta;
-Float_t cutval_trkPtErr;
-Float_t cutval_Dsvpv;
-Float_t cutval_Dalpha;
-Float_t cutval_Dchi2cl;
 std::vector<TString> cutval_skim;
-std::vector<TString> cutval_hlt;
 
 int initcutval(TString collisionsyst)
 {
@@ -112,12 +82,8 @@ int initcutval_bindep(TString collisionsyst, int ipt, int idr)
   if(ipt<0 || idr<0 || ipt>=nPtSelBins || idr>=nDrBins) return 2;
 
   int icollsyst = collsyst_list[collisionsyst];
-  cutval_trkPt = cutval_list_trkPt[icollsyst][ipt][idr];
-  cutval_trkEta = cutval_list_trkEta[icollsyst][ipt][idr];
-  cutval_trkPtErr = cutval_list_trkPtErr[icollsyst][ipt][idr];
   cutval_Dsvpv = cutval_list_Dsvpv[icollsyst][ipt][idr];
   cutval_Dalpha = cutval_list_Dalpha[icollsyst][ipt][idr];
-  cutval_Dchi2cl = cutval_list_Dchi2cl[icollsyst][ipt][idr];
   return 0;
 }
 
@@ -131,12 +97,8 @@ int initcutval_bindep_flat(TString collisionsyst, int ipt)
   if(ipt<0 || ipt>=nPtSelBins) return 2;
 
   int icollsyst = collsyst_list[collisionsyst];
-  cutval_trkPt = cutval_list_trkPt[icollsyst][ipt][0];
-  cutval_trkEta = cutval_list_trkEta[icollsyst][ipt][0];
-  cutval_trkPtErr = cutval_list_trkPtErr[icollsyst][ipt][0];
   cutval_Dsvpv = cutval_list_Dsvpv[icollsyst][ipt][0];
   cutval_Dalpha = cutval_list_Dalpha[icollsyst][ipt][0];
-  cutval_Dchi2cl = cutval_list_Dchi2cl[icollsyst][ipt][0];
   return 0;
 }
 

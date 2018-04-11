@@ -229,6 +229,44 @@ namespace djtcorr
   //   return 0;
   // }
 
+  int processjets(Float_t jetpt, Float_t jetphi, Float_t jeteta, Float_t jetnpdfpart, Int_t ibincent,
+                  std::vector<float>* vjetpt, std::vector<float>* vjetphi, std::vector<float>* vjeteta,
+                  Int_t jescale, Int_t gensmearphi,
+                  Bool_t doJEC, Bool_t doSmearPt, Bool_t doSmearAngle, int NSMEAR)
+  {
+    // JEC
+    if(doJEC)
+      { if(djtcorr::ptCorr(jescale, jetpt, jetnpdfpart, ibincent)) return 1; }
+    // smear pt
+    if(doSmearPt)
+      {
+        for(int n=0;n<NSMEAR;n++)
+          {
+            float sjetpt = jetpt;
+            if(djtcorr::ptSmear(sjetpt, ibincent)) return 1;
+            vjetpt->push_back(sjetpt);
+          }
+      }
+    else
+      { vjetpt->push_back(jetpt); }
+    // smear angle
+    if(doSmearAngle)
+      {
+        for(int n=0;n<NSMEAR;n++)
+          {
+            float sjetphi = jetphi, sjeteta = jeteta;
+            if(djtcorr::angleSmear(gensmearphi, sjeteta, sjetphi, vjetpt->at(n), ibincent)) return 1;
+            vjetphi->push_back(sjetphi);
+            vjeteta->push_back(sjeteta);
+          }
+      }
+    else
+      {
+        vjetphi->push_back(jetphi);
+        vjeteta->push_back(jeteta);
+      }
+    return 0;
+  }
 }
 
 #endif
