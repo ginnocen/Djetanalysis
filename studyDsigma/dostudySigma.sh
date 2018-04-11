@@ -58,7 +58,7 @@ rm studySigma_savehist.exe
 
 
 # studySigma_plothist.C #
-g++ studySigma_plothist.C $(root-config --cflags --libs) -g -o studySigma_plothist.exe || return 1;
+#g++ studySigma_plothist.C $(root-config --cflags --libs) -g -o studySigma_plothist.exe || return 1;
 
 if [[ $DO_PLOTHIST -eq 1 ]]
 then
@@ -66,7 +66,7 @@ then
     do
         echo -e "-- Processing ${FUNCOLOR}studySigma_plothist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
         [[ ! -f "rootfiles/hist_${COLSYST[i]}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/hist_${COLSYST[i]}.root doesn't exist. Process studySigma_savehist.C first."; continue; }
-        ./studySigma_plothist.exe "rootfiles/hist_${COLSYST[i]}" "${COLSYST[i]}"
+        #./studySigma_plothist.exe "rootfiles/hist_${COLSYST[i]}" "${COLSYST[i]}"
         echo
     done
 fi
