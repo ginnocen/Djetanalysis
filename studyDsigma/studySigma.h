@@ -10,8 +10,8 @@
 #include <TH2F.h>
 #include <TF1.h>
 
-int const nptBins=14;
-Float_t ptBins[nptBins+1] = {2., 3., 4., 5., 6., 8., 10., 12.5, 15., 20., 25., 30., 40., 60., 100.};
+int const nptBins=12;
+Float_t ptBins[nptBins+1] = {4., 5., 6., 8., 10., 12.5, 15., 20., 25., 30., 40., 60., 100.};
 
 int const nyBins=8;
 Float_t yBins[nyBins+1] = {-2.0,-1.5,-1.0,-0.5,0.0,0.5,1.0,1.5,2.0};
