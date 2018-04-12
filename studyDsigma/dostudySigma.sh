@@ -15,18 +15,18 @@ DO_SAVEHIST=${1:-0}
 DO_PLOTHIST=${2:-0}
 
 # Select the systems the macros run on 
-iCOL=(0)
+COLSYST=('pp' 'pp')
+DataFlag=('MC' 'Data')
+ISMC=(1 0)
+iCOL=(0 1)
 
-##
-# nCOL loop
-COLSYST=('pp' 'PbPb')
 
 MAXEVT=-1
 
 # dataset[nCOL]
-INPUTMCNAME=(
+INPUTNAME=(
     "$PREFIX/scratch/jwang/Djets/MC/DjetFiles_20171215_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20171214_pthatweight.root"
-    "$PREFIX/scratch/jwang/Djets/MC/DjetFiles_20180328_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20180326_pthatweight.root"
+    "$PREFIX/scratch/jwang/Djets/data/DjetFiles_20180214_pp_5TeV_HighPtLowerJetsHighPtJet80_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614_HLT406080100.root"
 )
 
 # Do not touch the macros below if you don't know what they mean #
@@ -48,7 +48,7 @@ then
     do
         echo -e "-- Processing ${FUNCOLOR}studySigma_savehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
         set -x
-        ./studySigma_savehist.exe "${INPUTMCNAME[i]}" "rootfiles/hist_${COLSYST[i]}" "${COLSYST[i]}" $MAXEVT &
+        ./studySigma_savehist.exe "${INPUTNAME[i]}" "rootfiles/hist_${COLSYST[i]}_${DataFlag[i]}" "${COLSYST[i]}" $MAXEVT ${ISMC[i]} &
         set +x
         echo
     done
