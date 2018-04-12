@@ -33,7 +33,7 @@ void studySigma_savehist(TString inputname, TString outputname, TString collisio
   Float_t cutval_trkEta = 2.0;
   Float_t cutval_trkPtErr = 0.3;
 
-  djet djt(inputname, ispp, 1);
+  djet djt(inputname, ispp, isMC);
   djt.settrkcut(cutval_trkPt, cutval_trkEta, cutval_trkPtErr);
   djt.setDcut(cutval_Dsvpv, cutval_Dalpha, cutval_Dchi2cl, cutval_Dy);
   djt.setGcut(cutval_Dy);
