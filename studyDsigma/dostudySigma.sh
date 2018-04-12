@@ -51,7 +51,7 @@ isPtHat=0
 COLSYST=('pp' 'pp')
 DataFlag=('MC' 'Data')
 
-MAXEVT=100000
+MAXEVT=-1
 
 # dataset[nCOL]
 INPUTNAME=(

@@ -34,7 +34,7 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
   TCanvas* c = new TCanvas("c", "", 1000, 500);
   c->Divide(2,1);
   c->cd(1);
-  TH2F* hempty = new TH2F("hempty", ";;", 10, -3, 3, 10, 0.,0.1);
+  TH2F* hempty = new TH2F("hempty", ";rapidity;#sigma (GeV)", 10, -3, 3, 10, 0.,0.1);
   hempty->GetXaxis()->SetNdivisions(505);
   xjjroot::sethempty(hempty, 0, 0.3);
   hempty->Draw();
@@ -43,9 +43,9 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
   ahHistoSigmaYData->Draw("same");
   ahHistoSigmaYMC->Draw("same");
   c->cd(2);
-  TH2F* hemptyPt = new TH2F("hemptyPt", ";;", 10, 0, 100, 10, 0.,0.1);
+  TH2F* hemptyPt = new TH2F("hemptyPt", ";p_{T} (GeV) ;#sigma (GeV)", 10, 0, 100, 10, 0.,0.1);
   hemptyPt->GetXaxis()->SetNdivisions(505);
-  xjjroot::sethempty(hempty, 0, 0.3);
+  xjjroot::sethempty(hemptyPt, 0, 0.3);
   hemptyPt->Draw();
   xjjroot::setthgrstyle(ahHistoSigmaPtData, 1, 1, 1.2, 1, 1, 1, -1, -1, -1);
   xjjroot::setthgrstyle(ahHistoSigmaPtMC, 2, 1, 1.2, 2, 1, 1, -1, -1, -1);
