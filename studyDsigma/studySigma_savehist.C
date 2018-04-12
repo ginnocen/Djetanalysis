@@ -15,7 +15,7 @@
 #include <TGraphErrors.h>
 #include "studySigma.h"
 
-void studySigma_savehist(TString inputname, TString outputname, TString collisionsyst, int maxevt=-1, int isMC=1,int ispthatweight=1, double ptcutforYstudy=2.0, double ycutforPtstudy=4.0)
+void studySigma_savehist(TString inputname, TString outputname, TString collisionsyst, int maxevt=-1, int isMC=1,int ispthatweight=1, double ptcutforYstudy=2.0, double ycutforPtstudy=4.0,Float_t cutval_Dchi2cl = 0.15, Float_t cutval_Dsvpv = 4.5,Float_t cutval_Dalpha = 0.12)
 {
   int arguerr(TString collisionsyst);
   if(arguerr(collisionsyst)) return;
@@ -32,9 +32,6 @@ void studySigma_savehist(TString inputname, TString outputname, TString collisio
   Float_t cutval_trkPt = 2.0;
   Float_t cutval_trkEta = 2.0;
   Float_t cutval_trkPtErr = 0.3;
-  Float_t cutval_Dchi2cl = 0.15;
-  Float_t cutval_Dsvpv = 4.5; //! bin-dep
-  Float_t cutval_Dalpha = 0.5; //! bin-dep
 
   djet djt(inputname, ispp, 1);
   djt.settrkcut(cutval_trkPt, cutval_trkEta, cutval_trkPtErr);
@@ -103,9 +100,9 @@ void studySigma_savehist(TString inputname, TString outputname, TString collisio
 
 int main(int argc, char* argv[])
 {
-  if(argc==9)
+  if(argc==12)
     {
-      studySigma_savehist(argv[1], argv[2], argv[3], atoi(argv[4]),atoi(argv[5]),atoi(argv[6]),atof(argv[7]),atof(argv[8]));
+      studySigma_savehist(argv[1], argv[2], argv[3], atoi(argv[4]),atoi(argv[5]),atoi(argv[6]),atof(argv[7]),atof(argv[8]),atof(argv[9]),atof(argv[10]),atof(argv[11]));
       return 0;
     }
   else
