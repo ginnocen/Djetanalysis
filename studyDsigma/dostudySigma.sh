@@ -68,6 +68,11 @@ then
         ./studySigma_usehist.exe "rootfiles/hist_${COLSYST[i]}_${DataFlag[i]}" "rootfiles/hist_${COLSYST[i]}_MC" "${COLSYST[i]}_${DataFlag[i]}" "${COLSYST[i]}"
         echo
     done
+    
+g++ studySigma_plothist.C $(root-config --cflags --libs) -g -o studySigma_plothist.exe || return 1;
+./studySigma_plothist.exe "rootfiles/xsec_pp_Data" "rootfiles/xsec_pp_MC" "pp" ""
+
 fi
 
 rm studySigma_usehist.exe
+rm studySigma_plothist.C.exe

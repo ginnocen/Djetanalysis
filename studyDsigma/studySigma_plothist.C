@@ -1,17 +1,17 @@
 #include "../includes/xjjrootuti.h"
-#include "../includes/djtuti.h"
-#include "../includes/systmetics.h"
 #include <iostream>
 #include <iomanip>
 #include <TMath.h>
 #include <TH1F.h>
 #include <TH2F.h>
 #include <TLegend.h>
+#include <TCanvas.h>
+#include <TFile.h>
 #include <TGraphErrors.h>
 
 
 
-void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString inputnameMC="rootfiles/xsec_pp_MC", TString collisionsyst="pp")
+void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString inputnameMC="rootfiles/xsec_pp_MC", TString collisionsyst="pp",TString label="")
 {
   xjjroot::setgstyle();
   gStyle->SetPadTickX(1);
@@ -51,13 +51,14 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
   xjjroot::setthgrstyle(ahHistoSigmaPtMC, 2, 1, 1.2, 2, 1, 1, -1, -1, -1);
   ahHistoSigmaPtData->Draw("same");
   ahHistoSigmaPtMC->Draw("same");
+  c->SaveAs(Form("plotsSigma/canvasSigma%s",label.Data()));
 }
 
 int main(int argc, char* argv[])
 {
-  if(argc==4)
+  if(argc==5)
     {
-      studySigma_plothist(argv[1], argv[2], argv[3]);
+      studySigma_plothist(argv[1], argv[2], argv[3],argv[4]);
       return 0;
     }
   std::cout<<"  Error: invalid arguments number - studySigma_plothist()"<<std::endl;
