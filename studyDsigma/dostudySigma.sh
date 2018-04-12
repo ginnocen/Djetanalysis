@@ -32,42 +32,8 @@ function produce_postfix()
         echo -e "\033[1;31merror:${NC} invalid argument number - produce_postfix()"
         return 1
     fi
-    echo ${COLSYST[i]}_${DataFlag[i]}_pthat${isPtHat}_ptcutforYstudy$(float_to_string ${ptcutforYstudy})_ycutforPtstudy$(float_to_string ${ycutforPtstudy})
-}
-
-function produce_postfixNosample()
-{
-    if [[ $# -ne 1 ]]
-    then
-        echo -e "\033[1;31merror:${NC} invalid argument number - produce_postfix()"
-        return 1
-    fi
     echo ${COLSYST[i]}_pthat${isPtHat}_ptcutforYstudy$(float_to_string ${ptcutforYstudy})_ycutforPtstudy$(float_to_string ${ycutforPtstudy})
 }
-
-
-function produce_postfixMC()
-{
-    if [[ $# -ne 1 ]]
-    then
-        echo -e "\033[1;31merror:${NC} invalid argument number - produce_postfix()"
-        return 1
-    fi
-    echo ${COLSYST[i]}_MC_pthat${isPtHat}_ptcutforYstudy$(float_to_string ${ptcutforYstudy})_ycutforPtstudy$(float_to_string ${ycutforPtstudy})
-}
-
-function produce_postfixData()
-{
-    if [[ $# -ne 1 ]]
-    then
-        echo -e "\033[1;31merror:${NC} invalid argument number - produce_postfix()"
-        return 1
-    fi
-    echo ${COLSYST[i]}_Data_pthat${isPtHat}_ptcutforYstudy$(float_to_string ${ptcutforYstudy})_ycutforPtstudy$(float_to_string ${ycutforPtstudy})
-}
-
-
-
 
 
 DO_SAVEHIST=${1:-0}
@@ -80,11 +46,12 @@ isPtHat=${6:-0}
 # Select the systems the macros run on 
 ISMC=(1 0)
 iCOL=(0 1)
+isPtHat=0
 
 COLSYST=('pp' 'pp')
 DataFlag=('MC' 'Data')
 
-MAXEVT=-1
+MAXEVT=100000
 
 # dataset[nCOL]
 INPUTNAME=(
@@ -112,7 +79,7 @@ then
         tPOSTFIX=Djet_$(produce_postfix $i)
         echo -e "-- Processing ${FUNCOLOR}studySigma_savehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
         set -x
-        ./studySigma_savehist.exe "${INPUTNAME[i]}" "rootfiles/hist_$tPOSTFIX" "${COLSYST[i]}" $MAXEVT ${ISMC[i]} $isPtHat ${ptcutforYstudy} ${ycutforPtstudy} &
+        ./studySigma_savehist.exe "${INPUTNAME[i]}" "rootfiles/hist_${DataFlag[i]}_$tPOSTFIX" "${COLSYST[i]}" $MAXEVT ${ISMC[i]} $isPtHat ${ptcutforYstudy} ${ycutforPtstudy} &
         set +x
         echo
     done
@@ -128,9 +95,8 @@ then
     for i in ${iCOL[@]}
     do
         tPOSTFIX=Djet_$(produce_postfix $i)
-        tPOSTFIXMC=Djet_$(produce_postfixMC $i)
         echo -e "-- Processing ${FUNCOLOR}studySigma_usehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
-        ./studySigma_usehist.exe "rootfiles/hist_$tPOSTFIX" "rootfiles/hist_$tPOSTFIXMC" "$tPOSTFIX" "${COLSYST[i]}"
+        ./studySigma_usehist.exe "rootfiles/hist_${DataFlag[i]}_$tPOSTFIX" "rootfiles/hist_MC_$tPOSTFIX" "${DataFlag[i]}_$tPOSTFIX" "${COLSYST[i]}"
         echo
     done
 
@@ -144,13 +110,11 @@ then
     for i in ${iCOL[@]}
     do
          tPOSTFIX=Djet_$(produce_postfixNosample $i)
-         tPOSTFIXData=Djet_$(produce_postfixData $i)
-         tPOSTFIXMC=Djet_$(produce_postfixMC $i)
         echo -e "-- Processing ${FUNCOLOR}studySigma_plothist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
-        ./studySigma_plothist.exe "rootfiles/xsec_$tPOSTFIXData" "rootfiles/xsec_$tPOSTFIXMC" "${COLSYST[i]}" "$tPOSTFIX" 
+        ./studySigma_plothist.exe "rootfiles/xsec_Data_$tPOSTFIX" "rootfiles/xsec_MC_$tPOSTFIX" "${COLSYST[i]}" "$tPOSTFIX" 
         echo
     done
 fi
 
 
-rm studySigma_plothist.C.exe
+rm studySigma_plothist.exe
