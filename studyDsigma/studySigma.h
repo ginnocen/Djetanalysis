@@ -2,6 +2,7 @@
 #include <iomanip>
 #include "../includes/xjjcuti.h"
 #include "../includes/xjjrootuti.h"
+#include "../includes/dfitter.h"
 #include "../includes/djet.h"
 #include "../includes/djtweight.h"
 #include <TGraphAsymmErrors.h> 
@@ -9,9 +10,9 @@
 #include <TCanvas.h>
 #include <TH2F.h>
 #include <TF1.h>
-
-int const nptBins=12;
-Float_t ptBins[nptBins+1] = {4., 5., 6., 8., 10., 12.5, 15., 20., 25., 30., 40., 60., 100.};
+  
+int const nptBins=5;
+Float_t ptBins[nptBins+1] = {4., 10., 20., 40., 60., 100.};
 
 int const nyBins=8;
 Float_t yBins[nyBins+1] = {-2.0,-1.5,-1.0,-0.5,0.0,0.5,1.0,1.5,2.0};
@@ -22,6 +23,10 @@ TH1F* ahHistoMassPtSwapped[nptBins];
 TH1F* ahHistoMassY[nyBins];
 TH1F* ahHistoMassYSignal[nyBins];
 TH1F* ahHistoMassYSwapped[nyBins];
+
+TH1F* ahHistoSigmaPt;
+TH1F* ahHistoSigmaY;
+
 
 int createhists(Option_t* option)
 {
@@ -46,16 +51,20 @@ int createhists(Option_t* option)
       ahHistoMassYSwapped[j] = new TH1F(Form("ahHistoMassYSwapped_%d",j), ";m_{#piK} (GeV/c^{2});Entries / (5 MeV/c^{2})", 60, 1.7, 2.0);
       ahHistoMassYSwapped[j]->Sumw2();
     }
+   return 0;
   }
-  return 0;
+  if(opt=="usehist"){
+   ahHistoSigmaPt=new TH1F("ahHistoSigmaPt", ";p_{T} (GeV/c); #sigma", nptBins, ptBins);
+   ahHistoSigmaY=new TH1F("ahHistoSigmaY", ";rapidity; #sigma", nyBins, yBins);
+   return 0;
+  }
+
 }
 
 int writehists(Option_t* option)
 {
   TString opt  = option;
   opt.ToLower();
-  std::cout<<"step1"<<std::endl;
-
   if(opt=="savehist")
     {
       for(int j=0;j<nptBins;j++) {
@@ -70,6 +79,12 @@ int writehists(Option_t* option)
       }
       return 0;
     }
+  if(opt=="usehist"){
+    ahHistoSigmaPt->Write();
+    ahHistoSigmaY->Write();
+    return 0;
+  }
+
   std::cout<<"error: invalid option for writehists()"<<std::endl;
   return 1;
 }
@@ -78,23 +93,26 @@ int gethists(TFile* inf, Option_t* option)
 {
   TString opt  = option;
   opt.ToLower();
-  if(opt=="plothist")
-    {
-    /*
-      hDpt_MC_fine = (TH1F*)inf->Get("hDpt_MC_fine");
-      hDpt_MC_fine->Sumw2();
-      hDpt_MC = (TH1F*)inf->Get("hDpt_MC");
-      hDpt_MC->Sumw2();
-      hDpt_MC_weight = (TH1F*)inf->Get("hDpt_MC_weight");
-      hDpt_MC_weight->Sumw2();
-      hDpt_data = (TH1F*)inf->Get("hDpt_data");
-      hDpt_data->Sumw2();
-      hDpt_Ratio = (TH1F*)inf->Get("hDpt_Ratio");
-      hDpt_Ratio->Sumw2();
-      hDpt_Ratio_weight = (TH1F*)inf->Get("hDpt_Ratio_weight");
-      hDpt_Ratio_weight->Sumw2();
-    */
-      return 0;
+  if(opt=="hist"){
+    for(int j=0;j<nptBins;j++) {
+      ahHistoMassPt[j] = (TH1F*)inf->Get(Form("ahHistoMassPt_%d",j));
+    }
+    for(int j=0;j<nyBins;j++) {
+      ahHistoMassY[j] = (TH1F*)inf->Get(Form("ahHistoMassY_%d",j));
+    }
+    return 0;
+    }
+    
+  if(opt=="tpl"){
+    for(int j=0;j<nptBins;j++) {
+      ahHistoMassPtSignal[j] = (TH1F*)inf->Get(Form("ahHistoMassPtSignal_%d",j));
+      ahHistoMassPtSwapped[j] = (TH1F*)inf->Get(Form("ahHistoMassPtSwapped_%d",j));
+    }
+    for(int j=0;j<nyBins;j++) {
+      ahHistoMassYSignal[j] = (TH1F*)inf->Get(Form("ahHistoMassYSignal_%d",j));
+      ahHistoMassYSwapped[j] = (TH1F*)inf->Get(Form("ahHistoMassYSwapped_%d",j));
+    }
+    return 0;
     }
   std::cout<<"error: invalid option for gethists()"<<std::endl;
   return 1;

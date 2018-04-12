@@ -60,6 +60,7 @@ void studySigma_savehist(TString inputname, TString outputname, TString collisio
          if(Dpt<4.) continue;
 
          for(int j=0;j<nptBins;j++) {
+           if(std::fabs(Dy)>1.) continue;
            if(Dpt>ptBins[j] && Dpt<ptBins[j+1]) {
              ahHistoMassPt[j]->Fill(Dmass);
              if (isMC==1){
@@ -68,8 +69,8 @@ void studySigma_savehist(TString inputname, TString outputname, TString collisio
                }//if isMC
              }//if pt bin
          }//loop over pt bins
-         if(Dpt<10.) continue;
          for(int j=0;j<nyBins;j++) {
+         //if(Dpt<10.) continue;
            if(Dy>yBins[j] && Dy<yBins[j+1]) {
              ahHistoMassY[j]->Fill(Dmass);
              if (isMC==1){

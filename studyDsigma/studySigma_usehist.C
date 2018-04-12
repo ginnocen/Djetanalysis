@@ -1,0 +1,93 @@
+#include "studySigma.h"
+
+void studySigma_usehist(TString inputhistname, TString inputtplname, TString outputname, TString collisionsyst)
+{
+  int arguerr(TString collisionsyst);
+  if(arguerr(collisionsyst)) return;
+
+  xjjroot::setgstyle();
+
+  if(createhists("usehist")) return;
+  Bool_t ispp = collisionsyst=="pp";
+  Bool_t isMC = inputhistname.Contains("MC");
+
+  TFile* infhist = new TFile(Form("%s.root",inputhistname.Data()));
+  if(!infhist->IsOpen()) return;
+  if(gethists(infhist, "hist")) return;
+
+  TFile* inftpl = new TFile(Form("%s.root",inputtplname.Data()));
+  if(!inftpl->IsOpen()) return;
+  if(gethists(inftpl, "tpl")) return;
+
+  xjjroot::dfitter* dft = new xjjroot::dfitter("S");
+
+  TCanvas* cy = new TCanvas("cy", "cy", 600*nyBins, 600);
+  cy->Divide(nyBins, 1);
+  
+  std::vector<TString> vectexy ={"p_{T}>10 GeV"};
+
+  for(int i=0;i<nyBins;i++){
+    cy->cd(i+1);
+    dft->fit(ahHistoMassY[i], ahHistoMassYSignal[i], ahHistoMassYSwapped[i], collisionsyst, vectexy);
+    if(dft->drawfit(collisionsyst, vectexy)) return;
+
+    TF1* fmass=(TF1*)dft->GetFun_mass();
+    double sigma=fmass->GetParameter(2)*(1+fmass->GetParameter(6));
+    double errsigma=fmass->GetParameter(2)*fmass->GetParError(6);
+    ahHistoSigmaY->SetBinContent(i+1,sigma);
+    std::cout<<sigma<<"+-"<<errsigma<<std::endl;
+    ahHistoSigmaY->SetBinError(i+1,errsigma);
+  }
+  cy->SaveAs(Form("plotfits/cmassY_%s.pdf",outputname.Data()));
+
+  TCanvas* cpt = new TCanvas("cpt", "cpt", 600*nptBins, 600);
+  cpt->Divide(nptBins, 1);
+  
+  std::vector<TString> vectexpt ={"|y^{D}| < 2"};
+
+  for(int i=0;i<nptBins;i++){
+    cpt->cd(i+1);
+    dft->fit(ahHistoMassPt[i], ahHistoMassPtSignal[i], ahHistoMassPtSwapped[i], collisionsyst, vectexy);
+    if(dft->drawfit(collisionsyst, vectexy)) return;
+
+    TF1* fmass=(TF1*)dft->GetFun_mass();
+    double sigma=fmass->GetParameter(2)*(1+fmass->GetParameter(6));
+    double errsigma=fmass->GetParameter(2)*fmass->GetParError(6);
+    ahHistoSigmaPt->SetBinContent(i+1,sigma);
+    std::cout<<sigma<<"+-"<<errsigma<<std::endl;
+    ahHistoSigmaPt->SetBinError(i+1,errsigma);
+  }
+  cy->SaveAs(Form("plotfits/cmassPt_%s.pdf",outputname.Data()));
+
+
+  TFile* outf = new TFile(Form("rootfiles/xsec_%s.root",outputname.Data()), "recreate");
+  outf->cd();
+  if(writehists("usehist")) return;
+  outf->Write();
+  outf->Close();
+}
+
+int main(int argc, char* argv[])
+{
+  if(argc==5)
+    {
+      studySigma_usehist(argv[1], argv[2], argv[3], argv[4]);
+      return 0;
+    }
+  else
+    {
+      std::cout<<"  Error: invalid arguments number - djtana_usehist()"<<std::endl;
+      return 1;
+    }
+}
+
+int arguerr(TString collisionsyst)
+{
+  if(collisionsyst!="pp" && collisionsyst!="PbPb")
+    {
+      std::cout<<"error: invalid collisionsyst"<<std::endl;
+      return 1;
+    }
+  return 0;
+}
+
