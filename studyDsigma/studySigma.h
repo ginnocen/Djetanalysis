@@ -26,6 +26,8 @@ TH1F* ahHistoMassYSwapped[nyBins];
 
 TH1F* ahHistoSigmaPt;
 TH1F* ahHistoSigmaY;
+TH1F* ahHistoMeanPt;
+TH1F* ahHistoMeanY;
 
 
 int createhists(Option_t* option)
@@ -56,6 +58,8 @@ int createhists(Option_t* option)
   if(opt=="usehist"){
    ahHistoSigmaPt=new TH1F("ahHistoSigmaPt", ";p_{T} (GeV/c); #sigma", nptBins, ptBins);
    ahHistoSigmaY=new TH1F("ahHistoSigmaY", ";rapidity; #sigma", nyBins, yBins);
+   ahHistoMeanPt=new TH1F("ahHistoMeanPt", ";p_{T} (GeV/c); #mu", nptBins, ptBins);
+   ahHistoMeanY=new TH1F("ahHistoMeanY", ";rapidity; #mu", nyBins, yBins);
    return 0;
   }
 
@@ -82,6 +86,8 @@ int writehists(Option_t* option)
   if(opt=="usehist"){
     ahHistoSigmaPt->Write();
     ahHistoSigmaY->Write();
+    ahHistoMeanPt->Write();
+    ahHistoMeanY->Write();
     return 0;
   }
 

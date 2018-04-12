@@ -29,10 +29,14 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
   TH1F*ahHistoSigmaPtMC=(TH1F*)infMC->Get("ahHistoSigmaPt");
   TH1F*ahHistoSigmaYData=(TH1F*)infData->Get("ahHistoSigmaY");
   TH1F*ahHistoSigmaYMC=(TH1F*)infMC->Get("ahHistoSigmaY");
+  TH1F*ahHistoMeanPtData=(TH1F*)infData->Get("ahHistoMeanPt");
+  TH1F*ahHistoMeanPtMC=(TH1F*)infMC->Get("ahHistoMeanPt");
+  TH1F*ahHistoMeanYData=(TH1F*)infData->Get("ahHistoMeanY");
+  TH1F*ahHistoMeanYMC=(TH1F*)infMC->Get("ahHistoMeanY");
 
   Float_t ypaddiv = 1./2, yPullpaddiv = 1-ypaddiv;
-  TCanvas* c = new TCanvas("c", "", 1000, 500);
-  c->Divide(2,1);
+  TCanvas* c = new TCanvas("c", "", 1000, 1000);
+  c->Divide(2,2);
   c->cd(1);
   TH2F* hempty = new TH2F("hempty", ";rapidity;#sigma (GeV)", 10, -3, 3, 10, 0.,0.1);
   hempty->GetXaxis()->SetNdivisions(505);
@@ -51,7 +55,25 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
   xjjroot::setthgrstyle(ahHistoSigmaPtMC, 2, 1, 1.2, 2, 1, 1, -1, -1, -1);
   ahHistoSigmaPtData->Draw("same");
   ahHistoSigmaPtMC->Draw("same");
-  c->SaveAs(Form("plotsSigma/canvasSigma%s.png",label.Data()));
+  c->cd(3);
+  TH2F* hemptyMean = new TH2F("hemptyMean", ";rapidity;#mu (GeV)", 10, -3, 3, 10, 1.84,1.89);
+  hemptyMean->GetXaxis()->SetNdivisions(505);
+  xjjroot::sethempty(hemptyMean, 0, 0.3);
+  hemptyMean->Draw();
+  xjjroot::setthgrstyle(ahHistoMeanYData, 1, 1, 1.2, 1, 1, 1, -1, -1, -1);
+  xjjroot::setthgrstyle(ahHistoMeanYMC, 2, 1, 1.2, 2, 1, 1, -1, -1, -1);
+  ahHistoMeanYData->Draw("same");
+  ahHistoMeanYMC->Draw("same");
+  c->cd(4);
+  TH2F* hemptyMeanPt = new TH2F("hemptyMeanPt", ";p_{T} (GeV) ;#mu (GeV)", 10, 0, 100, 10, 1.84,1.89);
+  hemptyMeanPt->GetXaxis()->SetNdivisions(505);
+  xjjroot::sethempty(hemptyMeanPt, 0, 0.3);
+  hemptyMeanPt->Draw();
+  xjjroot::setthgrstyle(ahHistoMeanPtData, 1, 1, 1.2, 1, 1, 1, -1, -1, -1);
+  xjjroot::setthgrstyle(ahHistoMeanPtMC, 2, 1, 1.2, 2, 1, 1, -1, -1, -1);
+  ahHistoMeanPtData->Draw("same");
+  ahHistoMeanPtMC->Draw("same");
+  c->SaveAs(Form("plotsSigma/canvasMeanSigma%s.png",label.Data()));
 }
 
 int main(int argc, char* argv[])

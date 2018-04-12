@@ -32,11 +32,14 @@ void studySigma_usehist(TString inputhistname, TString inputtplname, TString out
     if(dft->drawfit(collisionsyst, vectexy)) return;
 
     TF1* fmass=(TF1*)dft->GetFun_mass();
+    double mean=fmass->GetParameter(1);
+    double errmean=fmass->GetParError(1);
     double sigma=fmass->GetParameter(2)*(1+fmass->GetParameter(6));
     double errsigma=fmass->GetParameter(2)*fmass->GetParError(6);
     ahHistoSigmaY->SetBinContent(i+1,sigma);
-    std::cout<<sigma<<"+-"<<errsigma<<std::endl;
     ahHistoSigmaY->SetBinError(i+1,errsigma);
+    ahHistoMeanY->SetBinContent(i+1,mean);
+    ahHistoMeanY->SetBinError(i+1,errmean);
   }
   cy->SaveAs(Form("plotfits/cmassY_%s.pdf",outputname.Data()));
 
@@ -51,11 +54,14 @@ void studySigma_usehist(TString inputhistname, TString inputtplname, TString out
     if(dft->drawfit(collisionsyst, vectexy)) return;
 
     TF1* fmass=(TF1*)dft->GetFun_mass();
+    double mean=fmass->GetParameter(1);
+    double errmean=fmass->GetParError(1);
     double sigma=fmass->GetParameter(2)*(1+fmass->GetParameter(6));
     double errsigma=fmass->GetParameter(2)*fmass->GetParError(6);
     ahHistoSigmaPt->SetBinContent(i+1,sigma);
-    std::cout<<sigma<<"+-"<<errsigma<<std::endl;
     ahHistoSigmaPt->SetBinError(i+1,errsigma);
+    ahHistoMeanPt->SetBinContent(i+1,mean);
+    ahHistoMeanPt->SetBinError(i+1,errmean);
   }
   cy->SaveAs(Form("plotfits/cmassPt_%s.pdf",outputname.Data()));
 
