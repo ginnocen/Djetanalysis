@@ -34,7 +34,7 @@ void studySigma_savehist(TString inputname, TString outputname, TString collisio
   Float_t cutval_trkPtErr = 0.3;
   Float_t cutval_Dchi2cl = 0.15;
   Float_t cutval_Dsvpv = 4.5; //! bin-dep
-  Float_t cutval_Dalpha = 0.12; //! bin-dep
+  Float_t cutval_Dalpha = 0.5; //! bin-dep
 
   djet djt(inputname, ispp, 1);
   djt.settrkcut(cutval_trkPt, cutval_trkEta, cutval_trkPtErr);
@@ -51,13 +51,17 @@ void studySigma_savehist(TString inputname, TString outputname, TString collisio
       if(i%10000==0) std::cout<<std::setiosflags(std::ios::left)<<"  [ \033[1;36m"<<std::setw(10)<<i<<"\033[0m"<<" / "<<std::setw(10)<<rnentries<<" ] "<<"\033[1;36m"<<std::setw(4)<<Form("%.0f%s",100.*i/rnentries,"%")<<"\033[0m"<<"   >>   studySigma_savehist("<<std::setw(20)<<Form("%s)",collisionsyst.Data())<<"\r"<<std::flush;
       //
       djt.fChain->GetEntry(i);
-      //
+            //
       // Float_t cweight = ispp?1.:djtweight::getcentweight(djt.hiBin);
       //Float_t cweight = 1.;
       Float_t evtweight = 1;
       if (ispthatweight==1&&isMC==1) evtweight=djt.pthatweight;
       // loop D
       for(int jd=0;jd<djt.Dsize;jd++){
+      Int_t djtDsel = djt.isDselected(jd, "r");
+      if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
+      if(!djtDsel) continue;
+
          Float_t Dmass =(*djt.Dmass)[jd];
          Float_t Dpt =(*djt.Dpt)[jd];
          Float_t Dy =(*djt.Dy)[jd];
