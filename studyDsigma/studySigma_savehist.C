@@ -15,7 +15,7 @@
 #include <TGraphErrors.h>
 #include "studySigma.h"
 
-void studySigma_savehist(TString inputname, TString outputname, TString collisionsyst, int maxevt=-1, int isMC=1)
+void studySigma_savehist(TString inputname, TString outputname, TString collisionsyst, int maxevt=-1, int isMC=1,int ispthatweight=1, double ptcutforYstudy=2.0, double ycutforPtstudy=4.0)
 {
   int arguerr(TString collisionsyst);
   if(arguerr(collisionsyst)) return;
@@ -25,6 +25,8 @@ void studySigma_savehist(TString inputname, TString outputname, TString collisio
   Int_t ispp = collisionsyst=="pp"?1:0;
   djtweight::init();
  
+  std::cout<<"cut on pt="<<ptcutforYstudy<<std::endl;
+  std::cout<<"cut on y="<<ycutforPtstudy<<std::endl;
  
   Float_t cutval_Dy = 2.0;
   Float_t cutval_trkPt = 2.0;
@@ -40,6 +42,7 @@ void studySigma_savehist(TString inputname, TString outputname, TString collisio
   djt.setGcut(cutval_Dy);
   //initcutval(collisionsyst);
 
+ if (ptcutforYstudy<4.) std::cout<<"there is a hard cut for pt<4 in the production!"<<std::endl;
 
   int64_t nentries = djt.fChain->GetEntriesFast();
   int rnentries = (maxevt>0&&maxevt<=nentries)?maxevt:nentries;
@@ -51,7 +54,8 @@ void studySigma_savehist(TString inputname, TString outputname, TString collisio
       //
       // Float_t cweight = ispp?1.:djtweight::getcentweight(djt.hiBin);
       //Float_t cweight = 1.;
-      //Float_t evtweight = djt.pthatweight*cweight;
+      Float_t evtweight = 1;
+      if (ispthatweight==1&&isMC==1) evtweight=djt.pthatweight;
       // loop D
       for(int jd=0;jd<djt.Dsize;jd++){
          Float_t Dmass =(*djt.Dmass)[jd];
@@ -60,22 +64,22 @@ void studySigma_savehist(TString inputname, TString outputname, TString collisio
          if(Dpt<4.) continue;
 
          for(int j=0;j<nptBins;j++) {
-           if(std::fabs(Dy)>1.) continue;
+           if(std::fabs(Dy)>ycutforPtstudy) continue;
            if(Dpt>ptBins[j] && Dpt<ptBins[j+1]) {
              ahHistoMassPt[j]->Fill(Dmass);
              if (isMC==1){
-               if((*djt.Dgen)[jd]==23333) ahHistoMassPtSignal[j]->Fill(Dmass);
-               if((*djt.Dgen)[jd]==23344) ahHistoMassPtSwapped[j]->Fill(Dmass);
+               if((*djt.Dgen)[jd]==23333) ahHistoMassPtSignal[j]->Fill(Dmass,evtweight);
+               if((*djt.Dgen)[jd]==23344) ahHistoMassPtSwapped[j]->Fill(Dmass,evtweight);
                }//if isMC
              }//if pt bin
          }//loop over pt bins
          for(int j=0;j<nyBins;j++) {
-         //if(Dpt<10.) continue;
+         if(Dpt<ptcutforYstudy) continue;
            if(Dy>yBins[j] && Dy<yBins[j+1]) {
              ahHistoMassY[j]->Fill(Dmass);
              if (isMC==1){
-               if((*djt.Dgen)[jd]==23333) ahHistoMassYSignal[j]->Fill(Dmass);
-               if((*djt.Dgen)[jd]==23344) ahHistoMassYSwapped[j]->Fill(Dmass);
+               if((*djt.Dgen)[jd]==23333) ahHistoMassYSignal[j]->Fill(Dmass,evtweight);
+               if((*djt.Dgen)[jd]==23344) ahHistoMassYSwapped[j]->Fill(Dmass,evtweight);
                }//if isMC
              }//if y bin
          }//loop over y bins
@@ -95,9 +99,9 @@ void studySigma_savehist(TString inputname, TString outputname, TString collisio
 
 int main(int argc, char* argv[])
 {
-  if(argc==6)
+  if(argc==9)
     {
-      studySigma_savehist(argv[1], argv[2], argv[3], atoi(argv[4]),atoi(argv[5]));
+      studySigma_savehist(argv[1], argv[2], argv[3], atoi(argv[4]),atoi(argv[5]),atoi(argv[6]),atof(argv[7]),atof(argv[8]));
       return 0;
     }
   else

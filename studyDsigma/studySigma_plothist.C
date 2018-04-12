@@ -51,7 +51,7 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
   xjjroot::setthgrstyle(ahHistoSigmaPtMC, 2, 1, 1.2, 2, 1, 1, -1, -1, -1);
   ahHistoSigmaPtData->Draw("same");
   ahHistoSigmaPtMC->Draw("same");
-  c->SaveAs(Form("plotsSigma/canvasSigma%s",label.Data()));
+  c->SaveAs(Form("plotsSigma/canvasSigma%s.png",label.Data()));
 }
 
 int main(int argc, char* argv[])
