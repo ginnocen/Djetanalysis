@@ -5,7 +5,7 @@ void studySigma_usehist(TString inputhistname, TString inputtplname, TString out
   int arguerr(TString collisionsyst);
   if(arguerr(collisionsyst)) return;
   
-  if (!(indexgaussian==2 || indexgaussian ==4)) std::cout<<"wrong index of gaussian"<<std::endl;
+  if (!(indexgaussian==2 || indexgaussian ==5)) std::cout<<"wrong index of gaussian"<<std::endl;
   xjjroot::setgstyle();
 
   if(createhists("usehist")) return;
@@ -37,10 +37,15 @@ void studySigma_usehist(TString inputhistname, TString inputtplname, TString out
     double errmean=fmass->GetParError(1);
     double sigma=fmass->GetParameter(indexgaussian)*(1+fmass->GetParameter(6));
     double errsigma=fmass->GetParameter(indexgaussian)*fmass->GetParError(6);
+    double yield=dft->GetY();
+    double yieldE=dft->GetYE();
+    
     ahHistoSigmaY->SetBinContent(i+1,sigma);
     ahHistoSigmaY->SetBinError(i+1,errsigma);
     ahHistoMeanY->SetBinContent(i+1,mean);
     ahHistoMeanY->SetBinError(i+1,errmean);
+    ahHistoSignalY->SetBinContent(i+1,yield);
+    ahHistoSignalY->SetBinError(i+1,yieldE);
   }
   cy->SaveAs(Form("plotfits/cmassY_%s.pdf",outputname.Data()));
 
@@ -59,10 +64,15 @@ void studySigma_usehist(TString inputhistname, TString inputtplname, TString out
     double errmean=fmass->GetParError(1);
     double sigma=fmass->GetParameter(indexgaussian)*(1+fmass->GetParameter(6));
     double errsigma=fmass->GetParameter(indexgaussian)*fmass->GetParError(6);
+    double yield=dft->GetY();
+    double yieldE=dft->GetYE();
+
     ahHistoSigmaPt->SetBinContent(i+1,sigma);
     ahHistoSigmaPt->SetBinError(i+1,errsigma);
     ahHistoMeanPt->SetBinContent(i+1,mean);
     ahHistoMeanPt->SetBinError(i+1,errmean);
+    ahHistoSignalPt->SetBinContent(i+1,yield);
+    ahHistoSignalPt->SetBinError(i+1,yieldE);
   }
   cy->SaveAs(Form("plotfits/cmassPt_%s.pdf",outputname.Data()));
 

@@ -88,7 +88,6 @@ void studySigma_savehist(TString inputname, TString outputname, TString collisio
          }//loop over y bins
          if(Dpt>ptcutforYstudy) {
            hDmesonY->Fill(Dy);
-           if (isMC==1){ hDmesonYPthat->Fill(Dy,ptweight);}
          }
        }//d size
     } //end of entries

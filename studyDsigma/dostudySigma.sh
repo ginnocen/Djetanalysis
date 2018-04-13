@@ -53,7 +53,6 @@ cutval_Dalpha=${9:-0}
 # Select the systems the macros run on 
 ISMC=(1 0)
 iCOL=(0 1)
-isPtHat=0
 
 COLSYST=('pp' 'pp')
 DataFlag=('MC' 'Data')

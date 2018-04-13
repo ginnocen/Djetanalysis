@@ -28,10 +28,10 @@ TH1F* ahHistoSigmaPt;
 TH1F* ahHistoSigmaY;
 TH1F* ahHistoMeanPt;
 TH1F* ahHistoMeanY;
+TH1F* ahHistoSignalPt;
+TH1F* ahHistoSignalY;
 
 TH1F* hDmesonY;
-TH1F* hDmesonYPthat;
-
 int createhists(Option_t* option)
 {
   TString opt  = option;
@@ -39,7 +39,6 @@ int createhists(Option_t* option)
   if(opt=="savehist")
     {
      hDmesonY = new TH1F("hDmesonY", ";rapidity;Entries",60,-3.,3.);
-     hDmesonYPthat = new TH1F("hDmesonYPthat", ";rapidity;Entries", 60,-3.,3.);
 
     for(int j=0;j<nptBins;j++) {
       ahHistoMassPt[j] = new TH1F(Form("ahHistoMassPt_%d",j), ";m_{#piK} (GeV/c^{2});Entries / (5 MeV/c^{2})", 60, 1.7, 2.0);
@@ -64,6 +63,8 @@ int createhists(Option_t* option)
    ahHistoSigmaY=new TH1F("ahHistoSigmaY", ";rapidity; #sigma", nyBins, yBins);
    ahHistoMeanPt=new TH1F("ahHistoMeanPt", ";p_{T} (GeV/c); #mu", nptBins, ptBins);
    ahHistoMeanY=new TH1F("ahHistoMeanY", ";rapidity; #mu", nyBins, yBins);
+   ahHistoSignalPt=new TH1F("ahHistoSignalPt", ";p_{T} (GeV/c); yield", nptBins, ptBins);
+   ahHistoSignalY=new TH1F("ahHistoSignalY", ";rapidity; yield", nyBins, yBins);
    return 0;
   }
 
@@ -86,7 +87,6 @@ int writehists(Option_t* option)
       ahHistoMassYSwapped[j]->Write();
       }
      hDmesonY->Write();
-     hDmesonYPthat->Write();
 
       return 0;
     }
@@ -95,8 +95,9 @@ int writehists(Option_t* option)
     ahHistoSigmaY->Write();
     ahHistoMeanPt->Write();
     ahHistoMeanY->Write();
+    ahHistoSignalPt->Write();
+    ahHistoSignalY->Write();
     hDmesonY->Write();
-    hDmesonYPthat->Write();
     return 0;
   }
 
@@ -116,7 +117,6 @@ int gethists(TFile* inf, Option_t* option)
       ahHistoMassY[j] = (TH1F*)inf->Get(Form("ahHistoMassY_%d",j));
     }
     hDmesonY = (TH1F*)inf->Get("hDmesonY");
-    hDmesonYPthat = (TH1F*)inf->Get("hDmesonYPthat");
     return 0;
     }
     
