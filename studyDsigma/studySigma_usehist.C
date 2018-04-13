@@ -49,6 +49,7 @@ void studySigma_usehist(TString inputhistname, TString inputtplname, TString out
       ahHistoY[j]->SetBinError(i+1,errvariable[j]);
     }
   }
+
   cy->SaveAs(Form("plotfits/cmassY_%s.pdf",outputname.Data()));
 
   TCanvas* cpt = new TCanvas("cpt", "cpt", 600*nptBins, 600);
@@ -80,6 +81,9 @@ void studySigma_usehist(TString inputhistname, TString inputtplname, TString out
     }
   }
   cy->SaveAs(Form("plotfits/cmassPt_%s.pdf",outputname.Data()));
+
+  ahHistoY[2]->Scale(1./ahHistoY[2]->Integral());
+  ahHistoPt[2]->Scale(1./ahHistoPt[2]->Integral());
 
 
   TFile* outf = new TFile(Form("rootfiles/xsec_%s.root",outputname.Data()), "recreate");

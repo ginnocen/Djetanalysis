@@ -26,16 +26,19 @@ TH1F* ahHistoMassY[nyBins];
 TH1F* ahHistoMassYSignal[nyBins];
 TH1F* ahHistoMassYSwapped[nyBins];
 
-const int nsample=2;
+const int nsamples=2;
 const int nvariables=3;
 TString variablename[nvariables]={"Mean","Sigma","Signal"};
 TString variablelabel[nvariables]={"#mu","#sigma","signal"};
-TString samplename[nsample]={"Data","MC"};
+TString samplename[nsamples]={"Data","MC"};
 
 TH1F* ahHistoPt[nvariables];
 TH1F* ahHistoY[nvariables];
-TH1F* ahHistoPtMCData[nsample][nvariables];
-TH1F* ahHistoYMCData[nsample][nvariables];
+TH1F* ahHistoPtsample[nvariables][nsamples];
+TH1F* ahHistoYsample[nvariables][nsamples];
+
+TH1F* ahRatioPtDataOverMC[nvariables];
+TH1F* ahRatioYDataOverMC[nvariables];
 
 TH1F* hDmesonY;
 int createhists(Option_t* option)
@@ -71,7 +74,15 @@ int createhists(Option_t* option)
   }
    return 0;
   }
-
+  if(opt=="plothist"){
+  for (int i=0;i<nvariables;i++){
+    for (int j=0;j<nsamples;j++){
+      ahHistoPtsample[i][j]=new TH1F(Form("ahHisto%sPt%s",variablename[i].Data(),samplename[j].Data()), Form(";p_{T} (GeV/c); %s",variablelabel[i].Data()), nptBins, ptBins);
+      ahHistoYsample[i][j]=new TH1F(Form("ahHisto%sY%s",variablename[i].Data(),samplename[j].Data()), Form(";rapidity; %s",variablelabel[i].Data()), nyBins, yBins);
+    }
+  }
+   return 0;
+  }
 }
 
 int writehists(Option_t* option)
@@ -99,8 +110,18 @@ int writehists(Option_t* option)
     for (int i=0;i<nvariables;i++){
     ahHistoPt[i]->Write();
     ahHistoY[i]->Write();
+    }
+      return 0;
   }
-    hDmesonY->Write();
+  
+  if(opt=="plothist"){
+  
+    for (int i=0;i<nvariables;i++){
+      for (int j=0;j<nsamples;j++){
+      ahHistoPtsample[i][j]->Write();
+      ahHistoYsample[i][j]->Write();
+    }
+  }
     return 0;
   }
 
@@ -137,4 +158,31 @@ int gethists(TFile* inf, Option_t* option)
   std::cout<<"error: invalid option for gethists()"<<std::endl;
   return 1;
 }
+
+int gethistsDataMC(TFile* infData,TFile* infMC, Option_t* option)
+{
+  TString opt  = option;
+  opt.ToLower();
+  if(opt=="plothist"){
+
+    for (int i=0;i<nvariables;i++){
+      ahHistoPtsample[i][0]= (TH1F*)infData->Get(Form("ahHisto%sPt",variablename[i].Data()));
+      ahHistoPtsample[i][1]= (TH1F*)infMC->Get(Form("ahHisto%sPt",variablename[i].Data()));
+      ahHistoYsample[i][0]= (TH1F*)infData->Get(Form("ahHisto%sY",variablename[i].Data()));
+      ahHistoYsample[i][1]= (TH1F*)infMC->Get(Form("ahHisto%sY",variablename[i].Data()));
+    }
+    for (int i=0;i<nvariables;i++){
+      ahRatioPtDataOverMC[i]=(TH1F*)ahHistoPtsample[i][0]->Clone();
+      ahRatioYDataOverMC[i]=(TH1F*)ahHistoYsample[i][0]->Clone();
+      ahRatioPtDataOverMC[i]->Divide(ahHistoPtsample[i][1]);
+      ahRatioYDataOverMC[i]->Divide(ahHistoYsample[i][1]);
+      ahRatioYDataOverMC[i]->SetName(Form("ahRatio%sYDataOverMC",variablename[i].Data()));
+      ahRatioPtDataOverMC[i]->SetName(Form("ahRatio%sPtDataOverMC",variablename[i].Data()));
+    }
+    return 0;
+    }
+  std::cout<<"error: invalid option for gethists()"<<std::endl;
+  return 1;
+}
+
 
