@@ -50,19 +50,21 @@ cutval_Dchi2cl=${7:-0}
 cutval_Dsvpv=${8:-0}
 cutval_Dalpha=${9:-0}
 
+iCOL=(2 3)
+
 # Select the systems the macros run on 
-ISMC=(1 0)
-iCOL=(0 1)
+ISMC=(1 0 1 0)
+COLSYST=('pp' 'pp' 'PbPb' 'PbPb')
+DataFlag=('MC' 'Data' 'MC' 'Data')
 
-COLSYST=('pp' 'pp')
-DataFlag=('MC' 'Data')
-
-MAXEVT=-1
+MAXEVT=10000
 
 # dataset[nCOL]
 INPUTNAME=(
     "$PREFIX/scratch/jwang/Djets/MC/DjetFiles_20171215_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20171214_pthatweight.root"
     "$PREFIX/scratch/jwang/Djets/data/DjetFiles_20180214_pp_5TeV_HighPtLowerJetsHighPtJet80_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614_HLT406080100.root"
+    "$PREFIX/scratch/jwang/Djets/MC/DjetFiles_20180406_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20180326_pthatweight.root"
+    "$PREFIX/scratch/jwang/Djets/data/DjetFiles_20180406_PbPb_5TeV_HIHardProbes_skimmed_1unit_part1234_26March_20170326_HLT6080100.root"
 )
 
 # Do not touch the macros below if you don't know what they mean #

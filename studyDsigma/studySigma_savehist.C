@@ -49,12 +49,11 @@ void studySigma_savehist(TString inputname, TString outputname, TString collisio
       //
       djt.fChain->GetEntry(i);
             //
-      // Float_t cweight = ispp?1.:djtweight::getcentweight(djt.hiBin);
-      //Float_t cweight = 1.;
-      Float_t evtweight = 1;
+      Float_t cweight = ispp?1.:djtweight::getcentweight(djt.hiBin);
+      Float_t evtweight = cweight;
       Float_t ptweight=djt.pthatweight;
       
-      if (ispthatweight==1&&isMC==1) evtweight=ptweight;
+      if (ispthatweight==1&&isMC==1) evtweight=evtweight*ptweight;
       // loop D
       for(int jd=0;jd<djt.Dsize;jd++){
       Int_t djtDsel = djt.isDselected(jd, "r");
