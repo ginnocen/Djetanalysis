@@ -60,6 +60,9 @@ void studySigma_savehist(TString inputname, TString outputname, TString collisio
       if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
       if(!djtDsel) continue;
 
+        Float_t Dgenpt = (**djt.aDgenpt[irecogen])[jd];
+        Float_t weightDgen = isMC?1:djtweight::getDptweight(Dgenpt, ispp);
+
          Float_t Dmass =(*djt.Dmass)[jd];
          Float_t Dpt =(*djt.Dpt)[jd];
          Float_t Dy =(*djt.Dy)[jd];
@@ -68,20 +71,20 @@ void studySigma_savehist(TString inputname, TString outputname, TString collisio
          for(int j=0;j<nptBins;j++) {
            if(std::fabs(Dy)>ycutforPtstudy) continue;
            if(Dpt>ptBins[j] && Dpt<ptBins[j+1]) {
-             ahHistoMassPt[j]->Fill(Dmass);
+             ahHistoMassPt[j]->Fill(Dmass,evtweight*weightDgen);
              if (isMC==1){
-               if((*djt.Dgen)[jd]==23333) ahHistoMassPtSignal[j]->Fill(Dmass,evtweight);
-               if((*djt.Dgen)[jd]==23344) ahHistoMassPtSwapped[j]->Fill(Dmass,evtweight);
+               if((*djt.Dgen)[jd]==23333) ahHistoMassPtSignal[j]->Fill(Dmass);
+               if((*djt.Dgen)[jd]==23344) ahHistoMassPtSwapped[j]->Fill(Dmass);
                }//if isMC
              }//if pt bin
          }//loop over pt bins
          for(int j=0;j<nyBins;j++) {
          if(Dpt<ptcutforYstudy) continue;
            if(Dy>yBins[j] && Dy<yBins[j+1]) {
-             ahHistoMassY[j]->Fill(Dmass);
+             ahHistoMassY[j]->Fill(Dmass,evtweight*weightDgen);
              if (isMC==1){
-               if((*djt.Dgen)[jd]==23333) ahHistoMassYSignal[j]->Fill(Dmass,evtweight);
-               if((*djt.Dgen)[jd]==23344) ahHistoMassYSwapped[j]->Fill(Dmass,evtweight);
+               if((*djt.Dgen)[jd]==23333) ahHistoMassYSignal[j]->Fill(Dmass);
+               if((*djt.Dgen)[jd]==23344) ahHistoMassYSwapped[j]->Fill(Dmass);
                }//if isMC
              }//if y bin
          }//loop over y bins
