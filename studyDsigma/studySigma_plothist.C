@@ -16,7 +16,9 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
   xjjroot::setgstyle();
   gStyle->SetPadTickX(1);
   gStyle->SetPadTickY(1);
-
+  
+  int mycolors_sample[2]={1,2};
+  
   int arguerr(TString collisionsyst);
   if(arguerr(collisionsyst)) return;
 
@@ -49,6 +51,16 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
    hemptyRatio[4]= new TH2F("hemptyRatio4", ";rapidity;#sigma Data/MC", 10, -3, 3, 10, 0.,2);
    hemptyRatio[5]= new TH2F("hemptyRatio5", ";rapidity;signal Data/MC", 10, -3, 3, 10, 0.,2);
 
+  TLatex *texData = new TLatex(30,1.85,"Data");
+   texData->SetTextColor(mycolors_sample[0]);
+   texData->SetTextAlign(22); texData->SetTextSize(0.1);
+  TLatex *texMC = new TLatex(60,1.85,"MC");
+   texMC->SetTextColor(mycolors_sample[1]);
+   texMC->SetTextAlign(22); texMC->SetTextSize(0.1);
+
+  TLegend* leg = new TLegend(0.53, 0.88, 0.85, 0.88);
+  xjjroot::setleg(leg);
+
   TCanvas* c= new TCanvas("c", "", 1500, 1000);
   c->Divide(3,2);
   for (int i=0;i<3;i++){
@@ -56,18 +68,20 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
     hempty[i]->GetXaxis()->SetNdivisions(505);
     xjjroot::sethempty(hempty[i], 0, 0.3);
     hempty[i]->Draw();
-    xjjroot::setthgrstyle(ahHistoPtsample[i][0], 1, 1, 1.2, 1, 1, 1, -1, -1, -1);
-    xjjroot::setthgrstyle(ahHistoPtsample[i][1], 1, 1, 1.2, 1, 1, 1, -1, -1, -1);
+    xjjroot::setthgrstyle(ahHistoPtsample[i][0], mycolors_sample[0], 1, 1.2, mycolors_sample[0], 1, 1, -1, -1, -1);
+    xjjroot::setthgrstyle(ahHistoPtsample[i][1], mycolors_sample[1], 1, 1.2, mycolors_sample[1], 1, 1, -1, -1, -1);
     ahHistoPtsample[i][0]->Draw("same");
     ahHistoPtsample[i][1]->Draw("same");
+    texData->Draw();
+    texMC->Draw();
   }
   for (int i=0;i<3;i++){
     c->cd(i+4);
     hempty[i+3]->GetXaxis()->SetNdivisions(505);
     xjjroot::sethempty(hempty[i+3], 0, 0.3);
     hempty[i+3]->Draw();
-    xjjroot::setthgrstyle(ahHistoYsample[i][0], 1, 1, 1.2, 1, 1, 1, -1, -1, -1);
-    xjjroot::setthgrstyle(ahHistoYsample[i][1], 1, 1, 1.2, 1, 1, 1, -1, -1, -1);
+    xjjroot::setthgrstyle(ahHistoYsample[i][0], mycolors_sample[0], 1, 1.2, mycolors_sample[0], 1, 1, -1, -1, -1);
+    xjjroot::setthgrstyle(ahHistoYsample[i][1], mycolors_sample[1], 1, 1.2, mycolors_sample[1], 1, 1, -1, -1, -1);
     ahHistoYsample[i][0]->Draw("same");
     ahHistoYsample[i][1]->Draw("same");
   }
