@@ -11,7 +11,6 @@ void studySigma_usehist(TString inputhistname, TString inputtplname, TString out
   if(createhists("usehist")) return;
   Bool_t ispp = collisionsyst=="pp";
   Bool_t isMC = inputhistname.Contains("MC");
-
   TFile* infhist = new TFile(Form("%s.root",inputhistname.Data()));
   if(!infhist->IsOpen()) return;
   if(gethists(infhist, "hist")) return;
@@ -26,26 +25,29 @@ void studySigma_usehist(TString inputhistname, TString inputtplname, TString out
   cy->Divide(nyBins, 1);
   
   std::vector<TString> vectexy ={"p_{T}>10 GeV"};
-
+  
   for(int i=0;i<nyBins;i++){
     cy->cd(i+1);
     dft->fit(ahHistoMassY[i], ahHistoMassYSignal[i], ahHistoMassYSwapped[i], collisionsyst, vectexy);
     if(dft->drawfit(collisionsyst, vectexy)) return;
 
     TF1* fmass=(TF1*)dft->GetFun_mass();
-    double mean=fmass->GetParameter(1);
-    double errmean=fmass->GetParError(1);
-    double sigma=fmass->GetParameter(indexgaussian)*(1+fmass->GetParameter(6));
-    double errsigma=fmass->GetParameter(indexgaussian)*fmass->GetParError(6);
-    double yield=dft->GetY();
-    double yieldE=dft->GetYE();
     
-    ahHistoSigmaY->SetBinContent(i+1,sigma);
-    ahHistoSigmaY->SetBinError(i+1,errsigma);
-    ahHistoMeanY->SetBinContent(i+1,mean);
-    ahHistoMeanY->SetBinError(i+1,errmean);
-    ahHistoSignalY->SetBinContent(i+1,yield);
-    ahHistoSignalY->SetBinError(i+1,yieldE);
+    double variable[nvariables];
+    double errvariable[nvariables];
+
+    variable[0]=fmass->GetParameter(1);
+    variable[1]=fmass->GetParameter(indexgaussian)*(1+fmass->GetParameter(6));
+    variable[2]=dft->GetY();
+
+    errvariable[0]=fmass->GetParError(1);
+    errvariable[1]=fmass->GetParameter(indexgaussian)*fmass->GetParError(6);
+    errvariable[2]=dft->GetYE();
+
+    for (int j=0;j<nvariables;j++){
+      ahHistoY[j]->SetBinContent(i+1,variable[j]);
+      ahHistoY[j]->SetBinError(i+1,errvariable[j]);
+    }
   }
   cy->SaveAs(Form("plotfits/cmassY_%s.pdf",outputname.Data()));
 
@@ -55,24 +57,27 @@ void studySigma_usehist(TString inputhistname, TString inputtplname, TString out
   std::vector<TString> vectexpt ={"|y^{D}| < 2"};
 
   for(int i=0;i<nptBins;i++){
-    cpt->cd(i+1);
-    dft->fit(ahHistoMassPt[i], ahHistoMassPtSignal[i], ahHistoMassPtSwapped[i], collisionsyst, vectexy);
+    cy->cd(i+1);
+    dft->fit(ahHistoMassPt[i], ahHistoMassPtSignal[i], ahHistoMassPtSwapped[i], collisionsyst, vectexpt);
     if(dft->drawfit(collisionsyst, vectexy)) return;
 
     TF1* fmass=(TF1*)dft->GetFun_mass();
-    double mean=fmass->GetParameter(1);
-    double errmean=fmass->GetParError(1);
-    double sigma=fmass->GetParameter(indexgaussian)*(1+fmass->GetParameter(6));
-    double errsigma=fmass->GetParameter(indexgaussian)*fmass->GetParError(6);
-    double yield=dft->GetY();
-    double yieldE=dft->GetYE();
+    
+    double variable[nvariables];
+    double errvariable[nvariables];
 
-    ahHistoSigmaPt->SetBinContent(i+1,sigma);
-    ahHistoSigmaPt->SetBinError(i+1,errsigma);
-    ahHistoMeanPt->SetBinContent(i+1,mean);
-    ahHistoMeanPt->SetBinError(i+1,errmean);
-    ahHistoSignalPt->SetBinContent(i+1,yield);
-    ahHistoSignalPt->SetBinError(i+1,yieldE);
+    variable[0]=fmass->GetParameter(1);
+    variable[1]=fmass->GetParameter(indexgaussian)*(1+fmass->GetParameter(6));
+    variable[2]=dft->GetY();
+
+    errvariable[0]=fmass->GetParError(1);
+    errvariable[1]=fmass->GetParameter(indexgaussian)*fmass->GetParError(6);
+    errvariable[2]=dft->GetYE();
+    
+    for (int j=0;j<nvariables;j++){
+      ahHistoPt[j]->SetBinContent(i+1,variable[j]);
+      ahHistoPt[j]->SetBinError(i+1,errvariable[j]);
+    }
   }
   cy->SaveAs(Form("plotfits/cmassPt_%s.pdf",outputname.Data()));
 

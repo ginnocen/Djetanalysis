@@ -10,6 +10,8 @@
 #include <TCanvas.h>
 #include <TH2F.h>
 #include <TF1.h>
+#include <TString.h>
+
   
 int const nptBins=5;
 Float_t ptBins[nptBins+1] = {4., 10., 20., 40., 60., 100.};
@@ -24,12 +26,16 @@ TH1F* ahHistoMassY[nyBins];
 TH1F* ahHistoMassYSignal[nyBins];
 TH1F* ahHistoMassYSwapped[nyBins];
 
-TH1F* ahHistoSigmaPt;
-TH1F* ahHistoSigmaY;
-TH1F* ahHistoMeanPt;
-TH1F* ahHistoMeanY;
-TH1F* ahHistoSignalPt;
-TH1F* ahHistoSignalY;
+const int nsample=2;
+const int nvariables=3;
+TString variablename[nvariables]={"Mean","Sigma","Signal"};
+TString variablelabel[nvariables]={"#mu","#sigma","signal"};
+TString samplename[nsample]={"Data","MC"};
+
+TH1F* ahHistoPt[nvariables];
+TH1F* ahHistoY[nvariables];
+TH1F* ahHistoPtMCData[nsample][nvariables];
+TH1F* ahHistoYMCData[nsample][nvariables];
 
 TH1F* hDmesonY;
 int createhists(Option_t* option)
@@ -59,12 +65,10 @@ int createhists(Option_t* option)
    return 0;
   }
   if(opt=="usehist"){
-   ahHistoSigmaPt=new TH1F("ahHistoSigmaPt", ";p_{T} (GeV/c); #sigma", nptBins, ptBins);
-   ahHistoSigmaY=new TH1F("ahHistoSigmaY", ";rapidity; #sigma", nyBins, yBins);
-   ahHistoMeanPt=new TH1F("ahHistoMeanPt", ";p_{T} (GeV/c); #mu", nptBins, ptBins);
-   ahHistoMeanY=new TH1F("ahHistoMeanY", ";rapidity; #mu", nyBins, yBins);
-   ahHistoSignalPt=new TH1F("ahHistoSignalPt", ";p_{T} (GeV/c); yield", nptBins, ptBins);
-   ahHistoSignalY=new TH1F("ahHistoSignalY", ";rapidity; yield", nyBins, yBins);
+  for (int i=0;i<nvariables;i++){
+    ahHistoPt[i]=new TH1F(Form("ahHisto%sPt",variablename[i].Data()), Form(";p_{T} (GeV/c); %s",variablelabel[i].Data()), nptBins, ptBins);
+    ahHistoY[i]=new TH1F(Form("ahHisto%sY",variablename[i].Data()), Form(";rapidity; %s",variablelabel[i].Data()), nyBins, yBins);
+  }
    return 0;
   }
 
@@ -91,12 +95,11 @@ int writehists(Option_t* option)
       return 0;
     }
   if(opt=="usehist"){
-    ahHistoSigmaPt->Write();
-    ahHistoSigmaY->Write();
-    ahHistoMeanPt->Write();
-    ahHistoMeanY->Write();
-    ahHistoSignalPt->Write();
-    ahHistoSignalY->Write();
+  
+    for (int i=0;i<nvariables;i++){
+    ahHistoPt[i]->Write();
+    ahHistoY[i]->Write();
+  }
     hDmesonY->Write();
     return 0;
   }
