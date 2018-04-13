@@ -52,7 +52,9 @@ void studySigma_savehist(TString inputname, TString outputname, TString collisio
       // Float_t cweight = ispp?1.:djtweight::getcentweight(djt.hiBin);
       //Float_t cweight = 1.;
       Float_t evtweight = 1;
-      if (ispthatweight==1&&isMC==1) evtweight=djt.pthatweight;
+      Float_t ptweight=djt.pthatweight;
+      
+      if (ispthatweight==1&&isMC==1) evtweight=ptweight;
       // loop D
       for(int jd=0;jd<djt.Dsize;jd++){
       Int_t djtDsel = djt.isDselected(jd, "r");
@@ -84,6 +86,10 @@ void studySigma_savehist(TString inputname, TString outputname, TString collisio
                }//if isMC
              }//if y bin
          }//loop over y bins
+         if(Dpt>ptcutforYstudy) {
+           hDmesonY->Fill(Dy);
+           if (isMC==1){ hDmesonYPthat->Fill(Dy,ptweight);}
+         }
        }//d size
     } //end of entries
   std::cout<<std::setiosflags(std::ios::left)<<"  Processed "<<"\033[1;31m"<<rnentries<<"\033[0m out of\033[1;31m "<<nentries<<"\033[0m event(s)."<<"   >>   studySigma_savehist("<<std::setw(30)<<Form("%s)",collisionsyst.Data())<<std::endl;

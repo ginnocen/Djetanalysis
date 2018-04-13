@@ -33,10 +33,14 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
   TH1F*ahHistoMeanPtMC=(TH1F*)infMC->Get("ahHistoMeanPt");
   TH1F*ahHistoMeanYData=(TH1F*)infData->Get("ahHistoMeanY");
   TH1F*ahHistoMeanYMC=(TH1F*)infMC->Get("ahHistoMeanY");
+  TH1F*hDmesonYData=(TH1F*)infData->Get("hDmesonY");
+  TH1F*hDmesonYMC=(TH1F*)infMC->Get("hDmesonY");
+  TH1F*hDmesonYPthatData=(TH1F*)infData->Get("hDmesonYPthat");
+  TH1F*hDmesonYPthatMC=(TH1F*)infMC->Get("hDmesonYPthat");
 
   Float_t ypaddiv = 1./2, yPullpaddiv = 1-ypaddiv;
-  TCanvas* c = new TCanvas("c", "", 1000, 1000);
-  c->Divide(2,2);
+  TCanvas* c = new TCanvas("c", "", 1500, 1000);
+  c->Divide(3,2);
   c->cd(1);
   TH2F* hempty = new TH2F("hempty", ";rapidity;#sigma (GeV)", 10, -3, 3, 10, 0.,0.1);
   hempty->GetXaxis()->SetNdivisions(505);
@@ -73,6 +77,31 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
   xjjroot::setthgrstyle(ahHistoMeanPtMC, 2, 1, 1.2, 2, 1, 1, -1, -1, -1);
   ahHistoMeanPtData->Draw("same");
   ahHistoMeanPtMC->Draw("same");
+   c->cd(5);
+  TH2F* hemptyY= new TH2F("hemptyY", ";rapidity; entries", 10, -3, 3, 10, 0.,0.05);
+  hemptyY->GetXaxis()->SetNdivisions(505);
+  xjjroot::sethempty(hemptyY, 0, 0.3);
+  hemptyY->Draw();
+  hDmesonYMC->Scale(1./hDmesonYMC->GetEntries());
+  hDmesonYData->Scale(1./hDmesonYData->GetEntries());
+  xjjroot::setthgrstyle(hDmesonYData, 1, 1, 1.2, 1, 1, 1, -1, -1, -1);
+  xjjroot::setthgrstyle(hDmesonYMC, 2, 1, 1.2, 2, 1, 1, -1, -1, -1);
+  hDmesonYData->Draw("same");
+  hDmesonYMC->Draw("same");
+  /*
+   c->cd(6);
+  TH2F* hemptyYPthat= new TH2F("hemptYPthatY", ";rapidity pthat; entries", 10, -3, 3, 10, 0.,1);
+  hemptyYPthat->GetXaxis()->SetNdivisions(505);
+  xjjroot::sethempty(hemptyYPthat, 0, 0.3);
+  hemptyYPthat->Draw();
+  hDmesonYPthatMC->Scale(1./hDmesonYPthatMC->Integral());
+  hDmesonYPthatData->Scale(1./hDmesonYPthatData->Integral());
+  xjjroot::setthgrstyle(hDmesonYPthatData, 1, 1, 1.2, 1, 1, 1, -1, -1, -1);
+  xjjroot::setthgrstyle(hDmesonYPthatMC, 2, 1, 1.2, 2, 1, 1, -1, -1, -1);
+  hDmesonYPthatData->Draw("same");
+  hDmesonYPthatMC->Draw("same");
+  */
+
   c->SaveAs(Form("plotsSigma/canvasMeanSigma%s.png",label.Data()));
 }
 
