@@ -7,9 +7,9 @@ source dostudySigma.sh 1 1 1 4.0 2.0 0 0.3 4.5 0.12
 source dostudySigma.sh 1 1 1 4.0 2.0 0 0.15 4.5 0.02
 source dostudySigma.sh 1 1 1 4.0 2.0 0 0.15 4.5 0.3
 
-source dostudySigma.sh 1 1 1 4.0 2.0 0 0.15 2.0 0.12
-source dostudySigma.sh 1 1 1 4.0 2.0 0 0.15 6.0 0.12
-source dostudySigma.sh 1 1 1 4.0 2.0 0 0.0 4.5 0.12
-source dostudySigma.sh 1 1 1 4.0 2.0 0 0.3 4.5 0.12
-source dostudySigma.sh 1 1 1 4.0 2.0 0 0.15 4.5 0.02
-source dostudySigma.sh 1 1 1 4.0 2.0 0 0.15 4.5 0.3
+source dostudySigma.sh 1 1 1 4.0 2.0 1 0.15 2.0 0.12
+source dostudySigma.sh 1 1 1 4.0 2.0 1 0.15 6.0 0.12
+source dostudySigma.sh 1 1 1 4.0 2.0 1 0.0 4.5 0.12
+source dostudySigma.sh 1 1 1 4.0 2.0 1 0.3 4.5 0.12
+source dostudySigma.sh 1 1 1 4.0 2.0 1 0.15 4.5 0.02
+source dostudySigma.sh 1 1 1 4.0 2.0 1 0.15 4.5 0.3

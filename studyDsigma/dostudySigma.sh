@@ -50,7 +50,7 @@ cutval_Dchi2cl=${7:-0}
 cutval_Dsvpv=${8:-0}
 cutval_Dalpha=${9:-0}
 
-iCOL=(0 1 2 3)
+iCOL=(0 1)
 
 # Select the systems the macros run on 
 ISMC=(1 0 1 0)
@@ -105,7 +105,7 @@ then
         tPOSTFIX=Djet_$(produce_postfix $i)
         echo -e "-- Processing ${FUNCOLOR}studySigma_usehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
         ./studySigma_usehist.exe "rootfiles/hist_${DataFlag[i]}_$tPOSTFIX" "rootfiles/hist_MC_$tPOSTFIX" "${DataFlag[i]}_${tPOSTFIX}_gaussianindex2" "${COLSYST[i]}" 2
-        ./studySigma_usehist.exe "rootfiles/hist_${DataFlag[i]}_$tPOSTFIX" "rootfiles/hist_MC_$tPOSTFIX" "${DataFlag[i]}_${tPOSTFIX}_gaussianindex5" "${COLSYST[i]}" 5
+        #./studySigma_usehist.exe "rootfiles/hist_${DataFlag[i]}_$tPOSTFIX" "rootfiles/hist_MC_$tPOSTFIX" "${DataFlag[i]}_${tPOSTFIX}_gaussianindex5" "${COLSYST[i]}" 5
         echo
     done
 
@@ -121,7 +121,7 @@ then
          tPOSTFIX=Djet_$(produce_postfix $i)
         echo -e "-- Processing ${FUNCOLOR}studySigma_plothist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
         ./studySigma_plothist.exe "rootfiles/xsec_Data_${tPOSTFIX}_gaussianindex2" "rootfiles/xsec_MC_${tPOSTFIX}_gaussianindex2" "${COLSYST[i]}" "${tPOSTFIX}_gaussianindex2" 
-        ./studySigma_plothist.exe "rootfiles/xsec_Data_${tPOSTFIX}_gaussianindex5" "rootfiles/xsec_MC_${tPOSTFIX}_gaussianindex5" "${COLSYST[i]}" "${tPOSTFIX}_gaussianindex5" 
+        #./studySigma_plothist.exe "rootfiles/xsec_Data_${tPOSTFIX}_gaussianindex5" "rootfiles/xsec_MC_${tPOSTFIX}_gaussianindex5" "${COLSYST[i]}" "${tPOSTFIX}_gaussianindex5" 
         echo
     done
 fi
