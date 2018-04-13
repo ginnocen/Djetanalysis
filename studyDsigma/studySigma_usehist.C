@@ -1,10 +1,11 @@
 #include "studySigma.h"
 
-void studySigma_usehist(TString inputhistname, TString inputtplname, TString outputname, TString collisionsyst)
+void studySigma_usehist(TString inputhistname, TString inputtplname, TString outputname, TString collisionsyst,int indexgaussian=2)
 {
   int arguerr(TString collisionsyst);
   if(arguerr(collisionsyst)) return;
-
+  
+  if (!(indexgaussian==2 || indexgaussian ==4)) std::cout<<"wrong index of gaussian"<<std::endl;
   xjjroot::setgstyle();
 
   if(createhists("usehist")) return;
@@ -34,8 +35,8 @@ void studySigma_usehist(TString inputhistname, TString inputtplname, TString out
     TF1* fmass=(TF1*)dft->GetFun_mass();
     double mean=fmass->GetParameter(1);
     double errmean=fmass->GetParError(1);
-    double sigma=fmass->GetParameter(2)*(1+fmass->GetParameter(6));
-    double errsigma=fmass->GetParameter(2)*fmass->GetParError(6);
+    double sigma=fmass->GetParameter(indexgaussian)*(1+fmass->GetParameter(6));
+    double errsigma=fmass->GetParameter(indexgaussian)*fmass->GetParError(6);
     ahHistoSigmaY->SetBinContent(i+1,sigma);
     ahHistoSigmaY->SetBinError(i+1,errsigma);
     ahHistoMeanY->SetBinContent(i+1,mean);
@@ -56,8 +57,8 @@ void studySigma_usehist(TString inputhistname, TString inputtplname, TString out
     TF1* fmass=(TF1*)dft->GetFun_mass();
     double mean=fmass->GetParameter(1);
     double errmean=fmass->GetParError(1);
-    double sigma=fmass->GetParameter(2)*(1+fmass->GetParameter(6));
-    double errsigma=fmass->GetParameter(2)*fmass->GetParError(6);
+    double sigma=fmass->GetParameter(indexgaussian)*(1+fmass->GetParameter(6));
+    double errsigma=fmass->GetParameter(indexgaussian)*fmass->GetParError(6);
     ahHistoSigmaPt->SetBinContent(i+1,sigma);
     ahHistoSigmaPt->SetBinError(i+1,errsigma);
     ahHistoMeanPt->SetBinContent(i+1,mean);
@@ -75,9 +76,9 @@ void studySigma_usehist(TString inputhistname, TString inputtplname, TString out
 
 int main(int argc, char* argv[])
 {
-  if(argc==5)
+  if(argc==6)
     {
-      studySigma_usehist(argv[1], argv[2], argv[3], argv[4]);
+      studySigma_usehist(argv[1], argv[2], argv[3], argv[4],atoi(argv[5]));
       return 0;
     }
   else

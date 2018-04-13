@@ -103,7 +103,8 @@ then
     do
         tPOSTFIX=Djet_$(produce_postfix $i)
         echo -e "-- Processing ${FUNCOLOR}studySigma_usehist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
-        ./studySigma_usehist.exe "rootfiles/hist_${DataFlag[i]}_$tPOSTFIX" "rootfiles/hist_MC_$tPOSTFIX" "${DataFlag[i]}_$tPOSTFIX" "${COLSYST[i]}"
+        ./studySigma_usehist.exe "rootfiles/hist_${DataFlag[i]}_$tPOSTFIX" "rootfiles/hist_MC_$tPOSTFIX" "${DataFlag[i]}_${tPOSTFIX}_gaussianindex2" "${COLSYST[i]}" 2
+        ./studySigma_usehist.exe "rootfiles/hist_${DataFlag[i]}_$tPOSTFIX" "rootfiles/hist_MC_$tPOSTFIX" "${DataFlag[i]}_${tPOSTFIX}_gaussianindex5" "${COLSYST[i]}" 5
         echo
     done
 
@@ -118,7 +119,8 @@ then
     do
          tPOSTFIX=Djet_$(produce_postfix $i)
         echo -e "-- Processing ${FUNCOLOR}studySigma_plothist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
-        ./studySigma_plothist.exe "rootfiles/xsec_Data_$tPOSTFIX" "rootfiles/xsec_MC_$tPOSTFIX" "${COLSYST[i]}" "$tPOSTFIX" 
+        ./studySigma_plothist.exe "rootfiles/xsec_Data_${tPOSTFIX}_gaussianindex2" "rootfiles/xsec_MC_${tPOSTFIX}_gaussianindex2" "${COLSYST[i]}" "${tPOSTFIX}_gaussianindex2" 
+        ./studySigma_plothist.exe "rootfiles/xsec_Data_${tPOSTFIX}_gaussianindex5" "rootfiles/xsec_MC_${tPOSTFIX}_gaussianindex5" "${COLSYST[i]}" "${tPOSTFIX}_gaussianindex5" 
         echo
     done
 fi
