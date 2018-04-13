@@ -50,14 +50,14 @@ cutval_Dchi2cl=${7:-0}
 cutval_Dsvpv=${8:-0}
 cutval_Dalpha=${9:-0}
 
-iCOL=(2 3)
+iCOL=(0 1 2 3)
 
 # Select the systems the macros run on 
 ISMC=(1 0 1 0)
 COLSYST=('pp' 'pp' 'PbPb' 'PbPb')
 DataFlag=('MC' 'Data' 'MC' 'Data')
 
-MAXEVT=10000
+MAXEVT=-1
 
 # dataset[nCOL]
 INPUTNAME=(
