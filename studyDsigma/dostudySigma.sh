@@ -120,7 +120,7 @@ then
     do
          tPOSTFIX=Djet_$(produce_postfix $i)
         echo -e "-- Processing ${FUNCOLOR}studySigma_plothist.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC}"
-        ./studySigma_plothist.exe "rootfiles/xsec_Data_${tPOSTFIX}_gaussianindex2" "rootfiles/xsec_MC_${tPOSTFIX}_gaussianindex2" "${COLSYST[i]}" "${tPOSTFIX}_gaussianindex2" 
+        ./studySigma_plothist.exe "rootfiles/xsec_Data_${tPOSTFIX}_gaussianindex2" "rootfiles/xsec_MC_${tPOSTFIX}_gaussianindex2" "rootfiles/datamc_MC_${tPOSTFIX}_gaussianindex2" "${COLSYST[i]}" "${tPOSTFIX}_gaussianindex2" 
         #./studySigma_plothist.exe "rootfiles/xsec_Data_${tPOSTFIX}_gaussianindex5" "rootfiles/xsec_MC_${tPOSTFIX}_gaussianindex5" "${COLSYST[i]}" "${tPOSTFIX}_gaussianindex5" 
         echo
     done

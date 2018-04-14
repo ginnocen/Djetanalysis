@@ -11,7 +11,7 @@
 #include "studySigma.h"
 
 
-void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString inputnameMC="rootfiles/xsec_pp_MC", TString collisionsyst="pp",TString label="")
+void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString inputnameMC="rootfiles/xsec_pp_MC",TString output="rootfiles/output",  TString collisionsyst="pp",TString label="")
 {
   xjjroot::setgstyle();
   gStyle->SetPadTickX(1);
@@ -107,14 +107,22 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
     ahRatioYDataOverMC[i]->Draw("same");
   }
   cRatio->SaveAs(Form("plotsSigma/cRatioanvasMeanSigma%s.png",label.Data()));
+  
+  
+  TFile* outf = new TFile(output.Data(), "recreate");
+  outf->cd();
+  if(writehists("plothist")) return;
+  outf->Write();
+  outf->Close();
+
 
 }
 
 int main(int argc, char* argv[])
 {
-  if(argc==5)
+  if(argc==6)
     {
-      studySigma_plothist(argv[1], argv[2], argv[3],argv[4]);
+      studySigma_plothist(argv[1], argv[2], argv[3],argv[4],argv[5]);
       return 0;
     }
   std::cout<<"  Error: invalid arguments number - studySigma_plothist()"<<std::endl;

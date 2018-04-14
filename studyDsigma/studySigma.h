@@ -117,6 +117,8 @@ int writehists(Option_t* option)
   if(opt=="plothist"){
   
     for (int i=0;i<nvariables;i++){
+      ahRatioYDataOverMC[i]->Write();
+      ahRatioPtDataOverMC[i]->Write();
       for (int j=0;j<nsamples;j++){
       ahHistoPtsample[i][j]->Write();
       ahHistoYsample[i][j]->Write();
@@ -170,6 +172,11 @@ int gethistsDataMC(TFile* infData,TFile* infMC, Option_t* option)
       ahHistoPtsample[i][1]= (TH1F*)infMC->Get(Form("ahHisto%sPt",variablename[i].Data()));
       ahHistoYsample[i][0]= (TH1F*)infData->Get(Form("ahHisto%sY",variablename[i].Data()));
       ahHistoYsample[i][1]= (TH1F*)infMC->Get(Form("ahHisto%sY",variablename[i].Data()));
+      ahHistoYsample[i][0]->SetName(Form("ahHisto%sY%s",variablename[i].Data(),samplename[0].Data()));
+      ahHistoYsample[i][1]->SetName(Form("ahHisto%sY%s",variablename[i].Data(),samplename[1].Data()));
+      ahHistoPtsample[i][0]->SetName(Form("ahHisto%sPt%s",variablename[i].Data(),samplename[0].Data()));
+      ahHistoPtsample[i][1]->SetName(Form("ahHisto%sPt%s",variablename[i].Data(),samplename[1].Data()));
+
     }
     for (int i=0;i<nvariables;i++){
       ahRatioPtDataOverMC[i]=(TH1F*)ahHistoPtsample[i][0]->Clone();
