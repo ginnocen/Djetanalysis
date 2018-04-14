@@ -36,7 +36,7 @@ void djtana_savetpl(TString inputname, TString outputname,
       if(djt.pthat < 30) continue;
 
       Int_t ibincent = ispp?0:xjjc::findibin(&centBins, (float)(djt.hiBin/2.));
-      if(ibincent<0) {std::cout<<"wrong ibincent"<<std::endl; return;}
+      if(ibincent<0) { std::cout<<"wrong ibincent"<<std::endl; return; }
       // Float_t cweight = ispp?1.:djtweight::getcentweight(djt.hiBin);
       Float_t cweight = 1.;
       Float_t evtweight = djt.pthatweight*cweight;
@@ -98,14 +98,14 @@ void djtana_savetpl(TString inputname, TString outputname,
                         {
                           if(!l) 
                             {
-                              ahHistoRMassSignal[ibinpt][ibindr]->Fill((*djt.Dmass)[jd], 1. / nsjet);
-                              if(deltaR[l] < 0.3) ahHistoRMassSignalRef[ibinpt]->Fill((*djt.Dmass)[jd], 1. / nsjet);
-                              if(deltaR[l] < 0.5) ahHistoRMassSignalMe[ibinpt]->Fill((*djt.Dmass)[jd], 1. / nsjet);
+                              ahHistoRMassSignal[ibinpt][ibindr]->Fill((*djt.Dmass)[jd], evtweight*weightDgen / nsjet);
+                              if(deltaR[l] < 0.3) ahHistoRMassSignalRef[ibinpt]->Fill((*djt.Dmass)[jd], evtweight*weightDgen / nsjet);
+                              if(deltaR[l] < 0.5) ahHistoRMassSignalMe[ibinpt]->Fill((*djt.Dmass)[jd], evtweight*weightDgen / nsjet);
                             }
                           ahNumREfficiency[l][ibinpt]->Fill(deltaR[l], evtweight*weightDgen / nsjet);
                           if(deltaR[l] < 0.3 && l)
                             {
-                              // ahHistoRMassSignalRef[ibinpt]->Fill((*djt.Dmass)[jd], 1. / nsjet);
+                              // ahHistoRMassSignalRef[ibinpt]->Fill((*djt.Dmass)[jd], evtweight*weightDgen / nsjet);
                               ahNumREfficiencyRef[ibinpt]->Fill(deltaR[l], evtweight*weightDgen / nsjet);                              
                             }
                         }
@@ -113,9 +113,9 @@ void djtana_savetpl(TString inputname, TString outputname,
                         {
                           if(!l) 
                             {
-                              ahHistoRMassSwapped[ibinpt][ibindr]->Fill((*djt.Dmass)[jd], 1. / nsjet);
-                              if(deltaR[l] < 0.3) ahHistoRMassSwappedRef[ibinpt]->Fill((*djt.Dmass)[jd], 1. / nsjet);
-                              if(deltaR[l] < 0.5) ahHistoRMassSwappedMe[ibinpt]->Fill((*djt.Dmass)[jd], 1. / nsjet);
+                              ahHistoRMassSwapped[ibinpt][ibindr]->Fill((*djt.Dmass)[jd], evtweight*weightDgen / nsjet);
+                              if(deltaR[l] < 0.3) ahHistoRMassSwappedRef[ibinpt]->Fill((*djt.Dmass)[jd], evtweight*weightDgen / nsjet);
+                              if(deltaR[l] < 0.5) ahHistoRMassSwappedMe[ibinpt]->Fill((*djt.Dmass)[jd], evtweight*weightDgen / nsjet);
                             }
                           // if(deltaR[l] < 0.3 && l)
                           //   ahHistoRMassSwappedRef[ibinpt]->Fill((*djt.Dmass)[jd], 1. / nsjet);

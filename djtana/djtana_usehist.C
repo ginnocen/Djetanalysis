@@ -15,6 +15,7 @@ void djtana_usehist(TString inputhistname, TString inputtplname, TString outputn
   Bool_t ispp = collisionsyst=="pp";
   Bool_t isMC = inputhistname.Contains("MC");
   djtcorr::setParameters(ispp);
+  Float_t nmixevt = (!isMC&&!ispp)?10.:1.;
 
   TFile* infhist = new TFile(Form("%s.root",inputhistname.Data()));
   if(!infhist->IsOpen()) return;
@@ -29,11 +30,12 @@ void djtana_usehist(TString inputhistname, TString inputtplname, TString outputn
   std::vector<TString> vectex =
     {
       "|y^{D}| < 2",
+      Form("%s < |#eta^{jet}| < %s",xjjc::number_remove_zero(jetetamin).c_str(),xjjc::number_remove_zero(jetetamax).c_str()),
     };
   TString texjetpt = jetptmax<999?Form("%s < p_{T}^{jet} < %s GeV/c",xjjc::number_remove_zero(jetptmin).c_str(),xjjc::number_remove_zero(jetptmax).c_str()):Form("p_{T}^{jet} > %s GeV/c",xjjc::number_remove_zero(jetptmin).c_str());
   vectex.push_back(texjetpt);
 
-  xjjroot::dfitter* dft = new xjjroot::dfitter("S");
+  xjjroot::dfitter* dft = new xjjroot::dfitter("Y");
   
   for(int i=0;i<nPtBins;i++)
     {
@@ -190,11 +192,14 @@ void djtana_usehist(TString inputhistname, TString inputtplname, TString outputn
               for(int j=0;j<nDrBins;j++) 
                 {
                   Float_t area = (drBins[j+1]*drBins[j+1] - drBins[j]*drBins[j])*ahREfficiency[0][i]->GetBinContent(j+1);
-                  ahSignalRrawMe[l][i]->SetBinContent(j+1, density * area / dennorm);
-                  ahSignalRrawMe[l][i]->SetBinError(j+1, densityError * area / dennorm);
-                  ahSignalRMe[l][i]->SetBinContent(j+1, density * area / dennorm);
-                  ahSignalRMe[l][i]->SetBinError(j+1, densityError * area / dennorm);
+                  ahSignalRrawMe[l][i]->SetBinContent(j+1, (density * area / dennorm) / nmixevt);
+                  ahSignalRrawMe[l][i]->SetBinError(j+1, (densityError * area / dennorm) / nmixevt);
                 }
+              for(int j=0;j<nDrBins;j++)
+                {
+                  ahSignalRMe[l][i]->SetBinContent(j+1, ahSignalRrawMe[l][i]->GetBinContent(j+1));
+                  ahSignalRMe[l][i]->SetBinError(j+1, ahSignalRrawMe[l][i]->GetBinError(j+1));
+                }              
               ahSignalRMe[l][i]->Divide(ahREfficiency[0][i]);
             }
           c->SaveAs(Form("plotfits/cmass_%s_Me_pt_%d_%s.pdf",outputname.Data(),i,"dr"));
@@ -232,12 +237,12 @@ void djtana_usehist(TString inputhistname, TString inputtplname, TString outputn
           ahSignalRsub[i] = (TH1F*)ahSignalRnorm[0][i]->Clone(ahSignalRsub[i]->GetName());
           ahSignalRsubMe[i] = (TH1F*)ahSignalRnorm[0][i]->Clone(ahSignalRsubMe[i]->GetName());
         }
-      else 
+      else
         {
           ahSignalRsub[i]->Add(ahSignalRnorm[0][i], ahSignalRnorm[1][i], 1, -1);
           ahSignalRsubMe[i]->Add(ahSignalRnorm[0][i], ahSignalRnormMe[0][i], 1, -1);
           ahSignalRsubMe[i]->Add(ahSignalRnormMe[1][i], -1);
-          ahSignalRsubMe[i]->Add(ahSignalRnormMe[2][i], 1);
+          ahSignalRsubMe[i]->Add(ahSignalRnormMe[2][i]);
         }
       ahSignalRsub[i]->Scale(1./ahSignalRsub[i]->Integral(1, 3, "width"));
       ahSignalRsubUncorr[i] = (TH1F*)ahSignalRsub[i]->Clone(ahSignalRsubUncorr[i]->GetName());
@@ -260,6 +265,8 @@ void djtana_usehist(TString inputhistname, TString inputtplname, TString outputn
   delete dft;
 
   if(isrecoD) { verbose_stat(jetptmin, jetptmax); }
+
+  // plot efficiency
 
   if(isrecoD)
     {
@@ -287,7 +294,6 @@ void djtana_usehist(TString inputhistname, TString inputtplname, TString outputn
           hemptyAcc->Draw();
           c3->cd(3);
           hemptyEff->Draw();
-          // TLegend* leg = new TLegend(0.53, 0.88-nPtBins*nRefBins*0.06, 0.85, 0.88);
           TLegend* leg = new TLegend(0.53, 0.88-0.06, 0.85, 0.88);
           xjjroot::setleg(leg);
           for(int l=0;l<nRefBins;l++)
@@ -310,7 +316,7 @@ void djtana_usehist(TString inputhistname, TString inputtplname, TString outputn
             {
               if(l) 
                 {
-                  ahREfficiencyRef[i]->Draw("pe same");
+                  // ahREfficiencyRef[i]->Draw("pe same");
                   continue;
                 }
               ahREfficiency[l][i]->Draw("pe same");
@@ -327,13 +333,13 @@ void djtana_usehist(TString inputhistname, TString inputtplname, TString outputn
               if(l) continue;
               c3->cd(1);
               ahREfficiency[l][i]->Draw("pe same");
-              ahREfficiencyRef[i]->Draw("pe same");              
+              // ahREfficiencyRef[i]->Draw("pe same");              
               c3->cd(2);
               ahRAcceptance[l][i]->Draw("pe same");
-              ahRAcceptanceRef[i]->Draw("pe same");
+              // ahRAcceptanceRef[i]->Draw("pe same");
               c3->cd(3);
               ahREff[l][i]->Draw("pe same");
-              ahREffRef[i]->Draw("pe same");
+              // ahREffRef[i]->Draw("pe same");
             }
           c3->cd(1);
           xjjroot::drawCMS(collisionsyst);

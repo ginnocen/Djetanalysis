@@ -121,7 +121,6 @@ void djtana_savehist(TString inputname, TString outputname,
               if(djt.nmix==0) continue;
               for(int jd=0;jd<*(djt.anD_mix[irecogen]);jd++)
                 {
-                  std::cout<<"test"<<std::endl;
                   if(isMC && signalMC && (**djt.aDcollisionId_mix[irecogen])[jd]!=0) continue;
                   Int_t ibinpt = xjjc::findibin(&ptBins, (**djt.aDpt_mix[irecogen])[jd]);
                   if(ibinpt<0) continue;
