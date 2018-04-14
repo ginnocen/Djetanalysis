@@ -113,7 +113,7 @@ void djtclosure_plothist(std::vector<TString> inputhistname, TString outputname,
       for(int m=nCases-1;m>=0;m--)
         {
           // if(m!=1) continue;
-          xjjroot::setthgrstyle((hSignalXsubPull.at(k))[m*nPtBins+i], amcolor[m], amstyle[0], 1.2, amcolor[m], 1, 1, -1, -1, -1);
+          xjjroot::setthgrstyle((hSignalXsubPull.at(k))[m*nPtBins+i], amcolor[m], amstyle[m], 1.2, amcolor[m], 1, 1, -1, -1, -1);
           (hSignalXsubPull.at(k))[m*nPtBins+i]->Draw("pe same");
         }
       c->SaveAs(Form("plotclosure/cclosuresub_xsec_%s_%s_pt_%s_%s.pdf",outputname.Data(),tname[k].Data(),xjjc::number_to_string(ptBins[i]).c_str(),xjjc::number_to_string(ptBins[i+1]).c_str()));
