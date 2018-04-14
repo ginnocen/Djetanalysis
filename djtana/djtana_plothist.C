@@ -53,7 +53,7 @@ void djtana_plothist(TString inputhistname, TString outputname,
       for(std::vector<TString>::const_iterator it=vectex.begin(); it!=vectex.end(); it++)
         xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), *it);
       leg->Draw();
-      c->SaveAs(Form("plotxsecs/cxsec_%s_%s_pt_%d.pdf","dr",outputname.Data(),i));
+      if(jetetamin>=0.3) c->SaveAs(Form("plotxsecs/cxsec_%s_%s_pt_%d.pdf","dr",outputname.Data(),i));
       delete leg;
       delete hempty;
       delete c;
@@ -118,7 +118,7 @@ void djtana_plothist(TString inputhistname, TString outputname,
       for(std::vector<TString>::const_iterator it=vectex.begin(); it!=vectex.end(); it++)
         xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), *it);
       leg->Draw();
-      c->SaveAs(Form("plotxsecs/cxsecsub_%s_%s_pt_%d.pdf","dr",outputname.Data(),i));
+      if(jetetamin>=0.3) c->SaveAs(Form("plotxsecs/cxsecsub_%s_%s_pt_%d.pdf","dr",outputname.Data(),i));
       delete leg;
       delete hempty;
       delete c;

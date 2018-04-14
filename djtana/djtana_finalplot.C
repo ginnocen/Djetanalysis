@@ -169,7 +169,7 @@ void djtana_finalplot(TString inputnamePP, TString inputnamePbPb, TString inputn
           xjjroot::setthgrstyle((gSignalXsubRatio.at(l))[i], kBlack, fmstyle[1], 1.2, 0, 1, 1, kGray+1, 0.7, 1001);
           (gSignalXsubRatio.at(l))[i]->Draw("2 same");
           (hSignalXsubRatio.at(l))[i]->Draw("pe same");
-          c->SaveAs(Form("plotfinal/cfinal_xsec_%s_r_pt_%s_%s%s.pdf",outputname.Data(),xjjc::number_to_string(ptBins[i]).c_str(),xjjc::number_to_string(ptBins[i+1]).c_str(),tname[l].Data()));
+          if(l || jetetamin>=0.3)c->SaveAs(Form("plotfinal/cfinal_xsec_%s_r_pt_%s_%s%s.pdf",outputname.Data(),xjjc::number_to_string(ptBins[i]).c_str(),xjjc::number_to_string(ptBins[i+1]).c_str(),tname[l].Data()));
 
           delete leg;
           delete hemptyPull;
@@ -199,7 +199,7 @@ void djtana_finalplot(TString inputnamePP, TString inputnamePbPb, TString inputn
       hempty->GetXaxis()->SetNdivisions(505);
       xjjroot::sethempty(hempty, 0, 0.2);
       hempty->Draw();
-      TLegend* leg = new TLegend(0.65, 0.85-(4+plotPYTHIA)*0.06, 1.1, 0.85);
+      TLegend* leg = new TLegend(0.65, 0.85-(2+2*int(jetetamin>=0.3)+plotPYTHIA)*0.06, 1.1, 0.85);
       xjjroot::setleg(leg);
 
       (gSignalXsubP.at(1))[1*nPtBins+i]->Draw("2 same");
@@ -210,13 +210,15 @@ void djtana_finalplot(TString inputnamePP, TString inputnamePbPb, TString inputn
       (hSignalXsubP.at(1))[0*nPtBins+i]->Draw("pe same");
       leg->AddEntry((gSignalXsubP.at(1))[0*nPtBins+i], fleg[0], "pf");
 
-      xjjroot::setthgrstyle((hSignalXsubP.at(0))[1*nPtBins+i], kViolet-7, fmstyle[1]+4, 1.2, kViolet-7, 1, 1, -1, -1, -1);
-      (hSignalXsubP.at(0))[1*nPtBins+i]->Draw("pe same");
-      leg->AddEntry((hSignalXsubP.at(0))[1*nPtBins+i], Form("%s #eta-ref", fleg[1].Data()), "p");
-      xjjroot::setthgrstyle((hSignalXsubP.at(0))[0*nPtBins+i], kViolet-7, fmstyle[0]+4, 1.2, kViolet-7, 1, 1, -1, -1, -1);
-      (hSignalXsubP.at(0))[0*nPtBins+i]->Draw("pe same");
-      leg->AddEntry((hSignalXsubP.at(0))[0*nPtBins+i], Form("%s #eta-ref", fleg[0].Data()), "p");
-
+      if(jetetamin>=0.3)
+        {
+          xjjroot::setthgrstyle((hSignalXsubP.at(0))[1*nPtBins+i], kViolet-7, fmstyle[1]+4, 1.2, kViolet-7, 1, 1, -1, -1, -1);
+          (hSignalXsubP.at(0))[1*nPtBins+i]->Draw("pe same");
+          leg->AddEntry((hSignalXsubP.at(0))[1*nPtBins+i], Form("%s #eta-ref", fleg[1].Data()), "p");
+          xjjroot::setthgrstyle((hSignalXsubP.at(0))[0*nPtBins+i], kViolet-7, fmstyle[0]+4, 1.2, kViolet-7, 1, 1, -1, -1, -1);
+          (hSignalXsubP.at(0))[0*nPtBins+i]->Draw("pe same");
+          leg->AddEntry((hSignalXsubP.at(0))[0*nPtBins+i], Form("%s #eta-ref", fleg[0].Data()), "p");
+        }
       if(plotPYTHIA)
         {
           xjjroot::setthgrstyle(ahSignalRsubPYTHIA[i], fmcolor[2], fmstyle[2], 1.2, fmcolor[2], 1, 1, -1, -1, -1);
@@ -257,8 +259,11 @@ void djtana_finalplot(TString inputnamePP, TString inputnamePbPb, TString inputn
       xjjroot::setthgrstyle((gSignalXsubRatio.at(1))[i], kBlack, fmstyle[1], 1.2, 0, 1, 1, kGray+1, 0.7, 1001);
       (gSignalXsubRatio.at(1))[i]->Draw("2 same");
       (hSignalXsubRatio.at(1))[i]->Draw("pe same");
-      xjjroot::setthgrstyle((hSignalXsubRatio.at(0))[i], kViolet-7, fmstyle[1]+4, 1.2, kViolet-7, 1, 1, -1, -1, -1);
-      (hSignalXsubRatio.at(0))[i]->Draw("pe same");
+      if(jetetamin >= 0.3)
+        {
+          xjjroot::setthgrstyle((hSignalXsubRatio.at(0))[i], kViolet-7, fmstyle[1]+4, 1.2, kViolet-7, 1, 1, -1, -1, -1);
+          (hSignalXsubRatio.at(0))[i]->Draw("pe same");
+        }
       if(plotPYTHIA)
         {
           xjjroot::setthgrstyle((hSignalXsubRatioPYTHIA.at(1))[i], fmcolor[2], fmstyle[2], 1.2, fmcolor[2], 1, 1, -1, -1, -1);
@@ -266,13 +271,13 @@ void djtana_finalplot(TString inputnamePP, TString inputnamePbPb, TString inputn
           // (gSignalXsubRatioPYTHIA.at(1))[i]->Draw("2 same");
           (hSignalXsubRatioPYTHIA.at(1))[i]->Draw("pe same");
         }
-      TLegend* legPull = new TLegend(0.21, 0.95-(2+plotPYTHIA)*0.09, 0.55, 0.95);
+      TLegend* legPull = new TLegend(0.21, 0.95-(1+int(jetetamin>=0.3)+plotPYTHIA)*0.09, 0.55, 0.95);
       xjjroot::setleg(legPull, 0.09);
       legPull->AddEntry((hSignalXsubRatio.at(1))[i], "event-mixing", "p");
       legPull->AddEntry((hSignalXsubRatioPYTHIA.at(1))[i], "PbPb / PYTHIA", "p");
-      legPull->AddEntry((hSignalXsubRatio.at(0))[i], "#eta-ref", "p");
+      if(jetetamin >= 0.3) legPull->AddEntry((hSignalXsubRatio.at(0))[i], "#eta-ref", "p");
       legPull->Draw();
-      c->SaveAs(Form("plotfinal/cfinal_xsec_%s_r_pt_%s_%s_comp.pdf",outputname.Data(),xjjc::number_to_string(ptBins[i]).c_str(),xjjc::number_to_string(ptBins[i+1]).c_str()));
+      if(jetetamin>=0.3) c->SaveAs(Form("plotfinal/cfinal_xsec_%s_r_pt_%s_%s_comp.pdf",outputname.Data(),xjjc::number_to_string(ptBins[i]).c_str(),xjjc::number_to_string(ptBins[i+1]).c_str()));
 
       delete legPull;
       delete hemptyPull;
