@@ -197,7 +197,7 @@ TF1* xjjroot::dfitter::fit(const TH1* hmass, const TH1* hmassMCSignal, const TH1
   sethist(hMCSignal);
   sethist(hMCSwapped);
 
-  if(h->GetEntries()==0)
+  if(h->GetEntries()<5)
     {
       fun_f->SetParameter(0, 0);
       fun_f->SetParameter(3, 0);
@@ -499,6 +499,7 @@ void xjjroot::dfitter::calvar()
   Sig = S/TMath::Sqrt(S+B);
   yield = fun_mass->Integral(min_hist_dzero,max_hist_dzero)/binwid_hist_dzero;
   yieldErr = fun_mass->Integral(min_hist_dzero,max_hist_dzero)/binwid_hist_dzero*fun_mass->GetParError(0)/fun_mass->GetParameter(0);
+  if(yield<1) yieldErr = 0;
   Chi2 = 2.*r->MinFcnValue();
   NDF = fun_f->GetNDF();
   Chi2Prob = TMath::Prob(Chi2,NDF);
