@@ -9,7 +9,7 @@
 #include <vector>
 
 //const int nEventsToMix = 24;
-const int nEventsToMix = 1;
+const int nEventsToMix = 10;
 
 class DJetTree {
   public:
