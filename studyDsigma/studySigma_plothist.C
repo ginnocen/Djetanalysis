@@ -35,6 +35,8 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
     fFitPt[i]=new TF1(Form("fFitPt%s",variablename[i].Data()),"[0]+x*[1]",4.,100.);
     fFitY[i]->SetName(Form("fFitY%s",variablename[i].Data()));
     fFitPt[i]->SetName(Form("fFitPt%s",variablename[i].Data()));
+    fFitY[i]->SetLineColor(4);
+    fFitPt[i]->SetLineColor(4);
   }
   
   TFile* infData = new TFile(Form("%s.root",inputnameData.Data()));
@@ -46,21 +48,23 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
   TH1F*hDmesonYData=(TH1F*)infData->Get("hDmesonY");
   TH1F*hDmesonYMC=(TH1F*)infMC->Get("hDmesonY");
 
-   TH2F* hempty[6];
-   hempty[0]= new TH2F("hempty0", ";p_{T};#mu (GeV)", 10, 0, 100, 10, 1.8,1.9);
-   hempty[1]= new TH2F("hempty1", ";p_{T};#sigma (GeV)", 10, 0, 100, 10, 0.,0.1);
-   hempty[2]= new TH2F("hempty2", ";p_{T};signal", 10, 0, 100, 10, 0.,1);
-   hempty[3]= new TH2F("hempty3", ";rapidity;#mu (GeV)", 10, -3, 3, 10, 1.8,1.9);
-   hempty[4]= new TH2F("hempty4", ";rapidity;#sigma (GeV)", 10, -3, 3, 10, 0.,0.1);
-   hempty[5]= new TH2F("hempty5", ";rapidity;signal", 10, -3, 3, 10, 0.,1);
+   TH2F* hemptyPt[4];
+   hemptyPt[0]= new TH2F("hemptyPt0", ";p_{T}; #mu (GeV)", 10, 0, 100, 10, 1.8,1.9);
+   hemptyPt[1]= new TH2F("hemptyPt1", ";p_{T}; #sigma (GeV)", 10, 0, 100, 10, 0.,0.1);
+   hemptyPt[2]= new TH2F("hemptyPt2", ";p_{T}; #mu DATA/MC", 10, 0, 100, 10, 0.5,1.5);
+   hemptyPt[3]= new TH2F("hemptyPt3", ";p_{T}; #sigma DATA/MC", 10, 0, 100, 10, 0.5,1.5);
+   
+   TH2F* hemptyY[4];
+   hemptyY[0]= new TH2F("hemptyY0", ";rapidity; #mu (GeV)", 10, -3, 3, 10, 1.8,1.9);
+   hemptyY[1]= new TH2F("hemptyY1", ";rapidity; #sigma (GeV)", 10, -3, 3, 10, 0.,0.1);
+   hemptyY[2]= new TH2F("hemptyY2", ";rapidity; #mu DATA/MC", 10, -3, 3, 10, 0.5,1.5);
+   hemptyY[3]= new TH2F("hemptyY3", ";rapidity; #sigma DATA/MC", 10, -3, 3, 10, 0.5,1.5);
 
-   TH2F* hemptyRatio[6];
-   hemptyRatio[0]= new TH2F("hemptyRatio0", ";p_{T};#mu Data/MC", 10, 0, 100, 10, 0.9,1.1);
-   hemptyRatio[1]= new TH2F("hemptyRatio1", ";p_{T};#sigma Data/MC", 10, 0, 100, 10, 0.,2);
-   hemptyRatio[2]= new TH2F("hemptyRatio2", ";p_{T};signal Data/MC", 10, 0, 100, 10, 0.,2);
-   hemptyRatio[3]= new TH2F("hemptyRatio3", ";rapidity;#mu Data/MC", 10, -3, 3, 10, 0.9,1.1);
-   hemptyRatio[4]= new TH2F("hemptyRatio4", ";rapidity;#sigma Data/MC", 10, -3, 3, 10, 0.,2);
-   hemptyRatio[5]= new TH2F("hemptyRatio5", ";rapidity;signal Data/MC", 10, -3, 3, 10, 0.,2);
+   TH2F* hemptySpectra[4];
+   hemptySpectra[0]= new TH2F("hemptySpectra0", ";p_{T};signal", 10, 0, 100, 10, 0.,1);
+   hemptySpectra[1]= new TH2F("hemptySpectra1", ";rapidity;signal", 10, -3, 3, 10, 0.,1);
+   hemptySpectra[2]= new TH2F("hemptySpectra2", ";p_{T};signal Data/MC", 10, 0, 100, 10, 0., 2);
+   hemptySpectra[3]= new TH2F("hemptySpectra3", ";rapidity;signal Data/MC", 10, -3, 3, 10, 0., 2);
 
   TLatex *texData = new TLatex(30,1.85,"Data");
    texData->SetTextColor(mycolors_sample[0]);
@@ -68,59 +72,74 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
   TLatex *texMC = new TLatex(60,1.85,"MC");
    texMC->SetTextColor(mycolors_sample[1]);
    texMC->SetTextAlign(22); texMC->SetTextSize(0.1);
+   
+  TLatex *texDataY = new TLatex(-1.5,1.85,"Data");
+   texDataY->SetTextColor(mycolors_sample[0]);
+   texDataY->SetTextAlign(22); texDataY->SetTextSize(0.1);
+  TLatex *texMCY = new TLatex(0,1.85,"MC");
+   texMCY->SetTextColor(mycolors_sample[1]);
+   texMCY->SetTextAlign(22); texMCY->SetTextSize(0.1);
 
   TLegend* leg = new TLegend(0.53, 0.88, 0.85, 0.88);
   xjjroot::setleg(leg);
 
-  TCanvas* c= new TCanvas("c", "", 1500, 1000);
-  c->Divide(3,2);
-  for (int i=0;i<3;i++){
-    c->cd(i+1);
-    hempty[i]->GetXaxis()->SetNdivisions(505);
-    xjjroot::sethempty(hempty[i], 0, 0.3);
-    hempty[i]->Draw();
+  TCanvas* cPt= new TCanvas("cPt", "", 1000, 1000);
+  cPt->Divide(2,2);
+  for (int i=0;i<2;i++){
+    cPt->cd(i+1);
+    hemptyPt[i]->GetXaxis()->SetNdivisions(505);
+    xjjroot::sethempty(hemptyPt[i], 0, 0.3);
+    hemptyPt[i]->Draw();
     xjjroot::setthgrstyle(ahHistoPtsample[i][0], mycolors_sample[0], 1, 1.2, mycolors_sample[0], 1, 1, -1, -1, -1);
     xjjroot::setthgrstyle(ahHistoPtsample[i][1], mycolors_sample[1], 1, 1.2, mycolors_sample[1], 1, 1, -1, -1, -1);
     ahHistoPtsample[i][0]->Draw("same");
     ahHistoPtsample[i][1]->Draw("same");
-    texData->Draw();
+     texData->Draw();
     texMC->Draw();
+
   }
-  for (int i=0;i<3;i++){
-    c->cd(i+4);
-    hempty[i+3]->GetXaxis()->SetNdivisions(505);
-    xjjroot::sethempty(hempty[i+3], 0, 0.3);
-    hempty[i+3]->Draw();
+  for (int i=0;i<2;i++){
+    cPt->cd(i+3);
+    hemptyPt[i]->GetXaxis()->SetNdivisions(505);
+    xjjroot::sethempty(hemptyPt[i+2], 0, 0.3);
+    hemptyPt[i+2]->Draw();
+    xjjroot::setthgrstyle(ahRatioPtDataOverMC[i], mycolors_sample[0], 1, 1.2, mycolors_sample[0], 1, 1, -1, -1, -1);
+    ahRatioPtDataOverMC[i]->Draw("same");
+    ahRatioPtDataOverMC[i]->Draw("same");
+    ahRatioPtDataOverMC[i]->Fit(Form("fFitPt%s",variablename[i].Data()),"q");
+  }
+
+  cPt->SaveAs(Form("plotsSigma/canvasMeanSigmaPt%s.png",label.Data()));
+
+
+  TCanvas* cY= new TCanvas("cY", "", 1000, 1000);
+  cY->Divide(2,2);
+  for (int i=0;i<2;i++){
+    cY->cd(i+1);
+    hemptyY[i]->GetXaxis()->SetNdivisions(505);
+    xjjroot::sethempty(hemptyY[i], 0, 0.3);
+    hemptyY[i]->Draw();
+    texDataY->Draw();
+    texMCY->Draw();
     xjjroot::setthgrstyle(ahHistoYsample[i][0], mycolors_sample[0], 1, 1.2, mycolors_sample[0], 1, 1, -1, -1, -1);
     xjjroot::setthgrstyle(ahHistoYsample[i][1], mycolors_sample[1], 1, 1.2, mycolors_sample[1], 1, 1, -1, -1, -1);
     ahHistoYsample[i][0]->Draw("same");
     ahHistoYsample[i][1]->Draw("same");
-  }
-  c->SaveAs(Form("plotsSigma/canvasMeanSigma%s.png",label.Data()));
 
-
-  TCanvas* cRatio = new TCanvas("cRatio", "", 1500, 1000);
-  cRatio->Divide(3,2);
-  for (int i=0;i<3;i++){
-    cRatio->cd(i+1);
-    hemptyRatio[i]->GetXaxis()->SetNdivisions(505);
-    xjjroot::sethempty(hemptyRatio[i], 0, 0.3);
-    hemptyRatio[i]->Draw();
-    xjjroot::setthgrstyle(ahRatioPtDataOverMC[i], 1, 1, 1.2, 1, 1, 1, -1, -1, -1);
-    ahRatioPtDataOverMC[i]->Draw("same");
-    ahRatioPtDataOverMC[i]->Fit(Form("fFitPt%s",variablename[i].Data()),"q");
   }
-  for (int i=0;i<3;i++){
-    cRatio->cd(i+4);
-    hemptyRatio[i+3]->GetXaxis()->SetNdivisions(505);
-    xjjroot::sethempty(hemptyRatio[i+3], 0, 0.3);
-    hemptyRatio[i+3]->Draw();
-    xjjroot::setthgrstyle(ahRatioYDataOverMC[i], 1, 1, 1.2, 1, 1, 1, -1, -1, -1);
+  for (int i=0;i<2;i++){
+    cY->cd(i+3);
+    hemptyY[i]->GetXaxis()->SetNdivisions(505);
+    xjjroot::sethempty(hemptyY[i+2], 0, 0.3);
+    hemptyY[i+2]->Draw();
+    xjjroot::setthgrstyle(ahRatioYDataOverMC[i], mycolors_sample[0], 1, 1.2, mycolors_sample[0], 1, 1, -1, -1, -1);
+    ahRatioYDataOverMC[i]->Draw("same");
     ahRatioYDataOverMC[i]->Draw("same");
     ahRatioYDataOverMC[i]->Fit(Form("fFitY%s",variablename[i].Data()),"q");
   }
-  cRatio->SaveAs(Form("plotsSigma/cRatioanvasMeanSigma%s.png",label.Data()));
-  
+
+  cY->SaveAs(Form("plotsSigma/canvasMeanSigmaY%s.png",label.Data()));
+
   for (int m=0;m<nvariables;m++){
     if(m==0|| m==2) continue;
     std::cout<<std::endl;
