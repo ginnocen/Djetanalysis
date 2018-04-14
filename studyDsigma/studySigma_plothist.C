@@ -121,6 +121,20 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
   }
   cRatio->SaveAs(Form("plotsSigma/cRatioanvasMeanSigma%s.png",label.Data()));
   
+  for (int m=0;m<nvariables;m++){
+    if(m==0|| m==2) continue;
+    std::cout<<std::endl;
+    std::cout<<"************ Parameter fits Y rapidity "<<collisionsyst.Data()<<","<<variablename[m]<<std::endl;
+    std::cout<<"intersept="<<fFitY[m]->GetParameter(0)<<", with error="<<fFitY[m]->GetParError(0)<<std::endl;
+    std::cout<<"linear coefficient="<<fFitY[m]->GetParameter(1)<<", with error="<<fFitY[m]->GetParError(1)<<std::endl;
+    std::cout<<std::endl;
+    
+    std::cout<<std::endl;
+    std::cout<<"************ Parameter fits Pt rapidity "<<collisionsyst.Data()<<","<<variablename[m]<<std::endl;
+    std::cout<<"intersept="<<fFitPt[m]->GetParameter(0)<<", with error="<<fFitPt[m]->GetParError(0)<<std::endl;
+    std::cout<<"linear coefficient="<<fFitPt[m]->GetParameter(1)<<", with error="<<fFitPt[m]->GetParError(1)<<std::endl;
+    std::cout<<std::endl;
+  }
   
   TFile* outf = new TFile(Form("%s.root",output.Data()), "recreate");
   outf->cd();
