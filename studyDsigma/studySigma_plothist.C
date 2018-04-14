@@ -26,6 +26,17 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
   
   if(createhists("usehist")) return;
   
+  
+  TF1 *fFitY[nvariables];
+  TF1 *fFitPt[nvariables];
+  
+  for (int i=0;i<nvariables;i++){
+    fFitY[i]=new TF1(Form("fFitY%s",variablename[i].Data()),"[0]+x*[1]",-2.,2.);
+    fFitPt[i]=new TF1(Form("fFitPt%s",variablename[i].Data()),"[0]+x*[1]",4.,100.);
+    fFitY[i]->SetName(Form("fFitY%s",variablename[i].Data()));
+    fFitPt[i]->SetName(Form("fFitPt%s",variablename[i].Data()));
+  }
+  
   TFile* infData = new TFile(Form("%s.root",inputnameData.Data()));
   TFile* infMC = new TFile(Form("%s.root",inputnameMC.Data()));
   if(!infData->IsOpen()) return;
@@ -97,6 +108,7 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
     hemptyRatio[i]->Draw();
     xjjroot::setthgrstyle(ahRatioPtDataOverMC[i], 1, 1, 1.2, 1, 1, 1, -1, -1, -1);
     ahRatioPtDataOverMC[i]->Draw("same");
+    ahRatioPtDataOverMC[i]->Fit(Form("fFitPt%s",variablename[i].Data()),"q");
   }
   for (int i=0;i<3;i++){
     cRatio->cd(i+4);
@@ -105,13 +117,18 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
     hemptyRatio[i+3]->Draw();
     xjjroot::setthgrstyle(ahRatioYDataOverMC[i], 1, 1, 1.2, 1, 1, 1, -1, -1, -1);
     ahRatioYDataOverMC[i]->Draw("same");
+    ahRatioYDataOverMC[i]->Fit(Form("fFitY%s",variablename[i].Data()),"q");
   }
   cRatio->SaveAs(Form("plotsSigma/cRatioanvasMeanSigma%s.png",label.Data()));
   
   
-  TFile* outf = new TFile(output.Data(), "recreate");
+  TFile* outf = new TFile(Form("%s.root",output.Data()), "recreate");
   outf->cd();
   if(writehists("plothist")) return;
+  for (int i=0;i<nvariables;i++){
+    fFitY[i]->Write();
+    fFitPt[i]->Write();
+  }
   outf->Write();
   outf->Close();
 
