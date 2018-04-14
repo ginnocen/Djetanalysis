@@ -20,6 +20,7 @@ const int nCorr = 2;
 TString legCorr[nCorr-1] = {"sgen / gen jet"};
 Color_t colCorr[nCorr-1] = {kRed-7};
 TString tHist[nCorr] = {"hSignalRsub_pt", "hSignalRsub_pt"};
+TString tRatio[nCorr] = {"hSignalRsubRatioMe_pt", "hSignalRsubRatioMe_pt"};
 
 //
 TH1F* ahSignalRnorm[nCorr][nPtBins];
@@ -58,6 +59,18 @@ int gethists(std::vector<TFile*> inf, Option_t* option)
               ahSignalRnorm[m][i] = (TH1F*)inf[m]->Get(Form("%s_%d",tHist[m].Data(),i));
               ahSignalRnorm[m][i]->SetName(Form("hSignalRnorm_Case%d_pt_%d",m,i));
               // ahSignalRnorm[m][i]->Scale(1./ahSignalRnorm[m][i]->Integral("width"));
+            }
+        }
+      return 0;
+    }
+  if(opt=="usehist_ratio")
+    {
+      for(int m=0;m<nCorr;m++)
+        {
+          for(int i=0;i<nPtBins;i++)
+            {
+              ahSignalRnorm[m][i] = (TH1F*)inf[m]->Get(Form("%s_%d",tRatio[m].Data(),i));
+              ahSignalRnorm[m][i]->SetName(Form("hSignalRnorm_Case%d_pt_%d",m,i));
             }
         }
       return 0;

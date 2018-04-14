@@ -1,18 +1,13 @@
 #include "compxsec.h"
 
-void compxsec_usehist(TString inputnumname, TString inputdenname, 
-                      TString legnum, TString legden,
-                      TString outputname, TString collisionsyst, 
-                      Float_t jetptmin, Float_t jetptmax, Float_t jetetamin, Float_t jetetamax,
-                      TString texname="")
+void compxsec_usehist_ratio(TString inputnumname, TString inputdenname, 
+                            TString legnum, TString legden,
+                            TString outputname, 
+                            Float_t jetptmin, Float_t jetptmax, Float_t jetetamin, Float_t jetetamax,
+                            TString texname="")
 {
   xjjroot::setgstyle();
 
-  int arguerr(TString collisionsyst);
-  if(arguerr(collisionsyst)) return;
-
-  Bool_t ispp = collisionsyst=="pp";
-  
   if(createhists("usehist")) return;
 
   std::vector<TFile*> infhist(nCorr, 0);
@@ -21,7 +16,7 @@ void compxsec_usehist(TString inputnumname, TString inputdenname,
   infhist[1] = new TFile(Form("%s.root",inputdenname.Data()));
   if(!infhist[1]->IsOpen()) return;
 
-  if(gethists(infhist, "usehist")) return;
+  if(gethists(infhist, "usehist_ratio")) return;
 
   for(int i=0;i<nPtBins;i++)
     ahCorrFactor[i]->Divide(ahSignalRnorm[0][i], ahSignalRnorm[1][i]);
@@ -34,22 +29,20 @@ void compxsec_usehist(TString inputnumname, TString inputdenname,
     };
   TString texjetpt = jetptmax<999? Form("%s < p_{T}^{jet} < %s GeV/c",xjjc::number_remove_zero(jetptmin).c_str(),xjjc::number_remove_zero(jetptmax).c_str()): Form("p_{T}^{jet} > %s GeV/c",xjjc::number_remove_zero(jetptmin).c_str());
   vectex.push_back(texjetpt);
-  TString texpythia = ispp?"PYTHIA":"PYTHIA + HYDJET";
-  vectex.push_back(texpythia);
 
   Float_t ypaddiv = 2./3, yPullpaddiv = 1-ypaddiv;
 
   for(int i=0;i<nPtBins;i++)
     {
-      Float_t yaxismax = ahSignalRnorm[0][i]->GetBinContent(1) * 1.e+3;
-      Float_t yaxismin = ahSignalRnorm[0][i]->GetBinContent(nDrBins) * 1.e-2;
+      Float_t yaxismax = 3;
+      Float_t yaxismin = 0;
       TCanvas* c = new TCanvas("c", "", 600, 800);
       TPad* pXsec = new TPad("pXsec", "", 0, 1-ypaddiv, 1, 1);
       pXsec->SetMargin(xjjroot::margin_pad_left, xjjroot::margin_pad_right, 0, xjjroot::margin_pad_top);
       pXsec->Draw();
       pXsec->cd();
-      pXsec->SetLogy();
-      TH2F* hempty = new TH2F("hempty", ";r;#frac{1}{N_{jD}} #frac{dN_{jD}}{dr}", 5, drBins[0], drBins[nDrBins], 10, yaxismin, yaxismax);
+      // pXsec->SetLogy();
+      TH2F* hempty = new TH2F("hempty", ";r;P+H / PYTHIA", 5, drBins[0], drBins[nDrBins], 10, yaxismin, yaxismax);
       hempty->GetXaxis()->SetNdivisions(505);
       xjjroot::sethempty(hempty, 0, 0.3);
       hempty->Draw();
@@ -61,7 +54,7 @@ void compxsec_usehist(TString inputnumname, TString inputdenname,
       xjjroot::setthgrstyle(ahSignalRnorm[1][i], kRed, 25, 1.2, kRed, 1, 1, -1, -1, -1);
       ahSignalRnorm[1][i]->Draw("pe same");
       leg->AddEntry(ahSignalRnorm[1][i], legden.Data(), "p");
-      xjjroot::drawCMS(collisionsyst);
+      xjjroot::drawCMS("");
       Float_t texxpos = 0.22, texypos = 0.85, texdypos = 0.06;
       texypos += texdypos;
       for(std::vector<TString>::const_iterator it=vectex.begin(); it!=vectex.end(); it++)
@@ -92,7 +85,7 @@ void compxsec_usehist(TString inputnumname, TString inputdenname,
       xjjroot::drawline(drBins[0], 1.00, drBins[nDrBins], 1.00, kGray+2, 2, 4);
       xjjroot::setthgrstyle(ahCorrFactor[i], kBlack, 20, 1.2, kBlack, 1, 1, -1, -1, -1);
       ahCorrFactor[i]->Draw("pe same");
-      c->SaveAs(Form("plotcomp/ccomp_xsec_%s_dr_pt_%d.pdf",outputname.Data(),i));
+      c->SaveAs(Form("plotcomp/ccomp_ratio_xsec_%s_dr_pt_%d.pdf",outputname.Data(),i));
 
       delete hemptyPull;
       delete pPull;
@@ -102,23 +95,9 @@ void compxsec_usehist(TString inputnumname, TString inputdenname,
       delete c;
     }
 
-  if(texname != "" && jetetamin<=0 && jetetamax>=1.6)
-    {
-      std::cout<<"\033[1;36mstd::vector<std::vector<Float_t>> "<<texname<<Form("%.0f",jetptmin)<<Form("%.0f",jetptmax)<<"_"<<collisionsyst<<" = {";
-      for(int i=0;i<nPtBins;i++)
-        {
-          for(int j=0;j<nDrBins;j++)
-            {
-              if(!j) std::cout<<"{";
-              std::cout<<ahCorrFactor[i]->GetBinContent(j+1)<<(j<nDrBins-1?", ":"}");
-            }
-          if(i<nPtBins-1) std::cout<<","<<std::endl;
-        }
-      std::cout<<"};\033[0m"<<std::endl;
-    }
   if(texname == "corrFactor" && jetetamin<=0 && jetetamax>=1.6)
     {
-      std::cout<<"\033[1;35mstd::vector<std::vector<Float_t>> syst"<<Form("%.0f",jetptmin)<<Form("%.0f",jetptmax)<<"_NONCLOSURE_"<<collisionsyst<<" = {";
+      std::cout<<"\033[1;35mstd::vector<std::vector<Float_t>> syst"<<Form("%.0f",jetptmin)<<Form("%.0f",jetptmax)<<"_NONCLOSURE_ratio = {";
       for(int i=0;i<nPtBins;i++)
         {
           for(int j=0;j<nDrBins;j++)
@@ -134,22 +113,11 @@ void compxsec_usehist(TString inputnumname, TString inputdenname,
 
 int main(int argc, char* argv[])
 {
-  if(argc==12)
+  if(argc==11)
     {
-      compxsec_usehist(argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], atof(argv[7]), atof(argv[8]), atof(argv[9]), atof(argv[10]), argv[11]);
+      compxsec_usehist_ratio(argv[1], argv[2], argv[3], argv[4], argv[5], atof(argv[6]), atof(argv[7]), atof(argv[8]), atof(argv[9]), argv[10]);
       return 0;
     }
-  std::cout<<"  Error: invalid arguments number - compxsec_usehist()"<<std::endl;
+  std::cout<<"  Error: invalid arguments number - compxsec_usehist_ratio()"<<std::endl;
   return 1;
 }
-
-int arguerr(TString collisionsyst)
-{
-  if(collsyst_list.find(collisionsyst)==collsyst_list.end())
-    {
-      std::cout<<"\033[1;31merror:\033[0m invalid \"collisionsyst\""<<std::endl;
-      return 1;
-    } 
-  return 0;
-}
-

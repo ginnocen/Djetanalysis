@@ -14,6 +14,6 @@ JETPTMAX=(999 999)
 JETETAMIN=(0. 0.3)
 JETETAMAX=(1.6 1.6)
 
-source docompxsec.sh
+source docompxsec_ratio.sh
 
 rm prefilters.h

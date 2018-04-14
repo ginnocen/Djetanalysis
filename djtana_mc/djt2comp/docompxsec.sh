@@ -1,25 +1,15 @@
 #!/bin/bash
 # docompxsec.sh #
 
-DO_USEHIST=${1:-0}
-
 source ../includes/utility.shinc
-cp ../includes/prefilters_data.h prefilters.h
 
 # Select the systems the macros run on 
 iCOL=(0 1)
-jJET=(0 1 2)
 kPAR=(0 2)
 
 ##
 # nCOL loop
 COLSYST=('pp' 'PbPb')
-
-# nJET loop
-JETPTMIN=(60 80 100)
-JETPTMAX=(80 100 999)
-JETETAMIN=(0.3 0.3 0.3)
-JETETAMAX=(1.6 1.6 1.6)
 
 # Do not touch the macros below if you don't know what they mean #
 #
@@ -121,5 +111,3 @@ then
     done
 fi
 rm compxsec_usehist.exe
-
-rm prefilters.h
