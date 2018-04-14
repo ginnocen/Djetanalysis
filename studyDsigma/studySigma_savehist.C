@@ -49,9 +49,12 @@ void studySigma_savehist(TString inputname, TString outputname, TString collisio
       //
       djt.fChain->GetEntry(i);
             //
-      Float_t cweight = ispp?1.:djtweight::getcentweight(djt.hiBin);
+      //Float_t cweight = ispp?1.:djtweight::getcentweight(djt.hiBin);
+      Float_t cweight = 1;
       Float_t evtweight = cweight;
       Float_t ptweight=djt.pthatweight;
+      
+      if (isMC==1&&djt.pthat<30) continue;
       
       if (ispthatweight==1&&isMC==1) evtweight=evtweight*ptweight;
       // loop D
@@ -59,10 +62,6 @@ void studySigma_savehist(TString inputname, TString outputname, TString collisio
       Int_t djtDsel = djt.isDselected(jd, "r");
       if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
       if(!djtDsel) continue;
-
-        Float_t Dgenpt = (**djt.aDgenpt[irecogen])[jd];
-        Float_t weightDgen = isMC?1:djtweight::getDptweight(Dgenpt, ispp);
-
          Float_t Dmass =(*djt.Dmass)[jd];
          Float_t Dpt =(*djt.Dpt)[jd];
          Float_t Dy =(*djt.Dy)[jd];
@@ -71,7 +70,7 @@ void studySigma_savehist(TString inputname, TString outputname, TString collisio
          for(int j=0;j<nptBins;j++) {
            if(std::fabs(Dy)>ycutforPtstudy) continue;
            if(Dpt>ptBins[j] && Dpt<ptBins[j+1]) {
-             ahHistoMassPt[j]->Fill(Dmass,evtweight*weightDgen);
+             ahHistoMassPt[j]->Fill(Dmass,evtweight);
              if (isMC==1){
                if((*djt.Dgen)[jd]==23333) ahHistoMassPtSignal[j]->Fill(Dmass);
                if((*djt.Dgen)[jd]==23344) ahHistoMassPtSwapped[j]->Fill(Dmass);
@@ -81,7 +80,7 @@ void studySigma_savehist(TString inputname, TString outputname, TString collisio
          for(int j=0;j<nyBins;j++) {
          if(Dpt<ptcutforYstudy) continue;
            if(Dy>yBins[j] && Dy<yBins[j+1]) {
-             ahHistoMassY[j]->Fill(Dmass,evtweight*weightDgen);
+             ahHistoMassY[j]->Fill(Dmass,evtweight);
              if (isMC==1){
                if((*djt.Dgen)[jd]==23333) ahHistoMassYSignal[j]->Fill(Dmass);
                if((*djt.Dgen)[jd]==23344) ahHistoMassYSwapped[j]->Fill(Dmass);
