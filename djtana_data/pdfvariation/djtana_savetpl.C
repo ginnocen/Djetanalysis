@@ -57,7 +57,7 @@ void djtana_savetpl(TString inputname, TString outputname,
 
           if(djtcorr::processjets(jetpt, jetphi, jeteta, jetnpdfpart, ibincent,
                                   vjetpt, vjetphi, vjeteta,
-                                  jescale, gensmearphi,
+                                  jescale, gensmearpt, gensmearphi,
                                   djt.ajetopt[irecogen]=="reco" && jescale,
                                   djt.ajetopt[irecogen]=="gen" && gensmearpt,
                                   djt.ajetopt[irecogen]=="gen" && gensmearphi, NSMEAR)) return;

@@ -57,7 +57,7 @@ void djtana_savetpl(TString inputname, TString outputname,
 
           if(djtcorr::processjets(jetpt, jetphi, jeteta, jetnpdfpart, ibincent,
                                   vjetpt, vjetphi, vjeteta,
-                                  jescale, gensmearphi,
+                                  jescale, gensmearpt, gensmearphi,
                                   djt.ajetopt[irecogen]=="reco" && jescale,
                                   djt.ajetopt[irecogen]=="gen" && gensmearpt,
                                   djt.ajetopt[irecogen]=="gen" && gensmearphi, NSMEAR)) return;
@@ -216,7 +216,7 @@ int arguerr(TString collisionsyst, Int_t irecogen, Int_t gensmearpt, Int_t gensm
       std::cout<<"\"irecogen\" indicates genD, skip djtana_savetpl()."<<std::endl;
       return 2;
     }
-  if(gensmearpt != gensmearphi)
+  if((gensmearpt==0 && gensmearphi>0) || (gensmearpt>0 && gensmearphi==0))
     {
       std::cout<<"error: smear gen pt and angle together"<<std::endl;
       return 2;

@@ -9,6 +9,8 @@
 #include "xjjcuti.h"
 
 std::vector<std::vector<Float_t>>* paramfScalePt = 0;
+std::vector<std::vector<Float_t>>* paramfScalePtQ = 0;
+std::vector<std::vector<Float_t>>* paramfScalePtG = 0;
 std::vector<std::vector<Float_t>>* paramfResoPt = 0;
 std::vector<std::vector<Float_t>>* paramfScaleRecoPt = 0;
 std::vector<std::vector<Float_t>>* paramfScalePtFfCorr = 0;
@@ -33,6 +35,9 @@ TRandom3* pRandom3 = 0;
 
 namespace djtcorr
 {
+  Float_t syst_scale_pm = 0.028;
+  Float_t syst_reso_pm = 0.15;
+
   void setnCentBins(Int_t ispp) { nCentBins = ispp?1:NCentBins; }
 
   void setParameters(int ispp)
@@ -41,6 +46,8 @@ namespace djtcorr
     pRandom3 = new TRandom3();
 
     paramfScalePt = ispp?&paramfScalePt_pp:&paramfScalePt_PbPb;
+    paramfScalePtQ = ispp?&paramfScalePtQ_pp:&paramfScalePtQ_PbPb;
+    paramfScalePtG = ispp?&paramfScalePtG_pp:&paramfScalePtG_PbPb;
     paramfResoPt = ispp?&paramfResoPtCorr_pp:&paramfResoPtCorr_PbPb;
     paramfScaleRecoPt = ispp?&paramfScaleRecoPt_pp:&paramfScaleRecoPt_PbPb;
     paramfScalePtFfCorr = ispp?&paramfScalePtFfCorr_pp:&paramfScalePtFfCorr_PbPb;
@@ -111,16 +118,64 @@ namespace djtcorr
     return 1;
   }
 
-  int ptSmear(float &jetpt, int ibincent)
+  int ptCorrVariation(int jescale, float &jetpt, float jetnpfpart, int ibincent)
+  {
+    if(!paramfScaleRecoPt || !paramfScalePt || !paramfScalePtQ || !paramfScalePtG) { std::cout<<"error: set parameters first."<<std::endl; return 2; }
+    if(jescale==0)
+      {
+        Float_t jetrecomatgenpt = jetpt / (paramfScaleRecoPt->at(ibincent).at(0) + paramfScaleRecoPt->at(ibincent).at(1)/TMath::Sqrt(jetpt) + paramfScaleRecoPt->at(ibincent).at(2)/jetpt + paramfScaleRecoPt->at(ibincent).at(3)/(jetpt*jetpt));
+        Float_t vScalePt = paramfScalePt->at(ibincent).at(0) + paramfScalePt->at(ibincent).at(1)/TMath::Sqrt(jetrecomatgenpt) + paramfScalePt->at(ibincent).at(2)/jetrecomatgenpt + paramfScalePt->at(ibincent).at(3)/(jetrecomatgenpt*jetrecomatgenpt);
+        jetpt = jetpt/vScalePt;
+        return 0;
+      }
+    if(jescale==1)
+      {
+        Float_t jetrecomatgenpt = jetpt / (paramfScaleRecoPt->at(ibincent).at(0) + paramfScaleRecoPt->at(ibincent).at(1)/TMath::Sqrt(jetpt) + paramfScaleRecoPt->at(ibincent).at(2)/jetpt + paramfScaleRecoPt->at(ibincent).at(3)/(jetpt*jetpt));
+        Float_t vScalePt = paramfScalePt->at(ibincent).at(0) + paramfScalePt->at(ibincent).at(1)/TMath::Sqrt(jetrecomatgenpt) + paramfScalePt->at(ibincent).at(2)/jetrecomatgenpt + paramfScalePt->at(ibincent).at(3)/(jetrecomatgenpt*jetrecomatgenpt);
+        jetpt = jetpt/(vScalePt*(1+syst_scale_pm));
+        return 0;
+      }
+    if(jescale==2)
+      {
+        Float_t jetrecomatgenpt = jetpt / (paramfScaleRecoPt->at(ibincent).at(0) + paramfScaleRecoPt->at(ibincent).at(1)/TMath::Sqrt(jetpt) + paramfScaleRecoPt->at(ibincent).at(2)/jetpt + paramfScaleRecoPt->at(ibincent).at(3)/(jetpt*jetpt));
+        Float_t vScalePt = paramfScalePt->at(ibincent).at(0) + paramfScalePt->at(ibincent).at(1)/TMath::Sqrt(jetrecomatgenpt) + paramfScalePt->at(ibincent).at(2)/jetrecomatgenpt + paramfScalePt->at(ibincent).at(3)/(jetrecomatgenpt*jetrecomatgenpt);
+        jetpt = jetpt/(vScalePt*(1-syst_scale_pm));
+        return 0;
+      }
+    if(jescale==3)
+      {
+        Float_t jetrecomatgenpt = jetpt / (paramfScaleRecoPt->at(ibincent).at(0) + paramfScaleRecoPt->at(ibincent).at(1)/TMath::Sqrt(jetpt) + paramfScaleRecoPt->at(ibincent).at(2)/jetpt + paramfScaleRecoPt->at(ibincent).at(3)/(jetpt*jetpt));
+        Float_t vScalePt = paramfScalePtQ->at(ibincent).at(0) + paramfScalePtQ->at(ibincent).at(1)/TMath::Sqrt(jetrecomatgenpt) + paramfScalePtQ->at(ibincent).at(2)/jetrecomatgenpt + paramfScalePtQ->at(ibincent).at(3)/(jetrecomatgenpt*jetrecomatgenpt);
+        jetpt = jetpt/vScalePt;
+        return 0;
+      }
+    if(jescale==4)
+      {
+        Float_t jetrecomatgenpt = jetpt / (paramfScaleRecoPt->at(ibincent).at(0) + paramfScaleRecoPt->at(ibincent).at(1)/TMath::Sqrt(jetpt) + paramfScaleRecoPt->at(ibincent).at(2)/jetpt + paramfScaleRecoPt->at(ibincent).at(3)/(jetpt*jetpt));
+        Float_t vScalePt = paramfScalePtG->at(ibincent).at(0) + paramfScalePtG->at(ibincent).at(1)/TMath::Sqrt(jetrecomatgenpt) + paramfScalePtG->at(ibincent).at(2)/jetrecomatgenpt + paramfScalePtG->at(ibincent).at(3)/(jetrecomatgenpt*jetrecomatgenpt);
+        jetpt = jetpt/vScalePt;
+        return 0;
+      }
+    std::cout<<"invalid jescale"<<std::endl;
+    return 1;
+  }
+
+  int ptSmear(float &jetpt, int ibincent, int jereso=1)
   {
     if(!paramfResoPt) { std::cout<<"error: set parameters first. (djt::ptSmear)"<<std::endl; return 2; }
-    // if(jetpt > 10)
-    if(jetpt > 0)
+    if(jereso==1)
       {
         Float_t sigmaPt = TMath::Sqrt(paramfResoPt->at(ibincent).at(0)*paramfResoPt->at(ibincent).at(0) +
                                       paramfResoPt->at(ibincent).at(1)*paramfResoPt->at(ibincent).at(1)/jetpt +
                                       paramfResoPt->at(ibincent).at(2)*paramfResoPt->at(ibincent).at(2)/(jetpt*jetpt));
         jetpt = jetpt * pRandom3->Gaus(1, sigmaPt);
+      }
+    if(jereso==2)
+      {
+        Float_t sigmaPt = TMath::Sqrt(paramfResoPt->at(ibincent).at(0)*paramfResoPt->at(ibincent).at(0) +
+                                      paramfResoPt->at(ibincent).at(1)*paramfResoPt->at(ibincent).at(1)/jetpt +
+                                      paramfResoPt->at(ibincent).at(2)*paramfResoPt->at(ibincent).at(2)/(jetpt*jetpt));
+        jetpt = jetpt * pRandom3->Gaus(1, sigmaPt*(1+syst_reso_pm));
       }
     return 0;
   }
@@ -232,7 +287,7 @@ namespace djtcorr
 
   int processjets(Float_t jetpt, Float_t jetphi, Float_t jeteta, Float_t jetnpdfpart, Int_t ibincent,
                   std::vector<float>* vjetpt, std::vector<float>* vjetphi, std::vector<float>* vjeteta,
-                  Int_t jescale, Int_t gensmearphi,
+                  Int_t jescale, Int_t gensmearpt, Int_t gensmearphi,
                   Bool_t doJEC, Bool_t doSmearPt, Bool_t doSmearAngle, int NSMEAR)
   {
     // JEC
@@ -244,7 +299,7 @@ namespace djtcorr
         for(int n=0;n<NSMEAR;n++)
           {
             float sjetpt = jetpt;
-            if(djtcorr::ptSmear(sjetpt, ibincent)) return 1;
+            if(djtcorr::ptSmear(sjetpt, ibincent, gensmearpt)) return 1;
             vjetpt->push_back(sjetpt);
           }
       }
