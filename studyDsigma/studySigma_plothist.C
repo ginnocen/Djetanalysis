@@ -1,0 +1,202 @@
+#include "../includes/xjjrootuti.h"
+#include <iostream>
+#include <iomanip>
+#include <TMath.h>
+#include <TH1F.h>
+#include <TH2F.h>
+#include <TLegend.h>
+#include <TCanvas.h>
+#include <TFile.h>
+#include <TGraphErrors.h>
+#include "studySigma.h"
+
+
+void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString inputnameMC="rootfiles/xsec_pp_MC",TString output="rootfiles/output",  TString collisionsyst="pp",TString label="")
+{
+  xjjroot::setgstyle();
+  gStyle->SetPadTickX(1);
+  gStyle->SetPadTickY(1);
+  
+  int mycolors_sample[2]={1,2};
+  
+  int arguerr(TString collisionsyst);
+  if(arguerr(collisionsyst)) return;
+
+  Int_t ispp = collisionsyst=="pp"?1:0;
+  
+  if(createhists("usehist")) return;
+  
+  TF1 *fFitY[nvariables][fitvariations];
+  TF1 *fFitPt[nvariables][fitvariations];
+  
+  for (int i=0;i<nvariables;i++){
+    for (int m=0;m<fitvariations;m++){
+  
+      fFitY[i][m]=new TF1(Form("fFitY%s%s",variablename[i].Data(),fittype[m].Data()),fittype[m],-2.,2.);
+      fFitPt[i][m]=new TF1(Form("fFitPt%s%s",variablename[i].Data(),fittype[m].Data()),fittype[m],4.,100.);
+      fFitY[i][m]->SetName(Form("fFitY%s%s",variablename[i].Data(),fittype[m].Data()));
+      fFitPt[i][m]->SetName(Form("fFitPt%s%s",variablename[i].Data(),fittype[m].Data()));
+      fFitY[i][m]->SetLineColor(fittypecolor[m]);
+      fFitPt[i][m]->SetLineColor(fittypecolor[m]);
+    }
+  }
+  
+  TFile* infData = new TFile(Form("%s.root",inputnameData.Data()));
+  TFile* infMC = new TFile(Form("%s.root",inputnameMC.Data()));
+  if(!infData->IsOpen()) return;
+  if(!infMC->IsOpen()) return;
+  if(gethistsDataMC(infData,infMC, "plothist")) return;
+  
+  TH1F*hDmesonYData=(TH1F*)infData->Get("hDmesonY");
+  TH1F*hDmesonYMC=(TH1F*)infMC->Get("hDmesonY");
+
+   TH2F* hemptyPt[4];
+   hemptyPt[0]= new TH2F("hemptyPt0", ";p_{T}; #mu (GeV)", 10, 0, 100, 10, 1.8,1.9);
+   hemptyPt[1]= new TH2F("hemptyPt1", ";p_{T}; #sigma (GeV)", 10, 0, 100, 10, 0.,0.1);
+   hemptyPt[2]= new TH2F("hemptyPt2", ";p_{T}; #mu DATA/MC", 10, 0, 100, 10, 0.5,1.5);
+   hemptyPt[3]= new TH2F("hemptyPt3", ";p_{T}; #sigma DATA/MC", 10, 0, 100, 10, 0.5,1.5);
+   
+   TH2F* hemptyY[4];
+   hemptyY[0]= new TH2F("hemptyY0", ";rapidity; #mu (GeV)", 10, -3, 3, 10, 1.8,1.9);
+   hemptyY[1]= new TH2F("hemptyY1", ";rapidity; #sigma (GeV)", 10, -3, 3, 10, 0.,0.1);
+   hemptyY[2]= new TH2F("hemptyY2", ";rapidity; #mu DATA/MC", 10, -3, 3, 10, 0.5,1.5);
+   hemptyY[3]= new TH2F("hemptyY3", ";rapidity; #sigma DATA/MC", 10, -3, 3, 10, 0.5,1.5);
+
+   TH2F* hemptySpectra[4];
+   hemptySpectra[0]= new TH2F("hemptySpectra0", ";p_{T};signal", 10, 0, 100, 10, 0.,1);
+   hemptySpectra[1]= new TH2F("hemptySpectra1", ";rapidity;signal", 10, -3, 3, 10, 0.,1);
+   hemptySpectra[2]= new TH2F("hemptySpectra2", ";p_{T};signal Data/MC", 10, 0, 100, 10, 0., 2);
+   hemptySpectra[3]= new TH2F("hemptySpectra3", ";rapidity;signal Data/MC", 10, -3, 3, 10, 0., 2);
+
+  TLatex *texData = new TLatex(30,1.85,"Data");
+   texData->SetTextColor(mycolors_sample[0]);
+   texData->SetTextAlign(22); texData->SetTextSize(0.1);
+  TLatex *texMC = new TLatex(60,1.85,"MC");
+   texMC->SetTextColor(mycolors_sample[1]);
+   texMC->SetTextAlign(22); texMC->SetTextSize(0.1);
+   
+  TLatex *texDataY = new TLatex(-1.5,1.85,"Data");
+   texDataY->SetTextColor(mycolors_sample[0]);
+   texDataY->SetTextAlign(22); texDataY->SetTextSize(0.1);
+  TLatex *texMCY = new TLatex(0,1.85,"MC");
+   texMCY->SetTextColor(mycolors_sample[1]);
+   texMCY->SetTextAlign(22); texMCY->SetTextSize(0.1);
+
+  TLegend* leg = new TLegend(0.53, 0.88, 0.85, 0.88);
+  xjjroot::setleg(leg);
+
+  TCanvas* cPt= new TCanvas("cPt", "", 1000, 1000);
+  cPt->Divide(2,2);
+  for (int i=0;i<2;i++){
+    cPt->cd(i+1);
+    hemptyPt[i]->GetXaxis()->SetNdivisions(505);
+    xjjroot::sethempty(hemptyPt[i], 0, 0.3);
+    hemptyPt[i]->Draw();
+    xjjroot::setthgrstyle(ahHistoPtsample[i][0], mycolors_sample[0], 1, 1.2, mycolors_sample[0], 1, 1, -1, -1, -1);
+    xjjroot::setthgrstyle(ahHistoPtsample[i][1], mycolors_sample[1], 1, 1.2, mycolors_sample[1], 1, 1, -1, -1, -1);
+    ahHistoPtsample[i][0]->Draw("same");
+    ahHistoPtsample[i][1]->Draw("same");
+    texData->Draw();
+    texMC->Draw();
+
+  }
+  for (int i=0;i<2;i++){
+    cPt->cd(i+3);
+    hemptyPt[i]->GetXaxis()->SetNdivisions(505);
+    xjjroot::sethempty(hemptyPt[i+2], 0, 0.3);
+    hemptyPt[i+2]->Draw();
+    xjjroot::setthgrstyle(ahRatioPtDataOverMC[i], mycolors_sample[0], 1, 1.2, mycolors_sample[0], 1, 1, -1, -1, -1);
+    ahRatioPtDataOverMC[i]->Draw("same");
+    ahRatioPtDataOverMC[i]->Draw("same");
+    
+    for (int m=0;m<fitvariations;m++){
+      ahRatioPtDataOverMC[i]->Fit(Form("fFitPt%s%s",variablename[i].Data(),fittype[m].Data()),"q");
+       fFitPt[i][m]->Draw("same");
+    }
+  }
+
+  cPt->SaveAs(Form("plotsSigma/canvasMeanSigmaPt%s.png",label.Data()));
+
+
+  TCanvas* cY= new TCanvas("cY", "", 1000, 1000);
+  cY->Divide(2,2);
+  for (int i=0;i<2;i++){
+    cY->cd(i+1);
+    hemptyY[i]->GetXaxis()->SetNdivisions(505);
+    xjjroot::sethempty(hemptyY[i], 0, 0.3);
+    hemptyY[i]->Draw();
+    texDataY->Draw();
+    texMCY->Draw();
+    xjjroot::setthgrstyle(ahHistoYsample[i][0], mycolors_sample[0], 1, 1.2, mycolors_sample[0], 1, 1, -1, -1, -1);
+    xjjroot::setthgrstyle(ahHistoYsample[i][1], mycolors_sample[1], 1, 1.2, mycolors_sample[1], 1, 1, -1, -1, -1);
+    ahHistoYsample[i][0]->Draw("same");
+    ahHistoYsample[i][1]->Draw("same");
+
+  }
+  for (int i=0;i<2;i++){
+    cY->cd(i+3);
+    hemptyY[i]->GetXaxis()->SetNdivisions(505);
+    xjjroot::sethempty(hemptyY[i+2], 0, 0.3);
+    hemptyY[i+2]->Draw();
+    xjjroot::setthgrstyle(ahRatioYDataOverMC[i], mycolors_sample[0], 1, 1.2, mycolors_sample[0], 1, 1, -1, -1, -1);
+    ahRatioYDataOverMC[i]->Draw("same");
+    ahRatioYDataOverMC[i]->Draw("same");
+    for (int m=0;m<fitvariations;m++){
+      ahRatioYDataOverMC[i]->Fit(Form("fFitY%s%s",variablename[i].Data(),fittype[m].Data()),"q");
+       fFitY[i][m]->Draw("same");
+    }
+  }
+
+  cY->SaveAs(Form("plotsSigma/canvasMeanSigmaY%s.png",label.Data()));
+/*
+  for (int m=0;m<nvariables;m++){
+    if(m==0|| m==2) continue;
+    std::cout<<std::endl;
+    std::cout<<"************ Parameter fits Y rapidity "<<collisionsyst.Data()<<","<<variablename[m]<<std::endl;
+    std::cout<<"intersept="<<fFitY[m]->GetParameter(0)<<", with error="<<fFitY[m]->GetParError(0)<<std::endl;
+    std::cout<<"linear coefficient="<<fFitY[m]->GetParameter(1)<<", with error="<<fFitY[m]->GetParError(1)<<std::endl;
+    std::cout<<std::endl;
+    
+    std::cout<<std::endl;
+    std::cout<<"************ Parameter fits Pt rapidity "<<collisionsyst.Data()<<","<<variablename[m]<<std::endl;
+    std::cout<<"intersept="<<fFitPt[m]->GetParameter(0)<<", with error="<<fFitPt[m]->GetParError(0)<<std::endl;
+    std::cout<<"linear coefficient="<<fFitPt[m]->GetParameter(1)<<", with error="<<fFitPt[m]->GetParError(1)<<std::endl;
+    std::cout<<std::endl;
+  }
+  */
+  TFile* outf = new TFile(Form("%s.root",output.Data()), "recreate");
+  outf->cd();
+  if(writehists("plothist")) return;
+  for (int i=0;i<2;i++){
+    for (int m=0;m<fitvariations;m++){
+      fFitY[i][m]->Write();
+      //fFitPt[i][m]->Write();
+    }
+  }
+  outf->Write();
+  outf->Close();
+
+
+}
+
+int main(int argc, char* argv[])
+{
+  if(argc==6)
+    {
+      studySigma_plothist(argv[1], argv[2], argv[3],argv[4],argv[5]);
+      return 0;
+    }
+  std::cout<<"  Error: invalid arguments number - studySigma_plothist()"<<std::endl;
+  return 1;
+}
+
+int arguerr(TString collisionsyst)
+{
+  if(collisionsyst!="pp" && collisionsyst!="PbPb")
+    {
+      std::cout<<"error: invalid collisionsyst"<<std::endl;
+      return 1;
+    }
+  return 0;
+}
+
