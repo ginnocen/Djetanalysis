@@ -13,7 +13,7 @@ void pdfvar_plothist(TString inputname, TString outputname, TString collisionsys
   Float_t maxbackground[nPtBins][nDrBins];
   for(int i=0;i<nPtBins;i++)
     {
-      xjjroot::setthgrstyle(ahSignalRdevtotal[i], kGray+1, -1, -1, kGray+1, 10, 3);
+      xjjroot::setthgrstyle(ahSignalRdevtotal[i], kGray+1, -1, -1, kGray+1, 7, 7);
       for(int j=0;j<nDrBins;j++)
         {
           maxsignal[i][j] = 0;
@@ -49,13 +49,13 @@ void pdfvar_plothist(TString inputname, TString outputname, TString collisionsys
       hempty->Draw();
       TLegend* leg = new TLegend(0.60, 0.88-nVariation*0.053, 0.90, 0.88);
       xjjroot::setleg(leg);
-      ahSignalRdevtotal[i]->Draw("same");
       for(int v=0;v<nVariation;v++)
         {
           xjjroot::setthgrstyle(ahSignalRdev[i][v], fitcolor[v], -1, -1, fitcolor[v], 2, 3);
           ahSignalRdev[i][v]->Draw("same e");
           leg->AddEntry(ahSignalRdev[i][v], fitleg[v].Data(), "l");
         }
+      ahSignalRdevtotal[i]->Draw("same");
       leg->AddEntry(ahSignalRdevtotal[i], "total", "l");
       xjjroot::drawCMS(collisionsyst);
       Float_t texxpos = 0.22, texypos = 0.85, texdypos = 0.06; texypos += texdypos;

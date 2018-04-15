@@ -23,10 +23,6 @@ void djtana_savehist(TString inputname, TString outputname,
   djt.setGcut(cutval_Dy);
   initcutval(collisionsyst);
 
-  Bool_t doJEC = djt.ajetopt[irecogen]=="reco" && jescale;
-  Bool_t doSmearPt =  djt.ajetopt[irecogen]=="gen" && gensmearpt;
-  Bool_t doSmearAngle = djt.ajetopt[irecogen]=="gen" && gensmearphi;
-
   Int_t fileno = -1;
   if(ispp && !isMC)
     {
@@ -66,19 +62,17 @@ void djtana_savehist(TString inputname, TString outputname,
           Float_t jetphi = (**djt.ajetphi[irecogen])[jj];
           Float_t jeteta = (**djt.ajeteta[irecogen])[jj];
           Float_t jetnpdfpart = 0;
-          if(jescale==2) jetnpdfpart = (*djt.jetnpfpart_akpu3pf)[jj];
 
           std::vector<float>* vjetpt = new std::vector<float>();
           std::vector<float>* vjetphi = new std::vector<float>();
           std::vector<float>* vjeteta = new std::vector<float>();
 
-          if(djtcorr::processjets(jetpt, jetphi, jeteta, jetnpdfpart, ibincent,
-                                  vjetpt, vjetphi, vjeteta, 
-                                  jescale, gensmearpt, gensmearphi,
-                                  djt.ajetopt[irecogen]=="reco" && jescale,
-                                  djt.ajetopt[irecogen]=="gen" && gensmearpt,
-                                  djt.ajetopt[irecogen]=="gen" && gensmearphi, NSMEAR)) return;
-          Bool_t issmear = djt.ajetopt[irecogen]=="gen" && (gensmearpt || gensmearphi);
+          if(djtcorr::ptCorrVariation(jescale, jetpt, jetnpdfpart, ibincent)) return;
+          vjetpt->push_back(jetpt);
+          vjetphi->push_back(jetphi);
+          vjeteta->push_back(jeteta);
+
+          Bool_t issmear = false;
 
           int nsjet = vjetpt->size();
           if(nsjet!=vjeteta->size() || nsjet!=vjetphi->size() || nsjet!=(issmear?NSMEAR:1)) { std::cout<<"error: wrong number of jet in vector."<<std::endl; return; }
@@ -152,19 +146,17 @@ void djtana_savehist(TString inputname, TString outputname,
           Float_t jetphi = (**djt.ajetphi_mix[irecogen])[jj];
           Float_t jeteta = (**djt.ajeteta_mix[irecogen])[jj];
           Float_t jetnpdfpart = 0;
-          if(jescale==2) jetnpdfpart = (*djt.jetnpfpart_akpu3pf_mix)[jj];
 
           std::vector<float>* vjetpt = new std::vector<float>();
           std::vector<float>* vjetphi = new std::vector<float>();
           std::vector<float>* vjeteta = new std::vector<float>();
 
-          if(djtcorr::processjets(jetpt, jetphi, jeteta, jetnpdfpart, ibincent,
-                                  vjetpt, vjetphi, vjeteta, 
-                                  jescale, gensmearpt, gensmearphi,
-                                  djt.ajetopt[irecogen]=="reco" && jescale,
-                                  djt.ajetopt[irecogen]=="gen" && gensmearpt,
-                                  djt.ajetopt[irecogen]=="gen" && gensmearphi, NSMEAR)) return;
-          Bool_t issmear = djt.ajetopt[irecogen]=="gen" && (gensmearpt || gensmearphi);
+          if(djtcorr::ptCorrVariation(jescale, jetpt, jetnpdfpart, ibincent)) return;
+          vjetpt->push_back(jetpt);
+          vjetphi->push_back(jetphi);
+          vjeteta->push_back(jeteta);
+
+          Bool_t issmear = false;
 
           int nsjet = vjetpt->size();
           if(nsjet!=vjeteta->size() || nsjet!=vjetphi->size() || nsjet!=(issmear?NSMEAR:1)) { std::cout<<"error: wrong number of jet in vector."<<std::endl; return; }
@@ -260,12 +252,12 @@ int arguerr(TString collisionsyst, Int_t irecogen, Int_t isMC, Int_t gensmearpt,
       std::cout<<"\033[1;31merror:\033[0m invalid \"isMC\""<<std::endl;
       return 1;
     }
-  if(irecogen<0 || irecogen>3)
+  if(irecogen==2 || irecogen==3)
     {
       std::cout<<"\033[1;31merror:\033[0m invalid \"irecogen\""<<std::endl;
       return 1;
     }
-  if((gensmearpt==0 && gensmearphi>0) || (gensmearpt>0 && gensmearphi==0))
+  if(gensmearpt != gensmearphi)
     {
       std::cout<<"error: smear gen pt and angle together"<<std::endl;
       return 2;

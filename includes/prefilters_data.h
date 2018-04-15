@@ -15,7 +15,6 @@ TString tMC[] = {"data", "MC"};
 TString tPbPb[] = {"pp", "PbPb"};
 
 //
-const int nPtBins = sizeof(ptBins)/sizeof(ptBins[0])-1;
 const int nDrBins = sizeof(drBins)/sizeof(drBins[0])-1;
 const int nZBins = sizeof(zBins)/sizeof(zBins[0])-1;
 

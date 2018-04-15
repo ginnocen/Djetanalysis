@@ -1,0 +1,13 @@
+#!/bin/bash
+
+SAVETPL=0
+SAVEHIST=0
+USEHIST=1
+PLOTHIST=1
+
+./dodjtana_2Dbins.sh $SAVETPL $SAVEHIST $USEHIST $PLOTHIST
+./dodjtana_1Dbins.sh $SAVETPL $SAVEHIST $USEHIST $PLOTHIST
+
+
+
+
