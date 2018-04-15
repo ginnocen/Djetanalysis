@@ -19,7 +19,6 @@ ifScale=${8:-1}
 ifSmearPt=${9:-1}
 ifSmearPhi=${10:-1}
 
-##
 # nJET loop
 JETPTMIN=(60 60)
 JETPTMAX=(999 999)

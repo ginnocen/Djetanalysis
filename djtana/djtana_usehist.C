@@ -267,7 +267,7 @@ void djtana_usehist(TString inputhistname, TString inputtplname, TString outputn
   if(isrecoD) { verbose_stat(jetptmin, jetptmax); }
 
   // plot efficiency
-
+  xjjroot::setgstyle(1);
   if(isrecoD)
     {
       for(int i=0;i<nPtBins;i++)
