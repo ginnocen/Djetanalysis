@@ -17,7 +17,7 @@ namespace xjjroot
   const float margin_pad_bottom = 0.145;
   const float margin_pad_top = 0.1;
 
-  void setgstyle();
+  void setgstyle(Int_t padtick=0);
   template <class T> void sethempty(T* hempty, Float_t xoffset=0, Float_t yoffset=0);
   template <class T> void setthgr(T* hempty, Float_t xoffset=0, Float_t yoffset=0);
   template <class T> void setthgrstyle(T* h, Color_t mcolor=-1, Style_t mstyle=-1, Size_t msize=-1, Color_t lcolor=-1, Style_t lstyle=-1, Width_t lwidth=-1, Color_t fcolor=-1, Float_t falpha=-1, Style_t fstyle=-1);
@@ -38,7 +38,7 @@ namespace xjjroot
 
 /* ---------- */
 
-void xjjroot::setgstyle()
+void xjjroot::setgstyle(Int_t padtick/*=0*/)
 {
   gStyle->SetOptTitle(0);
   gStyle->SetOptStat(0);
@@ -50,6 +50,11 @@ void xjjroot::setgstyle()
   gStyle->SetPadTopMargin(xjjroot::margin_pad_top);
   gStyle->SetPadBottomMargin(xjjroot::margin_pad_bottom);
   gStyle->SetTitleX(.0f);
+  if(padtick)
+    {
+      gStyle->SetPadTickX(1);
+      gStyle->SetPadTickY(1);
+    }
 }
 
 template <class T>
