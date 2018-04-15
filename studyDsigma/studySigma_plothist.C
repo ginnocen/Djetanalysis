@@ -6,6 +6,9 @@
 #include <TH2F.h>
 #include <TLegend.h>
 #include <TCanvas.h>
+#include <iostream>
+#include <fstream>
+#include <iomanip>
 #include <TFile.h>
 #include <TGraphErrors.h>
 #include "studySigma.h"
@@ -148,22 +151,32 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
   }
 
   cY->SaveAs(Form("plotsSigma/canvasMeanSigmaY%s.png",label.Data()));
-/*
-  for (int m=0;m<nvariables;m++){
-    if(m==0|| m==2) continue;
-    std::cout<<std::endl;
-    std::cout<<"************ Parameter fits Y rapidity "<<collisionsyst.Data()<<","<<variablename[m]<<std::endl;
-    std::cout<<"intersept="<<fFitY[m]->GetParameter(0)<<", with error="<<fFitY[m]->GetParError(0)<<std::endl;
-    std::cout<<"linear coefficient="<<fFitY[m]->GetParameter(1)<<", with error="<<fFitY[m]->GetParError(1)<<std::endl;
-    std::cout<<std::endl;
     
-    std::cout<<std::endl;
-    std::cout<<"************ Parameter fits Pt rapidity "<<collisionsyst.Data()<<","<<variablename[m]<<std::endl;
-    std::cout<<"intersept="<<fFitPt[m]->GetParameter(0)<<", with error="<<fFitPt[m]->GetParError(0)<<std::endl;
-    std::cout<<"linear coefficient="<<fFitPt[m]->GetParameter(1)<<", with error="<<fFitPt[m]->GetParError(1)<<std::endl;
-    std::cout<<std::endl;
-  }
-  */
+  std::ofstream myfile;
+  myfile.open(Form("%sparameters.h",collisionsyst.Data()));
+
+  myfile<<"// Y rapidity "<<collisionsyst.Data()<<","<<variablename[1]<<std::endl;
+
+  for (int m=0;m<fitvariations;m++){
+    int nparam=fFitY[1][m]->GetNpar();
+    myfile<<"par"<<collisionsyst.Data()<<"["<<nparam<<"]={";
+      for (int jj=0;jj<nparam;jj++){
+       myfile<<fFitY[1][m]->GetParameter(jj);;
+        if(jj<nparam-1)  myfile<<",";
+        else myfile<<"};"<<std::endl;
+      }
+   }
+  for (int m=0;m<fitvariations;m++){
+    int nparam=fFitY[1][m]->GetNpar();
+    myfile<<"parerr"<<collisionsyst.Data()<<"["<<nparam<<"]={";
+      for (int jj=0;jj<nparam;jj++){
+       myfile<<fFitY[1][m]->GetParError(jj);;
+        if(jj<nparam-1)  myfile<<",";
+        else myfile<<"};"<<std::endl;
+      }
+   }
+   myfile.close();
+
   TFile* outf = new TFile(Form("%s.root",output.Data()), "recreate");
   outf->cd();
   if(writehists("plothist")) return;
