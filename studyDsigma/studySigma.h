@@ -40,6 +40,10 @@ TH1F* ahHistoYsample[nvariables][nsamples];
 TH1F* ahRatioPtDataOverMC[nvariables];
 TH1F* ahRatioYDataOverMC[nvariables];
 
+const int fitvariations=5;
+TString fittype[fitvariations]={"pol1","pol2","pol3","pol4","pol5"};
+int fittypecolor[fitvariations]={4,5,6,7,8};
+
 TH1F* hDmesonY;
 int createhists(Option_t* option)
 {

@@ -26,17 +26,19 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
   
   if(createhists("usehist")) return;
   
-  
-  TF1 *fFitY[nvariables];
-  TF1 *fFitPt[nvariables];
+  TF1 *fFitY[nvariables][fitvariations];
+  TF1 *fFitPt[nvariables][fitvariations];
   
   for (int i=0;i<nvariables;i++){
-    fFitY[i]=new TF1(Form("fFitY%s",variablename[i].Data()),"[0]+x*[1]",-2.,2.);
-    fFitPt[i]=new TF1(Form("fFitPt%s",variablename[i].Data()),"[0]+x*[1]",4.,100.);
-    fFitY[i]->SetName(Form("fFitY%s",variablename[i].Data()));
-    fFitPt[i]->SetName(Form("fFitPt%s",variablename[i].Data()));
-    fFitY[i]->SetLineColor(4);
-    fFitPt[i]->SetLineColor(4);
+    for (int m=0;m<fitvariations;m++){
+  
+      fFitY[i][m]=new TF1(Form("fFitY%s%s",variablename[i].Data(),fittype[m].Data()),fittype[m],-2.,2.);
+      fFitPt[i][m]=new TF1(Form("fFitPt%s%s",variablename[i].Data(),fittype[m].Data()),fittype[m],4.,100.);
+      fFitY[i][m]->SetName(Form("fFitY%s%s",variablename[i].Data(),fittype[m].Data()));
+      fFitPt[i][m]->SetName(Form("fFitPt%s%s",variablename[i].Data(),fittype[m].Data()));
+      fFitY[i][m]->SetLineColor(fittypecolor[m]);
+      fFitPt[i][m]->SetLineColor(fittypecolor[m]);
+    }
   }
   
   TFile* infData = new TFile(Form("%s.root",inputnameData.Data()));
@@ -94,7 +96,7 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
     xjjroot::setthgrstyle(ahHistoPtsample[i][1], mycolors_sample[1], 1, 1.2, mycolors_sample[1], 1, 1, -1, -1, -1);
     ahHistoPtsample[i][0]->Draw("same");
     ahHistoPtsample[i][1]->Draw("same");
-     texData->Draw();
+    texData->Draw();
     texMC->Draw();
 
   }
@@ -106,7 +108,11 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
     xjjroot::setthgrstyle(ahRatioPtDataOverMC[i], mycolors_sample[0], 1, 1.2, mycolors_sample[0], 1, 1, -1, -1, -1);
     ahRatioPtDataOverMC[i]->Draw("same");
     ahRatioPtDataOverMC[i]->Draw("same");
-    ahRatioPtDataOverMC[i]->Fit(Form("fFitPt%s",variablename[i].Data()),"q");
+    
+    for (int m=0;m<fitvariations;m++){
+      ahRatioPtDataOverMC[i]->Fit(Form("fFitPt%s%s",variablename[i].Data(),fittype[m].Data()),"q");
+       fFitPt[i][m]->Draw("same");
+    }
   }
 
   cPt->SaveAs(Form("plotsSigma/canvasMeanSigmaPt%s.png",label.Data()));
@@ -135,11 +141,14 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
     xjjroot::setthgrstyle(ahRatioYDataOverMC[i], mycolors_sample[0], 1, 1.2, mycolors_sample[0], 1, 1, -1, -1, -1);
     ahRatioYDataOverMC[i]->Draw("same");
     ahRatioYDataOverMC[i]->Draw("same");
-    ahRatioYDataOverMC[i]->Fit(Form("fFitY%s",variablename[i].Data()),"q");
+    for (int m=0;m<fitvariations;m++){
+      ahRatioYDataOverMC[i]->Fit(Form("fFitY%s%s",variablename[i].Data(),fittype[m].Data()),"q");
+       fFitY[i][m]->Draw("same");
+    }
   }
 
   cY->SaveAs(Form("plotsSigma/canvasMeanSigmaY%s.png",label.Data()));
-
+/*
   for (int m=0;m<nvariables;m++){
     if(m==0|| m==2) continue;
     std::cout<<std::endl;
@@ -154,13 +163,15 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
     std::cout<<"linear coefficient="<<fFitPt[m]->GetParameter(1)<<", with error="<<fFitPt[m]->GetParError(1)<<std::endl;
     std::cout<<std::endl;
   }
-  
+  */
   TFile* outf = new TFile(Form("%s.root",output.Data()), "recreate");
   outf->cd();
   if(writehists("plothist")) return;
-  for (int i=0;i<nvariables;i++){
-    fFitY[i]->Write();
-    fFitPt[i]->Write();
+  for (int i=0;i<2;i++){
+    for (int m=0;m<fitvariations;m++){
+      fFitY[i][m]->Write();
+      //fFitPt[i][m]->Write();
+    }
   }
   outf->Write();
   outf->Close();
