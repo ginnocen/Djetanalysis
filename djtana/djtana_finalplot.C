@@ -31,7 +31,7 @@ void djtana_finalplot(TString inputnamePP, TString inputnamePbPb, TString inputn
         }
     }
 
-  djtsyst::initsyst(jetptmin, jetptmax);
+  if(djtsyst::initsyst(jetptmin, jetptmax)) return;
   std::vector<TString> tname = {"", "_Me"};
   std::vector<TH1F**> hSignalXsubP = {(TH1F**)ahSignalRsubP, (TH1F**)ahSignalRsubMeP};
   std::vector<TH1F**> hSignalXsubRatio = {(TH1F**)ahSignalRsubRatio, (TH1F**)ahSignalRsubRatioMe};

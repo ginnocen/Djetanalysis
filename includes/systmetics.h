@@ -71,16 +71,16 @@ namespace djtsyst
   std::vector<Float_t> syst_CUT_PbPb = {3.5, 2.7};
 
   //
-  std::vector<std::vector<Float_t>>* syst_SCALE_pp;  
-  std::vector<std::vector<Float_t>>* syst_SCALE_PbPb;  
-  std::vector<std::vector<Float_t>>* syst_RESO_pp;  
-  std::vector<std::vector<Float_t>>* syst_RESO_PbPb;  
-  std::vector<std::vector<Float_t>>* syst_PDF_pp;  
-  std::vector<std::vector<Float_t>>* syst_PDF_PbPb;  
-  std::vector<std::vector<Float_t>>* syst_PDF_ratio;  
-  std::vector<std::vector<Float_t>>* syst_NONCLOSURE_pp;  
-  std::vector<std::vector<Float_t>>* syst_NONCLOSURE_PbPb;  
-  std::vector<std::vector<Float_t>>* syst_NONCLOSURE_ratio;  
+  std::vector<std::vector<Float_t>>* syst_SCALE_pp = 0;  
+  std::vector<std::vector<Float_t>>* syst_SCALE_PbPb = 0;  
+  std::vector<std::vector<Float_t>>* syst_RESO_pp = 0;  
+  std::vector<std::vector<Float_t>>* syst_RESO_PbPb = 0;  
+  std::vector<std::vector<Float_t>>* syst_PDF_pp = 0;  
+  std::vector<std::vector<Float_t>>* syst_PDF_PbPb = 0;  
+  std::vector<std::vector<Float_t>>* syst_PDF_ratio = 0;  
+  std::vector<std::vector<Float_t>>* syst_NONCLOSURE_pp = 0;  
+  std::vector<std::vector<Float_t>>* syst_NONCLOSURE_PbPb = 0;  
+  std::vector<std::vector<Float_t>>* syst_NONCLOSURE_ratio = 0;  
 
   int initsyst(float jetptmin, float jetptmax)
   {
@@ -148,6 +148,9 @@ namespace djtsyst
   {
     TString opt  = option;
     Float_t syst = 0;
+
+    if(!syst_SCALE_pp || !syst_SCALE_PbPb || !syst_RESO_pp || !syst_RESO_PbPb || !syst_PDF_pp || !syst_PDF_PbPb || !syst_NONCLOSURE_pp || !syst_NONCLOSURE_PbPb) 
+      { std::cout<<"error: init syst first."<<std::endl; return -1; }
 
     if(opt=="pp")
       {
