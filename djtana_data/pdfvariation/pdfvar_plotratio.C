@@ -18,7 +18,7 @@ void pdfvar_plotratio(TString inputnamePP, TString inputnamePbPb, TString output
   Float_t maxbackground[nPtBins][nDrBins];
   for(int i=0;i<nPtBins;i++)
     {
-      xjjroot::setthgrstyle(ahSignalRdevtotalRatio[i], kGray+1, -1, -1, kGray+1, 10, 3);
+      xjjroot::setthgrstyle(ahSignalRdevtotalRatio[i], kGray+1, -1, -1, kGray+1, 7, 7);
       for(int v=0;v<nVariation;v++)
         {
           ahSignalRrawRatio[i][v]->Divide(ahSignalRrawPbPb[i][v], ahSignalRrawPP[i][v]);
@@ -58,19 +58,19 @@ void pdfvar_plotratio(TString inputnamePP, TString inputnamePbPb, TString output
       vectex.push_back(texpt);
 
       TCanvas* c = new TCanvas("c", "", 600, 600);
-      TH2F* hempty = new TH2F("hempty", ";r;Yield deviation (PbPb/pp)", 10, drBins[0], drBins[nDrBins], 10, -0.3, 0.5);
+      TH2F* hempty = new TH2F("hempty", ";r;Yield deviation (PbPb/pp)", 10, drBins[0], drBins[nDrBins], 10, -0.3, 0.6);
       xjjroot::sethempty(hempty, 0, 0.3);
       hempty->GetXaxis()->SetNdivisions(505);
       hempty->Draw();
       TLegend* leg = new TLegend(0.60, 0.88-nVariation*0.052, 0.90, 0.88);
       xjjroot::setleg(leg);
-      ahSignalRdevtotalRatio[i]->Draw("same e");
       for(int v=0;v<nVariation;v++)
         {
           xjjroot::setthgrstyle(ahSignalRdevRatio[i][v], fitcolor[v], -1, -1, fitcolor[v], 2, 3);
           ahSignalRdevRatio[i][v]->Draw("same");
           leg->AddEntry(ahSignalRdevRatio[i][v], fitleg[v].Data(), "l");
         }
+      ahSignalRdevtotalRatio[i]->Draw("same");
       leg->AddEntry(ahSignalRdevtotalRatio[i], "total", "l");
       xjjroot::drawCMS("");
       Float_t texxpos = 0.22, texypos = 0.85, texdypos = 0.06; texypos += texdypos;
