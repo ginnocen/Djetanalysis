@@ -25,7 +25,7 @@ tSIGNALMC=("" "Signal_")
 
 # scaleNsmear
 tScale=("woScale" "wScaleRMG" "wScaleFF")
-tSmearPt=("woSmearPt" "wSmearPt")
+tSmearPt=("woSmearPt" "wSmearPt" "wSmearPtSyst")
 tSmearPhi=("woSmearAng" "wSmearAngJet" "wSmearAngJetD")
 
 # nCOL loop
