@@ -18,9 +18,6 @@ void jetreso_usehist(TString inputhistname, TString outputname,
   TFile* infhist = new TFile(Form("%s.root",inputhistname.Data()));
   if(!infhist->IsOpen()) return;
   if(gethists(infhist, "usehist")) return;
-  // TFile* infresolution = new TFile(Form("../includes/Resolution/hist_Djet_reso_%s_ResolutionEtaPhi.root",collisionsyst.Data()));
-  // if(!infresolution->IsOpen()) return;
-  // if(gethists(infresolution, "usehistetaphi")) return;
 
   std::vector<TString> name = {"Pt", "PtCorr", "Phi", "Eta", "PtFfCorr", "PtFfJecCorr", "PtRMatGCorr"};
   std::vector<TH1F**> ahHistoResoX = {(TH1F**)ahHistoResoPt, (TH1F**)ahHistoResoPtCorr, (TH1F**)ahHistoResoPhi, (TH1F**)ahHistoResoEta, (TH1F**)ahHistoResoPtFfCorr, (TH1F**)ahHistoResoPtFfJecCorr, (TH1F**)ahHistoResoPtRMatGCorr};
@@ -70,12 +67,12 @@ void jetreso_usehist(TString inputhistname, TString outputname,
               for(int i=0;i<nResoJtXBins[l];i++)
                 {
                   TString texjtpt = Form("%.0f < p_{T}^{gen jet} < %.0f GeV", resojtptBins[i], resojtptBins[i+1]);
-                  TString texjtdr = Form("%.2f < #DeltaR < %.2f", resojtdrBins[i], resojtdrBins[i+1]);
+                  TString texjtdr = Form("%.2f < r < %.2f", resojtdrBins[i], resojtdrBins[i+1]);
 
                   TH1F* hfit = (ahHistoResoX.at(l))[k*nResoJtXBins[l]*(nJtetaBins+1)+j*nResoJtXBins[l]+i];
                   TH1F* hpull = (ahHistoPullX.at(l))[k*nResoJtXBins[l]*(nJtetaBins+1)+j*nResoJtXBins[l]+i];
 
-                  TF1* fX = new TF1("fX", "[0]*Gaus(x,[1],[2])/(TMath::Sqrt(2*3.14159265)*[2])", xmin.at(l), xmax.at(l));
+                  TF1* fX = new TF1("fX", "[0]*TMath::Gaus(x,[1],[2])/(TMath::Sqrt(2*3.14159265)*[2])", xmin.at(l), xmax.at(l));
                   fX->SetLineWidth(2);
                   fX->SetLineColor(kBlue);
                   fX->SetParLimits(2, 0, 1);
@@ -93,7 +90,7 @@ void jetreso_usehist(TString inputhistname, TString outputname,
                   Float_t meanX = fX->GetParameter(1);
                   Float_t sigmaX = fX->GetParameter(2);
                   if(i>1 && sigmaX > 0.4) sigmaX = 0.2;
-                  TF1* fX1 = new TF1("fX1", "[0]*Gaus(x,[1],[2])/(TMath::Sqrt(2*3.14159265)*[2])", xmin.at(l), xmax.at(l));
+                  TF1* fX1 = new TF1("fX1", "[0]*TMath::Gaus(x,[1],[2])/(TMath::Sqrt(2*3.14159265)*[2])", xmin.at(l), xmax.at(l));
                   fX1->SetParameter(0, fX->GetParameter(0));
                   fX1->SetParameter(1, fX->GetParameter(1));
                   fX1->SetParameter(2, fX->GetParameter(2));
@@ -152,31 +149,28 @@ void jetreso_usehist(TString inputhistname, TString outputname,
                       xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), Form("#mu = %.3f #pm %.3f", fX->GetParameter(1), fX->GetParError(1)));
                       xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), Form("#sigma = %.3f #pm %.3f", fX->GetParameter(2), fX->GetParError(2)));
                     }
-                  // if(i>3)
-                  // {
-                  cpull15->cd(i+1);
-                  pFit[i]->cd();
-                  hemptyX->Draw();
-                  hfit->Draw("same pe");
-                  afX1->at(i)->Draw("same");
-                  afX->at(i)->Draw("same");
-                  texxpos = 0.22; texypos = 0.85; texdypos = 0.06; texypos += texdypos;
-                  xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), (l<7?texjtpt:texjtdr));
-                  // if(!i)
-                  // {
-                  xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), texjteta);
-                  if(!ispp) xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), texcent);
-                  xjjroot::drawCMS(collisionsyst);
-                  // }
-                  texxpos = 0.65; texypos = 0.85; texdypos = 0.06; texypos += texdypos;
-                  xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), Form("#mu = %.3f #pm %.3f", fX->GetParameter(1), fX->GetParError(1)));
-                  xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), Form("#sigma = %.3f #pm %.3f", fX->GetParameter(2), fX->GetParError(2)));
-                  cpull15->cd(i+1);
-                  pPull[i]->cd();
-                  hpull->Draw("p");
-                  xjjroot::drawline(xmin.at(l), 0, xmax.at(l), 0, kBlue, 7, 2);
-                  hpull->Draw("p same");
-                  // }
+                  if(i>=istart)
+                    {
+                      cpull15->cd(ii+1);
+                      pFit[ii]->cd();
+                      hemptyX->Draw();
+                      hfit->Draw("same pe");
+                      afX1->at(i)->Draw("same");
+                      afX->at(i)->Draw("same");
+                      texxpos = 0.22; texypos = 0.85; texdypos = 0.06; texypos += texdypos;
+                      xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), (l<7?texjtpt:texjtdr));
+                      xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), texjteta);
+                      if(!ispp) xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), texcent);
+                      xjjroot::drawCMS(collisionsyst);
+                      texxpos = 0.65; texypos = 0.85; texdypos = 0.06; texypos += texdypos;
+                      xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), Form("#mu = %.3f #pm %.3f", fX->GetParameter(1), fX->GetParError(1)));
+                      xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), Form("#sigma = %.3f #pm %.3f", fX->GetParameter(2), fX->GetParError(2)));
+                      cpull15->cd(i+1);
+                      pPull[ii]->cd();
+                      hpull->Draw("p");
+                      xjjroot::drawline(xmin.at(l), 0, xmax.at(l), 0, kBlue, 7, 2);
+                      hpull->Draw("p same");
+                    }
 
                   delete fX1;
                   delete fX;
