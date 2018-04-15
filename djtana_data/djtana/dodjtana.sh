@@ -46,7 +46,9 @@ INPUTDANAME=(
     "$PREFIX/scratch/jwang/Djets/MC/DjetFiles_20171215_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20171214_pthatweight.root"
     "$PREFIX/scratch/jwang/Djets/data/DjetFiles_20180214_pp_5TeV_HighPtLowerJetsHighPtJet80_dPt4tkPt1p5Alpha0p2Decay2_D0Dstar_20170614_HLT406080100.root"
     "$PREFIX/scratch/jwang/Djets/MC/DjetFiles_20180406_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20180326_pthatweight.root"
-    "$PREFIX/scratch/jwang/Djets/data/DjetFiles_20180406_PbPb_5TeV_HIHardProbes_skimmed_1unit_part1234_26March_20170326_HLT6080100.root"
+    "$PREFIX/scratch/jwang/Djets/data/DjetFiles_20180411_PbPb_5TeV_HIHardProbes_skimmed_1unit_part1234_26March_20170326_HLT6080100_jetpt50_mix10_skimbranch.root"
+    # "$PREFIX/scratch/jwang/Djets/data/DjetFiles_20180411_PbPb_5TeV_HIHardProbes_skimmed_1unit_part1234_26March_20170326_HLT6080100_jetpt40.root"
+    # "$PREFIX/scratch/jwang/Djets/data/DjetFiles_20180406_PbPb_5TeV_HIHardProbes_skimmed_1unit_part1234_26March_20170326_HLT6080100.root"
     # "$PREFIX/scratch/jwang/Djets/data/DjetFiles_20171120_PbPb_5TeV_HIHardProbes_skimmed_1unit_part1234_26March_20170326_HLTHIPuAK4CaloJet406080100.root"
 )
 INPUTMCNAME=(

@@ -1,18 +1,17 @@
-#ifndef _XJJROOT_DFITTER_H_
-#define _XJJROOT_DFITTER_H_
+#ifndef _XJJROOT_DFITTER_VARIATION_H_
+#define _XJJROOT_DFITTER_VARIATION_H_
 
-// Created by Jing Wang (7/26/2017)
+// Created by Jing Wang (2/10/2018)
 
 /******************************************************************************************
- * Class : xjjroot::dfitter                                                               * 
+ * Class : xjjroot::dfitter_variation                                                     * 
  * This class provides tools fitting Dzero invariant mass spectra.                        * 
  * The object to be used can be declared by                                               * 
  *                                                                                        * 
- *    xjjroot::dfitter obj(options);                                                      * 
+ *    xjjroot::dfitter_variation obj(options);                                            * 
  *                                                                                        * 
  * Options supported are listed below                                                     * 
  *                                                                                        * 
- *   "3" : Using 3-Gaussian function to model signal (default is 2-Gaussian function)     * 
  *   "Y" : Draw yield info                                                                * 
  *   "C" : Draw chi2 info                                                                 * 
  *   "L" : Draw lines at signal region and side bands                                     * 
@@ -20,6 +19,12 @@
  *   "D" : Draw all details                                                               * 
  *   "V" : Switch off Quiet mode of fitting                                               * 
  *   "X" : Do not save plots                                                              * 
+ *                                                                                        * 
+ *   "3" : Using 3-Gaussian function to model signal (default is 2-Gaussian function)     * 
+ *   "WP"  : Increase width                                                               * 
+ *   "WM"  : Decrease width                                                               * 
+ *   "EPO" : Exponential combinatorial                                                    * 
+ *   "2PO" : 2nd order poly combinatorial                                                 * 
  *                                                                                        * 
  * The core function of this class is                                                     * 
  *                                                                                        * 
@@ -37,19 +42,16 @@
 #include <TLatex.h>
 #include <TMath.h>
 #include <TFitResult.h>
-#include <ctime>
 
 namespace xjjroot
 {
-  class dfitter
+  class dfitter_variation
   {
   public:
-    dfitter(Option_t* option="") {foption = option; resolveoption(); init();}
-    ~dfitter() {};
+    dfitter_variation(Option_t* option="") {foption = option; resolveoption(); init();}
+    ~dfitter_variation() {};
 
     TF1* fit(const TH1* hmass, const TH1* hmassMCSignal, const TH1* hmassMCSwapped, TString collisionsyst="", const std::vector<TString>& vtex=std::vector<TString>());
-    Int_t drawfit(TString collisionsyst="", const std::vector<TString>& vtex=std::vector<TString>());
-    Int_t drawpull(const std::vector<TString>& vtex=std::vector<TString>());
     Bool_t isFitted() const {return fparamfuns;}
 
     Double_t GetS() const {return S;}
@@ -86,9 +88,6 @@ namespace xjjroot
     Double_t NDF;
     Double_t Chi2Prob;
 
-    TH1* hist_h;
-    TH1* hist_hpull;
-
     TF1* fun_f;
     TF1* fun_mass;
     TF1* fun_swap;
@@ -100,8 +99,6 @@ namespace xjjroot
     TString foption;
     Bool_t fparamfun_f;
     Bool_t fparamfuns;
-    Bool_t fsethist;
-    Bool_t f3gaus;
     Bool_t fdrawyield;
     Bool_t fdrawchi2;
     Bool_t fdrawsignif;
@@ -109,6 +106,12 @@ namespace xjjroot
     Bool_t ffitverbose;
     Bool_t fdrawdetail;
     Bool_t fsaveplot;
+
+    Bool_t f3gaus;
+    Bool_t fincwid;
+    Bool_t fdecwid;
+    Bool_t fexp;
+    Bool_t f2ndpol;
 
     const Double_t setparam0 = 100.;
     const Double_t setparam1 = 1.865;
@@ -144,8 +147,6 @@ namespace xjjroot
     void reset();
     void createfun();
     void deletefun();
-    void deletehist();
-    void clearhist();
     void clearvar();
     void calvar();
     void resolveoption();
@@ -162,10 +163,8 @@ namespace xjjroot
   };
 }
 
-void xjjroot::dfitter::resolveoption()
+void xjjroot::dfitter_variation::resolveoption()
 {
-  f3gaus = false;
-  if(foption.Contains("3")) f3gaus = true;
   fdrawyield = false;
   if(foption.Contains("Y")) fdrawyield = true;
   fdrawchi2 = false;
@@ -180,153 +179,137 @@ void xjjroot::dfitter::resolveoption()
   if(foption.Contains("V")) ffitverbose = true;
   fsaveplot = true;
   if(foption.Contains("X")) fsaveplot = false;
+
+  f3gaus = false;
+  if(foption.Contains("3")) f3gaus = true;
+  fincwid = false;
+  if(foption.Contains("WP")) fincwid = true;
+  fdecwid = false;
+  if(foption.Contains("WM")) fdecwid = true;
+  fexp = false;
+  if(foption.Contains("EPO")) fexp = true;
+  f2ndpol = false;
+  if(foption.Contains("2PO")) f2ndpol = true;
+
 }
 
-TF1* xjjroot::dfitter::fit(const TH1* hmass, const TH1* hmassMCSignal, const TH1* hmassMCSwapped, TString collisionsyst/*=""*/, const std::vector<TString> &vtex/*=std::vector<TString>()*/)
+TF1* xjjroot::dfitter_variation::fit(const TH1* hmass, const TH1* hmassMCSignal, const TH1* hmassMCSwapped, TString collisionsyst/*=""*/, const std::vector<TString> &vtex/*=std::vector<TString>()*/)
 {
   reset();
   init();
 
-  hist_h = (TH1*)hmass->Clone(Form("hist_h_%d",std::time(nullptr)));
-  sethist(hist_h);
-
-  TH1* h = (TH1*)hmass->Clone(Form("%s_clone_%d",hmass->GetName(),std::time(nullptr)));
-  TH1* hMCSignal = (TH1*)hmassMCSignal->Clone(Form("%s_clone_%d",hmassMCSignal->GetName(),std::time(nullptr)));
-  TH1* hMCSwapped = (TH1*)hmassMCSwapped->Clone(Form("%s_clone_%d",hmassMCSwapped->GetName(),std::time(nullptr)));
+  TH1* h = (TH1*)hmass->Clone("h");
+  TH1* hMCSignal = (TH1*)hmassMCSignal->Clone("hMCSignal");
+  TH1* hMCSwapped = (TH1*)hmassMCSwapped->Clone("hMCSwapped");
   sethist(h);
   sethist(hMCSignal);
   sethist(hMCSwapped);
 
-  if(h->GetEntries()<5)
+  TString fitoption = ffitverbose?"L m":"L m q";
+  // setgstyle();
+  // TCanvas* c = new TCanvas("c", "" , 600, 600);
+  
+  fun_f->SetParLimits(0,  0,     1.e+5);
+  fun_f->SetParLimits(4,  -1000, 1000);
+  fun_f->SetParLimits(10, 0.001, 0.05);
+  fun_f->SetParLimits(2,  0.01,  0.5);
+  fun_f->SetParLimits(8,  0.02,  0.2);
+  if(f3gaus) fun_f->SetParLimits(13, 0.002, 0.1);
+  fun_f->SetParLimits(7,  0,     1);
+  fun_f->SetParLimits(9,  0,     1);
+  if(f3gaus) fun_f->SetParLimits(12, 0, 1);
+    
+  // -- fit MC
+  fun_f->FixParameter(3, 0);
+  fun_f->FixParameter(4, 0);
+  fun_f->FixParameter(5, 0);
+  fun_f->FixParameter(6, 0);
+
+  //  - fit signal 
+  fun_f->FixParameter(11, 0);
+  fun_f->FixParameter(1,  fixparam1);
+  fun_f->FixParameter(7,  1);
+  fun_f->FixParameter(8,  1);
+  fun_f->SetParameter(0,  setparam0);
+  fun_f->SetParameter(1,  setparam1);
+  fun_f->SetParameter(2,  setparam2);
+  fun_f->SetParameter(10, setparam10);
+  if(f3gaus) fun_f->SetParameter(13, setparam13);
+  fun_f->SetParameter(9,  setparam9);
+  if(f3gaus) fun_f->SetParameter(12, setparam12);
+
+  hMCSignal->Fit("fun_f", "q", "", min_hist_dzero, max_hist_dzero);
+  hMCSignal->Fit("fun_f", "q", "", min_hist_dzero, max_hist_dzero);
+  fun_f->ReleaseParameter(1);
+  hMCSignal->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
+  hMCSignal->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
+  hMCSignal->Fit("fun_f", fitoption, "", min_hist_dzero, max_hist_dzero);
+
+  fun_f->FixParameter(1, fun_f->GetParameter(1));
+  fun_f->FixParameter(2, fun_f->GetParameter(2));
+  fun_f->FixParameter(10, fun_f->GetParameter(10));
+  if(f3gaus) fun_f->FixParameter(13, fun_f->GetParameter(13));
+  fun_f->FixParameter(9, fun_f->GetParameter(9));
+  if(f3gaus) fun_f->FixParameter(12, fun_f->GetParameter(12));
+
+  fixparam7 = fun_f->GetParameter(0);
+
+  //   - fit swapped
+  fun_f->FixParameter(7,0);
+  fun_f->ReleaseParameter(8);
+  fun_f->SetParameter(8,setparam8);
+  
+  hMCSwapped->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
+  hMCSwapped->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
+  hMCSwapped->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
+  hMCSwapped->Fit("fun_f",fitoption,"", min_hist_dzero, max_hist_dzero);
+  
+  fixparam7 = fixparam7/(fun_f->GetParameter(0)+fixparam7);
+  fun_f->FixParameter(7, fixparam7);
+  fun_f->FixParameter(8,fun_f->GetParameter(8));
+
+  //  -- fit data
+  fun_f->ReleaseParameter(3);
+  fun_f->ReleaseParameter(4);
+  fun_f->ReleaseParameter(5);
+  fun_f->ReleaseParameter(6);
+
+  if(fexp) { fun_f->SetParameter(3, 1); fun_f->SetParLimits(3, 0, 100);}
+  
+  h->Fit("fun_f", "q", "", min_hist_dzero, max_hist_dzero);
+  h->Fit("fun_f", "q", "", min_hist_dzero, max_hist_dzero);
+  fun_f->ReleaseParameter(1);
+  fun_f->SetParLimits(1, 1.86, 1.87);
+  // fun_f->ReleaseParameter(11);
+  // fun_f->SetParLimits(11, -0.5, 0.5);
+  h->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
+  h->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
+  if(fincwid) fun_f->FixParameter(11, fun_f->GetParameter(11)+fun_f->GetParError(11));
+  if(fdecwid) fun_f->FixParameter(11, fun_f->GetParameter(11)-fun_f->GetParError(11));
+  h->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
+
+  r = h->Fit("fun_f", Form("%s S",fitoption.Data()),"", min_hist_dzero, max_hist_dzero);
+
+  if(h->GetEntries()==0)
     {
       fun_f->SetParameter(0, 0);
       fun_f->SetParameter(3, 0);
       fun_f->SetParameter(4, 0);
       fun_f->SetParameter(5, 0);
       fun_f->SetParameter(6, 0);
-      
-      fun_f->SetParameter(1, setparam1);
-      fun_f->SetParameter(2,  setparam2);
-      fun_f->SetParameter(7,  1);
-      fun_f->SetParameter(8,  1);
-      fun_f->SetParameter(9,  setparam9);
-      fun_f->SetParameter(10, setparam10);
-      fun_f->SetParameter(11, 0);
-      if(f3gaus) fun_f->SetParameter(12, setparam12);
-      if(f3gaus) fun_f->SetParameter(13, setparam13);
-    }
-  else
-    {
-      TString fitoption = ffitverbose?"L m":"L m q";
-      // setgstyle();
-      // TCanvas* c = new TCanvas("c", "" , 600, 600);
-  
-      fun_f->SetParLimits(0,  0,     1.e+5);
-      fun_f->SetParLimits(4,  -1000, 1000);
-      fun_f->SetParLimits(10, 0.001, 0.05);
-      fun_f->SetParLimits(2,  0.01,  0.5);
-      fun_f->SetParLimits(8,  0.02,  0.2);
-      if(f3gaus) fun_f->SetParLimits(13, 0.002, 0.1);
-      fun_f->SetParLimits(7,  0,     1);
-      fun_f->SetParLimits(9,  0,     1);
-      if(f3gaus) fun_f->SetParLimits(12, 0, 1);
-    
-      // -- fit MC
-      fun_f->FixParameter(3, 0);
-      fun_f->FixParameter(4, 0);
-      fun_f->FixParameter(5, 0);
-      fun_f->FixParameter(6, 0);
-
-      //  - fit signal 
-      fun_f->FixParameter(11, 0);
-      fun_f->FixParameter(1,  fixparam1);
-      fun_f->FixParameter(7,  1);
-      fun_f->FixParameter(8,  1);
-      fun_f->SetParameter(0,  setparam0);
-      fun_f->SetParameter(1,  setparam1);
-      fun_f->SetParameter(2,  setparam2);
-      fun_f->SetParameter(10, setparam10);
-      if(f3gaus) fun_f->SetParameter(13, setparam13);
-      fun_f->SetParameter(9,  setparam9);
-      if(f3gaus) fun_f->SetParameter(12, setparam12);
-
-      hMCSignal->Fit("fun_f", "q", "", min_hist_dzero, max_hist_dzero);
-      hMCSignal->Fit("fun_f", "q", "", min_hist_dzero, max_hist_dzero);
-      fun_f->ReleaseParameter(1);
-      hMCSignal->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
-      hMCSignal->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
-      hMCSignal->Fit("fun_f", fitoption, "", min_hist_dzero, max_hist_dzero);
-
-      fun_f->FixParameter(1, fun_f->GetParameter(1));
-      fun_f->FixParameter(2, fun_f->GetParameter(2));
-      fun_f->FixParameter(10, fun_f->GetParameter(10));
-      if(f3gaus) fun_f->FixParameter(13, fun_f->GetParameter(13));
-      fun_f->FixParameter(9, fun_f->GetParameter(9));
-      if(f3gaus) fun_f->FixParameter(12, fun_f->GetParameter(12));
-
-      fixparam7 = fun_f->GetParameter(0);
-
-      //   - fit swapped
-      fun_f->FixParameter(7,0);
-      fun_f->ReleaseParameter(8);
-      fun_f->SetParameter(8,setparam8);
-  
-      hMCSwapped->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
-      hMCSwapped->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
-      hMCSwapped->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
-      hMCSwapped->Fit("fun_f",fitoption,"", min_hist_dzero, max_hist_dzero);
-  
-      fixparam7 = fixparam7/(fun_f->GetParameter(0)+fixparam7);
-      fun_f->FixParameter(7, fixparam7);
-      fun_f->FixParameter(8,fun_f->GetParameter(8));
-
-      //  -- fit data
-      fun_f->ReleaseParameter(3);
-      fun_f->ReleaseParameter(4);
-      fun_f->ReleaseParameter(5);
-      fun_f->ReleaseParameter(6);
-  
-      h->Fit("fun_f", "q", "", min_hist_dzero, max_hist_dzero);
-      h->Fit("fun_f", "q", "", min_hist_dzero, max_hist_dzero);
-      fun_f->ReleaseParameter(1);
-      fun_f->SetParLimits(1, 1.86, 1.87);
-      // fun_f->ReleaseParameter(11);
-      // fun_f->SetParLimits(11, -0.5, 0.5);
-      h->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
-      h->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
-      h->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
-      r = h->Fit("fun_f", Form("%s S",fitoption.Data()),"", min_hist_dzero, max_hist_dzero);
-
     }
 
   fparamfun_f = true;
   setfunparameters();
   calvar();
-
-  hist_hpull = (TH1*)h->Clone(Form("hist_hpull_%d",std::time(nullptr)));
-  hist_hpull->SetMaximum(-1111);
-  for(int i=0;i<h->GetNbinsX();i++)
-    {
-      Float_t nfit = fun_f->Integral(h->GetBinLowEdge(i+1),h->GetBinLowEdge(i+1)+h->GetBinWidth(i+1))/h->GetBinWidth(i+1);
-      if(h->GetBinContent(i+1)==0)
-        {
-          hist_hpull->SetBinContent(i+1,0.);
-        }
-      else hist_hpull->SetBinContent(i+1,(h->GetBinContent(i+1)-nfit)/h->GetBinError(i+1));
-      hist_hpull->SetBinError(i+1,0);
-    }
-  fsethist = true;
   
-  // plot
-
   h->Draw("e");
-  TF1* fun_clone_f = clonefun(fun_f, Form("fun_f_%d",std::time(nullptr)));
-  TF1* fun_clone_mass = clonefun(fun_mass, Form("fun_mass_%d",std::time(nullptr)));
-  TF1* fun_clone_swap = clonefun(fun_swap, Form("fun_swap_%d",std::time(nullptr)));
-  TF1* fun_clone_background = clonefun(fun_background, Form("fun_background_%d",std::time(nullptr)));
-  TF1* fun_clone_not_mass = clonefun(fun_not_mass, Form("fun_not_mass_%d",std::time(nullptr)));
-
-  fun_clone_background->Draw("same");   
+  TF1* fun_clone_f = clonefun(fun_f, Form("%s_fun_f",hmass->GetName()));
+  TF1* fun_clone_mass = clonefun(fun_mass, Form("%s_fun_mass",hmass->GetName()));
+  TF1* fun_clone_swap = clonefun(fun_swap, Form("%s_fun_swap",hmass->GetName()));
+  TF1* fun_clone_background = clonefun(fun_background, Form("%s_fun_background",hmass->GetName()));
+  TF1* fun_clone_not_mass = clonefun(fun_not_mass, Form("%s_fun_not_mass",hmass->GetName()));
+  fun_clone_background->Draw("same");
   fun_clone_mass->Draw("same");
   fun_clone_swap->Draw("same");
   if(fdrawsigsid || fdrawsignif)
@@ -370,6 +353,14 @@ TF1* xjjroot::dfitter::fit(const TH1* hmass, const TH1* hmassMCSignal, const TH1
     {
       drawtex(texxpos, texypos=(texypos-texdypos), Form("N#scale[0.6]{#lower[0.7]{sig}}/(N#scale[0.6]{#lower[0.7]{sig}}+N#scale[0.6]{#lower[0.7]{swap}}) = %.2f",fun_f->GetParameter(7)));
     }
+
+  // Float_t texVxpos = 0.22, texVypos = 0.30, texVdypos = 0.053;
+  // if(f3gaus) drawtex(texVxpos, texVypos=(texVypos-texVdypos), "Triple Gaussian");
+  // else if(fincwid) drawtex(texVxpos, texVypos=(texVypos-texVdypos), "Increase width");
+  // else if(fdecwid) drawtex(texVxpos, texVypos=(texVypos-texVdypos), "Decrease width");
+  // else if(fexp) drawtex(texVxpos, texVypos=(texVypos-texVdypos), "Expo combinatorial");
+  // else if(f2ndpol) drawtex(texVxpos, texVypos=(texVypos-texVdypos), "2nd ord pol comb");
+  // else drawtex(texVxpos, texVypos=(texVypos-texVdypos), "Default");
   
   // if(fsaveplot) c->SaveAs(Form("%s.pdf",outputname.Data()));
 
@@ -378,95 +369,23 @@ TF1* xjjroot::dfitter::fit(const TH1* hmass, const TH1* hmassMCSignal, const TH1
   // delete hMCSignal;
   // delete hMCSwapped;
 
-  return fun_clone_f;
+  return clonefun(fun_mass, "Fun_mass");
 }
 
-
-Int_t xjjroot::dfitter::drawfit(TString collisionsyst/*=""*/, const std::vector<TString> &vtex/*=std::vector<TString>()*/)
-{
-  if(!fparamfuns || !fsethist) { std::cout<<"error: hist_h or funs are not set up properly."<<std::endl; return 1; }
-  
-  TH1* hist_h_clone = (TH1*)hist_h->Clone(Form("hist_h_%d",std::time(nullptr)));
-  hist_h_clone->Draw("e");
-  TF1* fun_clone_f = clonefun(fun_f, Form("fun_f_%d",std::time(nullptr)));
-  TF1* fun_clone_mass = clonefun(fun_mass, Form("fun_mass_%d",std::time(nullptr)));
-  TF1* fun_clone_swap = clonefun(fun_swap, Form("fun_swap_%d",std::time(nullptr)));
-  TF1* fun_clone_background = clonefun(fun_background, Form("fun_background_%d",std::time(nullptr)));
-
-  fun_clone_background->Draw("same");   
-  fun_clone_mass->Draw("same");
-  fun_clone_swap->Draw("same");
-  fun_clone_f->Draw("same");
-
-  drawleg(hist_h_clone, fun_clone_f, fun_clone_mass, fun_clone_swap, fun_clone_background);
-  drawCMS(collisionsyst);
-
-  Float_t texxpos = 0.22, texypos = 0.90, texdypos = 0.053;
-  if(!vtex.empty())
-    {
-      texypos+=texlinespc;
-      for(std::vector<TString>::const_iterator it=vtex.begin(); it!=vtex.end(); it++) 
-        drawtex(texxpos, texypos=(texypos-texdypos-texlinespc), *it);
-    }
-  return 0;
-}
-
-Int_t xjjroot::dfitter::drawpull(const std::vector<TString> &vtex/*=std::vector<TString>()*/)
-{
-  if(!fparamfun_f || !fsethist) { std::cout<<"error: hist_h or funs are not set up properly."<<std::endl; return 1; }
-
-  hist_hpull->SetMinimum(-4.);
-  hist_hpull->SetMaximum(4.);
-  hist_hpull->SetYTitle("Pull");
-  hist_hpull->GetXaxis()->SetTitleOffset(1.);
-  hist_hpull->GetYaxis()->SetTitleOffset(0.65);
-  hist_hpull->GetXaxis()->SetLabelOffset(0.007);
-  hist_hpull->GetYaxis()->SetLabelOffset(0.007);
-  hist_hpull->GetXaxis()->SetTitleSize(0.12);
-  hist_hpull->GetYaxis()->SetTitleSize(0.12);
-  hist_hpull->GetXaxis()->SetLabelSize(0.1);
-  hist_hpull->GetYaxis()->SetLabelSize(0.1);
-  hist_hpull->GetYaxis()->SetNdivisions(504);
-  
-  TH1* hist_hpull_clone = (TH1*)hist_hpull->Clone(Form("hist_hpull_%d",std::time(nullptr)));
-  hist_hpull_clone->Draw("p");
-  drawline(min_hist_dzero, 0, max_hist_dzero, 0, 2, 7, 2);
-  hist_hpull_clone->Draw("p same");
-
-  Float_t texxpos = 0.22, texypos = 0.90, texdypos = 0.053;
-  if(!vtex.empty())
-    {
-      texypos+=texlinespc;
-      for(std::vector<TString>::const_iterator it=vtex.begin(); it!=vtex.end(); it++) 
-        drawtex(texxpos, texypos=(texypos-texdypos-texlinespc), *it);
-    }
-
-  return 0;
-}
-
-void xjjroot::dfitter::reset()
+void xjjroot::dfitter_variation::reset()
 {
   clearvar();
   deletefun();
-  deletehist();
 }
 
-void xjjroot::dfitter::clearhist()
-{
-  fsethist = false;
-  hist_h = 0;
-  hist_hpull = 0;
-}
-
-void xjjroot::dfitter::init()
+void xjjroot::dfitter_variation::init()
 {
   clearvar();
-  clearhist();
   createfun();
   setfunstyle();
 }
 
-void xjjroot::dfitter::clearvar()
+void xjjroot::dfitter_variation::clearvar()
 {
   S = 0;
   B = 0;
@@ -478,13 +397,7 @@ void xjjroot::dfitter::clearvar()
   Chi2Prob = 0;
 }
 
-void xjjroot::dfitter::deletehist()
-{
-  delete hist_h;
-  delete hist_hpull;
-}
-
-void xjjroot::dfitter::calvar()
+void xjjroot::dfitter_variation::calvar()
 {
   mass_dzero_signal_l = mass_dzero - d_mass_signal;
   mass_dzero_signal_h = mass_dzero + d_mass_signal;
@@ -499,31 +412,40 @@ void xjjroot::dfitter::calvar()
   Sig = S/TMath::Sqrt(S+B);
   yield = fun_mass->Integral(min_hist_dzero,max_hist_dzero)/binwid_hist_dzero;
   yieldErr = fun_mass->Integral(min_hist_dzero,max_hist_dzero)/binwid_hist_dzero*fun_mass->GetParError(0)/fun_mass->GetParameter(0);
-  if(yield<1) yieldErr = 0;
   Chi2 = 2.*r->MinFcnValue();
   NDF = fun_f->GetNDF();
   Chi2Prob = TMath::Prob(Chi2,NDF);
 }
 
-void xjjroot::dfitter::createfun()
+void xjjroot::dfitter_variation::createfun()
 {
-  TString str_fun_f = f3gaus?
-    "[0]*([7]*([9]*TMath::Gaus(x,[1],[2]*(1+[11]))/(sqrt(2*3.14159)*[2]*(1+[11]))+(1-[9])*([12]*TMath::Gaus(x,[1],[10]*(1+[11]))/(sqrt(2*3.14159)*[10]*(1+[11]))+(1-[12])*TMath::Gaus(x,[1],[13]*(1+[11]))/(sqrt(2*3.14159)*[13]*(1+[11]))))+(1-[7])*TMath::Gaus(x,[1],[8]*(1+[11]))/(sqrt(2*3.14159)*[8]*(1+[11])))+[3]+[4]*x+[5]*x*x+[6]*x*x*x":
-    "[0]*([7]*([9]*TMath::Gaus(x,[1],[2]*(1+[11]))/(sqrt(2*3.14159)*[2]*(1+[11]))+(1-[9])*TMath::Gaus(x,[1],[10]*(1+[11]))/(sqrt(2*3.14159)*[10]*(1+[11])))+(1-[7])*TMath::Gaus(x,[1],[8]*(1+[11]))/(sqrt(2*3.14159)*[8]*(1+[11])))+[3]+[4]*x+[5]*x*x+[6]*x*x*x";
-  TString str_fun_mass = f3gaus?
-    "[0]*([3]*([4]*TMath::Gaus(x,[1],[2]*(1+[6]))/(sqrt(2*3.14159)*[2]*(1+[6]))+(1-[4])*([7]*TMath::Gaus(x,[1],[5]*(1+[6]))/(sqrt(2*3.14159)*[5]*(1+[6]))+(1-[7])*TMath::Gaus(x,[1],[8]*(1+[6]))/(sqrt(2*3.14159)*[8]*(1+[6])))))":
-    "[0]*([3]*([4]*TMath::Gaus(x,[1],[2]*(1+[6]))/(sqrt(2*3.14159)*[2]*(1+[6]))+(1-[4])*TMath::Gaus(x,[1],[5]*(1+[6]))/(sqrt(2*3.14159)*[5]*(1+[6]))))";
+  TString str_fun_f = "[0]*([7]*([9]*TMath::Gaus(x,[1],[2]*(1+[11]))/(sqrt(2*3.14159)*[2]*(1+[11]))+(1-[9])*TMath::Gaus(x,[1],[10]*(1+[11]))/(sqrt(2*3.14159)*[10]*(1+[11])))+(1-[7])*TMath::Gaus(x,[1],[8]*(1+[11]))/(sqrt(2*3.14159)*[8]*(1+[11])))+[3]+[4]*x+[5]*x*x+[6]*x*x*x";
+  if(f3gaus) str_fun_f = "[0]*([7]*([9]*TMath::Gaus(x,[1],[2]*(1+[11]))/(sqrt(2*3.14159)*[2]*(1+[11]))+(1-[9])*([12]*TMath::Gaus(x,[1],[10]*(1+[11]))/(sqrt(2*3.14159)*[10]*(1+[11]))+(1-[12])*TMath::Gaus(x,[1],[13]*(1+[11]))/(sqrt(2*3.14159)*[13]*(1+[11]))))+(1-[7])*TMath::Gaus(x,[1],[8]*(1+[11]))/(sqrt(2*3.14159)*[8]*(1+[11])))+[3]+[4]*x+[5]*x*x+[6]*x*x*x";
+  if(fexp) str_fun_f = "[0]*([7]*([9]*TMath::Gaus(x,[1],[2]*(1+[11]))/(sqrt(2*3.14159)*[2]*(1+[11]))+(1-[9])*TMath::Gaus(x,[1],[10]*(1+[11]))/(sqrt(2*3.14159)*[10]*(1+[11])))+(1-[7])*TMath::Gaus(x,[1],[8]*(1+[11]))/(sqrt(2*3.14159)*[8]*(1+[11])))+[3]*TMath::Exp([4]*x+[5]*x*x)";
+  if(f2ndpol) str_fun_f = "[0]*([7]*([9]*TMath::Gaus(x,[1],[2]*(1+[11]))/(sqrt(2*3.14159)*[2]*(1+[11]))+(1-[9])*TMath::Gaus(x,[1],[10]*(1+[11]))/(sqrt(2*3.14159)*[10]*(1+[11])))+(1-[7])*TMath::Gaus(x,[1],[8]*(1+[11]))/(sqrt(2*3.14159)*[8]*(1+[11])))+[3]+[4]*x+[5]*x*x";
+
+  TString str_fun_mass = "[0]*([3]*([4]*TMath::Gaus(x,[1],[2]*(1+[6]))/(sqrt(2*3.14159)*[2]*(1+[6]))+(1-[4])*TMath::Gaus(x,[1],[5]*(1+[6]))/(sqrt(2*3.14159)*[5]*(1+[6]))))";
+  if(f3gaus) str_fun_mass = "[0]*([3]*([4]*TMath::Gaus(x,[1],[2]*(1+[6]))/(sqrt(2*3.14159)*[2]*(1+[6]))+(1-[4])*([7]*TMath::Gaus(x,[1],[5]*(1+[6]))/(sqrt(2*3.14159)*[5]*(1+[6]))+(1-[7])*TMath::Gaus(x,[1],[8]*(1+[6]))/(sqrt(2*3.14159)*[8]*(1+[6])))))";
+
+  TString str_fun_background = "[0]+[1]*x+[2]*x*x+[3]*x*x*x";
+  if(fexp) str_fun_background = "[0]*TMath::Exp([1]*x+[2]*x*x)";
+  if(f2ndpol) str_fun_background = "[0]+[1]*x+[2]*x*x";
+
+  TString str_fun_not_mass = "[0]*(1-[2])*TMath::Gaus(x,[1],[3]*(1+[4]))/(sqrt(2*3.14159)*[3]*(1+[4]))+[5]+[6]*x+[7]*x*x+[8]*x*x*x";
+  if(fexp) str_fun_not_mass = "[0]*(1-[2])*TMath::Gaus(x,[1],[3]*(1+[4]))/(sqrt(2*3.14159)*[3]*(1+[4]))+[5]*TMath::Exp([6]*x+[7]*x*x)";
+  if(f2ndpol) str_fun_not_mass = "[0]*(1-[2])*TMath::Gaus(x,[1],[3]*(1+[4]))/(sqrt(2*3.14159)*[3]*(1+[4]))+[5]+[6]*x+[7]*x*x";
+
   fun_f = new TF1("fun_f", str_fun_f.Data(), min_hist_dzero, max_hist_dzero);  
   fun_mass = new TF1("fun_mass", str_fun_mass.Data(), min_hist_dzero, max_hist_dzero);
-  fun_background = new TF1("fun_background", "[0]+[1]*x+[2]*x*x+[3]*x*x*x", min_hist_dzero, max_hist_dzero);
+  fun_background = new TF1("fun_background", str_fun_background.Data(), min_hist_dzero, max_hist_dzero);
   fun_swap = new TF1("fun_swap", "[0]*(1-[2])*TMath::Gaus(x,[1],[3]*(1+[4]))/(sqrt(2*3.14159)*[3]*(1+[4]))", min_hist_dzero, max_hist_dzero);
-  fun_not_mass = new TF1("fun_not_mass", "[0]*(1-[2])*TMath::Gaus(x,[1],[3]*(1+[4]))/(sqrt(2*3.14159)*[3]*(1+[4]))+[5]+[6]*x+[7]*x*x+[8]*x*x*x", min_hist_dzero, max_hist_dzero);
+  fun_not_mass = new TF1("fun_not_mass", str_fun_not_mass.Data(), min_hist_dzero, max_hist_dzero);
 
   fparamfun_f = false;
   fparamfuns = false;
 }
 
-void xjjroot::dfitter::deletefun()
+void xjjroot::dfitter_variation::deletefun()
 {
   delete fun_f;
   delete fun_background;
@@ -535,7 +457,7 @@ void xjjroot::dfitter::deletefun()
   fparamfuns = false;
 }
 
-void xjjroot::dfitter::setfunstyle()
+void xjjroot::dfitter_variation::setfunstyle()
 {
   fun_f->SetNpx(2000);
   fun_f->SetLineColor(2);
@@ -566,14 +488,15 @@ void xjjroot::dfitter::setfunstyle()
   fun_not_mass->SetLineWidth(2);
 }
 
-void xjjroot::dfitter::setfunparameters()
+void xjjroot::dfitter_variation::setfunparameters()
 {
-  fun_background->SetParameters(fun_f->GetParameter(3), fun_f->GetParameter(4), fun_f->GetParameter(5), fun_f->GetParameter(6));
+  fun_background->SetParameters(fun_f->GetParameter(3), fun_f->GetParameter(4), fun_f->GetParameter(5));
+  if(!(fexp || f2ndpol)) fun_background->SetParameter(3, fun_f->GetParameter(6));
   fun_background->SetParError(0,fun_f->GetParError(3));
   fun_background->SetParError(1,fun_f->GetParError(4));
   fun_background->SetParError(2,fun_f->GetParError(5));
-  fun_background->SetParError(3,fun_f->GetParError(6));
-  
+  if(!(fexp || f2ndpol)) fun_background->SetParError(3,fun_f->GetParError(6));
+
   fun_mass->SetParameters(fun_f->GetParameter(0),fun_f->GetParameter(1),fun_f->GetParameter(2),fun_f->GetParameter(7),fun_f->GetParameter(9),fun_f->GetParameter(10),fun_f->GetParameter(11));
   fun_mass->SetParError(0,fun_f->GetParError(0));
   fun_mass->SetParError(1,fun_f->GetParError(1));
@@ -598,7 +521,8 @@ void xjjroot::dfitter::setfunparameters()
   fun_swap->SetParError(4,fun_f->GetParError(11));
 
   fun_not_mass->SetParameters(fun_swap->GetParameter(0),fun_swap->GetParameter(1),fun_swap->GetParameter(2),fun_swap->GetParameter(3),fun_swap->GetParameter(4),
-                              fun_background->GetParameter(0),fun_background->GetParameter(1),fun_background->GetParameter(2),fun_background->GetParameter(3));
+                              fun_background->GetParameter(0),fun_background->GetParameter(1),fun_background->GetParameter(2));
+  if(!(fexp || f2ndpol)) fun_not_mass->SetParameter(8, fun_background->GetParameter(3));
   fun_not_mass->SetParError(0,fun_swap->GetParError(0));
   fun_not_mass->SetParError(1,fun_swap->GetParError(1));
   fun_not_mass->SetParError(2,fun_swap->GetParError(2));
@@ -607,19 +531,19 @@ void xjjroot::dfitter::setfunparameters()
   fun_not_mass->SetParError(5,fun_background->GetParError(0));
   fun_not_mass->SetParError(6,fun_background->GetParError(1));
   fun_not_mass->SetParError(7,fun_background->GetParError(2));
-  fun_not_mass->SetParError(8,fun_background->GetParError(3));
+  if(!(fexp || f2ndpol)) fun_not_mass->SetParError(8,fun_background->GetParError(3));
 
   fparamfuns = true;
 }
 
-TF1* xjjroot::dfitter::clonefun(const TF1* fun, TString fun_name) const
+TF1* xjjroot::dfitter_variation::clonefun(const TF1* fun, TString fun_name) const
 {
   TF1* newfun = new TF1(*fun);
   newfun->SetName(fun_name);
   return newfun;
 }
 
-void xjjroot::dfitter::sethist(TH1* h) const
+void xjjroot::dfitter_variation::sethist(TH1* h) const
 {
   h->SetMaximum(-1111);
   h->SetXTitle("m_{#piK} (GeV/c^{2})");
@@ -639,14 +563,12 @@ void xjjroot::dfitter::sethist(TH1* h) const
   h->GetYaxis()->SetLabelFont(42);
   h->GetXaxis()->SetLabelSize(0.04);
   h->GetYaxis()->SetLabelSize(0.04);
-  h->SetMarkerSize(1.0);
+  h->SetMarkerSize(0.8);
   h->SetMarkerStyle(20);
-  h->SetMarkerColor(kBlack);
-  h->SetLineColor(kBlack);
   h->SetStats(0);
 }
 
-void xjjroot::dfitter::drawleg(TH1* h, TF1* leg_fun_f, TF1* leg_fun_mass, TF1* leg_fun_swap, TF1* leg_fun_background) const
+void xjjroot::dfitter_variation::drawleg(TH1* h, TF1* leg_fun_f, TF1* leg_fun_mass, TF1* leg_fun_swap, TF1* leg_fun_background) const
 {
   TLegend* leg = new TLegend(0.65, 0.58, 0.85, 0.88, NULL,"brNDC");
   leg->SetBorderSize(0);
@@ -663,7 +585,7 @@ void xjjroot::dfitter::drawleg(TH1* h, TF1* leg_fun_f, TF1* leg_fun_mass, TF1* l
   leg->Draw("same");
 }
 
-void xjjroot::dfitter::drawCMS(TString collision, TString snn/*="5.02"*/) const
+void xjjroot::dfitter_variation::drawCMS(TString collision, TString snn/*="5.02"*/) const
 {
   TLatex* texCms = new TLatex(0.18,0.93, "#scale[1.25]{CMS} Preliminary");
   texCms->SetNDC();
@@ -680,7 +602,7 @@ void xjjroot::dfitter::drawCMS(TString collision, TString snn/*="5.02"*/) const
   texCol->Draw();
 }
 
-void xjjroot::dfitter::drawtex(Double_t x, Double_t y, const char* text, Float_t tsize/*=0.04*/, Short_t align/*=12*/) const
+void xjjroot::dfitter_variation::drawtex(Double_t x, Double_t y, const char* text, Float_t tsize/*=0.04*/, Short_t align/*=12*/) const
 {
   TLatex* tex = new TLatex(x, y, text);
   tex->SetNDC();
@@ -690,7 +612,7 @@ void xjjroot::dfitter::drawtex(Double_t x, Double_t y, const char* text, Float_t
   tex->Draw();
 }
 
-void xjjroot::dfitter::drawline(Double_t x1, Double_t y1, Double_t x2, Double_t y2, Color_t lcolor/*=kBlack*/, Style_t lstyle/*=1*/, Width_t lwidth/*=2*/) const
+void xjjroot::dfitter_variation::drawline(Double_t x1, Double_t y1, Double_t x2, Double_t y2, Color_t lcolor/*=kBlack*/, Style_t lstyle/*=1*/, Width_t lwidth/*=2*/) const
 {
   TLine* l = new TLine(x1, y1, x2, y2);
   l->SetLineColor(lcolor);
@@ -699,7 +621,7 @@ void xjjroot::dfitter::drawline(Double_t x1, Double_t y1, Double_t x2, Double_t 
   l->Draw();
 }
 
-void xjjroot::dfitter::setgstyle() const
+void xjjroot::dfitter_variation::setgstyle() const
 {
   gStyle->SetOptTitle(0);
   gStyle->SetOptStat(0);

@@ -225,6 +225,7 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
   std::cout<<"  -- Filling mixing map"<<std::endl;
   // std::vector<int> mapFileMix[nHiBins][nVzBins][nEventPlaneBins]; 
   std::vector<int> mapEvtMix[nMixFiles][nHiBins][nVzBins][nEventPlaneBins];
+  // std::vector<int> evtEvtMix[nMixFiles][nHiBins][nVzBins][nEventPlaneBins];
   if(!isPP)
     {
       for(int i=0;i<nMixFiles;i++)
@@ -243,6 +244,7 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
               int iEventPlane_mix = getEventPlaneBin(hiEvtPlanes_mix[8]);
               if(ihiBin_mix < 0 || ivz_mix < 0 || iEventPlane_mix < 0) continue;
               mapEvtMix[i][ihiBin_mix][ivz_mix][iEventPlane_mix].push_back(j);
+              // evtEvtMix[i][ihiBin_mix][ivz_mix][iEventPlane_mix].push_back(evt_mix);
             }
         }
     }
@@ -312,8 +314,6 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
     } else {      // pp event selection
       if (pPAprimaryVertexFilter < 1 || pBeamScrapingFilter < 1) continue;
     }
-
-    // std::cout<<j<<" test: passing evt sel"<<std::endl;
 
     //! D cuts and selection
     D_tree->GetEntry(j);
@@ -401,8 +401,6 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
     int njet_akpu3pf_mix = 0;
     int ngen_akpu3pf_mix = 0;
     
-    std::cout<<j<<"th evt going into mixing"<<std::endl;
-
     //! (2.5) Begin minbias mixing criteria machinery
     if(!isPP)
       {
@@ -420,7 +418,6 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
         int iMixFile = startMixFile[ihiBin][ivz][iEventPlane];
         // Long64_t iMixEvent = startMixEvent[ihiBin][ivz][iEventPlane];
         int iMixEventIndex = startMixEvent[ihiBin][ivz][iEventPlane];
-        std::cout<<j<<" start evtindex: "<<iMixEventIndex<<" "<<iMixFile<<std::endl;
 
         for (; iMixFile < nMixFiles; ++iMixFile) {
           if(usedAllMixEvents[ihiBin][ivz][iEventPlane])  break; // do not reuse the used mix events.
@@ -436,9 +433,9 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
               break;
             }
 
-            std::cout<<j<<" "<<iMixEventIndex<<" "<<nMixEvents<<" "<<initialMixEvent[ihiBin][ivz][iEventPlane]<<std::endl;
             Long64_t iMixEvent = mapEvtMix[iMixFile][ihiBin][ivz][iEventPlane].at(iMixEventIndex);
-            std::cout<<j<<" "<<iMixEventIndex<<" "<<nMixEvents<<" "<<iMixEvent<<std::endl;
+            // Long64_t evtMixEvent = evtEvtMix[iMixFile][ihiBin][ivz][iEventPlane].at(iMixEventIndex);
+            // if(evtMixEvent == (Long64_t)djt.evt) continue; // skip if mix with the same event (for MB mixed with itself in MC)
 
             event_tree_mix[iMixFile]->GetEntry(iMixEvent);
             djt.hiBin_mix[nmix] = hiBin_mix;

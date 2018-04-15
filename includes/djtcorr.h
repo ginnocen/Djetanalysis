@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <TRandom3.h>
+#include <TMath.h>
 #include "corrFactor.h"
 #include "paramCorr.h"
 #include "xjjcuti.h"

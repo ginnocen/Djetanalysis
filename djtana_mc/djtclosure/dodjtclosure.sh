@@ -4,13 +4,9 @@
 DIRPREFIX="../djtana/"
 
 source ../includes/utility.shinc
-cp ../includes/prefilters_data.h prefilters.h
-
-DO_PLOTHIST=${1:-0}
 
 # Select the systems the macros run on 
 iCOL=(0 1)
-jJET=(0 1 2)
 
 #
 CORRFACTOR=0
@@ -36,12 +32,6 @@ tSmearPhi=("woSmearAng" "wSmearAngJet" "wSmearAngJetD")
 # nCOL loop
 COLSYST=('pp' 'PbPb')
 
-# nJET loop
-JETPTMIN=(60 80 100)
-JETPTMAX=(80 100 999)
-JETETAMIN=(0.3 0.3 0.3)
-JETETAMAX=(1.6 1.6 1.6)
-
 # Do not touch the macros below if you don't know what they mean #
 #
 RECOGEN=('RecoD_RecoJet' 'GenD_RecoJet' 'RecoD_GenJet' 'GenD_GenJet')
@@ -61,7 +51,7 @@ function produce_postfix()
     fi
 }
 
-#
+
 FOLDERS=("plotclosure")
 mk_dirs ${FOLDERS[@]}
 
@@ -96,4 +86,3 @@ then
 fi
 rm djtclosure_plothist.exe
 
-rm prefilters.h

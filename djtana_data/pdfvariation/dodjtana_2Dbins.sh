@@ -4,12 +4,9 @@
 cp ../includes/prefilters_data_2Dbins.h prefilters.h
 
 DO_SAVETPL=${1:-0}
-DO_SAVEHIST=${2:-0}
-DO_USEHIST=${3:-0}
-DO_PLOTHIST=${4:-0}
 
 # Select the systems the macros run on 
-jJET=(0 1)
+jJET=(0)
 
 # nJET loop
 JETPTMIN=(60    60)

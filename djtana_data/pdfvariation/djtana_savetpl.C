@@ -1,4 +1,4 @@
-#include "djtana.h"
+#include "pdfvariation.h"
 
 void djtana_savetpl(TString inputname, TString outputname, 
                     TString collisionsyst, Int_t isMC, Int_t irecogen,
@@ -81,96 +81,40 @@ void djtana_savetpl(TString inputname, TString outputname,
                   Float_t Dgenpt = (**djt.aDgenpt[irecogen])[jd];
                   Float_t weightDgen = isMC?1:djtweight::getDptweight(Dgenpt, ispp);
 
-                  Float_t deltaR[nRefBins];
-                  deltaR[0] = djtuti::calr((**djt.aDphi[irecogen])[jd], (**djt.aDeta[irecogen])[jd], vjetphi->at(s), vjeteta->at(s), 0);
-                  deltaR[1] = djtuti::calr((**djt.aDphi[irecogen])[jd], (**djt.aDeta[irecogen])[jd], vjetphi->at(s), vjeteta->at(s), 1);
-                  for(int l=0;l<nRefBins;l++)
-                    {
-                      Int_t ibindr = xjjc::findibin(&drBins, deltaR[l]);
-                      if(ibindr<0) continue;
-                      Int_t result_initcutval = initcutval_bindep(collisionsyst, ibinselpt, ibindr);
-                      if(result_initcutval) return;
-                      djt.setbindepcut(cutval_Dsvpv, cutval_Dalpha);
-                      Int_t djtDsel = djt.isDselected(jd, djt.aDopt[irecogen]);
-                      if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
-                      if(!djtDsel) continue;
-                      if((*djt.Dgen)[jd]==23333)
-                        {
-                          if(!l) 
-                            {
-                              ahHistoRMassSignal[ibinpt][ibindr]->Fill((*djt.Dmass)[jd], evtweight*weightDgen / nsjet);
-                              if(deltaR[l] < 0.3) ahHistoRMassSignalRef[ibinpt]->Fill((*djt.Dmass)[jd], evtweight*weightDgen / nsjet);
-                              if(deltaR[l] < 0.5) ahHistoRMassSignalMe[ibinpt]->Fill((*djt.Dmass)[jd], evtweight*weightDgen / nsjet);
-                            }
-                          ahNumREfficiency[l][ibinpt]->Fill(deltaR[l], evtweight*weightDgen / nsjet);
-                          if(deltaR[l] < 0.3 && l)
-                            {
-                              // ahHistoRMassSignalRef[ibinpt]->Fill((*djt.Dmass)[jd], evtweight*weightDgen / nsjet);
-                              ahNumREfficiencyRef[ibinpt]->Fill(deltaR[l], evtweight*weightDgen / nsjet);                              
-                            }
-                        }
-                      if((*djt.Dgen)[jd]==23344) 
-                        {
-                          if(!l) 
-                            {
-                              ahHistoRMassSwapped[ibinpt][ibindr]->Fill((*djt.Dmass)[jd], evtweight*weightDgen / nsjet);
-                              if(deltaR[l] < 0.3) ahHistoRMassSwappedRef[ibinpt]->Fill((*djt.Dmass)[jd], evtweight*weightDgen / nsjet);
-                              if(deltaR[l] < 0.5) ahHistoRMassSwappedMe[ibinpt]->Fill((*djt.Dmass)[jd], evtweight*weightDgen / nsjet);
-                            }
-                          // if(deltaR[l] < 0.3 && l)
-                          //   ahHistoRMassSwappedRef[ibinpt]->Fill((*djt.Dmass)[jd], 1. / nsjet);
-                        }
-                    }
-                }
+                  Float_t deltaR = djtuti::calr((**djt.aDphi[irecogen])[jd], (**djt.aDeta[irecogen])[jd], vjetphi->at(s), vjeteta->at(s), 0);
 
-              // gen
-              for(int jd=0;jd<djt.Gsize;jd++)
-                {
-                  Int_t ibinpt = xjjc::findibin(&ptBins, (*djt.Gpt)[jd]);
-                  if(ibinpt<0) continue;
-
-                  if((*djt.GcollisionId)[jd] != 0) continue;
-                  Int_t djtDsel = djt.isDselected(jd, "gen");
-                  if(djtDsel < 0) { std::cout<<"error: invalid option for isDselected()"<<std::endl; return; }
+                  Int_t ibindr = xjjc::findibin(&drBins, deltaR);
+                  if(ibindr<0) continue;
+                  Int_t result_initcutval = initcutval_bindep(collisionsyst, ibinselpt, ibindr);
+                  if(result_initcutval) return;
+                  djt.setbindepcut(cutval_Dsvpv, cutval_Dalpha);
+                  Int_t djtDsel = djt.isDselected(jd, djt.aDopt[irecogen]);
+                  if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
                   if(!djtDsel) continue;
-
-                  Float_t Gpt = (*djt.Gpt)[jd];
-                  Float_t weightG = isMC?1.:djtweight::getDptweight(Gpt, ispp);
-
-                  Float_t deltaR[nRefBins];
-                  deltaR[0] = djtuti::calr((*djt.Gphi)[jd], (*djt.Geta)[jd], vjetphi->at(s), vjeteta->at(s), 0);
-                  deltaR[1] = djtuti::calr((*djt.Gphi)[jd], (*djt.Geta)[jd], vjetphi->at(s), vjeteta->at(s), 1);
-                  for(int l=0;l<nRefBins;l++)
+                  Float_t sDmasslow = (*djt.Dmass)[jd];
+                  Float_t sDmasshigh = (*djt.Dmass)[jd];
+                  if(!isMC) 
+                    { 
+                      sDmasslow = DZERO_MASS + ((*djt.Dmass)[jd]-DZERO_MASS) * djtweight::getsigmascale((*djt.Dy)[jd], ispp, 1); 
+                      sDmasshigh = DZERO_MASS + ((*djt.Dmass)[jd]-DZERO_MASS) * djtweight::getsigmascale((*djt.Dy)[jd], ispp, 2); 
+                    }
+                  if((*djt.Dgen)[jd]==23333)
                     {
-                      ahDenREfficiency[l][ibinpt]->Fill(deltaR[l], evtweight*weightG / nsjet);
-                      if(deltaR[l] < 0.3 && l)
-                        ahDenREfficiencyRef[ibinpt]->Fill(deltaR[l], evtweight*weightG / nsjet);
-                      if(TMath::Abs((*djt.Gtk1eta)[jd]) < 2.0 && TMath::Abs((*djt.Gtk2eta)[jd]) < 2.0 && (*djt.Gtk1pt)[jd] > 2.0 && (*djt.Gtk2pt)[jd] > 2.0)
-                        {
-                          ahAccREfficiency[l][ibinpt]->Fill(deltaR[l], evtweight*weightG / nsjet);
-                          if(deltaR[l] < 0.3 && l)
-                            ahAccREfficiencyRef[ibinpt]->Fill(deltaR[l], evtweight*weightG / nsjet);
-                        }
+                      ahHistoRMassSignallow[ibinpt][ibindr]->Fill(sDmasslow, 1. / nsjet);
+                      ahHistoRMassSignalhigh[ibinpt][ibindr]->Fill(sDmasshigh, 1. / nsjet);
+                    }
+                  if((*djt.Dgen)[jd]==23344)
+                    {
+                      ahHistoRMassSwappedlow[ibinpt][ibindr]->Fill(sDmasslow, 1. / nsjet);
+                      ahHistoRMassSwappedhigh[ibinpt][ibindr]->Fill(sDmasshigh, 1. / nsjet);
                     }
                 }
             }
         }
     }
+
   std::cout<<std::setiosflags(std::ios::left)<<"  Processed "<<"\033[1;31m"<<rnentries<<"\033[0m out of\033[1;31m "<<nentries<<"\033[0m event(s)."<<"   >>   djtana_savetpl("<<std::setw(5)<<Form("%s,",collisionsyst.Data())<<" "<<std::setw(5)<<Form("%s,",tMC[isMC].Data())<<" "<<std::setw(30)<<Form("%sD_%sjet)", djt.aDopt[irecogen].Data(), djt.ajetopt[irecogen].Data())<<std::endl;
   std::cout<<std::endl;
-
-  for(int i=0;i<nPtBins;i++)
-    {
-      for(int l=0;l<nRefBins;l++)
-        {
-          ahREfficiency[l][i]->Divide(ahNumREfficiency[l][i], ahDenREfficiency[l][i]);
-          ahREff[l][i]->Divide(ahNumREfficiency[l][i], ahAccREfficiency[l][i]);
-          ahRAcceptance[l][i]->Divide(ahAccREfficiency[l][i], ahDenREfficiency[l][i]);
-        }
-      ahREfficiencyRef[i]->Divide(ahNumREfficiencyRef[i], ahDenREfficiencyRef[i]);
-      ahREffRef[i]->Divide(ahNumREfficiencyRef[i], ahAccREfficiencyRef[i]);
-      ahRAcceptanceRef[i]->Divide(ahAccREfficiencyRef[i], ahDenREfficiencyRef[i]);
-    }
 
   TFile* outf = new TFile(Form("%s.root",outputname.Data()), "recreate");
   outf->cd();
