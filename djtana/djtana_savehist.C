@@ -260,7 +260,7 @@ int arguerr(TString collisionsyst, Int_t irecogen, Int_t isMC, Int_t gensmearpt,
       std::cout<<"\033[1;31merror:\033[0m invalid \"isMC\""<<std::endl;
       return 1;
     }
-  if(irecogen<0 && irecogen>3)
+  if(irecogen<0 || irecogen>3)
     {
       std::cout<<"\033[1;31merror:\033[0m invalid \"irecogen\""<<std::endl;
       return 1;

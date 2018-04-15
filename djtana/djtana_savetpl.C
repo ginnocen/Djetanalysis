@@ -94,18 +94,20 @@ void djtana_savetpl(TString inputname, TString outputname,
                       Int_t djtDsel = djt.isDselected(jd, djt.aDopt[irecogen]);
                       if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
                       if(!djtDsel) continue;
+                      Float_t sDmass = (*djt.Dmass)[jd];
+                      if(!isMC) { sDmass = DZERO_MASS + ((*djt.Dmass)[jd]-DZERO_MASS) * djtweight::getsigmascale((*djt.Dy)[jd], ispp); }
                       if((*djt.Dgen)[jd]==23333)
                         {
                           if(!l) 
                             {
-                              ahHistoRMassSignal[ibinpt][ibindr]->Fill((*djt.Dmass)[jd], evtweight*weightDgen / nsjet);
-                              if(deltaR[l] < 0.3) ahHistoRMassSignalRef[ibinpt]->Fill((*djt.Dmass)[jd], evtweight*weightDgen / nsjet);
-                              if(deltaR[l] < 0.5) ahHistoRMassSignalMe[ibinpt]->Fill((*djt.Dmass)[jd], evtweight*weightDgen / nsjet);
+                              ahHistoRMassSignal[ibinpt][ibindr]->Fill(sDmass, 1. / nsjet);
+                              if(deltaR[l] < 0.3) ahHistoRMassSignalRef[ibinpt]->Fill(sDmass, 1. / nsjet);
+                              if(deltaR[l] < 0.5) ahHistoRMassSignalMe[ibinpt]->Fill(sDmass, 1. / nsjet);
                             }
                           ahNumREfficiency[l][ibinpt]->Fill(deltaR[l], evtweight*weightDgen / nsjet);
                           if(deltaR[l] < 0.3 && l)
                             {
-                              // ahHistoRMassSignalRef[ibinpt]->Fill((*djt.Dmass)[jd], evtweight*weightDgen / nsjet);
+                              // ahHistoRMassSignalRef[ibinpt]->Fill(sDmass, 1. / nsjet);
                               ahNumREfficiencyRef[ibinpt]->Fill(deltaR[l], evtweight*weightDgen / nsjet);                              
                             }
                         }
@@ -113,12 +115,12 @@ void djtana_savetpl(TString inputname, TString outputname,
                         {
                           if(!l) 
                             {
-                              ahHistoRMassSwapped[ibinpt][ibindr]->Fill((*djt.Dmass)[jd], evtweight*weightDgen / nsjet);
-                              if(deltaR[l] < 0.3) ahHistoRMassSwappedRef[ibinpt]->Fill((*djt.Dmass)[jd], evtweight*weightDgen / nsjet);
-                              if(deltaR[l] < 0.5) ahHistoRMassSwappedMe[ibinpt]->Fill((*djt.Dmass)[jd], evtweight*weightDgen / nsjet);
+                              ahHistoRMassSwapped[ibinpt][ibindr]->Fill(sDmass, 1. / nsjet);
+                              if(deltaR[l] < 0.3) ahHistoRMassSwappedRef[ibinpt]->Fill(sDmass, 1. / nsjet);
+                              if(deltaR[l] < 0.5) ahHistoRMassSwappedMe[ibinpt]->Fill(sDmass, 1. / nsjet);
                             }
                           // if(deltaR[l] < 0.3 && l)
-                          //   ahHistoRMassSwappedRef[ibinpt]->Fill((*djt.Dmass)[jd], 1. / nsjet);
+                          //   ahHistoRMassSwappedRef[ibinpt]->Fill(sDmass, 1. / nsjet);
                         }
                     }
                 }
