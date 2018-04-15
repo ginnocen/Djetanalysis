@@ -153,15 +153,28 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
   cY->SaveAs(Form("plotsSigma/canvasMeanSigmaY%s.png",label.Data()));
     
   std::ofstream myfile;
-  myfile.open(Form("%sparameters.dat",collisionsyst.Data()));
+  myfile.open(Form("%sparameters.h",collisionsyst.Data()));
+
+  myfile<<"// Y rapidity "<<collisionsyst.Data()<<","<<variablename[1]<<std::endl;
 
   for (int m=0;m<fitvariations;m++){
-    myfile<<"****"<<fittype[m].Data()<<" Y rapidity "<<collisionsyst.Data()<<","<<variablename[1]<<std::endl;
-      for (int jj=0;jj<fFitY[1][m]->GetNpar();jj++){
-        myfile<<"par "<<jj<<", value="<<fFitY[1][m]->GetParameter(jj)<<", with error="<<fFitY[1][m]->GetParError(jj)<<std::endl;
+    int nparam=fFitY[1][m]->GetNpar();
+    myfile<<"par"<<collisionsyst.Data()<<"["<<nparam<<"]={";
+      for (int jj=0;jj<nparam;jj++){
+       myfile<<fFitY[1][m]->GetParameter(jj);;
+        if(jj<nparam-1)  myfile<<",";
+        else myfile<<"};"<<std::endl;
       }
    }
-   
+  for (int m=0;m<fitvariations;m++){
+    int nparam=fFitY[1][m]->GetNpar();
+    myfile<<"parerr"<<collisionsyst.Data()<<"["<<nparam<<"]={";
+      for (int jj=0;jj<nparam;jj++){
+       myfile<<fFitY[1][m]->GetParError(jj);;
+        if(jj<nparam-1)  myfile<<",";
+        else myfile<<"};"<<std::endl;
+      }
+   }
    myfile.close();
 
   TFile* outf = new TFile(Form("%s.root",output.Data()), "recreate");
