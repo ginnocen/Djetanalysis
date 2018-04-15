@@ -23,7 +23,7 @@ COLSYST=('pp' 'PbPb')
 # dataset[nCOL]
 INPUTDANAME=(
     '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20171215_pp_5TeV_TuneCUETP8M1_Dfinder_MC_20171214_pthatweight.root'
-    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20180328_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20180326_pthatweight.root'
+    '/export/d00/scratch/jwang/Djets/MC/DjetFiles_20180406_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20180326_pthatweight.root'
 )
 
 MAXEVT=-1

@@ -31,7 +31,8 @@ void jetreso_savehist(TString inputname, TString outputname, TString collisionsy
       Int_t ibincent = ispp?0:xjjc::findibin(&centBins, (float)(djt.hiBin/2.));
       if(ibincent<0) { std::cout<<"wrong ibincent"<<std::endl; return; }
 
-      Float_t cweight = ispp?1.:djtweight::getcentweight(djt.hiBin);
+      // Float_t cweight = ispp?1.:djtweight::getcentweight(djt.hiBin);
+      Float_t cweight = 1.;
       Float_t evtweight = djt.pthatweight*cweight;
 
       // loop jets

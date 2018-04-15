@@ -92,6 +92,7 @@ void jetreso_usehist(TString inputhistname, TString outputname,
                   hfit->Fit("fX", "m q", "", xmin.at(l), xmax.at(l));
                   Float_t meanX = fX->GetParameter(1);
                   Float_t sigmaX = fX->GetParameter(2);
+                  if(i>1 && sigmaX > 0.4) sigmaX = 0.2;
                   TF1* fX1 = new TF1("fX1", "[0]*Gaus(x,[1],[2])/(TMath::Sqrt(2*3.14159265)*[2])", xmin.at(l), xmax.at(l));
                   fX1->SetParameter(0, fX->GetParameter(0));
                   fX1->SetParameter(1, fX->GetParameter(1));
