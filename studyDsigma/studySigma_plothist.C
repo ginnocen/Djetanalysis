@@ -6,6 +6,9 @@
 #include <TH2F.h>
 #include <TLegend.h>
 #include <TCanvas.h>
+#include <iostream>
+#include <fstream>
+#include <iomanip>
 #include <TFile.h>
 #include <TGraphErrors.h>
 #include "studySigma.h"
@@ -148,22 +151,19 @@ void studySigma_plothist(TString inputnameData="rootfiles/xsec_pp_Data", TString
   }
 
   cY->SaveAs(Form("plotsSigma/canvasMeanSigmaY%s.png",label.Data()));
-/*
-  for (int m=0;m<nvariables;m++){
-    if(m==0|| m==2) continue;
-    std::cout<<std::endl;
-    std::cout<<"************ Parameter fits Y rapidity "<<collisionsyst.Data()<<","<<variablename[m]<<std::endl;
-    std::cout<<"intersept="<<fFitY[m]->GetParameter(0)<<", with error="<<fFitY[m]->GetParError(0)<<std::endl;
-    std::cout<<"linear coefficient="<<fFitY[m]->GetParameter(1)<<", with error="<<fFitY[m]->GetParError(1)<<std::endl;
-    std::cout<<std::endl;
     
-    std::cout<<std::endl;
-    std::cout<<"************ Parameter fits Pt rapidity "<<collisionsyst.Data()<<","<<variablename[m]<<std::endl;
-    std::cout<<"intersept="<<fFitPt[m]->GetParameter(0)<<", with error="<<fFitPt[m]->GetParError(0)<<std::endl;
-    std::cout<<"linear coefficient="<<fFitPt[m]->GetParameter(1)<<", with error="<<fFitPt[m]->GetParError(1)<<std::endl;
-    std::cout<<std::endl;
-  }
-  */
+  std::ofstream myfile;
+  myfile.open(Form("%sparameters.dat",collisionsyst.Data()));
+
+  for (int m=0;m<fitvariations;m++){
+    myfile<<"****"<<fittype[m].Data()<<" Y rapidity "<<collisionsyst.Data()<<","<<variablename[1]<<std::endl;
+      for (int jj=0;jj<fFitY[1][m]->GetNpar();jj++){
+        myfile<<"par "<<jj<<", value="<<fFitY[1][m]->GetParameter(jj)<<", with error="<<fFitY[1][m]->GetParError(jj)<<std::endl;
+      }
+   }
+   
+   myfile.close();
+
   TFile* outf = new TFile(Form("%s.root",output.Data()), "recreate");
   outf->cd();
   if(writehists("plothist")) return;

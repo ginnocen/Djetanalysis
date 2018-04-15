@@ -1,0 +1,25 @@
+****pol1 Y rapidity PbPb,Sigma
+par 0, value=0.909772, with error=0.0173298
+par 1, value=0.0339521, with error=0.0288642
+****pol2 Y rapidity PbPb,Sigma
+par 0, value=0.918217, with error=0.0212576
+par 1, value=0.0357167, with error=0.0289786
+par 2, value=-0.0236473, with error=0.0344734
+****pol3 Y rapidity PbPb,Sigma
+par 0, value=0.918321, with error=0.0212583
+par 1, value=0.0564954, with error=0.0451676
+par 2, value=-0.0241995, with error=0.0344857
+par 3, value=-0.0194949, with error=0.0325055
+****pol4 Y rapidity PbPb,Sigma
+par 0, value=0.924438, with error=0.0250083
+par 1, value=0.0558162, with error=0.0451912
+par 2, value=-0.0575597, with error=0.0796867
+par 3, value=-0.0173007, with error=0.0328471
+par 4, value=0.0152515, with error=0.0328428
+****pol5 Y rapidity PbPb,Sigma
+par 0, value=0.923134, with error=0.0251188
+par 1, value=0.0871046, with error=0.0723449
+par 2, value=-0.051395, with error=0.0804603
+par 3, value=-0.0860303, with error=0.12837
+par 4, value=0.0148206, with error=0.032852
+par 5, value=0.0215421, with error=0.038896

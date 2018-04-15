@@ -1,0 +1,25 @@
+****pol1 Y rapidity pp,Sigma
+par 0, value=0.931362, with error=0.0128087
+par 1, value=0.0207396, with error=0.0178277
+****pol2 Y rapidity pp,Sigma
+par 0, value=0.921729, with error=0.0162886
+par 1, value=0.0227696, with error=0.0179534
+par 2, value=0.0188963, with error=0.0197395
+****pol3 Y rapidity pp,Sigma
+par 0, value=0.916146, with error=0.0164234
+par 1, value=-0.0470373, with error=0.0318061
+par 2, value=0.0304723, with error=0.0202139
+par 3, value=0.0531419, with error=0.0199868
+****pol4 Y rapidity pp,Sigma
+par 0, value=0.901303, with error=0.0192795
+par 1, value=-0.0390099, with error=0.0322715
+par 2, value=0.0991494, with error=0.0509064
+par 3, value=0.045281, with error=0.0206898
+par 4, value=-0.0301266, with error=0.0204952
+****pol5 Y rapidity pp,Sigma
+par 0, value=0.90077, with error=0.0193072
+par 1, value=-0.058854, with error=0.0502484
+par 2, value=0.101739, with error=0.0511539
+par 3, value=0.0818058, with error=0.0738489
+par 4, value=-0.0318587, with error=0.020769
+par 5, value=-0.0112095, with error=0.0217566
