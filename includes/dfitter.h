@@ -290,8 +290,8 @@ TF1* xjjroot::dfitter::fit(const TH1* hmass, const TH1* hmassMCSignal, const TH1
       h->Fit("fun_f", "q", "", min_hist_dzero, max_hist_dzero);
       fun_f->ReleaseParameter(1);
       fun_f->SetParLimits(1, 1.86, 1.87);
-      fun_f->ReleaseParameter(11);
-      fun_f->SetParLimits(11, -0.5, 0.5);
+      // fun_f->ReleaseParameter(11);
+      // fun_f->SetParLimits(11, -0.5, 0.5);
       h->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
       h->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
       h->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);

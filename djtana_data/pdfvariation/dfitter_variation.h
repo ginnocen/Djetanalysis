@@ -258,7 +258,7 @@ TF1* xjjroot::dfitter_variation::fit(const TH1* hmass, const TH1* hmassMCSignal,
   fun_f->FixParameter(7,0);
   fun_f->ReleaseParameter(8);
   fun_f->SetParameter(8,setparam8);
-  
+
   hMCSwapped->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
   hMCSwapped->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
   hMCSwapped->Fit("fun_f", "L q", "", min_hist_dzero, max_hist_dzero);
@@ -272,10 +272,10 @@ TF1* xjjroot::dfitter_variation::fit(const TH1* hmass, const TH1* hmassMCSignal,
   fun_f->ReleaseParameter(3);
   fun_f->ReleaseParameter(4);
   fun_f->ReleaseParameter(5);
-  fun_f->ReleaseParameter(6);
+  if(!f2ndpol) fun_f->ReleaseParameter(6);
 
   if(fexp) { fun_f->SetParameter(3, 1); fun_f->SetParLimits(3, 0, 100);}
-  
+
   h->Fit("fun_f", "q", "", min_hist_dzero, max_hist_dzero);
   h->Fit("fun_f", "q", "", min_hist_dzero, max_hist_dzero);
   fun_f->ReleaseParameter(1);
@@ -408,7 +408,7 @@ void xjjroot::dfitter_variation::calvar()
 
   if(!fparamfuns) return;
   S = fun_mass->Integral(mass_dzero_signal_l,mass_dzero_signal_h)/binwid_hist_dzero;
-  B = fun_background->Integral(mass_dzero_signal_l,mass_dzero_signal_h)/binwid_hist_dzero + fun_swap->Integral(mass_dzero_signal_h,mass_dzero_signal_h)/binwid_hist_dzero;
+  B = fun_background->Integral(mass_dzero_signal_l,mass_dzero_signal_h)/binwid_hist_dzero + fun_swap->Integral(mass_dzero_signal_l,mass_dzero_signal_h)/binwid_hist_dzero;
   Sig = S/TMath::Sqrt(S+B);
   yield = fun_mass->Integral(min_hist_dzero,max_hist_dzero)/binwid_hist_dzero;
   yieldErr = fun_mass->Integral(min_hist_dzero,max_hist_dzero)/binwid_hist_dzero*fun_mass->GetParError(0)/fun_mass->GetParameter(0);
@@ -422,7 +422,7 @@ void xjjroot::dfitter_variation::createfun()
   TString str_fun_f = "[0]*([7]*([9]*TMath::Gaus(x,[1],[2]*(1+[11]))/(sqrt(2*3.14159)*[2]*(1+[11]))+(1-[9])*TMath::Gaus(x,[1],[10]*(1+[11]))/(sqrt(2*3.14159)*[10]*(1+[11])))+(1-[7])*TMath::Gaus(x,[1],[8]*(1+[11]))/(sqrt(2*3.14159)*[8]*(1+[11])))+[3]+[4]*x+[5]*x*x+[6]*x*x*x";
   if(f3gaus) str_fun_f = "[0]*([7]*([9]*TMath::Gaus(x,[1],[2]*(1+[11]))/(sqrt(2*3.14159)*[2]*(1+[11]))+(1-[9])*([12]*TMath::Gaus(x,[1],[10]*(1+[11]))/(sqrt(2*3.14159)*[10]*(1+[11]))+(1-[12])*TMath::Gaus(x,[1],[13]*(1+[11]))/(sqrt(2*3.14159)*[13]*(1+[11]))))+(1-[7])*TMath::Gaus(x,[1],[8]*(1+[11]))/(sqrt(2*3.14159)*[8]*(1+[11])))+[3]+[4]*x+[5]*x*x+[6]*x*x*x";
   if(fexp) str_fun_f = "[0]*([7]*([9]*TMath::Gaus(x,[1],[2]*(1+[11]))/(sqrt(2*3.14159)*[2]*(1+[11]))+(1-[9])*TMath::Gaus(x,[1],[10]*(1+[11]))/(sqrt(2*3.14159)*[10]*(1+[11])))+(1-[7])*TMath::Gaus(x,[1],[8]*(1+[11]))/(sqrt(2*3.14159)*[8]*(1+[11])))+[3]*TMath::Exp([4]*x+[5]*x*x)";
-  if(f2ndpol) str_fun_f = "[0]*([7]*([9]*TMath::Gaus(x,[1],[2]*(1+[11]))/(sqrt(2*3.14159)*[2]*(1+[11]))+(1-[9])*TMath::Gaus(x,[1],[10]*(1+[11]))/(sqrt(2*3.14159)*[10]*(1+[11])))+(1-[7])*TMath::Gaus(x,[1],[8]*(1+[11]))/(sqrt(2*3.14159)*[8]*(1+[11])))+[3]+[4]*x+[5]*x*x";
+  // if(f2ndpol) str_fun_f = "[0]*([7]*([9]*TMath::Gaus(x,[1],[2]*(1+[11]))/(sqrt(2*3.14159)*[2]*(1+[11]))+(1-[9])*TMath::Gaus(x,[1],[10]*(1+[11]))/(sqrt(2*3.14159)*[10]*(1+[11])))+(1-[7])*TMath::Gaus(x,[1],[8]*(1+[11]))/(sqrt(2*3.14159)*[8]*(1+[11])))+[3]+[4]*x+[5]*x*x";
 
   TString str_fun_mass = "[0]*([3]*([4]*TMath::Gaus(x,[1],[2]*(1+[6]))/(sqrt(2*3.14159)*[2]*(1+[6]))+(1-[4])*TMath::Gaus(x,[1],[5]*(1+[6]))/(sqrt(2*3.14159)*[5]*(1+[6]))))";
   if(f3gaus) str_fun_mass = "[0]*([3]*([4]*TMath::Gaus(x,[1],[2]*(1+[6]))/(sqrt(2*3.14159)*[2]*(1+[6]))+(1-[4])*([7]*TMath::Gaus(x,[1],[5]*(1+[6]))/(sqrt(2*3.14159)*[5]*(1+[6]))+(1-[7])*TMath::Gaus(x,[1],[8]*(1+[6]))/(sqrt(2*3.14159)*[8]*(1+[6])))))";

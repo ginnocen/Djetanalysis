@@ -93,20 +93,36 @@ void djtana_savetpl(TString inputname, TString outputname,
                   if(!djtDsel) continue;
                   Float_t sDmasslow = (*djt.Dmass)[jd];
                   Float_t sDmasshigh = (*djt.Dmass)[jd];
+                  Float_t sDmasspol3 = (*djt.Dmass)[jd];
+                  Float_t sDmasspol4 = (*djt.Dmass)[jd];
+                  Float_t sDmasspol5 = (*djt.Dmass)[jd];
+                  Float_t sDmasspol6 = (*djt.Dmass)[jd];
                   if(!isMC) 
                     { 
                       sDmasslow = DZERO_MASS + ((*djt.Dmass)[jd]-DZERO_MASS) * djtweight::getsigmascale((*djt.Dy)[jd], ispp, 1); 
                       sDmasshigh = DZERO_MASS + ((*djt.Dmass)[jd]-DZERO_MASS) * djtweight::getsigmascale((*djt.Dy)[jd], ispp, 2); 
+                      sDmasspol3 = DZERO_MASS + ((*djt.Dmass)[jd]-DZERO_MASS) * djtweight::getsigmascale((*djt.Dy)[jd], ispp, 3); 
+                      sDmasspol4 = DZERO_MASS + ((*djt.Dmass)[jd]-DZERO_MASS) * djtweight::getsigmascale((*djt.Dy)[jd], ispp, 4); 
+                      sDmasspol5 = DZERO_MASS + ((*djt.Dmass)[jd]-DZERO_MASS) * djtweight::getsigmascale((*djt.Dy)[jd], ispp, 5); 
+                      sDmasspol6 = DZERO_MASS + ((*djt.Dmass)[jd]-DZERO_MASS) * djtweight::getsigmascale((*djt.Dy)[jd], ispp, 6); 
                     }
                   if((*djt.Dgen)[jd]==23333)
                     {
                       ahHistoRMassSignallow[ibinpt][ibindr]->Fill(sDmasslow, 1. / nsjet);
                       ahHistoRMassSignalhigh[ibinpt][ibindr]->Fill(sDmasshigh, 1. / nsjet);
+                      ahHistoRMassSignalpol3[ibinpt][ibindr]->Fill(sDmasspol3, 1. / nsjet);
+                      ahHistoRMassSignalpol4[ibinpt][ibindr]->Fill(sDmasspol4, 1. / nsjet);
+                      ahHistoRMassSignalpol5[ibinpt][ibindr]->Fill(sDmasspol5, 1. / nsjet);
+                      ahHistoRMassSignalpol6[ibinpt][ibindr]->Fill(sDmasspol6, 1. / nsjet);
                     }
                   if((*djt.Dgen)[jd]==23344)
                     {
                       ahHistoRMassSwappedlow[ibinpt][ibindr]->Fill(sDmasslow, 1. / nsjet);
                       ahHistoRMassSwappedhigh[ibinpt][ibindr]->Fill(sDmasshigh, 1. / nsjet);
+                      ahHistoRMassSwappedpol3[ibinpt][ibindr]->Fill(sDmasspol3, 1. / nsjet);
+                      ahHistoRMassSwappedpol4[ibinpt][ibindr]->Fill(sDmasspol4, 1. / nsjet);
+                      ahHistoRMassSwappedpol5[ibinpt][ibindr]->Fill(sDmasspol5, 1. / nsjet);
+                      ahHistoRMassSwappedpol6[ibinpt][ibindr]->Fill(sDmasspol6, 1. / nsjet);
                     }
                 }
             }

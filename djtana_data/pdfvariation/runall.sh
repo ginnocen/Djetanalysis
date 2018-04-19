@@ -1,10 +1,10 @@
 #!/bin/bash
 
-DO_SAVETPL=1
+DO_SAVETPL=0
 
 DO_USEHIST=1
-DO_PLOTHIST=1
-DO_PLOTRATIO=1
+DO_PLOTHIST=0
+DO_PLOTRATIO=0
 
 ./dodjtana_2Dbins.sh $DO_SAVETPL
 ./dodjtana_1Dbins.sh $DO_SAVETPL

@@ -29,15 +29,18 @@ void pdfvar_usehist(TString inputhistname, TString inputtplname, TString inputtp
   TString texjetpt = jetptmax<999?Form("%s < p_{T}^{jet} < %s GeV/c",xjjc::number_remove_zero(jetptmin).c_str(),xjjc::number_remove_zero(jetptmax).c_str()):Form("p_{T}^{jet} > %s GeV/c",xjjc::number_remove_zero(jetptmin).c_str());
   vectex.push_back(texjetpt);
 
+  Float_t SsqrtSB[nPtBins][nDrBins];
+  Float_t Chi2ndf[nPtBins][nDrBins];
+
   for(int i=0;i<nPtBins;i++)
     {
       TString texpt = ptBins[i+1]<999?Form("%s < p_{T}^{D} < %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str(),xjjc::number_remove_zero(ptBins[i+1]).c_str()):Form("p_{T}^{D} > %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str());
       for(int j=0;j<nDrBins;j++)
         {
-          TCanvas* c = new TCanvas("c", "", 600*nVariation, 600);
-          c->Divide(nVariation, 1);
-          TH1F* hMassSignal[nVariation] = {(TH1F*)ahHistoRMassSignal[i][j], (TH1F*)ahHistoRMassSignal[i][j], (TH1F*)ahHistoRMassSignal[i][j], (TH1F*)ahHistoRMassSignallow[i][j], (TH1F*)ahHistoRMassSignalhigh[i][j]};
-          TH1F* hMassSwapped[nVariation] = {(TH1F*)ahHistoRMassSwapped[i][j], (TH1F*)ahHistoRMassSwapped[i][j], (TH1F*)ahHistoRMassSwapped[i][j], (TH1F*)ahHistoRMassSwappedlow[i][j], (TH1F*)ahHistoRMassSwappedhigh[i][j]};
+          TCanvas* c = new TCanvas("c", "", 600*3, 600*3);
+          c->Divide(3, 3);
+          TH1F* hMassSignal[nVariation] = {(TH1F*)ahHistoRMassSignal[i][j], (TH1F*)ahHistoRMassSignal[i][j], (TH1F*)ahHistoRMassSignal[i][j], (TH1F*)ahHistoRMassSignallow[i][j], (TH1F*)ahHistoRMassSignalhigh[i][j], (TH1F*)ahHistoRMassSignalpol3[i][j], (TH1F*)ahHistoRMassSignalpol4[i][j], (TH1F*)ahHistoRMassSignalpol5[i][j], (TH1F*)ahHistoRMassSignalpol6[i][j]};
+          TH1F* hMassSwapped[nVariation] = {(TH1F*)ahHistoRMassSwapped[i][j], (TH1F*)ahHistoRMassSwapped[i][j], (TH1F*)ahHistoRMassSwapped[i][j], (TH1F*)ahHistoRMassSwappedlow[i][j], (TH1F*)ahHistoRMassSwappedhigh[i][j], (TH1F*)ahHistoRMassSwappedpol3[i][j], (TH1F*)ahHistoRMassSwappedpol4[i][j], (TH1F*)ahHistoRMassSwappedpol5[i][j], (TH1F*)ahHistoRMassSwappedpol6[i][j]};
           for(int v=0;v<nVariation;v++)
             {
               c->cd(v+1);
@@ -47,6 +50,11 @@ void pdfvar_usehist(TString inputhistname, TString inputtplname, TString inputtp
               vectex.push_back(Form("%s < r < %s",xjjc::number_remove_zero(drBins[j]).c_str(),xjjc::number_remove_zero(drBins[j+1]).c_str()));
               // dft->fit(ahHistoRMass[i][j], ahHistoRMassSignal[i][j], ahHistoRMassSwapped[i][j], collisionsyst, vectex);
               dft->fit(ahHistoRMass[i][j], hMassSignal[v], hMassSwapped[v], collisionsyst, vectex);
+              if(v==0)
+                {
+                  SsqrtSB[i][j] = dft->GetS()/TMath::Sqrt(dft->GetS()+dft->GetB());
+                  Chi2ndf[i][j] = dft->GetChi2() / dft->GetNDF();
+                }
               Float_t texVxpos = 0.22, texVypos = 0.30, texVdypos = 0.053;
               xjjroot::drawtex(texVxpos, texVypos=(texVypos-texVdypos), fitleg[v].Data());
               vectex.pop_back();
@@ -73,7 +81,6 @@ void pdfvar_usehist(TString inputhistname, TString inputtplname, TString inputtp
             }
           for(int j=0;j<nDrBins;j++)
             {
-              // std::cout<<v<<" "<<ahSignalRraw[i][v]->GetBinContent(j+1)<<" "<<ahSignalRraw[i][0]->GetBinContent(j+1)<<" "<<ahSignalRdev[i][v]->GetBinContent(j+1)<<" "<<ahSignalRdev[i][v]->GetBinError(j+1)<<std::endl;
               if(v==0)
                 {
                   ahSignalRdev[i][v]->SetBinContent(j+1, 1);
@@ -84,6 +91,27 @@ void pdfvar_usehist(TString inputhistname, TString inputtplname, TString inputtp
             }
         }
     }
+
+  std::ofstream fout("AN.txt", std::ofstream::app);
+  fout<<"S/sqrt(S+B) >> "<<collisionsyst<<" >> "<<std::endl;
+  for(int i=0;i<nPtBins;i++)
+    {
+      fout<<(jetptmax>=999?Form("$>%.0f$ ",jetptmin):Form("$%.0f-%.0f$ & ",jetptmin,jetptmax));
+      fout<<(ptBins[i+1]>=999?Form("$>%.0f$ ",ptBins[i]):Form("$%.0f-%.0f$ ",ptBins[i],ptBins[i+1]));
+      for(int j=0;j<nDrBins;j++)
+        { fout<<"& "<<Form("%.1f ",SsqrtSB[i][j]); }
+      fout<<"\\\\\\hline"<<std::endl;
+    }
+  fout<<"Chi2NDF >>"<<std::endl;
+  for(int i=0;i<nPtBins;i++)
+    {
+      fout<<(jetptmax>=999?Form("$>%.0f$ ",jetptmin):Form("$%.0f-%.0f$ & ",jetptmin,jetptmax));
+      fout<<(ptBins[i+1]>=999?Form("$>%.0f$ ",ptBins[i]):Form("$%.0f-%.0f$ ",ptBins[i],ptBins[i+1]));
+      for(int j=0;j<nDrBins;j++)
+        { fout<<"& "<<Form("%.1f ",Chi2ndf[i][j]); }
+      fout<<"\\\\\\hline"<<std::endl;
+    }
+  fout<<std::endl;
 
   TFile* output = new TFile(Form("rootfiles/pdfvar_%s.root", outputname.Data()), "recreate");
   output->cd();
