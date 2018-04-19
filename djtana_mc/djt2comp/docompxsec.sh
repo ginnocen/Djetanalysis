@@ -6,6 +6,7 @@ source ../includes/utility.shinc
 # Select the systems the macros run on 
 iCOL=(0 1)
 kPAR=(0 2)
+# kPAR=(0 1 2 4)
 
 ##
 # nCOL loop
@@ -61,10 +62,10 @@ then
 
             tPOSTFIX[1]=corrNonclosureCorr_Djet_${COLSYST[i]}_$(produce_postfix $i $j)
             file_0[1]="../djtana/rootfiles/xsec_Djet_${COLSYST[i]}Raw_Signal_$(produce_postfix $i $j 1)_${tScale[1]}_${tSmearPt[1]}_${tSmearPhi[1]}"
-            file_1[1]="../djtana/rootfiles/xsec_Djet_${COLSYST[i]}Raw_Signal_$(produce_postfix $i $j 3)_${tScale[1]}_${tSmearPt[1]}_${tSmearPhi[1]}"
+            file_1[1]="../djtana/rootfiles/xsec_Djet_${COLSYST[i]}Raw_woCorr_Signal_$(produce_postfix $i $j 3)_${tScale[1]}_${tSmearPt[1]}_${tSmearPhi[1]}"
             leg_0[1]="corr Reco Jet, Gen D"
             leg_1[1]="sGen Jet, Gen D"
-            texname[1]=""
+            texname[1]="corrFactorClosure"
 
             tPOSTFIX[2]=corrReso_Djet_${COLSYST[i]}_$(produce_postfix $i $j)
             file_0[2]="../djtana/rootfiles/xsec_Djet_${COLSYST[i]}Raw_woCorr_Signal_$(produce_postfix $i $j 3)_${tScale[1]}_${tSmearPt[1]}_${tSmearPhi[1]}"
@@ -80,19 +81,12 @@ then
             leg_1[3]="Frag-indep JES"
             texname[3]=""
 
-            tPOSTFIX[4]=corrFinal_Djet_${COLSYST[i]}_$(produce_postfix $i $j)
-            file_0[4]="../djtana/rootfiles/xsec_Djet_${COLSYST[i]}Raw_woCorr_Signal_$(produce_postfix $i $j 1)_${tScale[1]}_${tSmearPt[1]}_${tSmearPhi[1]}"
+            tPOSTFIX[4]=corrFinalCorr_Djet_${COLSYST[i]}_$(produce_postfix $i $j)
+            file_0[4]="../djtana/rootfiles/xsec_Djet_${COLSYST[i]}_Signal_$(produce_postfix $i $j 0)_${tScale[1]}_${tSmearPt[1]}_${tSmearPhi[1]}"
             file_1[4]="../djtana/rootfiles/xsec_Djet_${COLSYST[i]}Raw_woCorr_Signal_$(produce_postfix $i $j 3)_${tScale[0]}_${tSmearPt[0]}_${tSmearPhi[0]}"
-            leg_0[4]="corr Reco Jet, Reco D"
+            leg_0[4]="Reco Jet, Reco D (corr reso)"
             leg_1[4]="Gen Jet, Gen D"
-            texname[4]=""
-
-            tPOSTFIX[5]=corrFinalCorr_Djet_${COLSYST[i]}_$(produce_postfix $i $j)
-            file_0[5]="../djtana/rootfiles/xsec_Djet_${COLSYST[i]}_Signal_$(produce_postfix $i $j 0)_${tScale[1]}_${tSmearPt[1]}_${tSmearPhi[1]}"
-            file_1[5]="../djtana/rootfiles/xsec_Djet_${COLSYST[i]}Raw_woCorr_Signal_$(produce_postfix $i $j 3)_${tScale[0]}_${tSmearPt[0]}_${tSmearPhi[0]}"
-            leg_0[5]="corr Reco Jet, Reco D"
-            leg_1[5]="Gen Jet, Gen D"
-            texname[5]=""
+            texname[4]="finalClosure"
 
             nPAR=${#tPOSTFIX[@]}
             echo $nPAR

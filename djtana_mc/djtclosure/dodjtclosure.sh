@@ -52,7 +52,7 @@ function produce_postfix()
 }
 
 
-FOLDERS=("plotclosure")
+FOLDERS=("plotclosure" "plotclosureAN")
 mk_dirs ${FOLDERS[@]}
 
 ##
