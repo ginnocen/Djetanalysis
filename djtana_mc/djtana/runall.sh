@@ -3,8 +3,8 @@
 #
 DO__CLOSURE=1
 DO__RESO=1
-DO__CLOSURE_CORR=0
-DO__ALL_CORR=0
+DO__CLOSURE_CORR=1
+DO__ALL_CORR=1
 
 #
 DO_SAVETPL=1
@@ -14,6 +14,7 @@ DO_PLOTHIST=1
 
 # closure (0 1 2 3)
 if [[ $DO__CLOSURE -eq 1 ]]; then
+    # sed -i 's/kRECOGEN=(.*/kRECOGEN=(1 3)/g' dodjtana.sh
     sed -i 's/kRECOGEN=(.*/kRECOGEN=(0 1 2 3)/g' dodjtana.sh
     ./dodjtana_2Dbins.sh $DO_SAVETPL $DO_SAVEHIST $DO_USEHIST $DO_PLOTHIST 0 0 1 1 1 1
     ./dodjtana_1Dbins.sh $DO_SAVETPL $DO_SAVEHIST $DO_USEHIST $DO_PLOTHIST 0 0 1 1 1 1
