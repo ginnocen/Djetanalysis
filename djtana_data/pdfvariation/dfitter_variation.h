@@ -25,6 +25,7 @@
  *   "WM"  : Decrease width                                                               * 
  *   "EPO" : Exponential combinatorial                                                    * 
  *   "2PO" : 2nd order poly combinatorial                                                 * 
+ *   "CHE" : Chebyshev 3nd order poly combinatorial                                       * 
  *                                                                                        * 
  * The core function of this class is                                                     * 
  *                                                                                        * 
@@ -42,6 +43,7 @@
 #include <TLatex.h>
 #include <TMath.h>
 #include <TFitResult.h>
+// #include "ChebyshevPol.h"
 
 namespace xjjroot
 {
@@ -112,6 +114,7 @@ namespace xjjroot
     Bool_t fdecwid;
     Bool_t fexp;
     Bool_t f2ndpol;
+    Bool_t fchepol;
 
     const Double_t setparam0 = 100.;
     const Double_t setparam1 = 1.865;
@@ -190,6 +193,8 @@ void xjjroot::dfitter_variation::resolveoption()
   if(foption.Contains("EPO")) fexp = true;
   f2ndpol = false;
   if(foption.Contains("2PO")) f2ndpol = true;
+  fchepol = false;
+  if(foption.Contains("CHE")) fchepol = true;
 
 }
 
@@ -423,6 +428,7 @@ void xjjroot::dfitter_variation::createfun()
   if(f3gaus) str_fun_f = "[0]*([7]*([9]*TMath::Gaus(x,[1],[2]*(1+[11]))/(sqrt(2*3.14159)*[2]*(1+[11]))+(1-[9])*([12]*TMath::Gaus(x,[1],[10]*(1+[11]))/(sqrt(2*3.14159)*[10]*(1+[11]))+(1-[12])*TMath::Gaus(x,[1],[13]*(1+[11]))/(sqrt(2*3.14159)*[13]*(1+[11]))))+(1-[7])*TMath::Gaus(x,[1],[8]*(1+[11]))/(sqrt(2*3.14159)*[8]*(1+[11])))+[3]+[4]*x+[5]*x*x+[6]*x*x*x";
   if(fexp) str_fun_f = "[0]*([7]*([9]*TMath::Gaus(x,[1],[2]*(1+[11]))/(sqrt(2*3.14159)*[2]*(1+[11]))+(1-[9])*TMath::Gaus(x,[1],[10]*(1+[11]))/(sqrt(2*3.14159)*[10]*(1+[11])))+(1-[7])*TMath::Gaus(x,[1],[8]*(1+[11]))/(sqrt(2*3.14159)*[8]*(1+[11])))+[3]*TMath::Exp([4]*x+[5]*x*x)";
   // if(f2ndpol) str_fun_f = "[0]*([7]*([9]*TMath::Gaus(x,[1],[2]*(1+[11]))/(sqrt(2*3.14159)*[2]*(1+[11]))+(1-[9])*TMath::Gaus(x,[1],[10]*(1+[11]))/(sqrt(2*3.14159)*[10]*(1+[11])))+(1-[7])*TMath::Gaus(x,[1],[8]*(1+[11]))/(sqrt(2*3.14159)*[8]*(1+[11])))+[3]+[4]*x+[5]*x*x";
+  if(fchepol) str_fun_f = "[0]*([7]*([9]*TMath::Gaus(x,[1],[2]*(1+[11]))/(sqrt(2*3.14159)*[2]*(1+[11]))+(1-[9])*TMath::Gaus(x,[1],[10]*(1+[11]))/(sqrt(2*3.14159)*[10]*(1+[11])))+(1-[7])*TMath::Gaus(x,[1],[8]*(1+[11]))/(sqrt(2*3.14159)*[8]*(1+[11])))+cheb3(3)";
 
   TString str_fun_mass = "[0]*([3]*([4]*TMath::Gaus(x,[1],[2]*(1+[6]))/(sqrt(2*3.14159)*[2]*(1+[6]))+(1-[4])*TMath::Gaus(x,[1],[5]*(1+[6]))/(sqrt(2*3.14159)*[5]*(1+[6]))))";
   if(f3gaus) str_fun_mass = "[0]*([3]*([4]*TMath::Gaus(x,[1],[2]*(1+[6]))/(sqrt(2*3.14159)*[2]*(1+[6]))+(1-[4])*([7]*TMath::Gaus(x,[1],[5]*(1+[6]))/(sqrt(2*3.14159)*[5]*(1+[6]))+(1-[7])*TMath::Gaus(x,[1],[8]*(1+[6]))/(sqrt(2*3.14159)*[8]*(1+[6])))))";
@@ -430,10 +436,12 @@ void xjjroot::dfitter_variation::createfun()
   TString str_fun_background = "[0]+[1]*x+[2]*x*x+[3]*x*x*x";
   if(fexp) str_fun_background = "[0]*TMath::Exp([1]*x+[2]*x*x)";
   if(f2ndpol) str_fun_background = "[0]+[1]*x+[2]*x*x";
+  if(fchepol) str_fun_background = "cheb3(0)";
 
   TString str_fun_not_mass = "[0]*(1-[2])*TMath::Gaus(x,[1],[3]*(1+[4]))/(sqrt(2*3.14159)*[3]*(1+[4]))+[5]+[6]*x+[7]*x*x+[8]*x*x*x";
   if(fexp) str_fun_not_mass = "[0]*(1-[2])*TMath::Gaus(x,[1],[3]*(1+[4]))/(sqrt(2*3.14159)*[3]*(1+[4]))+[5]*TMath::Exp([6]*x+[7]*x*x)";
   if(f2ndpol) str_fun_not_mass = "[0]*(1-[2])*TMath::Gaus(x,[1],[3]*(1+[4]))/(sqrt(2*3.14159)*[3]*(1+[4]))+[5]+[6]*x+[7]*x*x";
+  if(fchepol) str_fun_not_mass = "[0]*(1-[2])*TMath::Gaus(x,[1],[3]*(1+[4]))/(sqrt(2*3.14159)*[3]*(1+[4]))+cheb3(5)";
 
   fun_f = new TF1("fun_f", str_fun_f.Data(), min_hist_dzero, max_hist_dzero);  
   fun_mass = new TF1("fun_mass", str_fun_mass.Data(), min_hist_dzero, max_hist_dzero);

@@ -86,14 +86,14 @@ void pdfvar_plotratio(TString inputnamePP, TString inputnamePbPb, TString output
       vectex.pop_back();
     }
 
-  std::cout<<std::string(90,'=')<<std::endl;
+  std::cout<<std::string(120,'=')<<std::endl;
   std::cout<<std::setiosflags(std::ios::left)<<std::setw(16)<<"   r";
   for(int v=0;v<nVariation;v++)
     { std::cout<<std::setiosflags(std::ios::left)<<std::setw(10)<<fitname[v]; }
   std::cout<<std::setiosflags(std::ios::left)<<std::setw(10)<<"(signal)";
   std::cout<<std::setiosflags(std::ios::left)<<std::setw(10)<<"(background)";
   std::cout<<std::endl;
-  std::cout<<std::string(90,'-')<<std::endl;
+  std::cout<<std::string(120,'-')<<std::endl;
   for(int i=0;i<nPtBins;i++)
     {
       std::cout<<Form("D pt (%.2f, %.2f)",ptBins[i],ptBins[i+1])<<std::endl;
@@ -110,7 +110,7 @@ void pdfvar_plotratio(TString inputnamePP, TString inputnamePbPb, TString output
         }
       std::cout<<std::endl;
     }
-  std::cout<<std::string(90,'=')<<std::endl;
+  std::cout<<std::string(120,'=')<<std::endl;
   std::cout<<std::endl;
   if(jetetamin<=0 && jetetamax>=1.6)
     {

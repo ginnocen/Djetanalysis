@@ -21,19 +21,18 @@ const Float_t DZERO_MASS = 1.8649;
 const int nRefBins = 2;
 TString tRef[nRefBins] = {"eta", "etaref"};
 
-const int nVariation = 9;
-TString fitopt[nVariation] = {"", "3", "2PO", "", "", "", "", "", ""};
-TString fitname[nVariation] = {"Default", "3", "2PO", "narrow", "wide", "widpol3", "widpol4", "widpol5", "widpol6"};
-TString fitleg[nVariation] = {"Default","3 Gaus", "2nd ord pol", "width -", "width +", "width pol3", "width pol4", "width pol5", "width pol6"};
+const int nVariation = 10;
+TString fitopt[nVariation] = {"", "3", "2PO", "", "", "", "", "", "", "CHE"};
+TString fitname[nVariation] = {"Default", "3", "2PO", "narrow", "wide", "widpol3", "widpol4", "widpol5", "widpol6", "chepol"};
+TString fitleg[nVariation] = {"Default","3 Gaus", "2nd ord pol", "width -", "width +", "width pol3", "width pol4", "width pol5", "width pol6", "chebyshev3"};
 int vsignal[] = {1, 3, 4, 5, 6, 7, 8};
-
 const int nvsignal = sizeof(vsignal) / sizeof(vsignal[0]);
-int vbackground[] = {2};
+int vbackground[] = {2, 9};
 const int nvbackground = sizeof(vbackground) / sizeof(vbackground[0]);
 // TString fitopt[nVariation] = {"", "3", "WP", "WM", "2PO"};
 // TString fitname[nVariation] = {"Default", "3", "WP", "WM", "2PO"};
 // TString fitleg[nVariation] = {"Default","3 Gaus", "Increase wid", "Decrease wid", "2nd ord pol"};
-Color_t fitcolor[] = {kGray+3, kOrange-9, kGreen-5, kRed-9, kAzure-4, kViolet-9, kCyan-3, kMagenta-8, kYellow-8};
+Color_t fitcolor[] = {kGray+3, kOrange-9, kGreen-5, kRed-9, kAzure-4, kViolet-9, kCyan-3, kMagenta-8, kYellow-8, kOrange+1};
 
 TH1F* ahHistoRMass[nPtBins][nDrBins];
 TH1F* ahHistoRMassSignal[nPtBins][nDrBins];
