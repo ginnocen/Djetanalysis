@@ -22,8 +22,8 @@ namespace xjjroot
   template <class T> void setthgr(T* hempty, Float_t xoffset=0, Float_t yoffset=0);
   template <class T> void setthgrstyle(T* h, Color_t mcolor=-1, Style_t mstyle=-1, Size_t msize=-1, Color_t lcolor=-1, Style_t lstyle=-1, Width_t lwidth=-1, Color_t fcolor=-1, Float_t falpha=-1, Style_t fstyle=-1);
   void drawCMS(TString collision="", TString snn="5.02", Float_t xpos=0, Float_t ypos=0, Bool_t drawenergy=true);
-  void settex(TLatex* tex, Float_t tsize=0.04, Short_t align=12);
-  void drawtex(Double_t x, Double_t y, const char *text, Float_t tsize=0.04, Short_t align=12);
+  void settex(TLatex* tex, Float_t tsize=0.04, Short_t align=12, Style_t font=42);
+  void drawtex(Double_t x, Double_t y, const char *text, Float_t tsize=0.04, Short_t align=12, Style_t font=42);
   void setleg(TLegend* leg, Float_t tsize=0.04);
   void setlegndraw(TLegend* leg, Float_t tsize=0.04);
   void setline(TLine* l, Color_t lcolor=kBlack, Style_t lstyle=1, Width_t lwidth=2);
@@ -128,18 +128,18 @@ void xjjroot::drawCMS(TString collision/*=""*/, TString snn/*="5.02"*/, Float_t 
   texCol->Draw();
 }
 
-void xjjroot::settex(TLatex* tex, Float_t tsize/*=0.04*/, Short_t align/*=12*/)
+void xjjroot::settex(TLatex* tex, Float_t tsize/*=0.04*/, Short_t align/*=12*/, Style_t font/*=42*/)
 {
   tex->SetNDC();
-  tex->SetTextFont(42);
+  tex->SetTextFont(font);
   tex->SetTextAlign(align);
   tex->SetTextSize(tsize);
 }
 
-void xjjroot::drawtex(Double_t x, Double_t y, const char* text, Float_t tsize/*=0.04*/, Short_t align/*=12*/)
+void xjjroot::drawtex(Double_t x, Double_t y, const char* text, Float_t tsize/*=0.04*/, Short_t align/*=12*/, Style_t font/*=42*/)
 {
   TLatex* tex = new TLatex(x, y, text);
-  xjjroot::settex(tex, tsize, align);
+  xjjroot::settex(tex, tsize, align, font);
   tex->Draw();
 }
 

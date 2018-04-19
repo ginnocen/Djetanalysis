@@ -1,10 +1,14 @@
 #include "djtana.h"
 
+Float_t ypaddiv = 2./3, yPullpaddiv = 1-ypaddiv;
 void djtana_finalplot(TString inputnamePP, TString inputnamePbPb, TString inputnameRatio, TString outputname,
                       Float_t jetptmin, Float_t jetptmax, Float_t jetetamin, Float_t jetetamax,
-                      Int_t plotPYTHIA=0, TString inputnamePYTHIA="")
+                      Int_t plotPYTHIA=0, TString inputnamePYTHIA="",
+                      Bool_t verbose=true)
 {
   xjjroot::setgstyle();
+  void setup_hempty(TH2F* hempty, TH2F* hemptyPull);
+  void verbose_bincontent(TH1F* hpp, TH1F* hPbPb, TH1F* hratio, Float_t jetptmin, Float_t jetptmax, int i);
 
   TFile* infhistPP = new TFile(Form("%s.root",inputnamePP.Data()));
   if(!infhistPP->IsOpen()) return;
@@ -21,7 +25,6 @@ void djtana_finalplot(TString inputnamePP, TString inputnamePbPb, TString inputn
     {
       if(createhists("pythia")) return;
       TFile* infhistPYTHIA = new TFile(Form("%s.root",inputnamePYTHIA.Data()));
-      // infhistPYTHIA = new TFile(Form("%s.root",inputnamePYTHIA.Data()));
       if(!infhistPYTHIA->IsOpen()) return;
       if(gethists(infhistPYTHIA, "pythia")) return;
       for(int i=0;i<nPtBins;i++) 
@@ -39,6 +42,7 @@ void djtana_finalplot(TString inputnamePP, TString inputnamePbPb, TString inputn
   std::vector<TGraphErrors**> gSignalXsubP = {(TGraphErrors**)agSignalRsubP, (TGraphErrors**)agSignalRsubMeP};
   std::vector<TGraphErrors**> gSignalXsubRatio = {(TGraphErrors**)agSignalRsubRatio, (TGraphErrors**)agSignalRsubRatioMe};
   std::vector<TGraphErrors**> gSignalXsubRatioPYTHIA = {(TGraphErrors**)agSignalRsubRatioPYTHIA, (TGraphErrors**)agSignalRsubRatioPYTHIAMe};
+  std::cout<<ahSignalRsubRatioMe[0]<<" "<<(hSignalXsubRatio.at(1))[0]<<std::endl;
 
   for(int i=0;i<nPtBins;i++)
     {
@@ -100,14 +104,23 @@ void djtana_finalplot(TString inputnamePP, TString inputnamePbPb, TString inputn
     };
   TString texjetpt = jetptmax<999?Form("%s < |p_{T}^{jet}| < %s GeV/c",xjjc::number_remove_zero(jetptmin).c_str(),xjjc::number_remove_zero(jetptmax).c_str()):Form("|p_{T}^{jet}| > %s GeV/c",xjjc::number_remove_zero(jetptmin).c_str());
   vectex.push_back(texjetpt);
-  Float_t yaxismin[] = {2.e-3, 2.e-3}; 
-  Float_t yaxismax[] = {5.e+3, 5.e+3};
-  Float_t ypaddiv = 2./3, yPullpaddiv = 1-ypaddiv;
+  Float_t yaxiscompmin = 2.e-3;
+  Float_t yaxiscompmax = 5.e+3;
 
   for(int l=0;l<2;l++)
     {
       for(int i=0;i<nPtBins;i++)
         {
+          Float_t yaxismin = 2.e-2;
+          Float_t yaxismax = 1.e+2;
+          if(nPtBins==2)
+            {
+              if(i==0) { yaxismin = 2.e-2; yaxismax = 5.e+2; }
+              if(i==1) { yaxismin = 2.e-3; yaxismax = 5.e+2; }
+            }
+          TH2F* hempty = new TH2F("hempty", ";r;#frac{1}{N_{JD}} #frac{dN_{JD}}{dr}", 5, drBins[0], drBins[nDrBins], 10, yaxismin, yaxismax);
+          TH2F* hemptyPull = new TH2F("hemptyPull", ";r;PbPb / pp", 5, drBins[0], drBins[nDrBins], 10, 0, 3.2);
+          setup_hempty(hempty, hemptyPull);
           TString texpt = ptBins[i+1]>900?Form("p_{T}^{D} > %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str()):Form("%s < p_{T}^{D} < %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str(),xjjc::number_remove_zero(ptBins[i+1]).c_str());
           vectex.push_back(texpt);
 
@@ -119,11 +132,8 @@ void djtana_finalplot(TString inputnamePP, TString inputnamePbPb, TString inputn
           pXsec->Draw();
           pXsec->cd();
           pXsec->SetLogy();
-          TH2F* hempty = new TH2F("hempty", ";r;#frac{1}{N_{JD}} #frac{dN_{JD}}{dr}", 5, drBins[0], drBins[nDrBins], 10, yaxismin[i], yaxismax[i]);
-          hempty->GetXaxis()->SetNdivisions(505);
-          xjjroot::sethempty(hempty, 0, 0.2);
           hempty->Draw();
-          TLegend* leg = new TLegend(0.65, 0.85-2*0.065, 1.1, 0.85);
+          TLegend* leg = new TLegend(0.24, 0.30-2*0.06, 0.70, 0.30);
           xjjroot::setleg(leg);
 
           xjjroot::setthgrstyle((hSignalXsubP.at(l))[1*nPtBins+i], fmcolor[1], fmstyle[1], 1.2, fmcolor[1], 1, 1, -1, -1, -1);
@@ -138,8 +148,11 @@ void djtana_finalplot(TString inputnamePP, TString inputnamePbPb, TString inputn
           (hSignalXsubP.at(l))[0*nPtBins+i]->Draw("pe same");
           leg->AddEntry((gSignalXsubP.at(l))[0*nPtBins+i], fleg[0], "pf");
 
-          xjjroot::drawCMS("");
-          Float_t texxpos = 0.24, texypos = 0.84, texdypos = 0.06;
+          // xjjroot::drawCMS("");
+          xjjroot::drawtex(0.22, 0.86, "CMS", 0.075, 13, 62);
+          // xjjroot::drawtex(0.22, 0.86-0.07, "Preliminary", 0.060, 13, 52);
+          xjjroot::drawtex(0.96, 0.915, "27.4 pb^{-1} (5.02 TeV pp) + 404 #mub^{-1} (5.02 TeV PbPb)", 0.042, 31);
+          Float_t texxpos = 0.60, texypos = 0.84, texdypos = 0.06;
           texypos += texdypos;
           for(std::vector<TString>::const_iterator it=vectex.begin(); it!=vectex.end(); it++)
             xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), *it);
@@ -150,18 +163,6 @@ void djtana_finalplot(TString inputnamePP, TString inputnamePbPb, TString inputn
           pPull->SetMargin(xjjroot::margin_pad_left, xjjroot::margin_pad_right, 0.07*1/yPullpaddiv, 0);
           pPull->Draw();
           pPull->cd();
-          TH2F* hemptyPull = new TH2F("hemptyPull", ";r;PbPb / pp", 5, drBins[0], drBins[nDrBins], 10, 0, 4.2);
-          hemptyPull->GetXaxis()->SetNdivisions(505);
-          hemptyPull->GetYaxis()->SetNdivisions(505);
-          xjjroot::sethempty(hemptyPull, -0.5, -0);
-          hemptyPull->GetYaxis()->SetTitleSize(hemptyPull->GetYaxis()->GetTitleSize() * (ypaddiv / yPullpaddiv));
-          hemptyPull->GetXaxis()->SetTitleSize(hemptyPull->GetXaxis()->GetTitleSize() * (ypaddiv / yPullpaddiv));
-          hemptyPull->GetYaxis()->SetLabelSize(hemptyPull->GetYaxis()->GetLabelSize() * (ypaddiv / yPullpaddiv));
-          hemptyPull->GetXaxis()->SetLabelSize(hemptyPull->GetXaxis()->GetLabelSize() * (ypaddiv / yPullpaddiv));
-          hemptyPull->GetYaxis()->SetTitleOffset(hemptyPull->GetYaxis()->GetTitleOffset() / (ypaddiv / yPullpaddiv));
-          hemptyPull->GetXaxis()->SetTitleOffset(hemptyPull->GetXaxis()->GetTitleOffset() / (ypaddiv / yPullpaddiv) *(1+1.8));
-          hemptyPull->GetYaxis()->SetLabelOffset(hemptyPull->GetYaxis()->GetLabelOffset() / (ypaddiv / yPullpaddiv) *(1+12));
-          hemptyPull->GetXaxis()->SetLabelOffset(hemptyPull->GetXaxis()->GetLabelOffset() / (ypaddiv / yPullpaddiv));
           hemptyPull->Draw();
 
           xjjroot::drawline(drBins[0], 1, drBins[nDrBins], 1, kGray+3, 2, 2);
@@ -184,6 +185,17 @@ void djtana_finalplot(TString inputnamePP, TString inputnamePbPb, TString inputn
 
   for(int i=0;i<nPtBins;i++)
     {
+      Float_t yaxismin = 2.e-2;
+      Float_t yaxismax = 1.e+2;
+      if(nPtBins==2)
+        {
+          if(i==0) { yaxismin = 2.e-2; yaxismax = 5.e+2; }
+          if(i==1) { yaxismin = 2.e-3; yaxismax = 5.e+2; }
+        }
+      TH2F* hempty = new TH2F("hempty", ";r;#frac{1}{N_{JD}} #frac{dN_{JD}}{dr}", 5, drBins[0], drBins[nDrBins], 10, yaxismin, yaxismax);
+      TH2F* hemptyPull = new TH2F("hemptyPull", ";r;PbPb / pp", 5, drBins[0], drBins[nDrBins], 10, 0, 3.2);
+      setup_hempty(hempty, hemptyPull);
+
       TString texpt = ptBins[i+1]>900?Form("p_{T}^{D} > %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str()):Form("%s < p_{T}^{D} < %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str(),xjjc::number_remove_zero(ptBins[i+1]).c_str());
       vectex.push_back(texpt);
 
@@ -195,11 +207,10 @@ void djtana_finalplot(TString inputnamePP, TString inputnamePbPb, TString inputn
       pXsec->Draw();
       pXsec->cd();
       pXsec->SetLogy();
-      TH2F* hempty = new TH2F("hempty", ";r;#frac{1}{N_{JD}} #frac{dN_{JD}}{dr}", 5, drBins[0], drBins[nDrBins], 10, yaxismin[i], yaxismax[i]);
-      hempty->GetXaxis()->SetNdivisions(505);
-      xjjroot::sethempty(hempty, 0, 0.2);
       hempty->Draw();
-      TLegend* leg = new TLegend(0.65, 0.85-(2+2*int(jetetamin>=0.3)+plotPYTHIA)*0.06, 1.1, 0.85);
+      // TLegend* leg = new TLegend(0.65, 0.85-(2+2*int(jetetamin>=0.3)+plotPYTHIA)*0.06, 1.1, 0.85);
+      // xjjroot::setleg(leg);
+      TLegend* leg = new TLegend(0.24, 0.30-(2+2*int(jetetamin>=0.3)+plotPYTHIA)*0.06, 0.70, 0.30);
       xjjroot::setleg(leg);
 
       (gSignalXsubP.at(1))[1*nPtBins+i]->Draw("2 same");
@@ -225,14 +236,22 @@ void djtana_finalplot(TString inputnamePP, TString inputnamePbPb, TString inputn
           xjjroot::setthgrstyle(agSignalRsubPYTHIA[i], fmcolor[2], fmstyle[2], 1.2, 0, 1, 1, ffcolor[2], 0.7, 1001);
           agSignalRsubPYTHIA[i]->Draw("2 same");
           ahSignalRsubPYTHIA[i]->Draw("pe same");
-          leg->AddEntry(agSignalRsubPYTHIA[i], fleg[2], "pf");
+          leg->AddEntry(agSignalRsubPYTHIA[i], fleg[2], "p");
         }
 
-      xjjroot::drawCMS("");
-      Float_t texxpos = 0.24, texypos = 0.84, texdypos = 0.06;
+      xjjroot::drawtex(0.22, 0.86, "CMS", 0.075, 13, 62);
+      // xjjroot::drawtex(0.22, 0.86-0.07, "Preliminary", 0.060, 13, 52);
+      xjjroot::drawtex(0.96, 0.915, "27.4 pb^{-1} (5.02 TeV pp) + 404 #mub^{-1} (5.02 TeV PbPb)", 0.042, 31);
+      Float_t texxpos = 0.60, texypos = 0.84, texdypos = 0.06;
       texypos += texdypos;
       for(std::vector<TString>::const_iterator it=vectex.begin(); it!=vectex.end(); it++)
         xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), *it);
+
+      // xjjroot::drawCMS("");
+      // Float_t texxpos = 0.24, texypos = 0.84, texdypos = 0.06;
+      // texypos += texdypos;
+      // for(std::vector<TString>::const_iterator it=vectex.begin(); it!=vectex.end(); it++)
+      //   xjjroot::drawtex(texxpos, texypos=(texypos-texdypos), *it);
       leg->Draw();
 
       c->cd();
@@ -240,18 +259,6 @@ void djtana_finalplot(TString inputnamePP, TString inputnamePbPb, TString inputn
       pPull->SetMargin(xjjroot::margin_pad_left, xjjroot::margin_pad_right, 0.07*1/yPullpaddiv, 0);
       pPull->Draw();
       pPull->cd();
-      TH2F* hemptyPull = new TH2F("hemptyPull", ";r;PbPb / pp", 5, drBins[0], drBins[nDrBins], 10, 0, 4.2);
-      hemptyPull->GetXaxis()->SetNdivisions(505);
-      hemptyPull->GetYaxis()->SetNdivisions(505);
-      xjjroot::sethempty(hemptyPull, -0.5, -0);
-      hemptyPull->GetYaxis()->SetTitleSize(hemptyPull->GetYaxis()->GetTitleSize() * (ypaddiv / yPullpaddiv));
-      hemptyPull->GetXaxis()->SetTitleSize(hemptyPull->GetXaxis()->GetTitleSize() * (ypaddiv / yPullpaddiv));
-      hemptyPull->GetYaxis()->SetLabelSize(hemptyPull->GetYaxis()->GetLabelSize() * (ypaddiv / yPullpaddiv));
-      hemptyPull->GetXaxis()->SetLabelSize(hemptyPull->GetXaxis()->GetLabelSize() * (ypaddiv / yPullpaddiv));
-      hemptyPull->GetYaxis()->SetTitleOffset(hemptyPull->GetYaxis()->GetTitleOffset() / (ypaddiv / yPullpaddiv));
-      hemptyPull->GetXaxis()->SetTitleOffset(hemptyPull->GetXaxis()->GetTitleOffset() / (ypaddiv / yPullpaddiv) *(1+1.8));
-      hemptyPull->GetYaxis()->SetLabelOffset(hemptyPull->GetYaxis()->GetLabelOffset() / (ypaddiv / yPullpaddiv) *(1+12));
-      hemptyPull->GetXaxis()->SetLabelOffset(hemptyPull->GetXaxis()->GetLabelOffset() / (ypaddiv / yPullpaddiv));
       hemptyPull->Draw();
 
       xjjroot::drawline(drBins[0], 1, drBins[nDrBins], 1, kGray+3, 2, 2);
@@ -269,15 +276,15 @@ void djtana_finalplot(TString inputnamePP, TString inputnamePbPb, TString inputn
           xjjroot::setthgrstyle((hSignalXsubRatioPYTHIA.at(1))[i], fmcolor[2], fmstyle[2], 1.2, fmcolor[2], 1, 1, -1, -1, -1);
           xjjroot::setthgrstyle((gSignalXsubRatioPYTHIA.at(1))[i], fmcolor[2], fmstyle[2], 1.2, 0, 1, 1, ffcolor[2], 0.7, 1001);
           // (gSignalXsubRatioPYTHIA.at(1))[i]->Draw("2 same");
-          (hSignalXsubRatioPYTHIA.at(1))[i]->Draw("pe same");
+          // (hSignalXsubRatioPYTHIA.at(1))[i]->Draw("pe same");
         }
       TLegend* legPull = new TLegend(0.21, 0.95-(1+int(jetetamin>=0.3)+plotPYTHIA)*0.09, 0.55, 0.95);
       xjjroot::setleg(legPull, 0.09);
       legPull->AddEntry((hSignalXsubRatio.at(1))[i], "event-mixing", "p");
       legPull->AddEntry((hSignalXsubRatioPYTHIA.at(1))[i], "PbPb / PYTHIA", "p");
       if(jetetamin >= 0.3) legPull->AddEntry((hSignalXsubRatio.at(0))[i], "#eta-ref", "p");
-      legPull->Draw();
-      if(jetetamin>=0.3) c->SaveAs(Form("plotfinal/cfinal_xsec_%s_r_pt_%s_%s_comp.pdf",outputname.Data(),xjjc::number_to_string(ptBins[i]).c_str(),xjjc::number_to_string(ptBins[i+1]).c_str()));
+      if(jetetamin >= 0.3) legPull->Draw();
+      c->SaveAs(Form("plotfinal/cfinal_xsec_%s_r_pt_%s_%s_comp.pdf",outputname.Data(),xjjc::number_to_string(ptBins[i]).c_str(),xjjc::number_to_string(ptBins[i+1]).c_str()));
 
       delete legPull;
       delete hemptyPull;
@@ -289,6 +296,14 @@ void djtana_finalplot(TString inputnamePP, TString inputnamePbPb, TString inputn
       vectex.pop_back();
     }
 
+  if(verbose && jetetamin<=0 && jetetamax>=1.6)
+    {
+      for(int i=0;i<nPtBins;i++)
+        {
+          verbose_bincontent((hSignalXsubP.at(1))[0*nPtBins+i], (hSignalXsubP.at(1))[1*nPtBins+i], (hSignalXsubRatio.at(1))[i],
+                             jetptmin, jetptmax, i);
+        }
+    }
 }
 
 int main(int argc, char* argv[])
@@ -305,4 +320,48 @@ int main(int argc, char* argv[])
     }
   std::cout<<"error: invalid parameter number - djtana_finalplot"<<std::endl;
   return 1;
+}
+
+void setup_hempty(TH2F* hempty, TH2F* hemptyPull)
+{
+  hempty->GetXaxis()->SetNdivisions(505);
+  xjjroot::sethempty(hempty, 0, 0.2);
+
+  hemptyPull->GetXaxis()->SetNdivisions(505);
+  hemptyPull->GetYaxis()->SetNdivisions(505);
+  xjjroot::sethempty(hemptyPull, -0.5, -0);
+  hemptyPull->GetYaxis()->SetTitleSize(hemptyPull->GetYaxis()->GetTitleSize() * (ypaddiv / yPullpaddiv));
+  hemptyPull->GetXaxis()->SetTitleSize(hemptyPull->GetXaxis()->GetTitleSize() * (ypaddiv / yPullpaddiv));
+  hemptyPull->GetYaxis()->SetLabelSize(hemptyPull->GetYaxis()->GetLabelSize() * (ypaddiv / yPullpaddiv));
+  hemptyPull->GetXaxis()->SetLabelSize(hemptyPull->GetXaxis()->GetLabelSize() * (ypaddiv / yPullpaddiv));
+  hemptyPull->GetYaxis()->SetTitleOffset(hemptyPull->GetYaxis()->GetTitleOffset() / (ypaddiv / yPullpaddiv));
+  hemptyPull->GetXaxis()->SetTitleOffset(hemptyPull->GetXaxis()->GetTitleOffset() / (ypaddiv / yPullpaddiv) *(1+1.8));
+  hemptyPull->GetYaxis()->SetLabelOffset(hemptyPull->GetYaxis()->GetLabelOffset() / (ypaddiv / yPullpaddiv) *(1+12));
+  hemptyPull->GetXaxis()->SetLabelOffset(hemptyPull->GetXaxis()->GetLabelOffset() / (ypaddiv / yPullpaddiv));
+}
+
+void verbose_bincontent(TH1F* hpp, TH1F* hPbPb, TH1F* hratio, Float_t jetptmin, Float_t jetptmax, int i)
+{
+  Float_t normpp=0, normPbPb=0, normratio=0;
+  for(int j=0;j<3;j++)
+    {
+      normpp += hpp->GetBinContent(j+1) * hpp->GetBinWidth(j+1);
+      normPbPb += hPbPb->GetBinContent(j+1) * hPbPb->GetBinWidth(j+1);
+      normratio += hratio->GetBinContent(j+1) * hratio->GetBinWidth(j+1);
+    }
+
+  std::cout<<"\033[0;36mHistogram bin content >>> "<<Form("jet pt (%.0f, %.0f) - D pt (%.0f, %.0f)\033[0m", jetptmin, jetptmax, ptBins[i], ptBins[i+1]);
+  std::cout<<"\033[1;36m"<<std::endl;
+  std::cout<<std::setiosflags(std::ios::left)<<std::setw(20)<<"r"<<std::setw(10)<<"pp"<<std::setw(10)<<"PbPb"<<std::setw(10)<<"PbPb/pp"<<std::setw(10)<<"ratio"<<std::endl;
+  for(int j=0;j<nDrBins;j++)
+    {
+      std::cout<<std::setiosflags(std::ios::left)<<std::setw(20)<<Form("%.2f - %.2f",drBins[j],drBins[j+1]);
+      std::cout<<std::setiosflags(std::ios::left)<<std::setw(10)<<hpp->GetBinContent(j+1);
+      std::cout<<std::setiosflags(std::ios::left)<<std::setw(10)<<hPbPb->GetBinContent(j+1);
+      std::cout<<std::setiosflags(std::ios::left)<<std::setw(10)<<hPbPb->GetBinContent(j+1)/hpp->GetBinContent(j+1);
+      std::cout<<std::setiosflags(std::ios::left)<<std::setw(10)<<hratio->GetBinContent(j+1);
+      std::cout<<std::endl;
+    }
+  std::cout<<std::setiosflags(std::ios::left)<<std::setw(20)<<"Norm"<<std::setw(10)<<normpp<<std::setw(10)<<normPbPb<<std::setw(10)<<normPbPb/normpp<<std::setw(10)<<normratio<<std::endl;
+  std::cout<<"\033[0m"<<std::endl<<std::endl;
 }
