@@ -9,7 +9,7 @@ DO_USEHIST=${3:-0}
 DO_PLOTHIST=${4:-0}
 
 # Select the systems the macros run on 
-jJET=(0)
+jJET=(0 1)
 
 #
 CORRFACTOR=${5:-0}
