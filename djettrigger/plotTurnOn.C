@@ -57,6 +57,7 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 
 	EColor cols[ntriggers] = {kBlack,kRed,kBlue,kGreen};
 	int styles[ntriggers] = {20,21,22,20};
+	float thres[ntriggers] = {40, 60, 80, 100};
 	
 	for (int index=0;index<samples;index++){
 	
@@ -99,6 +100,7 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 		hemptyL1[index]->Draw();    
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){ 
 		if 	(plotturnon[index][indextriggers]==0) continue;
+                xjjroot::drawline(thres[indextriggers], 0, thres[indextriggers], 1, cols[indextriggers], 2, 2);
 
 			xjjroot::setthgrstyle(gL1efficiency[index][indextriggers],cols[indextriggers],styles[indextriggers],1.2,cols[indextriggers],1,1,-1,-1,-1);
 			gL1efficiency[index][indextriggers]->Draw("EPsame");
@@ -130,6 +132,7 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 		}
 		for (int indextriggers=0;indextriggers<ntriggers;indextriggers++){
 		if 	(plotturnon[index][indextriggers]==0) continue;
+                xjjroot::drawline(thres[indextriggers], 0, thres[indextriggers], 1, cols[indextriggers], 2, 2);
 		    if (useextrapolatedturnonHLT[index][indextriggers]==1){
                std::cout<<"BE AWARE THAT YOU ARE USING TRIGGER TURN ON CURVES THAT ARE EXTRAPOLATED FOR SAMPLE="<<index<<", index trigger="<<indextriggers<<std::endl;
                std::cout<<"THIS IS A TEMPORARY PATCH THAT NEEDS TO BE REMOVED WHEN THE MB SAMPLE WILL BE READY"<<std::endl;
@@ -190,6 +193,8 @@ void plotTurnOn(TString suffixfile="foutputTurnSelectionOnL1HLTprescale.root"){
 }
 
 TF1*fitfunctionErfL1(TGraphAsymmErrors *gEff, int indexsample, int indextrigger){
+  gStyle->SetOptFit(0);
+
   std::cout << "L1" << indexsample << indextrigger << std::endl;
   TF1 *fL1= new TF1("fL1",functionalFormTurnOn.Data(),0,200);
   //TF1 *fL1=new TF1("fL1","TMath::Erf(x*[1]+[2])+0*[0]");
