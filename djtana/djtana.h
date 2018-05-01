@@ -38,7 +38,7 @@ Color_t fmcolor[3] = {kAzure+3, kRed+3, kGreen+3};
 Style_t fmstyle[3] = {20, 21, 34};
 // Color_t ffcolor[3] = {kAzure-4, kRed-9};
 Color_t ffcolor[3] = {kAzure-8, kRed-9, kGreen-8};
-TString fleg[3] = {"pp", "PbPb", "PYTHIA"};
+TString fleg[3] = {"pp", "PbPb", "PYTHIA8"};
 
 TH1F* hNjets;
 
@@ -97,9 +97,11 @@ TGraphErrors* agSignalRsubRatioMe[nPtBins];
 TH1F* ahSignalRsubPYTHIA[nPtBins];
 TH1F* ahSignalRsubRatioPYTHIA[nPtBins];
 TH1F* ahSignalRsubRatioPYTHIAMe[nPtBins];
+TH1F* ahSignalRsubRatioPYTHIAPP[nPtBins];
 TGraphErrors* agSignalRsubPYTHIA[nPtBins];
 TGraphErrors* agSignalRsubRatioPYTHIA[nPtBins];
 TGraphErrors* agSignalRsubRatioPYTHIAMe[nPtBins];
+TGraphErrors* agSignalRsubRatioPYTHIAPP[nPtBins];
 
 //
 int createhists(Option_t* option)
@@ -237,6 +239,8 @@ int createhists(Option_t* option)
           ahSignalRsubRatioPYTHIA[i]->Sumw2();
           ahSignalRsubRatioPYTHIAMe[i] = new TH1F(Form("hSignalRsubRatioPYTHIAMe_pt_%d",i), ";r;", nDrBins, drBins);
           ahSignalRsubRatioPYTHIAMe[i]->Sumw2();
+          ahSignalRsubRatioPYTHIAPP[i] = new TH1F(Form("hSignalRsubRatioPYTHIAPP_pt_%d",i), ";r;", nDrBins, drBins);
+          ahSignalRsubRatioPYTHIAPP[i]->Sumw2();
         }
       return 0;
     }
