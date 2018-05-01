@@ -6,7 +6,7 @@ DO_USEHIST=${1:-0}
 cp ../includes/prefilters_data_2Dbins.h prefilters.h
 
 # Select the systems the macros run on 
-jJET=(0)
+jJET=(0 1)
 
 # nJET loop
 JETPTMIN=(60 60)

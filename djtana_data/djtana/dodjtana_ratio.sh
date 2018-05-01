@@ -110,7 +110,7 @@ then
                 then
                     tPOSTFIXPP=Djet_pp_$(produce_postfix $i $j $k)_${HLTOPTPP[i]}_wScaleRMG_woSmearPt_woSmearAng
                     tPOSTFIXPbPb=Djet_PbPb_$(produce_postfix $i $j $k)_${HLTOPTPbPb[i]}_wScaleRMG_woSmearPt_woSmearAng
-                    tPOSTFIXPYTHIA=Djet_ppRaw_woCorr_Signal_$(produce_postfix 1 $j 3)_noHLT_woScale_woSmearPt_woSmearAng
+                    tPOSTFIXPYTHIA=Djet_ppRaw_woCorr_Signal_$(produce_postfix 1 $j 3)_noHLT_woScale_woSmearPt_woSmearAng_noDweight
                     tPOSTFIX=Djet_$(produce_postfix $i $j $k)_${HLTOPTPP[i]}_${HLTOPTPbPb[i]}_wScaleRMG_woSmearPt_woSmearAng
                     echo -e "-- Processing ${FUNCOLOR}djtana_finalplot.C${NC} :: ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
                     [[ ! -f "rootfiles/xsec_${tPOSTFIXPP}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/xsec_${tPOSTFIXPP}.root doesn't exist. Process djtana_usehist.C first."; continue; }

@@ -27,6 +27,9 @@ TString str_sigmaDmass_low_PbPb = "((0.902618-0.766810)/4.)*(x-2)+0.902618";
 // TString str_sigmaDmass_high_PbPb = "((1.052734-0.916926)/4.)*(x-2)+1.052734";
 // TString str_sigmaDmass_low_PbPb = "((0.902618-0.766810)/4.)*(x-2)+0.902618";
 
+TString str_Dtrigger_pp = "TMath::Erf(x*1.32864e-1-1.90241)*0.5*(1-6.35868e-2)+0.5*(1+6.35868e-2)";
+TString str_Dtrigger_PbPb = "TMath::Erf(x*3.09974e-1+2.31049)*0.5*(1+4.5400e3)+0.5*(1-4.5400e3)";
+
 namespace djtweight
 {
   TF1 *fcentweight=0;
@@ -39,11 +42,15 @@ namespace djtweight
   TF1 *fsigmaDmass_pol4_pp=0, *fsigmaDmass_pol4_PbPb=0;
   TF1 *fsigmaDmass_pol5_pp=0, *fsigmaDmass_pol5_PbPb=0;
   TF1 *fsigmaDmass_pol6_pp=0, *fsigmaDmass_pol6_PbPb=0;
+
+  TF1 *fDtrigger_pp=0, *fDtrigger_PbPb=0;
+
   void init() 
   { 
     fcentweight = new TF1("fcentweight", str_fcentweight.Data(), 0, 200); 
     fweightGpt_pp = new TF1("fweightGpt_pp", str_weightGpt_pp.Data());
     fweightGpt_PbPb = new TF1("fweightGpt_PbPb", str_weightGpt_PbPb.Data());
+
     fsigmaDmass_pp = new TF1("fsigmaDmass_pp", str_sigmaDmass_pp.Data());
     fsigmaDmass_PbPb = new TF1("fsigmaDmass_PbPb", str_sigmaDmass_PbPb.Data());
     fsigmaDmass_high_pp = new TF1("fsigmaDmass_high_pp", str_sigmaDmass_high_pp.Data());
@@ -59,12 +66,21 @@ namespace djtweight
     fsigmaDmass_pol5_PbPb = new TF1("fsigmaDmass_pol5_PbPb", str_sigmaDmass_pol5_PbPb.Data());
     fsigmaDmass_pol6_pp = new TF1("fsigmaDmass_pol6_pp", str_sigmaDmass_pol6_pp.Data());
     fsigmaDmass_pol6_PbPb = new TF1("fsigmaDmass_pol6_PbPb", str_sigmaDmass_pol6_PbPb.Data());
+
+    fDtrigger_pp = new TF1("fDtrigger_pp", str_Dtrigger_pp.Data());
+    fDtrigger_PbPb = new TF1("fDtrigger_PbPb", str_Dtrigger_PbPb.Data());
  }
   float getcentweight(float hiBin) { return fcentweight->Eval(hiBin); }
   float getDptweight(float Dpt, int ispp)
   {
     if(ispp) return (1./fweightGpt_pp->Eval(Dpt));
     return (1./fweightGpt_PbPb->Eval(Dpt));
+  }
+  float getDtriggerweight(float Dpt, int ispp)
+  {
+    // if(ispp) return (1./fDtrigger_pp->Eval(Dpt));
+    if(ispp) return 1.;
+    return (1./fDtrigger_PbPb->Eval(Dpt));
   }
   float getsigmascale(float Dy, int ispp, int option=0)
   {

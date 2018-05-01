@@ -18,6 +18,8 @@ ifScale=${6:-1}
 ifSmearPt=${7:-1}
 ifSmearPhi=${8:-1}
 
+doDgenweight=${9:-1}
+
 # nJET loop
 JETPTMIN=(60 80 100 60 80 100)
 JETPTMAX=(80 100 999 80 100 999)

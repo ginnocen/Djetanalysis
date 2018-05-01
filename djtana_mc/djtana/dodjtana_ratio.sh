@@ -20,6 +20,9 @@ tScale=("woScale" "wScaleRMG" "wScaleFF")
 tSmearPt=("woSmearPt" "wSmearPt" "wSmearPtSyst")
 tSmearPhi=("woSmearAng" "wSmearAngJet" "wSmearAngJetD")
 
+# Dgenweight
+tDgenweight=("_noDweight" "")
+
 # nCOL loop
 ISMC=(0 1)
 HLTOPTPP=("" "noHLT")
@@ -63,9 +66,9 @@ then
             for k in ${kRECOGEN[@]}
             do
                 [[ $k -ne 0 && ${ISMC[i]} -eq 0 ]] && continue # only RecoD_RecoJet will run for data
-                tPOSTFIXPP=Djet_pp${tCORRRESO[$CORRRESO]}${tCORRFACTOR[$CORRFACTOR]}_${tSIGNALMC[$SIGNALMC]}$(produce_postfix $i $j $k)_${HLTOPTPP[i]}_${tScale[$ifScale]}_${tSmearPt[$ifSmearPt]}_${tSmearPhi[$ifSmearPhi]}
-                tPOSTFIXPbPb=Djet_PbPb${tCORRRESO[$CORRRESO]}${tCORRFACTOR[$CORRFACTOR]}_${tSIGNALMC[$SIGNALMC]}$(produce_postfix $i $j $k)_${HLTOPTPbPb[i]}_${tScale[$ifScale]}_${tSmearPt[$ifSmearPt]}_${tSmearPhi[$ifSmearPhi]}
-                tPOSTFIX=Djet_${tCORRRESO[$CORRRESO]}${tCORRFACTOR[$CORRFACTOR]}_${tSIGNALMC[$SIGNALMC]}$(produce_postfix $i $j $k)_${HLTOPTPP[i]}_${HLTOPTPbPb[i]}_${tScale[$ifScale]}_${tSmearPt[$ifSmearPt]}_${tSmearPhi[$ifSmearPhi]}
+                tPOSTFIXPP=Djet_pp${tCORRRESO[$CORRRESO]}${tCORRFACTOR[$CORRFACTOR]}_${tSIGNALMC[$SIGNALMC]}$(produce_postfix $i $j $k)_${HLTOPTPP[i]}_${tScale[$ifScale]}_${tSmearPt[$ifSmearPt]}_${tSmearPhi[$ifSmearPhi]}${tDgenweight[$doDgenweight]}
+                tPOSTFIXPbPb=Djet_PbPb${tCORRRESO[$CORRRESO]}${tCORRFACTOR[$CORRFACTOR]}_${tSIGNALMC[$SIGNALMC]}$(produce_postfix $i $j $k)_${HLTOPTPbPb[i]}_${tScale[$ifScale]}_${tSmearPt[$ifSmearPt]}_${tSmearPhi[$ifSmearPhi]}${tDgenweight[$doDgenweight]}
+                tPOSTFIX=Djet_${tCORRRESO[$CORRRESO]}${tCORRFACTOR[$CORRFACTOR]}_${tSIGNALMC[$SIGNALMC]}$(produce_postfix $i $j $k)_${HLTOPTPP[i]}_${HLTOPTPbPb[i]}_${tScale[$ifScale]}_${tSmearPt[$ifSmearPt]}_${tSmearPhi[$ifSmearPhi]}${tDgenweight[$doDgenweight]}
                 echo -e "-- Processing ${FUNCOLOR}djtana_saveratio.C${NC} :: ${ARGCOLOR}PbPb/pp${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
                 [[ ! -f "rootfiles/xsec_${tPOSTFIXPP}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/xsec_${tPOSTFIXPP}.root doesn't exist. Process djtana_usehist.C first."; continue; }
                 [[ ! -f "rootfiles/xsec_${tPOSTFIXPbPb}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/xsec_${tPOSTFIXPbPb}.root doesn't exist. Process djtana_usehist.C first."; continue; }
@@ -91,7 +94,7 @@ then
             do
                 if [[ $k -eq 0 || ${ISMC[i]} -eq 1 ]] # only RecoD_RecoJet will run for data
                 then
-                    tPOSTFIX=Djet_${tCORRRESO[$CORRRESO]}${tCORRFACTOR[$CORRFACTOR]}_${tSIGNALMC[$SIGNALMC]}$(produce_postfix $i $j $k)_${HLTOPTPP[i]}_${HLTOPTPbPb[i]}_${tScale[$ifScale]}_${tSmearPt[$ifSmearPt]}_${tSmearPhi[$ifSmearPhi]}
+                    tPOSTFIX=Djet_${tCORRRESO[$CORRRESO]}${tCORRFACTOR[$CORRFACTOR]}_${tSIGNALMC[$SIGNALMC]}$(produce_postfix $i $j $k)_${HLTOPTPP[i]}_${HLTOPTPbPb[i]}_${tScale[$ifScale]}_${tSmearPt[$ifSmearPt]}_${tSmearPhi[$ifSmearPhi]}${tDgenweight[$doDgenweight]}
                     echo -e "-- Processing ${FUNCOLOR}djtana_plotratio.C${NC} :: ${ARGCOLOR}${COLSYST[i]}${NC} - ${ARGCOLOR}${tMC[${ISMC[i]}]}${NC} - ${ARGCOLOR}${RECOGEN[k]}${NC}"
                     [[ ! -f "rootfiles/ratio_${tPOSTFIX}.root" ]] && { echo -e "${ERRCOLOR}error:${NC} rootfiles/ratio_${tPOSTFIX}.root doesn't exist. Process djtana_saveratio.C first."; continue; }
                     ./djtana_plotratio.exe "rootfiles/ratio_${tPOSTFIX}" "$tPOSTFIX" ${ISMC[i]} ${JETPTMIN[j]} ${JETPTMAX[j]} ${JETETAMIN[j]} ${JETETAMAX[j]}

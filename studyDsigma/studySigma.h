@@ -42,7 +42,8 @@ TH1F* ahRatioYDataOverMC[nvariables];
 
 const int fitvariations=5;
 TString fittype[fitvariations]={"pol1","pol2","pol3","pol4","pol5"};
-int fittypecolor[fitvariations]={4,5,6,7,8};
+// int fittypecolor[fitvariations]={4,5,6,7,8};
+int fittypecolor[fitvariations]={kRed+3,kGreen-1, kAzure-3, kOrange+2, kMagenta-3};
 
 TH1F* hDmesonY;
 int createhists(Option_t* option)

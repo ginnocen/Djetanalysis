@@ -37,7 +37,7 @@ void pdfvar_usehist(TString inputhistname, TString inputtplname, TString inputtp
       TString texpt = ptBins[i+1]<999?Form("%s < p_{T}^{D} < %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str(),xjjc::number_remove_zero(ptBins[i+1]).c_str()):Form("p_{T}^{D} > %s GeV/c",xjjc::number_remove_zero(ptBins[i]).c_str());
       for(int j=0;j<nDrBins;j++)
         {
-          TCanvas* c = new TCanvas("c", "", 600*3, 600*3);
+          TCanvas* c = new TCanvas("c", "", 600*4, 600*3);
           c->Divide(4, 3);
           TH1F* hMassSignal[nVariation] = {(TH1F*)ahHistoRMassSignal[i][j], (TH1F*)ahHistoRMassSignal[i][j], (TH1F*)ahHistoRMassSignal[i][j], (TH1F*)ahHistoRMassSignallow[i][j], (TH1F*)ahHistoRMassSignalhigh[i][j], (TH1F*)ahHistoRMassSignalpol3[i][j], (TH1F*)ahHistoRMassSignalpol4[i][j], (TH1F*)ahHistoRMassSignalpol5[i][j], (TH1F*)ahHistoRMassSignalpol6[i][j], (TH1F*)ahHistoRMassSignal[i][j]};
           TH1F* hMassSwapped[nVariation] = {(TH1F*)ahHistoRMassSwapped[i][j], (TH1F*)ahHistoRMassSwapped[i][j], (TH1F*)ahHistoRMassSwapped[i][j], (TH1F*)ahHistoRMassSwappedlow[i][j], (TH1F*)ahHistoRMassSwappedhigh[i][j], (TH1F*)ahHistoRMassSwappedpol3[i][j], (TH1F*)ahHistoRMassSwappedpol4[i][j], (TH1F*)ahHistoRMassSwappedpol5[i][j], (TH1F*)ahHistoRMassSwappedpol6[i][j], (TH1F*)ahHistoRMassSwapped[i][j]};

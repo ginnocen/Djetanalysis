@@ -150,7 +150,7 @@ void djtana_plothist(TString inputhistname, TString outputname,
       xjjroot::setleg(leg);
 
       ahSignalRPH[0][i]->Draw("pe same");
-      for(int l=0;l<nMeBins;l++) { ahSignalRMe[l][i]->Draw("pe same"); }
+      for(int l=0;l<nMeBins;l++) { if(!i || l<2) ahSignalRMe[l][i]->Draw("pe same"); }
       ahSignalRP[0][i]->Draw("pe same");
       ahSignalRMesub[i]->Draw("pe same");
 

@@ -175,10 +175,11 @@ public:
   // std::vector<float>**   ajetphi[ncases]   =   {&jetphi_akpu3pf,      &jetphi_akpu3pf,      &genphi_akpu3pf,   &genphi_akpu3pf};
   // std::vector<int>**     asubid[ncases]    =   {&subid_akpu3pf,       &subid_akpu3pf,       &gensubid_akpu3pf, &gensubid_akpu3pf};
 
-  Int_t HLT_AK4Jet40;
-  Int_t HLT_AK4Jet60;
-  Int_t HLT_AK4Jet80;
-  Int_t HLT_AK4Jet100;
+  Int_t HLT_AK4Jet40 = 0;
+  Int_t HLT_AK4Jet60 = 0;
+  Int_t HLT_AK4Jet80 = 0;
+  Int_t HLT_AK4Jet100 = 0;
+  Int_t HLT_DmesonDpt20 = 0;
 
   // djet(TTree* tree=0);
   djet(TString infname, Int_t ispp, Int_t isMC);
@@ -513,6 +514,9 @@ void djet::Init(TTree *tree, TTree *hlt)
       fHlt->SetBranchAddress(fisMC?"HLT_AK4PFJet60_Eta5p1ForPPRef_v1":"HLT_AK4PFJet60_Eta5p1_v1", &HLT_AK4Jet60);
       fHlt->SetBranchAddress(fisMC?"HLT_AK4PFJet80_Eta5p1ForPPRef_v1":"HLT_AK4PFJet80_Eta5p1_v1", &HLT_AK4Jet80);
       fHlt->SetBranchAddress(fisMC?"HLT_AK4PFJet100_Eta5p1ForPPRef_v1":"HLT_AK4PFJet100_Eta5p1_v1", &HLT_AK4Jet100);
+
+      fHlt->SetBranchStatus(fisMC?"HLT_DmesonPPTrackingGlobal_Dpt15_v1":"HLT_DmesonPPTrackingGlobal_Dpt15_v1", 1);
+      fHlt->SetBranchAddress(fisMC?"HLT_DmesonPPTrackingGlobal_Dpt15_v1":"HLT_DmesonPPTrackingGlobal_Dpt15_v1", &HLT_DmesonDpt20);
     }
   else
     {
@@ -523,7 +527,10 @@ void djet::Init(TTree *tree, TTree *hlt)
       fHlt->SetBranchAddress(fisMC?"HLT_HIPuAK4CaloJet40_Eta5p1_v2":"HLT_HIPuAK4CaloJet40_Eta5p1_v1", &HLT_AK4Jet40);
       fHlt->SetBranchAddress(fisMC?"HLT_HIPuAK4CaloJet60_Eta5p1_v2":"HLT_HIPuAK4CaloJet60_Eta5p1_v1", &HLT_AK4Jet60);
       fHlt->SetBranchAddress(fisMC?"HLT_HIPuAK4CaloJet80_Eta5p1_v2":"HLT_HIPuAK4CaloJet80_Eta5p1_v1", &HLT_AK4Jet80);      
-      fHlt->SetBranchAddress(fisMC?"HLT_HIPuAK4CaloJet100_Eta5p1_v2":"HLT_HIPuAK4CaloJet100_Eta5p1_v1", &HLT_AK4Jet100);      
+      fHlt->SetBranchAddress(fisMC?"HLT_HIPuAK4CaloJet100_Eta5p1_v2":"HLT_HIPuAK4CaloJet100_Eta5p1_v1", &HLT_AK4Jet100);
+
+      fHlt->SetBranchStatus(fisMC?"HLT_HIDmesonHITrackingGlobal_Dpt20_v2":"HLT_HIDmesonHITrackingGlobal_Dpt20_v1", 1);
+      fHlt->SetBranchAddress(fisMC?"HLT_HIDmesonHITrackingGlobal_Dpt20_v2":"HLT_HIDmesonHITrackingGlobal_Dpt20_v1", &HLT_DmesonDpt20);
     }
 
   Notify();

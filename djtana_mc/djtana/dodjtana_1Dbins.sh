@@ -9,7 +9,7 @@ DO_USEHIST=${3:-0}
 DO_PLOTHIST=${4:-0}
 
 # Select the systems the macros run on 
-jJET=(0 1 2 3 4 5)
+jJET=(0 1 2)
 
 #
 CORRFACTOR=${5:-0}
@@ -18,6 +18,7 @@ SIGNALMC=${7:-1}
 ifScale=${8:-1}
 ifSmearPt=${9:-1}
 ifSmearPhi=${10:-1}
+doDgenweight=${11:-1}
 
 ##
 

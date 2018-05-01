@@ -102,7 +102,8 @@ void compxsec_usehist(TString inputnumname, TString inputdenname,
       delete c;
     }
 
-  if(texname != "" && jetetamin<=0 && jetetamax>=1.6)
+  // if(texname != "" && jetetamin<=0 && jetetamax>=1.6)
+  if(texname != "")
     {
       std::cout<<"\033[1;36mstd::vector<std::vector<Float_t>> "<<texname<<Form("%.0f",jetptmin)<<Form("%.0f",jetptmax)<<"_"<<collisionsyst<<" = {";
       for(int i=0;i<nPtBins;i++)

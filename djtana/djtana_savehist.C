@@ -4,8 +4,8 @@ void djtana_savehist(TString inputname, TString outputname,
                      TString collisionsyst, Int_t isMC, Int_t irecogen,
                      Float_t jetptmin, Float_t jetptmax, Float_t jetetamin, Float_t jetetamax, 
                      Int_t jescale=0, Int_t gensmearpt=0, Int_t gensmearphi=0, 
-                     Int_t signalMC=1,
-                     Int_t maxevt=-1)
+                     Int_t signalMC=1, 
+                     Int_t maxevt=-1, Int_t doDgenweight=1)
 {
   int arguerr(TString collisionsyst, Int_t irecogen, Int_t isMC, Int_t gensmearpt, Int_t gensmearphi);
   if(arguerr(collisionsyst, irecogen, isMC, gensmearpt, gensmearphi)) return;
@@ -96,6 +96,9 @@ void djtana_savehist(TString inputname, TString outputname,
                   Int_t ibinselpt = xjjc::findibin(&ptselBins, (**djt.aDpt[irecogen])[jd]);
                   if(ibinselpt<0) { std::cout<<" error: wrong ibinselpt."<<std::endl; return; }
 
+                  Float_t Dgenpt = (**djt.aDgenpt[irecogen])[jd];
+                  Float_t weightDgen = (isMC&&Dgenpt>0&&doDgenweight)?djtweight::getDptweight(Dgenpt, ispp):1.;
+
                   Float_t deltaR[nRefBins];
                   deltaR[0] = djtuti::calr((**djt.aDphi[irecogen])[jd], (**djt.aDeta[irecogen])[jd], vjetphi->at(s), vjeteta->at(s), 0);
                   deltaR[1] = djtuti::calr((**djt.aDphi[irecogen])[jd], (**djt.aDeta[irecogen])[jd], vjetphi->at(s), vjeteta->at(s), 1);
@@ -111,9 +114,9 @@ void djtana_savehist(TString inputname, TString outputname,
                       if(djtDsel < 0) {std::cout<<"error: invalid option for isDselected()"<<std::endl; return;}
                       if(!djtDsel) continue;
                       Float_t Dmass = irecogen%2==0?(*djt.Dmass)[jd]:DZERO_MASS;
-                      ahHistoRMass[l][ibinpt][ibindr]->Fill(Dmass, evtweight / nsjet);
+                      ahHistoRMass[l][ibinpt][ibindr]->Fill(Dmass, evtweight*weightDgen / nsjet);
                       if(deltaR[l] < 0.3 && l)
-                        ahHistoRMassRef[ibinpt]->Fill(Dmass, evtweight / nsjet);
+                        ahHistoRMassRef[ibinpt]->Fill(Dmass, evtweight*weightDgen / nsjet);
                     }
                 } //! loopD
               // mix-UE D
@@ -126,6 +129,10 @@ void djtana_savehist(TString inputname, TString outputname,
                   if(ibinpt<0) continue;
                   Int_t ibinselpt = xjjc::findibin(&ptselBins, (**djt.aDpt_mix[irecogen])[jd]);
                   if(ibinselpt<0) { std::cout<<" error: wrong ibinselpt."<<std::endl; return; }
+
+                  Float_t Dgenpt = (**djt.aDgenpt_mix[irecogen])[jd];
+                  Float_t weightDgen = (isMC&&Dgenpt>0&&doDgenweight)?djtweight::getDptweight(Dgenpt, ispp):1.;
+
                   Float_t deltaR = djtuti::calr((**djt.aDphi_mix[irecogen])[jd], (**djt.aDeta_mix[irecogen])[jd], vjetphi->at(s), vjeteta->at(s), 0);
                   Int_t ibindr = xjjc::findibin(&drBins, deltaR);
                   if(ibindr<0) continue;
@@ -136,7 +143,7 @@ void djtana_savehist(TString inputname, TString outputname,
                   if(djtDsel < 0) { std::cout<<"error: invalid option for isDselected_mix()"<<std::endl; return; }
                   if(!djtDsel) continue;
                   Float_t Dmass = irecogen%2==0?(*djt.Dmass)[jd]:DZERO_MASS;
-                  ahHistoRMassMe[1][ibinpt]->Fill(Dmass, evtweight / nsjet);
+                  ahHistoRMassMe[1][ibinpt]->Fill(Dmass, evtweight*weightDgen / nsjet);
                 }//! loop UE D
             }
         } //!loop jets
@@ -182,6 +189,10 @@ void djtana_savehist(TString inputname, TString outputname,
                   if(isMC && signalMC && (**djt.aDcollisionId[irecogen])[jd]!=0) continue;
                   Int_t ibinselpt = xjjc::findibin(&ptselBins, (**djt.aDpt[irecogen])[jd]);
                   if(ibinselpt<0) { std::cout<<" error: wrong ibinselpt."<<std::endl; return; }
+
+                  Float_t Dgenpt = (**djt.aDgenpt[irecogen])[jd];
+                  Float_t weightDgen = (isMC&&Dgenpt>0&&doDgenweight)?djtweight::getDptweight(Dgenpt, ispp):1.;
+
                   Float_t deltaR = djtuti::calr((**djt.aDphi[irecogen])[jd], (**djt.aDeta[irecogen])[jd], vjetphi->at(s), vjeteta->at(s), 0);
                   Int_t ibindr = xjjc::findibin(&drBins, deltaR);
                   if(ibindr<0) continue;
@@ -192,7 +203,7 @@ void djtana_savehist(TString inputname, TString outputname,
                   if(djtDsel < 0) return;
                   if(!djtDsel) continue;
                   Float_t Dmass = irecogen%2==0?(*djt.Dmass)[jd]:DZERO_MASS;
-                  ahHistoRMassMe[0][ibinpt]->Fill(Dmass, evtweight / nsjet);
+                  ahHistoRMassMe[0][ibinpt]->Fill(Dmass, evtweight*weightDgen / nsjet);
                 }
               // mix-UE D
               for(int jd=0;jd<*(djt.anD_mix[irecogen]);jd++)
@@ -201,6 +212,10 @@ void djtana_savehist(TString inputname, TString outputname,
                   if(ibinpt<0) continue;
                   Int_t ibinselpt = xjjc::findibin(&ptselBins, (**djt.aDpt_mix[irecogen])[jd]);
                   if(ibinselpt<0) { std::cout<<" error: wrong ibinselpt."<<std::endl; return; }
+
+                  Float_t Dgenpt = (**djt.aDgenpt_mix[irecogen])[jd];
+                  Float_t weightDgen = (isMC&&Dgenpt>0&&doDgenweight)?djtweight::getDptweight(Dgenpt, ispp):1.;
+
                   Float_t deltaR = djtuti::calr((**djt.aDphi_mix[irecogen])[jd], (**djt.aDeta_mix[irecogen])[jd], vjetphi->at(s), vjeteta->at(s), 0);
                   Int_t ibindr = xjjc::findibin(&drBins, deltaR);
                   if(ibindr<0) continue;
@@ -211,7 +226,7 @@ void djtana_savehist(TString inputname, TString outputname,
                   if(djtDsel < 0) return;
                   if(!djtDsel) continue;
                   Float_t Dmass = irecogen%2==0?(*djt.Dmass)[jd]:DZERO_MASS;
-                  ahHistoRMassMe[2][ibinpt]->Fill(Dmass, evtweight / nsjet);
+                  ahHistoRMassMe[2][ibinpt]->Fill(Dmass, evtweight*weightDgen / nsjet);
                 }
             }
         } //! loop UE jets
@@ -232,13 +247,13 @@ void djtana_savehist(TString inputname, TString outputname,
 
 int main(int argc, char* argv[])
 {
-  if(argc==15)
+  if(argc==16)
     {
       djtana_savehist(argv[1], argv[2], argv[3], atoi(argv[4]), atoi(argv[5]), 
                       atof(argv[6]), atof(argv[7]), atof(argv[8]), atof(argv[9]),
                       atoi(argv[10]), atoi(argv[11]), atoi(argv[12]),
                       atoi(argv[13]), 
-                      atoi(argv[14]));
+                      atoi(argv[14]), atoi(argv[15]));
       return 0;
     }
   else
