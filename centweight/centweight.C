@@ -11,11 +11,10 @@ TString str_fcentweight = "TMath::Exp(1.73189e+00-1.95674e-02*x-3.23682e-04*x*x+
 void getcentweight()
 {
   TF1* fcentweight = new TF1("fcentweight", str_fcentweight.Data(), 0, 200);
-  TFile* infdata = new TFile("/export/d00/scratch/jwang/Djets/data/DjetFiles_20171120_PbPb_5TeV_HIHardProbes_skimmed_1unit_part1234_26March_20170326_HLTHIPuAK4CaloJet406080100.root", "");
+  TFile* infdata = new TFile("/export/d00/scratch/jwang/Djets/data/DjetFiles_20180411_PbPb_5TeV_HIHardProbes_skimmed_1unit_part1234_26March_20170326_HLT6080100_jetpt50_mix10_skimbranch.root", "");
   TTree* ntdata = (TTree*)infdata->Get("djt");
   TTree* nthltdata = (TTree*)infdata->Get("hlt");
-  // TFile* infmc = new TFile("/export/d00/scratch/jwang/Djets/MC/DjetFiles_20171215_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20171214_pthatweight.root", "");
-  TFile* infmc = new TFile("/export/d00/scratch/jwang/Djets/MC/DjetFiles_20180328_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20180326_pthatweight.root", "");
+  TFile* infmc = new TFile("/export/d00/scratch/jwang/Djets/MC/DjetFiles_20180406_PbPb_5TeV_TuneCUETP8M1_Dfinder_MC_20180326_pthatweight.root", "");
   TTree* ntmc = (TTree*)infmc->Get("djt");
   TTree* nthltmc = (TTree*)infmc->Get("hlt");
 
