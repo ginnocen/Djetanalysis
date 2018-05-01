@@ -48,10 +48,10 @@ namespace djtsyst
   std::vector<std::vector<Float_t>> syst100999_PDF_ratio = {{3.3, 3.3, 3.8, 7.3}};
 
   // non-closure
-  std::vector<std::vector<Float_t>> syst60999_NONCLOSURE_pp = {{6.5, 0.5, 2.6, 3.3},
-                                                               {2.2, 6.9, 14.7, 14.9}};
-  std::vector<std::vector<Float_t>> syst60999_NONCLOSURE_PbPb = {{3.4, 1.3, 0.6, 0.7},
-                                                                 {3.9, 8.4, 14.4, 15.6}};
+  std::vector<std::vector<Float_t>> syst60999_NONCLOSURE_pp = {{6.6, 0.4, 3.0, 3.5},
+                                                               {2.2, 7.0, 14.9, 15.1}};
+  std::vector<std::vector<Float_t>> syst60999_NONCLOSURE_PbPb = {{3.3, 1.5, 0.5, 0.1},
+                                                                 {3.1, 8.9, 14.3, 15.5}};
   std::vector<std::vector<Float_t>> syst6080_NONCLOSURE_pp = {{5.4, 5.6, 12.1, 12.7}};
   std::vector<std::vector<Float_t>> syst80100_NONCLOSURE_pp = {{5.7, 6.5, 10.3, 10.5}};
   std::vector<std::vector<Float_t>> syst100999_NONCLOSURE_pp = {{5.6, 6.4, 8.1, 7.4}};
@@ -59,8 +59,8 @@ namespace djtsyst
   std::vector<std::vector<Float_t>> syst80100_NONCLOSURE_PbPb = {{9.6, 8.7, 14.9, 12.0}};
   std::vector<std::vector<Float_t>> syst100999_NONCLOSURE_PbPb = {{11.5, 12.2, 14.1, 10.3}};
 
-  std::vector<std::vector<Float_t>> syst60999_NONCLOSURE_ratio = {{2.7, 1.8, 2.1, 4.3},
-                                                                  {1.7, 1.7, 0.5, 0.9}};
+  std::vector<std::vector<Float_t>> syst60999_NONCLOSURE_ratio = {{2.9, 1.9, 2.7, 3.9},
+                                                                  {0.8, 2.2, 0.9, 0.6}};
   std::vector<std::vector<Float_t>> syst6080_NONCLOSURE_ratio = {{2.2, 1.0, 0.9, 2.1}};
   std::vector<std::vector<Float_t>> syst80100_NONCLOSURE_ratio = {{3.4, 2.6, 5.8, 1.9}};
   std::vector<std::vector<Float_t>> syst100999_NONCLOSURE_ratio = {{5.4, 6.7, 7.1, 3.4}};
