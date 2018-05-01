@@ -1,0 +1,8 @@
+#!/bin/bash
+
+SAVETPL=1
+USEHIST=1
+PLOTHIST=1
+
+./doeff_2Dbins.sh $SAVETPL $USEHIST $PLOTHIST
+# ./doeff_1Dbins.sh $SAVETPL $USEHIST $PLOTHIST
