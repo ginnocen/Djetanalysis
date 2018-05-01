@@ -85,12 +85,18 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
   Int_t HLT_AK4Jet60;
   Int_t HLT_AK4Jet80;
   Int_t HLT_AK4Jet100;
+  Int_t HLT_DmesonDpt20;
+  Int_t HLT_DmesonDpt40;
+  Int_t HLT_DmesonDpt60;
   if(isPP)
     {
       hlt_tree->SetBranchAddress(isMC?"HLT_AK4PFJet40_Eta5p1ForPPRef_v1":"HLT_AK4PFJet40_Eta5p1_v1", &HLT_AK4Jet40);
       hlt_tree->SetBranchAddress(isMC?"HLT_AK4PFJet60_Eta5p1ForPPRef_v1":"HLT_AK4PFJet60_Eta5p1_v1", &HLT_AK4Jet60);
       hlt_tree->SetBranchAddress(isMC?"HLT_AK4PFJet80_Eta5p1ForPPRef_v1":"HLT_AK4PFJet80_Eta5p1_v1", &HLT_AK4Jet80);
       hlt_tree->SetBranchAddress(isMC?"HLT_AK4PFJet100_Eta5p1ForPPRef_v1":"HLT_AK4PFJet100_Eta5p1_v1", &HLT_AK4Jet100);
+      hlt_tree->SetBranchAddress(isMC?"HLT_DmesonPPTrackingGlobal_Dpt15_v1":"HLT_DmesonPPTrackingGlobal_Dpt15_v1", &HLT_DmesonDpt20);
+      hlt_tree->SetBranchAddress(isMC?"HLT_DmesonPPTrackingGlobal_Dpt30_v1":"HLT_DmesonPPTrackingGlobal_Dpt30_v1", &HLT_DmesonDpt40);
+      hlt_tree->SetBranchAddress(isMC?"HLT_DmesonPPTrackingGlobal_Dpt50_v1":"HLT_DmesonPPTrackingGlobal_Dpt50_v1", &HLT_DmesonDpt60);
     }
   else
     {
@@ -98,6 +104,9 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
       hlt_tree->SetBranchAddress(isMC?"HLT_HIPuAK4CaloJet60_Eta5p1_v2":"HLT_HIPuAK4CaloJet60_Eta5p1_v1", &HLT_AK4Jet60);
       hlt_tree->SetBranchAddress(isMC?"HLT_HIPuAK4CaloJet80_Eta5p1_v2":"HLT_HIPuAK4CaloJet80_Eta5p1_v1", &HLT_AK4Jet80);
       hlt_tree->SetBranchAddress(isMC?"HLT_HIPuAK4CaloJet100_Eta5p1_v2":"HLT_HIPuAK4CaloJet100_Eta5p1_v1", &HLT_AK4Jet100);
+      hlt_tree->SetBranchAddress(isMC?"HLT_HIDmesonHITrackingGlobal_Dpt20_v2":"HLT_HIDmesonHITrackingGlobal_Dpt20_v1", &HLT_DmesonDpt20);
+      hlt_tree->SetBranchAddress(isMC?"HLT_HIDmesonHITrackingGlobal_Dpt40_v2":"HLT_HIDmesonHITrackingGlobal_Dpt40_v1", &HLT_DmesonDpt40);
+      hlt_tree->SetBranchAddress(isMC?"HLT_HIDmesonHITrackingGlobal_Dpt60_v2":"HLT_HIDmesonHITrackingGlobal_Dpt60_v1", &HLT_DmesonDpt60);
     }
   foutput->cd();
   TTree* hlt_new = hlt_tree->CloneTree(0);
@@ -156,17 +165,17 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
   int nMixFiles = (int)mixing_list.size();
   std::cout<<"  Number of files: "<<nMixFiles<<std::endl;
 
-  TFile* fmixing[nMixFiles] = {0};
-  TTree* event_tree_mix[nMixFiles] = {0};
-  TTree* skim_tree_mix[nMixFiles] = {0};
-  TTree* jet_tree_akpu3pf_mix[nMixFiles] = {0};
+  TFile* fmixing[nMixFiles>0?nMixFiles:1] = {0};
+  TTree* event_tree_mix[nMixFiles>0?nMixFiles:1] = {0};
+  TTree* skim_tree_mix[nMixFiles>0?nMixFiles:1] = {0};
+  TTree* jet_tree_akpu3pf_mix[nMixFiles>0?nMixFiles:1] = {0};
 
-  TTree* D_tree_mix[nMixFiles] = {0};
-  TTree* G_tree_mix[nMixFiles] = {0};
+  TTree* D_tree_mix[nMixFiles>0?nMixFiles:1] = {0};
+  TTree* G_tree_mix[nMixFiles>0?nMixFiles:1] = {0};
 
-  jetTree jt_akpu3pf_mix[nMixFiles];
-  DTree dt_mix[nMixFiles];
-  GTree gt_mix[nMixFiles];
+  jetTree jt_akpu3pf_mix[nMixFiles>0?nMixFiles:1];
+  DTree dt_mix[nMixFiles>0?nMixFiles:1];
+  GTree gt_mix[nMixFiles>0?nMixFiles:1];
 
   /**************************************** should be array *****************************************/
   int hiBin_mix;
@@ -303,7 +312,8 @@ int D_jet_skim(std::string input, std::string output, bool isPP, bool isMC, floa
     if (j == end) { printf("done: %i\n", end); break; }
 
     // if(!HLT_AK4Jet40 && !HLT_AK4Jet60 && !HLT_AK4Jet80 && !HLT_AK4Jet100) { /*std::cout<<j<<" test: not pass hlt"<<std::endl;*/ continue; }
-    if(!isMC && !HLT_AK4Jet60 && !HLT_AK4Jet80 && !HLT_AK4Jet100) { /*std::cout<<j<<" test: not pass hlt"<<std::endl;*/ continue; }
+    // if(!isMC && !HLT_AK4Jet60 && !HLT_AK4Jet80 && !HLT_AK4Jet100) { /*std::cout<<j<<" test: not pass hlt"<<std::endl;*/ continue; }
+    if(!isMC && !HLT_DmesonDpt20 && !HLT_DmesonDpt40 && !HLT_DmesonDpt60) { /*std::cout<<j<<" test: not pass hlt"<<std::endl;*/ continue; }
 
     if (fabs(vz) > 15) continue;
     if (!isPP) {  // HI event selection
