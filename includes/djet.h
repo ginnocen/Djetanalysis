@@ -141,39 +141,43 @@ public:
   std::vector<float>*   Gtk2eta_mix;
 
   const static int ncases = 4;
-  TString               aDopt[ncases]              =  {"reco",                "gen",                "reco",                "gen"};
-  int*                  anD[ncases]                =  {&Dsize,                &Gsize,               &Dsize,                &Gsize};
-  std::vector<float>**  aDpt[ncases]               =  {&Dpt,                  &Gpt,                 &Dpt,                  &Gpt};
-  std::vector<float>**  aDeta[ncases]              =  {&Deta,                 &Geta,                &Deta,                 &Geta};
-  std::vector<float>**  aDphi[ncases]              =  {&Dphi,                 &Gphi,                &Dphi,                 &Gphi};
-  std::vector<float>**  aDgenpt[ncases]            =  {&Dgenpt,               &Gpt,                 &Dgenpt,               &Gpt};
-  std::vector<int>**    aDcollisionId[ncases]      =  {&DgencollisionId,      &GcollisionId,        &DgencollisionId,      &GcollisionId};
+  TString               aDopt[ncases]              =  {"reco",                "gen",                "reco",                 "gen"};
+  int*                  anD[ncases]                =  {&Dsize,                &Gsize,               &Dsize,                 &Gsize};
+  std::vector<float>**  aDpt[ncases]               =  {&Dpt,                  &Gpt,                 &Dpt,                   &Gpt};
+  std::vector<float>**  aDeta[ncases]              =  {&Deta,                 &Geta,                &Deta,                  &Geta};
+  std::vector<float>**  aDphi[ncases]              =  {&Dphi,                 &Gphi,                &Dphi,                  &Gphi};
+  std::vector<float>**  aDgenpt[ncases]            =  {&Dgenpt,               &Gpt,                 &Dgenpt,                &Gpt};
+  std::vector<int>**    aDcollisionId[ncases]      =  {&DgencollisionId,      &GcollisionId,        &DgencollisionId,       &GcollisionId};
 
-  int*                  anD_mix[ncases]            =  {&Dsize_mix,            &Gsize_mix,           &Dsize_mix,            &Gsize_mix};
-  std::vector<float>**  aDpt_mix[ncases]           =  {&Dpt_mix,              &Gpt_mix,             &Dpt_mix,              &Gpt_mix};
-  std::vector<float>**  aDeta_mix[ncases]          =  {&Deta_mix,             &Geta_mix,            &Deta_mix,             &Geta_mix};
-  std::vector<float>**  aDphi_mix[ncases]          =  {&Dphi_mix,             &Gphi_mix,            &Dphi_mix,             &Gphi_mix};
-  std::vector<float>**  aDgenpt_mix[ncases]        =  {&Dgenpt_mix,           &Gpt_mix,             &Dgenpt_mix,           &Gpt_mix};
-  std::vector<int>**    aDcollisionId_mix[ncases]  =  {&DgencollisionId_mix,  &GcollisionId_mix,    &DgencollisionId_mix,  &GcollisionId_mix};
+  int*                  anD_mix[ncases]            =  {&Dsize_mix,            &Gsize_mix,           &Dsize_mix,             &Gsize_mix};
+  std::vector<float>**  aDpt_mix[ncases]           =  {&Dpt_mix,              &Gpt_mix,             &Dpt_mix,               &Gpt_mix};
+  std::vector<float>**  aDeta_mix[ncases]          =  {&Deta_mix,             &Geta_mix,            &Deta_mix,              &Geta_mix};
+  std::vector<float>**  aDphi_mix[ncases]          =  {&Dphi_mix,             &Gphi_mix,            &Dphi_mix,              &Gphi_mix};
+  std::vector<float>**  aDgenpt_mix[ncases]        =  {&Dgenpt_mix,           &Gpt_mix,             &Dgenpt_mix,            &Gpt_mix};
+  std::vector<int>**    aDcollisionId_mix[ncases]  =  {&DgencollisionId_mix,  &GcollisionId_mix,    &DgencollisionId_mix,   &GcollisionId_mix};
 
-  TString               ajetopt[ncases]            =  {"reco",                "reco",               "gen",                 "gen"};
-  int*                  anjet[ncases]              =  {&njet_akpu3pf,         &njet_akpu3pf,        &njet_akpu3pf,         &njet_akpu3pf};
-  std::vector<float>**  ajetpt[ncases]             =  {&jetpt_akpu3pf,        &jetpt_akpu3pf,       &gjetpt_akpu3pf,       &gjetpt_akpu3pf};
-  std::vector<float>**  ajeteta[ncases]            =  {&jeteta_akpu3pf,       &jeteta_akpu3pf,      &gjeteta_akpu3pf,      &gjeteta_akpu3pf};
-  std::vector<float>**  ajetphi[ncases]            =  {&jetphi_akpu3pf,       &jetphi_akpu3pf,      &gjetphi_akpu3pf,      &gjetphi_akpu3pf};
-  std::vector<int>**    asubid[ncases]             =  {&subid_akpu3pf,        &subid_akpu3pf,       &subid_akpu3pf,        &subid_akpu3pf};
+  TString               ajetopt[ncases]            =  {"reco",                "reco",               "gen",                  "gen"};
+  // int*                  anjet[ncases]              =  {&njet_akpu3pf,         &njet_akpu3pf,        &njet_akpu3pf,          &njet_akpu3pf};
+  // std::vector<float>**  ajetpt[ncases]             =  {&jetpt_akpu3pf,        &jetpt_akpu3pf,       &gjetpt_akpu3pf,        &gjetpt_akpu3pf};
+  // std::vector<float>**  ajeteta[ncases]            =  {&jeteta_akpu3pf,       &jeteta_akpu3pf,      &gjeteta_akpu3pf,       &gjeteta_akpu3pf};
+  // std::vector<float>**  ajetphi[ncases]            =  {&jetphi_akpu3pf,       &jetphi_akpu3pf,      &gjetphi_akpu3pf,       &gjetphi_akpu3pf};
+  // std::vector<int>**    asubid[ncases]             =  {&subid_akpu3pf,        &subid_akpu3pf,       &subid_akpu3pf,         &subid_akpu3pf};
+  // int*                  anjet_mix[ncases]          =  {&njet_akpu3pf_mix,     &njet_akpu3pf_mix,    &njet_akpu3pf_mix,      &njet_akpu3pf_mix};
+  // std::vector<float>**  ajetpt_mix[ncases]         =  {&jetpt_akpu3pf_mix,    &jetpt_akpu3pf_mix,   &gjetpt_akpu3pf_mix,    &gjetpt_akpu3pf_mix};
+  // std::vector<float>**  ajeteta_mix[ncases]        =  {&jeteta_akpu3pf_mix,   &jeteta_akpu3pf_mix,  &gjeteta_akpu3pf_mix,   &gjeteta_akpu3pf_mix};
+  // std::vector<float>**  ajetphi_mix[ncases]        =  {&jetphi_akpu3pf_mix,   &jetphi_akpu3pf_mix,  &gjetphi_akpu3pf_mix,   &gjetphi_akpu3pf_mix};
+  // std::vector<int>**    asubid_mix[ncases]         =  {&subid_akpu3pf_mix,    &subid_akpu3pf_mix,   &subid_akpu3pf_mix,     &subid_akpu3pf_mix};
 
-  int*                  anjet_mix[ncases]          =  {&njet_akpu3pf_mix,     &njet_akpu3pf_mix,    &njet_akpu3pf_mix,     &njet_akpu3pf_mix};
-  std::vector<float>**  ajetpt_mix[ncases]         =  {&jetpt_akpu3pf_mix,    &jetpt_akpu3pf_mix,   &gjetpt_akpu3pf_mix,   &gjetpt_akpu3pf_mix};
-  std::vector<float>**  ajeteta_mix[ncases]        =  {&jeteta_akpu3pf_mix,   &jeteta_akpu3pf_mix,  &gjeteta_akpu3pf_mix,  &gjeteta_akpu3pf_mix};
-  std::vector<float>**  ajetphi_mix[ncases]        =  {&jetphi_akpu3pf_mix,   &jetphi_akpu3pf_mix,  &gjetphi_akpu3pf_mix,  &gjetphi_akpu3pf_mix};
-  std::vector<int>**    asubid_mix[ncases]         =  {&subid_akpu3pf_mix,    &subid_akpu3pf_mix,   &subid_akpu3pf_mix,    &subid_akpu3pf_mix};
-
-  // int*                   anjet[ncases]     =   {&njet_akpu3pf,        &njet_akpu3pf,        &ngen_akpu3pf,     &ngen_akpu3pf};
-  // std::vector<float>**   ajetpt[ncases]    =   {&jetpt_akpu3pf,       &jetpt_akpu3pf,       &genpt_akpu3pf,    &genpt_akpu3pf};
-  // std::vector<float>**   ajeteta[ncases]   =   {&jeteta_akpu3pf,      &jeteta_akpu3pf,      &geneta_akpu3pf,   &geneta_akpu3pf};
-  // std::vector<float>**   ajetphi[ncases]   =   {&jetphi_akpu3pf,      &jetphi_akpu3pf,      &genphi_akpu3pf,   &genphi_akpu3pf};
-  // std::vector<int>**     asubid[ncases]    =   {&subid_akpu3pf,       &subid_akpu3pf,       &gensubid_akpu3pf, &gensubid_akpu3pf};
+  int*                  anjet[ncases]              =  {&njet_akpu3pf,         &njet_akpu3pf,        &ngen_akpu3pf,          &ngen_akpu3pf};
+  std::vector<float>**  ajetpt[ncases]             =  {&jetpt_akpu3pf,        &jetpt_akpu3pf,       &genpt_akpu3pf,         &genpt_akpu3pf};
+  std::vector<float>**  ajeteta[ncases]            =  {&jeteta_akpu3pf,       &jeteta_akpu3pf,      &geneta_akpu3pf,        &geneta_akpu3pf};
+  std::vector<float>**  ajetphi[ncases]            =  {&jetphi_akpu3pf,       &jetphi_akpu3pf,      &genphi_akpu3pf,        &genphi_akpu3pf};
+  std::vector<int>**    asubid[ncases]             =  {&subid_akpu3pf,        &subid_akpu3pf,       &gensubid_akpu3pf,      &gensubid_akpu3pf};
+  int*                  anjet_mix[ncases]          =  {&njet_akpu3pf_mix,     &njet_akpu3pf_mix,    &ngen_akpu3pf_mix,      &ngen_akpu3pf_mix};
+  std::vector<float>**  ajetpt_mix[ncases]         =  {&jetpt_akpu3pf_mix,    &jetpt_akpu3pf_mix,   &genpt_akpu3pf_mix,     &genpt_akpu3pf_mix};
+  std::vector<float>**  ajeteta_mix[ncases]        =  {&jeteta_akpu3pf_mix,   &jeteta_akpu3pf_mix,  &geneta_akpu3pf_mix,    &geneta_akpu3pf_mix};
+  std::vector<float>**  ajetphi_mix[ncases]        =  {&jetphi_akpu3pf_mix,   &jetphi_akpu3pf_mix,  &genphi_akpu3pf_mix,    &genphi_akpu3pf_mix};
+  std::vector<int>**    asubid_mix[ncases]         =  {&subid_akpu3pf_mix,    &subid_akpu3pf_mix,   &gensubid_akpu3pf_mix,  &gensubid_akpu3pf_mix};
 
   Int_t HLT_AK4Jet40 = 0;
   Int_t HLT_AK4Jet60 = 0;

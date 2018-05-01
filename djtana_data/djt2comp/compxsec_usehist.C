@@ -6,7 +6,7 @@ void compxsec_usehist(TString inputnumname, TString inputdenname,
                       Float_t jetptmin, Float_t jetptmax, Float_t jetetamin, Float_t jetetamax,
                       TString texname="")
 {
-  xjjroot::setgstyle();
+  xjjroot::setgstyle(1);
 
   int arguerr(TString collisionsyst);
   if(arguerr(collisionsyst)) return;
@@ -34,15 +34,13 @@ void compxsec_usehist(TString inputnumname, TString inputdenname,
     };
   TString texjetpt = jetptmax<999? Form("%s < p_{T}^{jet} < %s GeV/c",xjjc::number_remove_zero(jetptmin).c_str(),xjjc::number_remove_zero(jetptmax).c_str()): Form("p_{T}^{jet} > %s GeV/c",xjjc::number_remove_zero(jetptmin).c_str());
   vectex.push_back(texjetpt);
-  TString texpythia = ispp?"PYTHIA":"PYTHIA + HYDJET";
-  vectex.push_back(texpythia);
 
   Float_t ypaddiv = 2./3, yPullpaddiv = 1-ypaddiv;
 
   for(int i=0;i<nPtBins;i++)
     {
-      Float_t yaxismax = ahSignalRnorm[0][i]->GetBinContent(1) * 1.e+3;
-      Float_t yaxismin = ahSignalRnorm[0][i]->GetBinContent(nDrBins) * 1.e-2;
+      Float_t yaxismax = ahSignalRnorm[0][i]->GetBinContent(1) * 1.e+2;
+      Float_t yaxismin = ahSignalRnorm[0][i]->GetBinContent(nDrBins) * 1.e-1;
       TCanvas* c = new TCanvas("c", "", 600, 800);
       TPad* pXsec = new TPad("pXsec", "", 0, 1-ypaddiv, 1, 1);
       pXsec->SetMargin(xjjroot::margin_pad_left, xjjroot::margin_pad_right, 0, xjjroot::margin_pad_top);
@@ -75,9 +73,9 @@ void compxsec_usehist(TString inputnumname, TString inputdenname,
       pPull->SetMargin(xjjroot::margin_pad_left, xjjroot::margin_pad_right, 0.07*1/yPullpaddiv, 0);
       pPull->Draw();
       pPull->cd();
-      TH2F* hemptyPull = new TH2F("hemptyPull", ";r;Ratio", 5, drBins[0], drBins[nDrBins], 10, 0, 2.2);
+      TH2F* hemptyPull = new TH2F("hemptyPull", ";r;Ratio", 5, drBins[0], drBins[nDrBins], 10, 0.2, 1.8);
       hemptyPull->GetXaxis()->SetNdivisions(505);
-      hemptyPull->GetYaxis()->SetNdivisions(504);
+      hemptyPull->GetYaxis()->SetNdivisions(505);
       xjjroot::sethempty(hemptyPull, -0.5, -0);
       hemptyPull->GetYaxis()->SetTitleSize(hemptyPull->GetYaxis()->GetTitleSize() * (ypaddiv / yPullpaddiv));
       hemptyPull->GetXaxis()->SetTitleSize(hemptyPull->GetXaxis()->GetTitleSize() * (ypaddiv / yPullpaddiv));
@@ -117,9 +115,9 @@ void compxsec_usehist(TString inputnumname, TString inputdenname,
         }
       std::cout<<"};\033[0m"<<std::endl;
     }
-  if(texname == "corrFactor" && jetetamin<=0 && jetetamax>=1.6)
+  if(texname == "trigeff" && jetetamin<=0 && jetetamax>=1.6)
     {
-      std::cout<<"\033[1;35mstd::vector<std::vector<Float_t>> syst"<<Form("%.0f",jetptmin)<<Form("%.0f",jetptmax)<<"_NONCLOSURE_"<<collisionsyst<<" = {";
+      std::cout<<"\033[1;35mstd::vector<std::vector<Float_t>> syst"<<Form("%.0f",jetptmin)<<Form("%.0f",jetptmax)<<"_TRIGGER_"<<collisionsyst<<" = {";
       for(int i=0;i<nPtBins;i++)
         {
           for(int j=0;j<nDrBins;j++)
