@@ -15,6 +15,7 @@ Color_t colorlist[] = {kRed-6, kAzure-5, kGreen-5, kMagenta-5, kOrange-8, kCyan+
 
 TH1F* hsystSCALE[nPtBins];
 TH1F* hsystRESO[nPtBins];
+TH1F* hsystTRIGGER[nPtBins];
 TH1F* hsystPDF[nPtBins];
 TH1F* hsystCUT[nPtBins];
 TH1F* hsystNONCLOSURE[nPtBins];
@@ -22,6 +23,7 @@ TH1F* hsystTOTAL[nPtBins];
 
 std::vector<std::vector<Float_t>>* syst_SCALE;
 std::vector<std::vector<Float_t>>* syst_RESO;
+std::vector<std::vector<Float_t>>* syst_TRIGGER;
 std::vector<std::vector<Float_t>>* syst_PDF;
 std::vector<std::vector<Float_t>>* syst_NONCLOSURE;
 std::vector<Float_t>* syst_CUT;
@@ -36,6 +38,7 @@ int createhist(Option_t* option)
         {
           hsystSCALE[i] = new TH1F(Form("hsystSCALE_%d",i), "", nDrBins, drBins);
           hsystRESO[i] = new TH1F(Form("hsystRESO_%d",i), "", nDrBins, drBins);
+          hsystTRIGGER[i] = new TH1F(Form("hsystTRIGGER_%d",i), "", nDrBins, drBins);
           hsystPDF[i] = new TH1F(Form("hsystPDF_%d",i), "", nDrBins, drBins);
           hsystCUT[i] = new TH1F(Form("hsystCUT_%d",i), "", nDrBins, drBins);
           hsystNONCLOSURE[i] = new TH1F(Form("hsystNONCLOSURE_%d",i), "", nDrBins, drBins);
@@ -53,6 +56,7 @@ int setsyst(Bool_t ispp)
     {
       syst_SCALE = djtsyst::syst_SCALE_pp;
       syst_RESO = djtsyst::syst_RESO_pp;
+      syst_TRIGGER = djtsyst::syst_TRIGGER_pp;
       syst_PDF = djtsyst::syst_PDF_pp;
       syst_NONCLOSURE = djtsyst::syst_NONCLOSURE_pp;
       syst_CUT = &djtsyst::syst_CUT_pp;
@@ -62,6 +66,7 @@ int setsyst(Bool_t ispp)
     {
       syst_SCALE = djtsyst::syst_SCALE_PbPb;
       syst_RESO = djtsyst::syst_RESO_PbPb;
+      syst_TRIGGER = djtsyst::syst_TRIGGER_PbPb;
       syst_PDF = djtsyst::syst_PDF_PbPb;
       syst_NONCLOSURE = djtsyst::syst_NONCLOSURE_PbPb;
       syst_CUT = &djtsyst::syst_CUT_PbPb;

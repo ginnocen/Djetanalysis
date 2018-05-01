@@ -3,7 +3,7 @@
 void syst_plothist(TString outputname, TString collisionsyst,
                    Float_t jetptmin, Float_t jetptmax, Float_t jetetamin, Float_t jetetamax)
 {
-  xjjroot::setgstyle();
+  xjjroot::setgstyle(1);
   Bool_t ispp = collisionsyst=="pp";
 
   if(createhist("plotsyst")) return;
@@ -22,6 +22,7 @@ void syst_plothist(TString outputname, TString collisionsyst,
         {
           hsystSCALE[i]->SetBinContent(j+1, syst_SCALE->at(i).at(j)/100.);
           hsystRESO[i]->SetBinContent(j+1, syst_RESO->at(i).at(j)/100.);
+          hsystTRIGGER[i]->SetBinContent(j+1, syst_TRIGGER->at(i).at(j)/100.);
           hsystPDF[i]->SetBinContent(j+1, syst_PDF->at(i).at(j)/100.);
           hsystNONCLOSURE[i]->SetBinContent(j+1, syst_NONCLOSURE->at(i).at(j)/100.);
           hsystCUT[i]->SetBinContent(j+1, syst_CUT->at(i)/100.);
@@ -30,6 +31,7 @@ void syst_plothist(TString outputname, TString collisionsyst,
         }
       xjjroot::setthgrstyle(hsystSCALE[i], colorlist[0], 21, 1, colorlist[0], 1, 3);
       xjjroot::setthgrstyle(hsystRESO[i], colorlist[1], 21, 1, colorlist[1], 1, 3);
+      xjjroot::setthgrstyle(hsystTRIGGER[i], colorlist[5], 21, 1, colorlist[5], 1, 3);
       xjjroot::setthgrstyle(hsystPDF[i], colorlist[2], 21, 1, colorlist[2], 1, 3);
       xjjroot::setthgrstyle(hsystNONCLOSURE[i], colorlist[3], 21, 1, colorlist[3], 1, 3);
       xjjroot::setthgrstyle(hsystCUT[i], colorlist[4], 21, 1, colorlist[4], 1, 3);
@@ -49,12 +51,14 @@ void syst_plothist(TString outputname, TString collisionsyst,
       xjjroot::setleg(leg);
       hsystSCALE[i]->Draw("same");
       hsystRESO[i]->Draw("same");
+      hsystTRIGGER[i]->Draw("same");
       hsystPDF[i]->Draw("same");
       hsystNONCLOSURE[i]->Draw("same");
       hsystCUT[i]->Draw("same");
       hsystTOTAL[i]->Draw("same");
       leg->AddEntry(hsystSCALE[i], "JES", "l");
       leg->AddEntry(hsystRESO[i], "JER", "l");
+      leg->AddEntry(hsystTRIGGER[i], "Trigger eff", "l");
       leg->AddEntry(hsystPDF[i], "Yield extraction", "l");
       leg->AddEntry(hsystCUT[i], "D efficiency", "l");
       leg->AddEntry(hsystNONCLOSURE[i], "Non-closure", "l");
@@ -88,6 +92,10 @@ void syst_plothist(TString outputname, TString collisionsyst,
   std::cout<<std::setiosflags(std::ios::left)<<std::setw(24)<<"Jet energy resolution";
   for(int i=0;i<nPtBins;i++)
     for(int j=0;j<nDrBins;j++) { std::cout<<"& "<<Form("%.1f",syst_RESO->at(i).at(j))<<"$\\%$ "; }
+  std::cout<<"\\\\"<<std::endl<<"\\hline"<<std::endl;
+  std::cout<<std::setiosflags(std::ios::left)<<std::setw(24)<<"Trigger efficiency";
+  for(int i=0;i<nPtBins;i++)
+    for(int j=0;j<nDrBins;j++) { std::cout<<"& "<<Form("%.1f",syst_TRIGGER->at(i).at(j))<<"$\\%$ "; }
   std::cout<<"\\\\"<<std::endl<<"\\hline"<<std::endl;
   std::cout<<std::setiosflags(std::ios::left)<<std::setw(24)<<"Non-closure";
   for(int i=0;i<nPtBins;i++)
