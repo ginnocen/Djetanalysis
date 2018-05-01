@@ -244,9 +244,7 @@ void djtana_usehist(TString inputhistname, TString inputtplname, TString outputn
           ahSignalRsubMe[i]->Add(ahSignalRnormMe[1][i], -1);
           ahSignalRsubMe[i]->Add(ahSignalRnormMe[2][i]);
         }
-      ahSignalRsub[i]->Scale(1./ahSignalRsub[i]->Integral(1, 3, "width"));
       ahSignalRsubUncorr[i] = (TH1F*)ahSignalRsub[i]->Clone(ahSignalRsubUncorr[i]->GetName());
-      ahSignalRsubMe[i]->Scale(1./ahSignalRsubMe[i]->Integral(1, 3, "width"));
       ahSignalRsubUncorrMe[i] = (TH1F*)ahSignalRsubMe[i]->Clone(ahSignalRsubUncorrMe[i]->GetName());
       for(int j=0;j<nDrBins;j++)
         {
@@ -260,6 +258,10 @@ void djtana_usehist(TString inputhistname, TString inputtplname, TString outputn
           ahSignalRsubMe[i]->SetBinContent(j+1, ahSignalRsubUncorrMe[i]->GetBinContent(j+1) / (corrfactor*corrfactorSg));
           ahSignalRsubMe[i]->SetBinError(j+1, ahSignalRsubUncorrMe[i]->GetBinError(j+1) / (corrfactor*corrfactorSg));
         }
+      ahSignalRsubUncorr[i]->Scale(1./ahSignalRsubUncorr[i]->Integral(1, 3, "width"));
+      ahSignalRsubUncorrMe[i]->Scale(1./ahSignalRsubUncorrMe[i]->Integral(1, 3, "width"));
+      ahSignalRsub[i]->Scale(1./ahSignalRsub[i]->Integral(1, 3, "width"));
+      ahSignalRsubMe[i]->Scale(1./ahSignalRsubMe[i]->Integral(1, 3, "width"));
     }
 
   delete dft;

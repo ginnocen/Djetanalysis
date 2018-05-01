@@ -79,7 +79,7 @@ void djtana_savetpl(TString inputname, TString outputname,
                   if((**djt.aDcollisionId[irecogen])[jd] != 0) continue;
 
                   Float_t Dgenpt = (**djt.aDgenpt[irecogen])[jd];
-                  Float_t weightDgen = isMC?1:djtweight::getDptweight(Dgenpt, ispp);
+                  Float_t weightDgen = Dgenpt>0?djtweight::getDptweight(Dgenpt, ispp):1.;
 
                   Float_t deltaR[nRefBins];
                   deltaR[0] = djtuti::calr((**djt.aDphi[irecogen])[jd], (**djt.aDeta[irecogen])[jd], vjetphi->at(s), vjeteta->at(s), 0);
@@ -137,7 +137,7 @@ void djtana_savetpl(TString inputname, TString outputname,
                   if(!djtDsel) continue;
 
                   Float_t Gpt = (*djt.Gpt)[jd];
-                  Float_t weightG = isMC?1.:djtweight::getDptweight(Gpt, ispp);
+                  Float_t weightG = Gpt>0?djtweight::getDptweight(Gpt, ispp):1.;
 
                   Float_t deltaR[nRefBins];
                   deltaR[0] = djtuti::calr((*djt.Gphi)[jd], (*djt.Geta)[jd], vjetphi->at(s), vjeteta->at(s), 0);
