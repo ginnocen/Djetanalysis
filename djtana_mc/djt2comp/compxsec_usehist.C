@@ -125,7 +125,7 @@ void compxsec_usehist(TString inputnumname, TString inputdenname,
           for(int j=0;j<nDrBins;j++)
             {
               if(!j) std::cout<<"{";
-              std::cout<<Form("%.1f",TMath::Abs(ahCorrFactor[i]->GetBinContent(j+1)-1)*100./2)<<(j<nDrBins-1?", ":"}");
+              std::cout<<Form("%.1f",TMath::Abs(ahCorrFactor[i]->GetBinContent(j+1)-1)*100.)<<(j<nDrBins-1?", ":"}");
             }
           if(i<nPtBins-1) std::cout<<","<<std::endl;
         }
