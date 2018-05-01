@@ -104,9 +104,9 @@ void djtana_plothist(TString inputhistname, TString outputname,
       pPull->SetMargin(xjjroot::margin_pad_left, xjjroot::margin_pad_right, 0.07*1/yPullpaddiv, 0);
       pPull->Draw();
       pPull->cd();
-      TH2F* hemptyPull = new TH2F("hemptyPull", ";r;bkg sub / signal", 5, drBins[0], drBins[nDrBins], 10, 0.5, 1.6);
+      TH2F* hemptyPull = new TH2F("hemptyPull", ";r;bkg sub / signal", 5, drBins[0], drBins[nDrBins], 10, 0.8, 1.2);
       hemptyPull->GetXaxis()->SetNdivisions(505);
-      hemptyPull->GetYaxis()->SetNdivisions(504);
+      hemptyPull->GetYaxis()->SetNdivisions(505);
       xjjroot::sethempty(hemptyPull, -0.5, -0);
       hemptyPull->GetYaxis()->SetTitleSize(hemptyPull->GetYaxis()->GetTitleSize() * (ypaddiv / yPullpaddiv));
       hemptyPull->GetXaxis()->SetTitleSize(hemptyPull->GetXaxis()->GetTitleSize() * (ypaddiv / yPullpaddiv));
@@ -117,7 +117,7 @@ void djtana_plothist(TString inputhistname, TString outputname,
       hemptyPull->GetYaxis()->SetLabelOffset(hemptyPull->GetYaxis()->GetLabelOffset() / (ypaddiv / yPullpaddiv) *(1+12));
       hemptyPull->GetXaxis()->SetLabelOffset(hemptyPull->GetXaxis()->GetLabelOffset() / (ypaddiv / yPullpaddiv));
       hemptyPull->Draw();
-      xjjroot::drawbox(drBins[0], 0.90, drBins[nDrBins], 1.10, kGray, 0.4);
+      // xjjroot::drawbox(drBins[0], 0.90, drBins[nDrBins], 1.10, kGray, 0.4);
       xjjroot::drawline(drBins[0], 1.00, drBins[nDrBins], 1.00, kGray+2, 2, 4);
       xjjroot::setthgrstyle(ahSignalRatio[i], kRed+3, 20, 1.2, kRed+3, 1, 1, -1, -1, -1);
       ahSignalRatio[i]->Draw("pe same");
@@ -174,9 +174,9 @@ void djtana_plothist(TString inputhistname, TString outputname,
       pPull->SetMargin(xjjroot::margin_pad_left, xjjroot::margin_pad_right, 0.07*1/yPullpaddiv, 0);
       pPull->Draw();
       pPull->cd();
-      TH2F* hemptyPull = new TH2F("hemptyPull", ";r;bkg sub / signal", 5, drBins[0], drBins[nDrBins], 10, 0.5, 1.6);
+      TH2F* hemptyPull = new TH2F("hemptyPull", ";r;bkg sub / signal", 5, drBins[0], drBins[nDrBins], 10, 0.85, 1.15);
       hemptyPull->GetXaxis()->SetNdivisions(505);
-      hemptyPull->GetYaxis()->SetNdivisions(504);
+      hemptyPull->GetYaxis()->SetNdivisions(505);
       xjjroot::sethempty(hemptyPull, -0.5, -0);
       hemptyPull->GetYaxis()->SetTitleSize(hemptyPull->GetYaxis()->GetTitleSize() * (ypaddiv / yPullpaddiv));
       hemptyPull->GetXaxis()->SetTitleSize(hemptyPull->GetXaxis()->GetTitleSize() * (ypaddiv / yPullpaddiv));
@@ -187,7 +187,7 @@ void djtana_plothist(TString inputhistname, TString outputname,
       hemptyPull->GetYaxis()->SetLabelOffset(hemptyPull->GetYaxis()->GetLabelOffset() / (ypaddiv / yPullpaddiv) *(1+12));
       hemptyPull->GetXaxis()->SetLabelOffset(hemptyPull->GetXaxis()->GetLabelOffset() / (ypaddiv / yPullpaddiv));
       hemptyPull->Draw();
-      xjjroot::drawbox(drBins[0], 0.90, drBins[nDrBins], 1.10, kGray, 0.4);
+      // xjjroot::drawbox(drBins[0], 0.90, drBins[nDrBins], 1.10, kGray, 0.4);
       xjjroot::drawline(drBins[0], 1.00, drBins[nDrBins], 1.00, kGray+2, 2, 4);
       ahSignalRatioMe[i]->Draw("pe same");
 
